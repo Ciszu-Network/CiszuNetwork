@@ -22,13 +22,20 @@ export const FEATURE_DEFS: FeatureDef[] = [
   { slug: 'music', label: 'Música', categories: ['Música'], premium: true },
   { slug: 'search', label: 'Búsqueda', commands: ['search'], premium: true },
   { slug: 'minigames', label: 'Minijuegos', categories: ['Diversión'] },
+  { slug: 'minigame_dice', label: 'Minijuego: dado', commands: ['dice'] },
+  { slug: 'minigame_rps', label: 'Minijuego: piedra papel tijeras', commands: ['rps'] },
+  { slug: 'minigame_rate', label: 'Minijuego: rate', commands: ['rate'] },
+  { slug: 'minigame_8ball', label: 'Minijuego: bola 8', commands: ['8ball'] },
   { slug: 'economy', label: 'Economía', categories: ['Economía'] },
+  { slug: 'giveaways', label: 'Sorteos', commands: ['giveaway', 'gend'] },
+  { slug: 'embeds', label: 'Embeds personalizados', commands: ['embed'] },
+  { slug: 'misc', label: 'Misceláneo', commands: ['say', 'directsay', 'confess', 'snipe', 'text', 'animal', 'avatar', 'hi', 'bye', 'test'] },
   { slug: 'help', label: 'Información (ayuda)', categories: ['Información'] },
   { slug: 'utility', label: 'Utilidad', categories: ['Utilidad'] },
   { slug: 'moderation', label: 'Moderación', categories: ['Moderación'] },
   { slug: 'setup', label: 'Configuración', categories: ['Configuración'] },
   { slug: 'levels', label: 'Niveles', categories: ['Niveles'] },
-  { slug: 'social', label: 'Social', categories: ['Social'] },
+  { slug: 'social', label: 'Social (perfiles)', categories: ['Social'] },
 ];
 
 /** Fila especial de feature_flags que controla la beta premium. */

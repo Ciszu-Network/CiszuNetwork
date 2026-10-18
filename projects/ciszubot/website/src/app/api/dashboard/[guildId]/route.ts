@@ -128,10 +128,30 @@ const guildConfigPatchSchema = z.object({
   invite_points_per: z.number().int().min(1).max(100).optional(),
   nitro_repost_enabled: z.boolean().optional(),
   private_vc_hub_id: z.string().min(1).nullable().optional(),
+  history_enabled: z.boolean().optional(),
+  history_channel_id: z.string().min(1).nullable().optional(),
 });
 
 /** Funciones configurables por servidor (mismas que los flags globales del bot). */
-const FEATURE_SLUGS = ['music', 'search', 'minigames', 'economy', 'help', 'utility', 'moderation', 'setup', 'levels', 'social'] as const;
+const FEATURE_SLUGS = [
+  'music',
+  'search',
+  'minigames',
+  'minigame_dice',
+  'minigame_rps',
+  'minigame_rate',
+  'minigame_8ball',
+  'economy',
+  'giveaways',
+  'embeds',
+  'misc',
+  'help',
+  'utility',
+  'moderation',
+  'setup',
+  'levels',
+  'social',
+] as const;
 
 const postLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 
@@ -185,6 +205,8 @@ interface GuildConfig {
   invite_points_per?: number;
   nitro_repost_enabled?: boolean;
   private_vc_hub_id?: string | null;
+  history_enabled?: boolean;
+  history_channel_id?: string | null;
   alliance_config?: Record<string, unknown>;
   ticket_config?: Record<string, unknown>;
 }
@@ -263,8 +285,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   }
   const body = parsed.data as Partial<GuildConfig>;
   const allowed: Record<string, unknown> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled'];
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled'];
 
   for (const key of stringFields) {
     if (body[key] !== undefined) allowed[key] = String(body[key]);
@@ -398,6 +420,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     invite_points_per: 'invitePointsPer',
     nitro_repost_enabled: 'nitroRepostEnabled',
     private_vc_hub_id: 'privateVcHubId',
+    history_enabled: 'historyEnabled',
+    history_channel_id: 'historyChannelId',
     alliance_config: 'allianceConfig',
     ticket_config: 'ticketConfig',
   };
@@ -440,13 +464,43 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     .where(eq(ciszubotSchema.discordUsers.id, userId))
     .limit(1);
 
-  await logAudit({
-    event: 'config_update',
-    actorId: userId,
-    actorName: userRows[0]?.username ?? null,
-    target: guildId,
-    ip,
-    detail: { fields: Object.keys(allowed), features: featurePatch },
-  });
+  // Historial: respeta el toggle del servidor; si hay canal, el bot publica
+  // el resumen del cambio allí (cola de acciones, directsay).
+  const freshRows = await db
+    .select({
+      historyEnabled: ciszubotSchema.guildConfigs.historyEnabled,
+      historyChannelId: ciszubotSchema.guildConfigs.historyChannelId,
+    })
+    .from(ciszubotSchema.guildConfigs)
+    .where(eq(ciszubotSchema.guildConfigs.guildId, guildId))
+    .limit(1);
+  const hist = freshRows[0];
+  const historyOn = hist?.historyEnabled !== false;
+
+  if (historyOn) {
+    await logAudit({
+      event: 'config_update',
+      actorId: userId,
+      actorName: userRows[0]?.username ?? null,
+      target: guildId,
+      ip,
+      detail: { fields: Object.keys(allowed), features: featurePatch },
+    });
+  }
+
+  if (historyOn && hist?.historyChannelId) {
+    const changed = [...Object.keys(allowed), ...Object.keys(featurePatch).map((f) => `feature:${f}`)];
+    await db
+      .insert(ciszubotSchema.botActions)
+      .values({
+        guildId,
+        type: 'directsay',
+        channelId: hist.historyChannelId,
+        content: `⚙️ Cambio de configuración en **${guild.name}** por <@${userId}>: ${changed.join(', ').slice(0, 300)}`,
+        createdBy: userId,
+        source: 'history',
+      })
+      .catch(() => undefined);
+  }
   return NextResponse.json({ ok: true });
 }

@@ -88,6 +88,21 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: byNames(['counters', 'serverinfo', 'stats']),
     note: 'Los contadores se actualizan al entrar/salir gente; también puedes ver datos con cz!serverinfo.',
   },
+  goodbye: {
+    title: 'Comandos de despedidas',
+    commands: byNames(['goodbye']),
+    note: 'Variables: {user} {username} {guild} {members}.',
+  },
+  vcs: {
+    title: 'Comandos de VCs privados',
+    commands: byNames(['privatevc', 'closeprivate']),
+    note: 'Hub de voz + panel: bloquear, ocultar, renombrar, límite y eliminar.',
+  },
+  invites: {
+    title: 'Comandos de invitaciones',
+    commands: byNames(['invites']),
+    note: 'Puntos por invitar, top y recompensas por umbral.',
+  },
   messages: {
     title: 'Say / DirectSay',
     commands: byNames(['say', 'directsay', 'text']),

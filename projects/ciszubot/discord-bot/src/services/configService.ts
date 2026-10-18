@@ -128,6 +128,8 @@ export interface GuildConfig {
   private_vc_hub_id: string | null;
   secret_user_ids: string[];
   nitro_repost_enabled: boolean;
+  history_enabled: boolean;
+  history_channel_id: string | null;
   alliance_config: AllianceConfig;
   ticket_config: TicketConfig;
 }
@@ -194,6 +196,8 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   private_vc_hub_id: null,
   secret_user_ids: [],
   nitro_repost_enabled: false,
+  history_enabled: true,
+  history_channel_id: null,
   alliance_config: DEFAULT_ALLIANCE,
   ticket_config: DEFAULT_TICKETS,
 };
@@ -280,6 +284,8 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         private_vc_hub_id: data.privateVcHubId ?? DEFAULTS.private_vc_hub_id,
         secret_user_ids: asArray(data.secretUserIds, DEFAULTS.secret_user_ids),
         nitro_repost_enabled: data.nitroRepostEnabled ?? DEFAULTS.nitro_repost_enabled,
+        history_enabled: data.historyEnabled ?? DEFAULTS.history_enabled,
+        history_channel_id: data.historyChannelId ?? DEFAULTS.history_channel_id,
         alliance_config: asObject(data.allianceConfig, DEFAULT_ALLIANCE),
         ticket_config: asObject(data.ticketConfig, DEFAULT_TICKETS),
       };
@@ -339,6 +345,8 @@ export async function updateGuildConfig(
     privateVcHubId: merged.private_vc_hub_id,
     secretUserIds: merged.secret_user_ids,
     nitroRepostEnabled: merged.nitro_repost_enabled,
+    historyEnabled: merged.history_enabled,
+    historyChannelId: merged.history_channel_id,
     allianceConfig: merged.alliance_config,
     ticketConfig: merged.ticket_config,
   };

@@ -77,6 +77,8 @@ export const guildConfigs = ciszubot.table(
     privateVcHubId: text('private_vc_hub_id'),
     secretUserIds: jsonb('secret_user_ids').notNull().default([]),
     nitroRepostEnabled: boolean('nitro_repost_enabled').notNull().default(false),
+    historyEnabled: boolean('history_enabled').notNull().default(true),
+    historyChannelId: text('history_channel_id'),
     allianceConfig: jsonb('alliance_config').notNull().default({}),
     ticketConfig: jsonb('ticket_config').notNull().default({}),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),

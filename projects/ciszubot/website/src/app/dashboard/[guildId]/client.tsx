@@ -63,6 +63,9 @@ interface GuildConfig {
   starboard_emoji?: string;
   starboard_min?: number;
   invite_points_per?: number;
+  invite_rewards?: { invites: number; role_id: string }[];
+  history_enabled?: boolean;
+  history_channel_id?: string | null;
   nitro_repost_enabled?: boolean;
   private_vc_hub_id?: string | null;
   alliance_config?: {
@@ -108,7 +111,7 @@ interface GuildConfig {
   premium?: boolean;
 }
 
-type SectionKey = 'general' | 'levels' | 'welcome' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'automod' | 'alliance' | 'tickets' | 'stats' | `feat:${string}`;
+type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -117,35 +120,22 @@ interface JsonPreviewPayload {
   config: Record<string, unknown>;
 }
 
-const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'automod' | 'alliance' | 'tickets' | 'stats', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang', 'staff_role_id'],
   messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
-  welcome: [
-    'welcome_channel_id',
-    'welcome_message',
-    'goodbye_channel_id',
-    'goodbye_message',
-    'autorole_ids',
-  ],
+  welcome: ['welcome_channel_id', 'welcome_message', 'autorole_ids'],
+  goodbye: ['goodbye_channel_id', 'goodbye_message'],
+  invites: ['invite_points_per', 'invite_rewards'],
+  vcs: ['private_channels', 'private_category_id', 'private_vc_hub_id'],
+  history: ['history_enabled', 'history_channel_id'],
   economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
   starboard: ['starboard_channel_id', 'starboard_emoji', 'starboard_min'],
   nitro: ['nitro_repost_enabled'],
   staff: ['staff_role_id'],
   automod: ['automod_enabled', 'automod_config'],
   alliance: ['alliance_config'],
-  tickets: [
-    'ticket_config',
-    'tickets_enabled',
-    'tickets_category_id',
-    'tickets_role_id',
-    'private_channels',
-    'private_category_id',
-    'private_vc_hub_id',
-    'music_channel_id',
-    'mute_role_id',
-    'logs_channel_id',
-  ],
+  tickets: ['ticket_config', 'tickets_enabled', 'tickets_category_id', 'tickets_role_id', 'music_channel_id', 'mute_role_id', 'logs_channel_id'],
   stats: ['counters'],
 };
 
@@ -164,7 +154,13 @@ const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPag
   { slug: 'music', icon: 'music', labelKey: 'featMusic', descKey: 'featMusicDesc', premium: true },
   { slug: 'search', icon: 'search', labelKey: 'featSearch', descKey: 'featSearchDesc', premium: true },
   { slug: 'minigames', icon: 'gamepad', labelKey: 'featMinigames', descKey: 'featMinigamesDesc' },
-  { slug: 'help', icon: 'help', labelKey: 'featHelp', descKey: 'featHelpDesc' },
+  { slug: 'minigame_dice', icon: 'gamepad', labelKey: 'featDice', descKey: 'featDiceDesc' },
+  { slug: 'minigame_rps', icon: 'gamepad', labelKey: 'featRps', descKey: 'featRpsDesc' },
+  { slug: 'minigame_rate', icon: 'gamepad', labelKey: 'featRate', descKey: 'featRateDesc' },
+  { slug: 'minigame_8ball', icon: 'gamepad', labelKey: 'feat8ball', descKey: 'feat8ballDesc' },
+  { slug: 'giveaways', icon: 'trophy', labelKey: 'featGiveaways', descKey: 'featGiveawaysDesc' },
+  { slug: 'embeds', icon: 'json', labelKey: 'featEmbeds', descKey: 'featEmbedsDesc', premium: true },
+  { slug: 'misc', icon: 'palette', labelKey: 'featMisc', descKey: 'featMiscDesc' },
   { slug: 'utility', icon: 'settings', labelKey: 'featUtility', descKey: 'featUtilityDesc' },
   { slug: 'moderation', icon: 'shield', labelKey: 'featModeration', descKey: 'featModerationDesc' },
   { slug: 'social', icon: 'users', labelKey: 'featSocial', descKey: 'featSocialDesc' },
@@ -452,11 +448,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
 
   // Sub-sidebar por opción: resumen por defecto (spec del dashboard).
   type GuildView =
-    | 'summary'
     | 'general'
     | 'messages'
     | 'levels'
     | 'welcome'
+    | 'goodbye'
+    | 'invites'
+    | 'vcs'
     | 'economy'
     | 'starboard'
     | 'nitro'
@@ -467,12 +465,12 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'stats'
     | 'history'
     | `feat:${string}`;
-  const [view, setView] = useState<GuildView>('summary');
+  const [view, setView] = useState<GuildView>('general');
   useEffect(() => {
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['summary', 'general', 'messages', 'levels', 'welcome', 'economy', 'starboard', 'nitro', 'staff', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
+      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
       setView(saved);
@@ -513,7 +511,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         /* sin storage */
       }
     } else {
-      setView('summary');
+      // #summary ya no es una vista: la info vive en el header del servidor.
+      setView('general');
+      try {
+        localStorage.setItem('cz-dash-view', 'general');
+      } catch {
+        /* sin storage */
+      }
     }
     const id = setTimeout(() => {
       document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -521,7 +525,6 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     return () => clearTimeout(id);
   }, []);
   const SUBNAV: ReadonlyArray<{ key: GuildView; icon: string; label: keyof Dict['guildPage']; tag: 'free' | 'premium' | 'mixed' }> = [
-    { key: 'summary', icon: 'server', label: 'subnavSummary', tag: 'free' },
     { key: 'general', icon: 'settings', label: 'subnavGeneral', tag: 'free' },
     { key: 'messages', icon: 'message', label: 'subnavMessages', tag: 'free' },
     ...FEATURE_ROWS.map((f) => ({
@@ -540,6 +543,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     { key: 'automod', icon: 'shield', label: 'subnavAutomod', tag: 'free' },
     { key: 'stats', icon: 'chart-bar', label: 'subnavStats', tag: 'free' },
     { key: 'welcome', icon: 'heart', label: 'subnavWelcome', tag: 'free' },
+    { key: 'goodbye', icon: 'logout', label: 'subnavGoodbye', tag: 'free' },
+    { key: 'invites', icon: 'person', label: 'subnavInvites', tag: 'free' },
+    { key: 'vcs', icon: 'music', label: 'subnavVcs', tag: 'free' },
     { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
   ];
 
@@ -662,6 +668,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         starboard_emoji: cfg?.starboard_emoji ?? '⭐',
         starboard_min: cfg?.starboard_min ?? 3,
         invite_points_per: cfg?.invite_points_per ?? 1,
+        invite_rewards: Array.isArray(cfg?.invite_rewards) ? cfg.invite_rewards : [],
+        history_enabled: cfg?.history_enabled ?? true,
+        history_channel_id: cfg?.history_channel_id ?? null,
         nitro_repost_enabled: cfg?.nitro_repost_enabled ?? false,
         private_vc_hub_id: cfg?.private_vc_hub_id ?? null,
         alliance_config: cfg?.alliance_config,
@@ -1377,73 +1386,33 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
 
           <div id="config" aria-busy={busy} className={`min-w-0 flex-1 space-y-6 ${muted}`}>
           {/* Resumen del servidor */}
-          {view === 'summary' && (
-            <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-              <div className="mb-4 flex flex-wrap items-center gap-2">
-                <h2 className="flex items-center gap-2 font-bold text-white">
-                  <Icon name="server" size={18} className="text-neon-blue" /> {t.serverInfoTitle}
-                </h2>
-                <Badge kind="free" dict={dict} />
+          {/* Info del servidor (antes era la vista RESUMEN): siempre visible */}
+          <div className="mb-6 flex flex-wrap items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4">
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-neon-blue">{t.serverInfoTitle}</p>
+              <p className="truncate text-sm font-bold text-white">{guildName}</p>
+            </div>
+            <div className="flex flex-wrap gap-4 text-center text-xs text-white/60">
+              <div>
+                <p className="text-base font-black text-white">{guildData?.memberCount ?? guildInfo?.memberCount ?? "—"}</p>
+                <p>{t.membersLabel}</p>
               </div>
-              {!hasGuildData ? (
-                <div className="rounded-xl border border-red-400/40 bg-red-400/10 px-4 py-3 text-sm text-red-300">
-                  {hasBotGuild === false ? t.botNotInGuild : t.noGuildData}
-                </div>
-              ) : (
-              <div className="grid gap-4 lg:grid-cols-2">
-                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">
-                    {t.rolesListTitle} · {roles.length}
-                  </p>
-                  <div className="flex max-h-56 flex-wrap gap-1.5 overflow-y-auto">
-                    {roles.map((role) => (
-                      <span
-                        key={role.id}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold text-white/75"
-                      >
-                        <span
-                          className="h-2.5 w-2.5 rounded-full"
-                          style={{ backgroundColor: role.color ? `#${role.color.toString(16).padStart(6, '0')}` : '#99aab5' }}
-                        />
-                        {role.name}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">
-                    {t.channelsListTitle} · {channels.length}
-                  </p>
-                  <div className="max-h-56 space-y-2 overflow-y-auto">
-                    {categories.map((cat) => (
-                      <div key={cat.id}>
-                        <p className="text-[10px] font-black uppercase tracking-widest text-white/40">📁 {cat.name}</p>
-                        <div className="mt-1 flex flex-wrap gap-1.5">
-                          {channels
-                            .filter((c) => c.parentId === cat.id)
-                            .map((c) => (
-                              <span key={c.id} className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
-                                {c.type === 2 || c.type === 13 ? '🔊' : c.type === 5 ? '📢' : '#'} {c.name}
-                              </span>
-                            ))}
-                        </div>
-                      </div>
-                    ))}
-                    <div className="flex flex-wrap gap-1.5">
-                      {channels
-                        .filter((c) => !c.parentId && c.type !== 4)
-                        .map((c) => (
-                          <span key={c.id} className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] text-white/70">
-                            {c.type === 2 || c.type === 13 ? '🔊' : c.type === 5 ? '📢' : '#'} {c.name}
-                          </span>
-                        ))}
-                    </div>
-                  </div>
-                </div>
+              <div>
+                <p className="text-base font-black text-white">{guildData?.roles?.length ?? guildInfo?.roles?.length ?? "—"}</p>
+                <p>{t.rolesLabel}</p>
               </div>
-              )}
-            </section>
-          )}
+              <div>
+                <p className="text-base font-black text-white">{guildData?.channels?.length ?? guildInfo?.channels?.length ?? "—"}</p>
+                <p>{t.channelsLabel}</p>
+              </div>
+              <div>
+                <p className={`text-base font-black ${hasBotGuild === false ? "text-amber-400" : "text-emerald-400"}`}>
+                  {hasBotGuild === false ? dict.dashboardPage.botMissing : hasBotGuild === null ? dict.dashboardPage.botUnverified : dict.dashboardPage.botConfigured}
+                </p>
+                <p>{t.botLabel}</p>
+              </div>
+            </div>
+          </div>
 
           {view === 'general' && (
           <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
@@ -1556,8 +1525,36 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name="verified" size={18} className="text-neon-blue" /> {t.historyTitle}
               </h2>
+              <Badge kind="free" dict={dict} />
             </div>
             <p className="mb-4 text-xs text-white/45">{t.historyHint}</p>
+            <div className="mb-5 grid gap-4">
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.historyToggle}</p>
+                  <p className="text-xs text-white/50">{t.historyHint}</p>
+                </div>
+                <Toggle on={config.history_enabled !== false} onChange={(v) => update({ history_enabled: v })} />
+              </div>
+              {hasGuildData ? (
+                <SelectField
+                  label={t.historyChannelLabel}
+                  hint={t.historyChannelHint}
+                  value={config.history_channel_id ?? null}
+                  placeholder={t.pickChannel}
+                  options={textChannelOptions}
+                  onChange={(v) => update({ history_channel_id: v })}
+                />
+              ) : (
+                <Field label={t.historyChannelLabel} hint={t.manualIdHint}>
+                  <input
+                    className={inputCls}
+                    value={config.history_channel_id ?? ''}
+                    onChange={(e) => update({ history_channel_id: e.target.value || null })}
+                  />
+                </Field>
+              )}
+            </div>
             {serverHistory === null && <p className="text-xs text-white/40">…</p>}
             {serverHistory !== null && serverHistory.length === 0 && (
               <p className="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-white/45">{t.historyEmpty}</p>
@@ -1567,20 +1564,30 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 {serverHistory.map((h) => (
                   <li
                     key={h.id}
-                    className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/20 px-4 py-2.5 text-xs"
+                    className="rounded-xl border border-white/10 bg-black/20 px-4 py-2.5 text-xs"
                   >
-                    <span className="font-mono text-white/45">
-                      {new Date(h.createdAt).toLocaleString()}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate text-white/70">
-                      {(h.detail?.fields ?? []).join(', ') || '—'}
-                      {h.detail?.features && Object.keys(h.detail.features).length > 0
-                        ? ` · ${Object.keys(h.detail.features).length} ${t.featuresLabel}`
-                        : ''}
-                    </span>
-                    <span className="text-[10px] text-white/40">
-                      {t.actorLabel}: <code className="font-mono">{h.actorId ?? '—'}</code>
-                    </span>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="font-mono text-white/45">
+                        {new Date(h.createdAt).toLocaleString()}
+                      </span>
+                      <span className="min-w-0 flex-1 break-words text-white/70 [overflow-wrap:anywhere]">
+                        {h.detail?.fields && h.detail.fields.length > 8
+                          ? `${h.detail.fields.slice(0, 8).join(', ')}… (+${h.detail.fields.length - 8})`
+                          : (h.detail?.fields ?? []).join(', ') || '—'}
+                        {h.detail?.features && Object.keys(h.detail.features).length > 0
+                          ? ` · ${Object.keys(h.detail.features).length} ${t.featuresLabel}`
+                          : ''}
+                      </span>
+                      <span className="text-[10px] text-white/40">
+                        {t.actorLabel}: <code className="font-mono">{h.actorId ?? '—'}</code>
+                      </span>
+                    </div>
+                    {h.detail?.fields && h.detail.fields.length > 8 && (
+                      <details className="mt-1">
+                        <summary className="cursor-pointer text-[10px] font-bold text-neon-blue">{t.showMore}</summary>
+                        <p className="mt-1 break-words text-white/50 [overflow-wrap:anywhere]">{h.detail.fields.join(', ')}</p>
+                      </details>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -1871,129 +1878,31 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   />
                 </Field>
               )}
-              {hasGuildData ? (
-                <SelectField
-                  label={t.goodbyeChannelLabel}
-                  value={config.goodbye_channel_id}
-                  placeholder={t.pickChannel}
-                  options={textChannelOptions}
-                  onChange={(v) => update({ goodbye_channel_id: v })}
+              <Field label={t.welcomeMessageLabel} hint={t.varsHint}>
+                <input
+                  className={inputCls}
+                  value={config.welcome_message ?? 'Bienvenido/a {user} a {guild}!'}
+                  maxLength={500}
+                  onChange={(e) => update({ welcome_message: e.target.value })}
                 />
-              ) : (
-                <Field label={t.goodbyeChannelLabel} hint={t.manualIdHint}>
-                  <input
-                    className={inputCls}
-                    placeholder="ID"
-                    value={config.goodbye_channel_id ?? ''}
-                    onChange={(e) => update({ goodbye_channel_id: e.target.value || null })}
-                  />
-                </Field>
-              )}
+              </Field>
+              <Field label={t.autoroleLabel} hint={t.autoroleHint}>
+                <input
+                  className={inputCls}
+                  placeholder="IDs separados por coma"
+                  value={(config.autorole_ids ?? []).join(', ')}
+                  onChange={(e) =>
+                    update({
+                      autorole_ids: e.target.value
+                        .split(',')
+                        .map((s) => s.trim())
+                        .filter((s) => /^\d{17,20}$/.test(s)),
+                    })
+                  }
+                />
+              </Field>
             </div>
-            <div className="mt-5 grid gap-5">
-              <DiscordMarkdownField
-                label={t.welcomeMessageLabel}
-                hint={t.varsHint}
-                value={config.welcome_message ?? ''}
-                onChange={(v) => update({ welcome_message: v })}
-                labels={{
-                  bold: t.mdBold,
-                  italic: t.mdItalic,
-                  underline: t.mdUnderline,
-                  spoiler: t.mdSpoiler,
-                  code: t.mdCode,
-                  preview: t.mdPreview,
-                  edit: t.mdEdit,
-                  vars: t.mdVars,
-                }}
-              />
-              <DiscordMarkdownField
-                label={t.goodbyeMessageLabel}
-                hint={t.varsHint}
-                value={config.goodbye_message ?? ''}
-                onChange={(v) => update({ goodbye_message: v })}
-                labels={{
-                  bold: t.mdBold,
-                  italic: t.mdItalic,
-                  underline: t.mdUnderline,
-                  spoiler: t.mdSpoiler,
-                  code: t.mdCode,
-                  preview: t.mdPreview,
-                  edit: t.mdEdit,
-                  vars: t.mdVars,
-                }}
-              />
-            </div>
-            {hasGuildData ? (
-              <div className="mt-4">
-                <p className="mb-1 block text-sm font-semibold text-white/85">{t.autoroleLabel}</p>
-                <div className="flex flex-wrap gap-2">
-                  {(config.autorole_ids ?? []).map((id) => {
-                    const role = roles.find((r) => r.id === id);
-                    return (
-                      <span
-                        key={id}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-black/30 px-3 py-1 text-xs font-semibold text-white/85"
-                      >
-                        @{role?.name ?? id}
-                        <button
-                          type="button"
-                          aria-label="Quitar"
-                          onClick={() =>
-                            update({
-                              autorole_ids: (config.autorole_ids ?? []).filter((r) => r !== id),
-                            })
-                          }
-                          className="text-white/40 transition hover:text-red-400"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    );
-                  })}
-                  <select
-                    className="rounded-full border border-white/15 bg-black/30 px-3 py-1 text-xs text-white/80 outline-none focus:border-neon-blue"
-                    value=""
-                    onChange={(e) => {
-                      const id = e.target.value;
-                      if (id && !(config.autorole_ids ?? []).includes(id)) {
-                        update({ autorole_ids: [...(config.autorole_ids ?? []), id] });
-                      }
-                    }}
-                  >
-                    <option value="" className="bg-[#0a0a14]">
-                      + {t.pickRole}
-                    </option>
-                    {roles
-                      .filter((r) => !(config.autorole_ids ?? []).includes(r.id))
-                      .map((r) => (
-                        <option key={r.id} value={r.id} className="bg-[#0a0a14]">
-                          @{r.name}
-                        </option>
-                      ))}
-                  </select>
-                </div>
-                <p className="mt-1 text-xs text-white/45">{t.autoroleHint}</p>
-              </div>
-            ) : (
-              <div className="mt-4">
-                <Field label={t.autoroleLabel} hint={t.manualIdHint}>
-                  <input
-                    className={inputCls}
-                    placeholder="123456789, 987654321"
-                    value={Array.isArray(config.autorole_ids) ? config.autorole_ids.join(', ') : ''}
-                    onChange={(e) =>
-                      update({
-                        autorole_ids: e.target.value
-                          .split(',')
-                          .map((s) => s.trim())
-                          .filter(Boolean),
-                      })
-                    }
-                  />
-                </Field>
-              </div>
-            )}
+            <HelpZone title={SECTION_HELP.welcome.title} commands={SECTION_HELP.welcome.commands} note={SECTION_HELP.welcome.note} />
           </section>
           )}
 
@@ -2266,6 +2175,212 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </div>
             </div>
             <HelpZone title={SECTION_HELP.messages.title} commands={SECTION_HELP.messages.commands} note={SECTION_HELP.messages.note} />
+          </section>
+          )}
+
+          {view === 'goodbye' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="logout" size={18} className="text-neon-pink" /> {t.goodbyeTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.goodbye.title} commands={SECTION_HELP.goodbye.commands} note={SECTION_HELP.goodbye.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('goodbye')}
+                onImport={(file) => void importFile(file, 'goodbye')}
+              />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.goodbyeHint}</p>
+            <div className="grid gap-5">
+              {hasGuildData ? (
+                <SelectField
+                  label={t.goodbyeChannelLabel}
+                  value={config.goodbye_channel_id ?? null}
+                  placeholder={t.pickChannel}
+                  options={textChannelOptions}
+                  onChange={(v) => update({ goodbye_channel_id: v })}
+                />
+              ) : (
+                <Field label={t.goodbyeChannelLabel} hint={t.manualIdHint}>
+                  <input
+                    className={inputCls}
+                    value={config.goodbye_channel_id ?? ''}
+                    onChange={(e) => update({ goodbye_channel_id: e.target.value || null })}
+                  />
+                </Field>
+              )}
+              <Field label={t.goodbyeMessageLabel} hint={t.varsHint}>
+                <input
+                  className={inputCls}
+                  value={config.goodbye_message ?? 'Adiós {user}, que te vaya bien!'}
+                  maxLength={500}
+                  onChange={(e) => update({ goodbye_message: e.target.value })}
+                />
+              </Field>
+            </div>
+            <HelpZone title={SECTION_HELP.goodbye.title} commands={SECTION_HELP.goodbye.commands} note={SECTION_HELP.goodbye.note} />
+          </section>
+          )}
+
+          {view === 'vcs' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="music" size={18} className="text-neon-blue" /> {t.vcsTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.vcs.title} commands={SECTION_HELP.vcs.commands} note={SECTION_HELP.vcs.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('vcs')}
+                onImport={(file) => void importFile(file, 'vcs')}
+              />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.vcsHint}</p>
+            <div className="grid gap-5">
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.privateToggle}</p>
+                  <p className="text-xs text-white/50">{t.privateToggleHint}</p>
+                </div>
+                <Toggle on={Boolean(config.private_channels)} onChange={(v) => update({ private_channels: v })} />
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {hasGuildData ? (
+                  <SelectField
+                    label={t.privateVcHubLabel}
+                    value={config.private_vc_hub_id ?? null}
+                    placeholder={t.pickVoice}
+                    options={voiceChannelOptions}
+                    onChange={(v) => update({ private_vc_hub_id: v })}
+                  />
+                ) : (
+                  <Field label={t.privateVcHubLabel} hint={t.manualIdHint}>
+                    <input className={inputCls} value={config.private_vc_hub_id ?? ''} onChange={(e) => update({ private_vc_hub_id: e.target.value || null })} />
+                  </Field>
+                )}
+                {hasGuildData ? (
+                  <SelectField
+                    label={t.privateCategoryLabel}
+                    value={config.private_category_id ?? null}
+                    placeholder={t.pickCategory}
+                    options={categoryOptions}
+                    onChange={(v) => update({ private_category_id: v })}
+                  />
+                ) : (
+                  <Field label={t.privateCategoryLabel} hint={t.manualIdHint}>
+                    <input className={inputCls} value={config.private_category_id ?? ''} onChange={(e) => update({ private_category_id: e.target.value || null })} />
+                  </Field>
+                )}
+              </div>
+            </div>
+            <HelpZone title={SECTION_HELP.vcs.title} commands={SECTION_HELP.vcs.commands} note={SECTION_HELP.vcs.note} />
+          </section>
+          )}
+
+          {view === 'invites' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="person" size={18} className="text-neon-blue" /> {t.invitesTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.invites.title} commands={SECTION_HELP.invites.commands} note={SECTION_HELP.invites.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('invites')}
+                onImport={(file) => void importFile(file, 'invites')}
+              />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.invitesHint}</p>
+            <div className="grid gap-5">
+              <Field label={t.invitePointsLabel} hint={t.invitePointsHint}>
+                <input
+                  type="number"
+                  min={1}
+                  max={100}
+                  className={inputCls}
+                  value={config.invite_points_per ?? 1}
+                  onChange={(e) => update({ invite_points_per: Math.max(1, Number(e.target.value) || 1) })}
+                />
+              </Field>
+              <div>
+                <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">{t.invitesRewardsLabel}</p>
+                <p className="mb-3 text-[10px] text-white/35">{t.invitesRewardsHint}</p>
+                <div className="grid gap-2">
+                  {(config.invite_rewards ?? []).map((row, idx) => (
+                    <div key={`${row.invites}-${idx}`} className="flex flex-wrap items-center gap-2">
+                      <input
+                        type="number"
+                        min={1}
+                        className={`${inputCls} w-24`}
+                        value={row.invites}
+                        onChange={(e) => {
+                          const next = (config.invite_rewards ?? []).map((r, i) => (i === idx ? { ...r, invites: Math.max(1, Number(e.target.value) || 1) } : r));
+                          update({ invite_rewards: next });
+                        }}
+                      />
+                      {hasGuildData ? (
+                        <select
+                          className={`${inputCls} w-52`}
+                          value={row.role_id}
+                          onChange={(e) => {
+                            const next = (config.invite_rewards ?? []).map((r, i) => (i === idx ? { ...r, role_id: e.target.value } : r));
+                            update({ invite_rewards: next });
+                          }}
+                        >
+                          {roleOptions.map((opt) => (
+                            <option key={opt.id} value={opt.id}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          className={`${inputCls} w-52`}
+                          value={row.role_id}
+                          onChange={(e) => {
+                            const next = (config.invite_rewards ?? []).map((r, i) => (i === idx ? { ...r, role_id: e.target.value } : r));
+                            update({ invite_rewards: next });
+                          }}
+                        />
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => update({ invite_rewards: (config.invite_rewards ?? []).filter((_, i) => i !== idx) })}
+                        className="rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-bold text-white/60 transition hover:border-red-400/50 hover:text-red-300"
+                      >
+                        {t.removeRow}
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    disabled={!hasGuildData || roleOptions.length === 0}
+                    onClick={() =>
+                      update({
+                        invite_rewards: [...(config.invite_rewards ?? []), { invites: ((config.invite_rewards ?? []).at(-1)?.invites ?? 0) + 10, role_id: roleOptions[0].id }],
+                      })
+                    }
+                    className="w-fit rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white disabled:opacity-40"
+                  >
+                    + {t.addRow}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <HelpZone title={SECTION_HELP.invites.title} commands={SECTION_HELP.invites.commands} note={SECTION_HELP.invites.note} />
           </section>
           )}
 
@@ -3050,27 +3165,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     </Field>
                   )}
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
-                  <div>
-                    <p className="text-sm font-semibold text-white/90">{t.privateToggle}</p>
-                    <p className="text-xs text-white/50">{t.privateToggleHint}</p>
-                  </div>
-                  <Toggle on={Boolean(config.private_channels)} onChange={(v) => update({ private_channels: v })} />
-                </div>
+
                 <div className="grid gap-4 sm:grid-cols-2">
-                  {hasGuildData ? (
-                    <SelectField
-                      label={t.privateCategoryLabel}
-                      value={config.private_category_id ?? null}
-                      placeholder={t.pickCategory}
-                      options={categoryOptions}
-                      onChange={(v) => update({ private_category_id: v })}
-                    />
-                  ) : (
-                    <Field label={t.privateCategoryLabel} hint={t.manualIdHint}>
-                      <input className={inputCls} value={config.private_category_id ?? ''} onChange={(e) => update({ private_category_id: e.target.value || null })} />
-                    </Field>
-                  )}
                   {hasGuildData ? (
                     <SelectField
                       label={t.musicChannelLabel}
@@ -3096,19 +3192,6 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   ) : (
                     <Field label={t.muteRoleLabel} hint={t.manualIdHint}>
                       <input className={inputCls} value={config.mute_role_id ?? ''} onChange={(e) => update({ mute_role_id: e.target.value || null })} />
-                    </Field>
-                  )}
-                  {hasGuildData ? (
-                    <SelectField
-                      label={t.privateVcHubLabel}
-                      value={config.private_vc_hub_id ?? null}
-                      placeholder={t.pickVoice}
-                      options={voiceChannelOptions}
-                      onChange={(v) => update({ private_vc_hub_id: v })}
-                    />
-                  ) : (
-                    <Field label={t.privateVcHubLabel} hint={t.manualIdHint}>
-                      <input className={inputCls} value={config.private_vc_hub_id ?? ''} onChange={(e) => update({ private_vc_hub_id: e.target.value || null })} />
                     </Field>
                   )}
                 </div>
