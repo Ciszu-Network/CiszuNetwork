@@ -391,6 +391,17 @@ export function AdBlockerGuard({ children, site, logo, title = 'Ciszu Network', 
   //   porque el usuario pudo activar/desactivar su adblocker al recargar.
   // - Navegación normal: se respeta la elección guardada (≤12h).
   useEffect(() => {
+    // Bypass de depuración: sesiones de GTM Preview / Tag Assistant añaden
+    // ?gtm_preview=… — el modal bloqueante arruinaría la sesión de depuración.
+    try {
+      const q = window.location.search;
+      if (q.includes('gtm_preview=') || q.includes('gtm_debug=')) {
+        console.debug('[AdBlockerGuard] sin deteccion: sesion de preview de GTM');
+        return;
+      }
+    } catch {
+      /* sin window */
+    }
     // Cookies rechazadas → el usuario ya eligió no ver anuncios: bypass total.
     if (getCookieConsent() === 'rejected') {
       // Diagnóstico: explica en consola por qué el guard no se muestra.

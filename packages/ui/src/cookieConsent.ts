@@ -121,7 +121,14 @@ export const COOKIE_CONSENT_GUARD_JS = `(function () {
   try {
     var c = null;
     try { c = window.localStorage.getItem('cookies_accepted'); } catch (e) {}
-    window.__ciszuCookieConsent = c === 'true' ? 'accepted' : c === 'false' ? 'rejected' : null;
+    // Bypass de depuración: las sesiones de GTM Preview / Tag Assistant añaden
+    // ?gtm_preview=… a la URL. En esos casos SIEMPRE se permiten los scripts de
+    // Google (aunque el usuario haya rechazado cookies en esa web), porque sin
+    // GTM la sesión de depuración queda "no conectada" (amarillo en Tag Assistant).
+    var q = '';
+    try { q = window.location.search || ''; } catch (e) {}
+    var isPreview = q.indexOf('gtm_preview=') !== -1 || q.indexOf('gtm_debug=') !== -1;
+    window.__ciszuCookieConsent = isPreview ? 'accepted' : c === 'true' ? 'accepted' : c === 'false' ? 'rejected' : null;
     if (window.__ciszuCookieConsent === 'rejected') {
       var SEL = [
         'script[data-cookie-consent="optional"]',
