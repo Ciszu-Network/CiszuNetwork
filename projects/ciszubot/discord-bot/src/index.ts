@@ -22,6 +22,7 @@ import { gateCommand } from './utils/commandGate';
 import { resolveFeatureForCommand, isPremiumCommand } from './config/features';
 import { getFeatureState, isPremiumBeta } from './services/featureFlags';
 import { runCustomCommand } from './services/customCommands';
+import { startAutopostLoop } from './services/autoposts';
 
 initErrorTracking();
 
@@ -73,6 +74,9 @@ client.once(Events.ClientReady, async (readyClient) => {
 
   // Estadísticas a bot lists (top.gg auto + DiscordBotList cada 30 min)
   scheduleStatsPosting(readyClient);
+
+  // Autopublicaciones (anuncios, animales, anime; +18 en canales NSFW)
+  startAutopostLoop(readyClient);
 
   // Registrar comandos de barra — CORREGIDO: applicationCommands con C mayúscula
   // Discord limita a 100 comandos de aplicación globales: se recorta con aviso

@@ -94,6 +94,13 @@ interface GuildConfig {
   trivia_time_seconds?: number;
   trivia_difficulty?: 'easy' | 'medium' | 'hard' | 'mixed';
   trivia_rewards?: { points: number; role_id: string }[];
+  autoposts_enabled?: boolean;
+  autoposts?: { id: string; type: 'custom' | 'animals' | 'anime'; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }[];
+  nsfw_enabled?: boolean;
+  nsfw_channel_id?: string | null;
+  nsfw_autopost_enabled?: boolean;
+  nsfw_autopost_minutes?: number;
+  nsfw_commands_enabled?: boolean;
   marriage_excluded_role_ids?: string[];
   nitro_repost_mode?: 'auto' | 'manual';
   nitro_excluded_role_ids?: string[];
@@ -146,7 +153,7 @@ interface GuildConfig {
   premium?: boolean;
 }
 
-type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
+type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'nsfw' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -183,7 +190,7 @@ const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPag
   ],
 };
 
-const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'nsfw' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id'],
   messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
@@ -195,6 +202,8 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   suggestions: ['suggestions_enabled', 'suggestions_channel_id', 'suggestions_excluded_role_ids', 'suggestions_max_active', 'suggestions_cooldown_minutes'],
   polls: ['polls_enabled', 'polls_excluded_role_ids', 'polls_max_active', 'polls_cooldown_minutes'],
   trivia: ['trivia_enabled', 'trivia_excluded_role_ids', 'trivia_timed', 'trivia_time_seconds', 'trivia_difficulty', 'trivia_rewards'],
+  autoposts: ['autoposts_enabled', 'autoposts'],
+  nsfw: ['nsfw_enabled', 'nsfw_channel_id', 'nsfw_autopost_enabled', 'nsfw_autopost_minutes', 'nsfw_commands_enabled'],
   history: ['history_enabled', 'history_channel_id'],
   economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
   starboard: ['starboard_channel_id', 'starboard_emoji', 'starboard_min'],
@@ -555,6 +564,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'suggestions'
     | 'polls'
     | 'trivia'
+    | 'autoposts'
+    | 'nsfw'
     | 'economy'
     | 'starboard'
     | 'nitro'
@@ -570,7 +581,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'polls', 'trivia', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
+      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'polls', 'trivia', 'autoposts', 'nsfw', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
       setView(saved);
@@ -650,6 +661,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     { key: 'suggestions', icon: 'lightbulb', label: 'subnavSuggestions', tag: 'free' },
     { key: 'polls', icon: 'chart-pie', label: 'subnavPolls', tag: 'free' },
     { key: 'trivia', icon: 'circle-question', label: 'subnavTrivia', tag: 'free' },
+    { key: 'autoposts', icon: 'bullhorn', label: 'subnavAutoposts', tag: 'free' },
+    { key: 'nsfw', icon: 'triangle-exclamation', label: 'subnavNsfw', tag: 'free' },
     { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
   ];
 
@@ -907,6 +920,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         trivia_time_seconds: cfg?.trivia_time_seconds ?? 60,
         trivia_difficulty: cfg?.trivia_difficulty ?? 'mixed',
         trivia_rewards: Array.isArray(cfg?.trivia_rewards) ? cfg.trivia_rewards : [],
+        autoposts_enabled: cfg?.autoposts_enabled ?? false,
+        autoposts: Array.isArray(cfg?.autoposts) ? cfg.autoposts : [],
+        nsfw_enabled: cfg?.nsfw_enabled ?? false,
+        nsfw_channel_id: cfg?.nsfw_channel_id ?? null,
+        nsfw_autopost_enabled: cfg?.nsfw_autopost_enabled ?? false,
+        nsfw_autopost_minutes: cfg?.nsfw_autopost_minutes ?? 60,
+        nsfw_commands_enabled: cfg?.nsfw_commands_enabled ?? false,
         marriage_excluded_role_ids: Array.isArray(cfg?.marriage_excluded_role_ids) ? cfg.marriage_excluded_role_ids : [],
         nitro_repost_mode: cfg?.nitro_repost_mode ?? 'auto',
         nitro_excluded_role_ids: Array.isArray(cfg?.nitro_excluded_role_ids) ? cfg.nitro_excluded_role_ids : [],
@@ -3310,6 +3330,225 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               )}
             </div>
             <HelpZone title={SECTION_HELP.trivia.title} commands={SECTION_HELP.trivia.commands} note={SECTION_HELP.trivia.note} />
+          </section>
+          )}
+
+          {view === 'autoposts' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="bullhorn" size={18} className="text-neon-blue" /> {t.autopostsTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.autoposts.title} commands={SECTION_HELP.autoposts.commands} note={SECTION_HELP.autoposts.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('autoposts')}
+                onImport={(file) => void importFile(file, 'autoposts')}
+              />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.autopostsHint}</p>
+            <div className="grid gap-5">
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.autopostsToggle}</p>
+                  <p className="text-xs text-white/50">{t.autopostsToggleHint}</p>
+                </div>
+                <Toggle on={Boolean(config.autoposts_enabled)} onChange={(v) => update({ autoposts_enabled: v })} />
+              </div>
+              {config.autoposts_enabled && (
+                <div className="grid gap-3">
+                  {(config.autoposts ?? []).map((row, idx) => (
+                    <div key={row.id || `ap-${idx}`} className="grid gap-3 rounded-xl border border-white/10 bg-black/20 p-4">
+                      <div className="grid gap-3 sm:grid-cols-3">
+                        <Field label={t.autopostsTypeLabel}>
+                          <NiceSelect
+                            value={row.type}
+                            options={[
+                              { id: 'custom', label: t.autopostsTypeCustom },
+                              { id: 'animals', label: t.autopostsTypeAnimals },
+                              { id: 'anime', label: t.autopostsTypeAnime },
+                            ]}
+                            onChange={(v) => {
+                              const next = (config.autoposts ?? []).map((r, i) => (i === idx ? { ...r, type: v as 'custom' | 'animals' | 'anime' } : r));
+                              update({ autoposts: next });
+                            }}
+                          />
+                        </Field>
+                        {hasGuildData ? (
+                          <Field label={t.autopostsChannelLabel}>
+                            <NiceSelect
+                              value={row.channel_id || null}
+                              options={textChannelOptions}
+                              placeholder={t.pickChannel}
+                              onChange={(v) => {
+                                const next = (config.autoposts ?? []).map((r, i) => (i === idx ? { ...r, channel_id: v ?? '' } : r));
+                                update({ autoposts: next });
+                              }}
+                            />
+                          </Field>
+                        ) : (
+                          <Field label={t.autopostsChannelLabel}>
+                            <input
+                              className={inputCls}
+                              value={row.channel_id}
+                              onChange={(e) => {
+                                const next = (config.autoposts ?? []).map((r, i) => (i === idx ? { ...r, channel_id: e.target.value } : r));
+                                update({ autoposts: next });
+                              }}
+                            />
+                          </Field>
+                        )}
+                        <Field label={t.autopostsIntervalLabel}>
+                          <input
+                            type="number"
+                            min={5}
+                            max={10080}
+                            className={inputCls}
+                            value={row.interval_minutes}
+                            onChange={(e) => {
+                              const next = (config.autoposts ?? []).map((r, i) => (i === idx ? { ...r, interval_minutes: Math.max(5, Number(e.target.value) || 5) } : r));
+                              update({ autoposts: next });
+                            }}
+                          />
+                        </Field>
+                      </div>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <Field label={t.autopostsTextLabel}>
+                          <input
+                            className={inputCls}
+                            value={row.text ?? ''}
+                            onChange={(e) => {
+                              const next = (config.autoposts ?? []).map((r, i) => (i === idx ? { ...r, text: e.target.value } : r));
+                              update({ autoposts: next });
+                            }}
+                          />
+                        </Field>
+                        <Field label={t.autopostsUrlLabel}>
+                          <input
+                            className={inputCls}
+                            value={row.url ?? ''}
+                            onChange={(e) => {
+                              const next = (config.autoposts ?? []).map((r, i) => (i === idx ? { ...r, url: e.target.value } : r));
+                              update({ autoposts: next });
+                            }}
+                          />
+                        </Field>
+                      </div>
+                      <div className="flex justify-end">
+                        <button
+                          type="button"
+                          className="rounded-lg border border-red-400/30 px-3 py-2 text-xs font-bold text-red-300 hover:bg-red-400/10"
+                          onClick={() => update({ autoposts: (config.autoposts ?? []).filter((_, i) => i !== idx) })}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    className="rounded-lg border border-white/15 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/5"
+                    onClick={() =>
+                      update({
+                        autoposts: [
+                          ...(config.autoposts ?? []),
+                          { id: `ap${Date.now().toString(36)}`, type: 'custom', channel_id: textChannelOptions[0]?.id ?? '', interval_minutes: 60, text: '', url: '' },
+                        ],
+                      })
+                    }
+                  >
+                    + {t.autopostsAdd}
+                  </button>
+                </div>
+              )}
+            </div>
+            <HelpZone title={SECTION_HELP.autoposts.title} commands={SECTION_HELP.autoposts.commands} note={SECTION_HELP.autoposts.note} />
+          </section>
+          )}
+
+          {view === 'nsfw' && (
+          <section className="rounded-2xl border border-red-400/20 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="triangle-exclamation" size={18} className="text-red-400" /> {t.nsfwTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.nsfw.title} commands={SECTION_HELP.nsfw.commands} note={SECTION_HELP.nsfw.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('nsfw')}
+                onImport={(file) => void importFile(file, 'nsfw')}
+              />
+            </div>
+            <div className="mb-4 rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-xs font-semibold text-red-200">
+              {t.nsfwWarning}
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.nsfwHint}</p>
+            <div className="grid gap-5">
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.nsfwToggle}</p>
+                  <p className="text-xs text-white/50">{t.nsfwToggleHint}</p>
+                </div>
+                <Toggle on={Boolean(config.nsfw_enabled)} onChange={(v) => update({ nsfw_enabled: v })} />
+              </div>
+              {config.nsfw_enabled && (
+                <div className="ml-2 grid gap-4 border-l-2 border-red-400/30 pl-4">
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.nsfwChannelLabel}
+                      value={config.nsfw_channel_id ?? null}
+                      placeholder={t.pickChannel}
+                      options={textChannelOptions}
+                      onChange={(v) => update({ nsfw_channel_id: v })}
+                    />
+                  ) : (
+                    <Field label={t.nsfwChannelLabel} hint={t.manualIdHint}>
+                      <input
+                        className={inputCls}
+                        value={config.nsfw_channel_id ?? ''}
+                        onChange={(e) => update({ nsfw_channel_id: e.target.value || null })}
+                      />
+                    </Field>
+                  )}
+                  <p className="text-[10px] text-white/35">{t.nsfwChannelHint}</p>
+                  <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-white/80">{t.nsfwAutopostToggle}</p>
+                      <p className="text-[10px] text-white/40">{t.nsfwAutopostToggleHint}</p>
+                    </div>
+                    <Toggle on={Boolean(config.nsfw_autopost_enabled)} onChange={(v) => update({ nsfw_autopost_enabled: v })} />
+                  </div>
+                  {config.nsfw_autopost_enabled && (
+                    <Field label={t.nsfwIntervalLabel}>
+                      <input
+                        type="number"
+                        min={15}
+                        max={10080}
+                        className={inputCls}
+                        value={config.nsfw_autopost_minutes ?? 60}
+                        onChange={(e) => update({ nsfw_autopost_minutes: Math.min(10080, Math.max(15, Number(e.target.value) || 60)) })}
+                      />
+                    </Field>
+                  )}
+                  <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-white/80">{t.nsfwCommandsToggle}</p>
+                      <p className="text-[10px] text-white/40">{t.nsfwCommandsToggleHint}</p>
+                    </div>
+                    <Toggle on={Boolean(config.nsfw_commands_enabled)} onChange={(v) => update({ nsfw_commands_enabled: v })} />
+                  </div>
+                </div>
+              )}
+            </div>
+            <HelpZone title={SECTION_HELP.nsfw.title} commands={SECTION_HELP.nsfw.commands} note={SECTION_HELP.nsfw.note} />
           </section>
           )}
 

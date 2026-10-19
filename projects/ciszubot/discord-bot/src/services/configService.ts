@@ -157,6 +157,13 @@ export interface GuildConfig {
   trivia_time_seconds: number;
   trivia_difficulty: string;
   trivia_rewards: Array<{ points: number; role_id: string }>;
+  autoposts_enabled: boolean;
+  autoposts: Array<{ id: string; type: string; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }>;
+  nsfw_enabled: boolean;
+  nsfw_channel_id: string | null;
+  nsfw_autopost_enabled: boolean;
+  nsfw_autopost_minutes: number;
+  nsfw_commands_enabled: boolean;
   marriage_excluded_role_ids: string[];
   nitro_repost_mode: 'auto' | 'manual';
   nitro_excluded_role_ids: string[];
@@ -259,6 +266,13 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   trivia_time_seconds: 60,
   trivia_difficulty: 'mixed',
   trivia_rewards: [],
+  autoposts_enabled: false,
+  autoposts: [],
+  nsfw_enabled: false,
+  nsfw_channel_id: null,
+  nsfw_autopost_enabled: false,
+  nsfw_autopost_minutes: 60,
+  nsfw_commands_enabled: false,
   marriage_excluded_role_ids: [],
   nitro_repost_mode: 'auto',
   nitro_excluded_role_ids: [],
@@ -379,6 +393,13 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         trivia_time_seconds: data.triviaTimeSeconds ?? DEFAULTS.trivia_time_seconds,
         trivia_difficulty: data.triviaDifficulty ?? DEFAULTS.trivia_difficulty,
         trivia_rewards: (data.triviaRewards as Array<{ points: number; role_id: string }>) ?? DEFAULTS.trivia_rewards,
+        autoposts_enabled: data.autopostsEnabled ?? DEFAULTS.autoposts_enabled,
+        autoposts: asArray(data.autoposts, DEFAULTS.autoposts) as typeof DEFAULTS.autoposts,
+        nsfw_enabled: data.nsfwEnabled ?? DEFAULTS.nsfw_enabled,
+        nsfw_channel_id: data.nsfwChannelId ?? DEFAULTS.nsfw_channel_id,
+        nsfw_autopost_enabled: data.nsfwAutopostEnabled ?? DEFAULTS.nsfw_autopost_enabled,
+        nsfw_autopost_minutes: data.nsfwAutopostMinutes ?? DEFAULTS.nsfw_autopost_minutes,
+        nsfw_commands_enabled: data.nsfwCommandsEnabled ?? DEFAULTS.nsfw_commands_enabled,
         marriage_excluded_role_ids: asArray(data.marriageExcludedRoleIds, DEFAULTS.marriage_excluded_role_ids),
         nitro_repost_mode: (data.nitroRepostMode as 'auto' | 'manual') ?? DEFAULTS.nitro_repost_mode,
         nitro_excluded_role_ids: asArray(data.nitroExcludedRoleIds, DEFAULTS.nitro_excluded_role_ids),
@@ -474,6 +495,13 @@ export async function updateGuildConfig(
     triviaTimeSeconds: merged.trivia_time_seconds,
     triviaDifficulty: merged.trivia_difficulty,
     triviaRewards: merged.trivia_rewards,
+    autopostsEnabled: merged.autoposts_enabled,
+    autoposts: merged.autoposts,
+    nsfwEnabled: merged.nsfw_enabled,
+    nsfwChannelId: merged.nsfw_channel_id,
+    nsfwAutopostEnabled: merged.nsfw_autopost_enabled,
+    nsfwAutopostMinutes: merged.nsfw_autopost_minutes,
+    nsfwCommandsEnabled: merged.nsfw_commands_enabled,
     marriageExcludedRoleIds: merged.marriage_excluded_role_ids,
     nitroRepostMode: merged.nitro_repost_mode,
     nitroExcludedRoleIds: merged.nitro_excluded_role_ids,

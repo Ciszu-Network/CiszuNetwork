@@ -154,6 +154,13 @@ const guildConfigPatchSchema = z.object({
   trivia_time_seconds: z.number().int().min(10).max(600).optional(),
   trivia_difficulty: z.enum(['easy', 'medium', 'hard', 'mixed']).optional(),
   trivia_rewards: z.array(z.object({ points: z.number().int().min(1).max(100000), role_id: z.string().min(1).max(32) })).max(20).optional(),
+  autoposts_enabled: z.boolean().optional(),
+  autoposts: z.array(z.object({ id: z.string().max(40), type: z.enum(['custom', 'animals', 'anime']), channel_id: z.string().max(32), interval_minutes: z.number().int().min(5).max(10080), text: z.string().max(2000).optional(), url: z.string().max(500).optional(), nsfw: z.boolean().optional() })).max(20).optional(),
+  nsfw_enabled: z.boolean().optional(),
+  nsfw_channel_id: z.string().max(32).nullable().optional(),
+  nsfw_autopost_enabled: z.boolean().optional(),
+  nsfw_autopost_minutes: z.number().int().min(15).max(10080).optional(),
+  nsfw_commands_enabled: z.boolean().optional(),
   marriage_enabled: z.boolean().optional(),
   marriage_allow_admin_pairs: z.boolean().optional(),
   command_global_cooldown: z.number().int().min(0).max(60).optional(),
@@ -277,6 +284,13 @@ interface GuildConfig {
   trivia_time_seconds?: number;
   trivia_difficulty?: 'easy' | 'medium' | 'hard' | 'mixed';
   trivia_rewards?: { points: number; role_id: string }[];
+  autoposts_enabled?: boolean;
+  autoposts?: { id: string; type: 'custom' | 'animals' | 'anime'; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }[];
+  nsfw_enabled?: boolean;
+  nsfw_channel_id?: string | null;
+  nsfw_autopost_enabled?: boolean;
+  nsfw_autopost_minutes?: number;
+  nsfw_commands_enabled?: boolean;
   marriage_enabled?: boolean;
   marriage_allow_admin_pairs?: boolean;
   command_global_cooldown?: number;
@@ -365,8 +379,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   }
   const body = parsed.data as Partial<GuildConfig>;
   const allowed: Record<string, unknown> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed'];
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed', 'autoposts_enabled', 'nsfw_enabled', 'nsfw_autopost_enabled', 'nsfw_commands_enabled'];
 
   for (const key of stringFields) {
     if (body[key] !== undefined) allowed[key] = String(body[key]);
@@ -377,6 +391,13 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   if (body.xp_rate !== undefined) {
     const rate = Number(body.xp_rate);
     if (rate >= 0.1 && rate <= 10) allowed.xp_rate = rate;
+  }
+  if (body.autoposts !== undefined) {
+    allowed.autoposts = Array.isArray(body.autoposts) ? body.autoposts.slice(0, 20) : [];
+  }
+  if (body.nsfw_autopost_minutes !== undefined) {
+    const value = Number(body.nsfw_autopost_minutes);
+    if (Number.isFinite(value) && value >= 15 && value <= 10080) allowed.nsfw_autopost_minutes = Math.round(value);
   }
   if (body.trivia_time_seconds !== undefined) {
     const value = Number(body.trivia_time_seconds);
@@ -565,6 +586,13 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     trivia_time_seconds: 'triviaTimeSeconds',
     trivia_difficulty: 'triviaDifficulty',
     trivia_rewards: 'triviaRewards',
+    autoposts_enabled: 'autopostsEnabled',
+    autoposts: 'autoposts',
+    nsfw_enabled: 'nsfwEnabled',
+    nsfw_channel_id: 'nsfwChannelId',
+    nsfw_autopost_enabled: 'nsfwAutopostEnabled',
+    nsfw_autopost_minutes: 'nsfwAutopostMinutes',
+    nsfw_commands_enabled: 'nsfwCommandsEnabled',
     marriage_excluded_role_ids: 'marriageExcludedRoleIds',
     nitro_repost_mode: 'nitroRepostMode',
     nitro_excluded_role_ids: 'nitroExcludedRoleIds',

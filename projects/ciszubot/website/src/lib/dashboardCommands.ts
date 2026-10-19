@@ -118,6 +118,16 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: byNames(['trivia']),
     note: 'cz!trivia [facil|media|dificil|mixta] inicia; cz!trivia top muestra el ranking; cz!trivia add <pregunta> | resp1 | resp2 agrega preguntas (staff).',
   },
+  autoposts: {
+    title: 'Autopublicaciones',
+    commands: [],
+    note: 'Sin comandos: el bot publica automáticamente en los canales configurados según el intervalo de cada entrada.',
+  },
+  nsfw: {
+    title: 'Comandos +18',
+    commands: byNames(['nsfwpic']),
+    note: 'cz!nsfwpic publica una imagen +18 aleatoria (solo en canales NSFW y con el apartado +18 activo).',
+  },
   invites: {
     title: 'Comandos de invitaciones',
     commands: byNames(['invites']),

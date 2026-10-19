@@ -15,7 +15,7 @@ export interface CommandInfo {
   tags: string[];
 }
 
-export const CATEGORIES: string[] = ["Economía","Niveles","Social","Diversión","Música","Información","Utilidad","Moderación","Configuración","Secreto","General"];
+export const CATEGORIES: string[] = ["Economía","Niveles","Social","Diversión","Música","Información","Utilidad","Moderación","Configuración","Secreto","General","+18"];
 
 export const COMMANDS: CommandInfo[] = [
   // ─── Economía ───
@@ -1248,5 +1248,16 @@ export const COMMANDS: CommandInfo[] = [
     icon: 'help',
     premium: false,
     tags: ["general","youtube","canal","ciszu","network"],
+  },
+  // ─── +18 ───
+  {
+    name: 'nsfwpic',
+    description: 'Imagen +18 aleatoria (solo en canales NSFW)',
+    aliases: ["nsfw","pic18"],
+    usage: 'cz!nsfwpic',
+    category: '+18',
+    icon: 'help',
+    premium: false,
+    tags: ["+18","nsfwpic","imagen","aleatoria","solo","canales","nsfw"],
   },
 ];
