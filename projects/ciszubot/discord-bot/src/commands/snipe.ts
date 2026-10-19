@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
+import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
   name: 'snipe',
@@ -10,8 +11,9 @@ const create = (): BotCommand => ({
   category: 'Diversión',
   slashCommand: new SlashCommandBuilder().setName('snipe').setDescription('Muestra el último mensaje borrado del canal'),
   async execute(message) {
+    const L = await langOf(message);
     if (!message.guild) {
-      await message.reply('❌ Este comando solo funciona en un servidor.');
+      await message.reply(tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'));
       return;
     }
     if (!message.channel) {

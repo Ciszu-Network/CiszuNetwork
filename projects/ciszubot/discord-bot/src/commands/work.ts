@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { addMoney, randomBetween } from '../services/economy';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 import { getGuildConfig, formatCoins } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 /** Trabajos aleatorios del `work` (sabor local, sin datos inventados de dinero). */
 const JOBS = [
@@ -29,6 +30,7 @@ const create = (): BotCommand => ({
   slashCommand: new SlashCommandBuilder().setName('work').setDescription('Trabaja para ganar dinero (cada hora)'),
 
   async execute(message) {
+    const L = await langOf(message);
     const guildId = message.guild?.id ?? 'DM';
     const userId = message.author.id;
 
@@ -48,8 +50,8 @@ const create = (): BotCommand => ({
         embeds: [
           new EmbedBuilder()
             .setColor('#ff0000')
-            .setTitle('⏳ Estás cansado')
-            .setDescription(`Podrás volver a trabajar en **${mins} min**.`)
+            .setTitle(tr(L, '⏳ Estás cansado', '⏳ You are tired'))
+            .setDescription(tr(L, `Podrás volver a trabajar en **${mins} min**.`, `You can work again in **${mins} min**.`))
             .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
             .setTimestamp(),
         ],
@@ -65,8 +67,8 @@ const create = (): BotCommand => ({
       embeds: [
         new EmbedBuilder()
           .setColor('#00d4ff')
-          .setTitle('💼 ¡Trabajo completado!')
-          .setDescription(`Trabajaste de **${job}** y ganaste **${(amount)}**.\nTu nuevo saldo es **${(bal ?? 0)}**.`)
+          .setTitle(tr(L, '💼 ¡Trabajo completado!', '💼 Work completed!'))
+          .setDescription(tr(L, `Trabajaste de **${job}** y ganaste **${(amount)}**.\nTu nuevo saldo es **${(bal ?? 0)}**.`, `You worked as **${job}** and earned **${(amount)}**.\nYour new balance is **${(bal ?? 0)}**.`))
           .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
           .setTimestamp(),
       ],

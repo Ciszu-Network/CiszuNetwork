@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 const mensajesDespedida = [
   '¡Que tengas un buen día!', '¡Nos vemos pronto!', '¡Cuídate mucho!', '¡Fue un placer verte!',
@@ -27,6 +28,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     let targetId = message.author.id;
     if (args.length > 0) {
       const mention = message.mentions?.users.first();
@@ -43,7 +45,7 @@ const command: BotCommand = {
       .setDescription(`${saludo} <@${targetId}>! ${final}`)
       .setThumbnail(message.client.user?.displayAvatarURL() ?? null)
       .setFooter({
-        text: `CiszuBot • Solicitado por ${message.author.tag}`,
+        text: tr(L, `CiszuBot • Solicitado por ${message.author.tag}`, `CiszuBot • Requested by ${message.author.tag}`),
         iconURL: message.client.user?.displayAvatarURL(),
       })
       .setTimestamp();

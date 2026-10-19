@@ -2,6 +2,7 @@
 import type { BotCommand } from '../types/command';
 import { db, ciszubotSchema, eq, and, sql } from '../services/supabase';
 import { getGuildConfig } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
   name: 'afk',
@@ -14,8 +15,9 @@ const create = (): BotCommand => ({
     .setDescription('Márquese como AFK con una razón')
     .addStringOption((o) => o.setName('razon').setDescription('Razón del AFK').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) {
-      await message.reply('❌ Este comando solo funciona en un servidor.');
+      await message.reply(tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'));
       return;
     }
     const reason = args.join(' ') || 'Sin razón especificada';

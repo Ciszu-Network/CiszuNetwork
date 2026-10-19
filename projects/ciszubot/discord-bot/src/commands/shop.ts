@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { getWallet, setWallet, getTopWallets } from '../services/economy';
 import { db, ciszubotSchema, eq, asc } from '../services/supabase';
 import { getGuildConfig, formatCoins } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
   name: 'shop',
@@ -12,8 +13,9 @@ const create = (): BotCommand => ({
   category: 'Economía',
   slashCommand: new SlashCommandBuilder().setName('shop').setDescription('Tienda del servidor'),
   async execute(message) {
+    const L = await langOf(message);
     if (!message.guild) {
-      await message.reply('❌ Este comando solo funciona en un servidor.');
+      await message.reply(tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'));
       return;
     }
     const shopItems = ciszubotSchema.shopItems;

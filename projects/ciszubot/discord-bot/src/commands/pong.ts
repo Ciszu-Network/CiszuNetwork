@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'pong',
@@ -13,6 +14,7 @@ const command: BotCommand = {
     .setDescription('Muestra el ping del bot con "ping"'),
 
   async execute(message, args) {
+    const L = await langOf(message);
     const sent = await message.reply('🏓 Calculando ping...');
     const messageLatency = (sent as { createdTimestamp?: number }).createdTimestamp
       ? (sent as { createdTimestamp: number }).createdTimestamp - message.createdTimestamp
@@ -29,7 +31,7 @@ const command: BotCommand = {
         { name: '📊 Estado', value: getStatusEmoji(messageLatency, apiLatency), inline: true },
       )
       .setFooter({
-        text: `CiszuBot • Solicitado por ${message.author.tag}`,
+        text: tr(L, `CiszuBot • Solicitado por ${message.author.tag}`, `CiszuBot • Requested by ${message.author.tag}`),
         iconURL: message.client.user?.displayAvatarURL(),
       })
       .setTimestamp();

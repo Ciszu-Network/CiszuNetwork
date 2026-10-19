@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getTopWallets } from '../services/economy';
+import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
   name: 'leaderboard',
@@ -10,8 +11,9 @@ const create = (): BotCommand => ({
   category: 'Economía',
   slashCommand: new SlashCommandBuilder().setName('leaderboard').setDescription('Top 10 de monedas del servidor'),
   async execute(message) {
+    const L = await langOf(message);
     if (!message.guild) {
-      await message.reply('❌ Este comando solo funciona en un servidor.');
+      await message.reply(tr(L, tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'), '❌ This command only works in a server.'));
       return;
     }
     const top = await getTopWallets(message.guild.id, 10);
@@ -29,8 +31,8 @@ const create = (): BotCommand => ({
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
       .setTitle(`🏆 Top 10 — ${message.guild.name}`)
-      .setDescription(lines.length > 0 ? lines.join('\n') : 'Aún no hay datos de monedas en este servidor.')
-      .setFooter({ text: `CiszuBot • Solicitado por ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
+      .setDescription(lines.length > 0 ? lines.join('\n') : tr(L, 'Aún no hay datos de monedas en este servidor.', 'There is no coin data in this server yet.'))
+      .setFooter({ text: tr(L, tr(L, `CiszuBot • Solicitado por ${message.author.tag}`, `CiszuBot • Requested by ${message.author.tag}`), `CiszuBot • Requested by ${message.author.tag}`), iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },

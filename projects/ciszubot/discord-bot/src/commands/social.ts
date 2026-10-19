@@ -2,6 +2,7 @@
 import type { BotCommand } from '../types/command';
 import { startGiveaway } from '../services/giveaways';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
+import { langOf, tr } from '../services/i18n';
 
 const giveaways = (): BotCommand => ({
   name: 'giveaway',
@@ -18,6 +19,7 @@ const giveaways = (): BotCommand => ({
     .addIntegerOption((o) => o.setName('ganadores').setDescription('Número de ganadores').setRequired(true))
     .addIntegerOption((o) => o.setName('duracion').setDescription('Duración en minutos').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild || !message.channel) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageMessages)) {
       await message.reply('❌ Necesitas permiso de **Gestionar Mensajes**.');
@@ -55,6 +57,7 @@ const gend = (): BotCommand => ({
     .setDescription('Fuerza el fin de un sorteo')
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
   async execute(message) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const giveawaysT = ciszubotSchema.giveaways;
     const gwRows = await db
@@ -99,6 +102,7 @@ const embedCmd = (): BotCommand => ({
     .addStringOption((o) => o.setName('descripcion').setDescription('Descripción').setRequired(true))
     .addStringOption((o) => o.setName('color').setDescription('Color hex (ej: #00d4ff)').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageMessages)) {
       await message.reply('❌ Necesitas permiso de **Gestionar Mensajes**.');
@@ -135,6 +139,7 @@ const alliance = (): BotCommand => ({
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addStringOption((o) => o.setName('invite').setDescription('Invitación del servidor aliado').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
       await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
@@ -189,8 +194,9 @@ const allies = (): BotCommand => ({
   category: 'Social',
   slashCommand: new SlashCommandBuilder().setName('allies').setDescription('Muestra las alianzas del servidor'),
   async execute(message) {
+    const L = await langOf(message);
     if (!message.guild) {
-      await message.reply('❌ Este comando solo funciona en un servidor.');
+      await message.reply(tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'));
       return;
     }
     const alliancesT = ciszubotSchema.alliances;

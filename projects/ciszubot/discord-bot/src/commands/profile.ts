@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'profile',
@@ -16,6 +17,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     let targetUserId = message.author.id;
     if (args.length > 0) {
       const mention = message.mentions?.users.first();
@@ -72,7 +74,7 @@ const command: BotCommand = {
     }
 
     embed.setFooter({
-      text: `CiszuBot • Solicitado por ${message.author.tag}`,
+      text: tr(L, `CiszuBot • Solicitado por ${message.author.tag}`, `CiszuBot • Requested by ${message.author.tag}`),
       iconURL: message.client.user?.displayAvatarURL(),
     }).setTimestamp();
 

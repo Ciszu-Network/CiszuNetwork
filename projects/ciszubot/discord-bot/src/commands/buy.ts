@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { getWallet, setWallet } from '../services/economy';
 import { db, ciszubotSchema, eq, and, ilike, sql } from '../services/supabase';
 import { getGuildConfig, formatCoins } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 interface ShopItem {
   id: string;
@@ -25,14 +26,15 @@ const create = (): BotCommand => ({
     .setDescription('Compra un ítem de la tienda')
     .addStringOption((o) => o.setName('item').setDescription('Nombre del ítem').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     const cfg = await getGuildConfig(message.guild?.id ?? 'DM');
     if (!message.guild) {
-      await message.reply('❌ Este comando solo funciona en un servidor.');
+      await message.reply(tr(L, tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'), '❌ This command only works in a server.'));
       return;
     }
     const name = args.join(' ').toLowerCase();
     if (!name) {
-      await message.reply('❌ Uso: `cz!buy <nombre del ítem>`');
+      await message.reply(tr(L, '❌ Uso: `cz!buy <nombre del ítem>`', '❌ Usage: `cz!buy <item name>`'));
       return;
     }
 
@@ -54,7 +56,7 @@ const create = (): BotCommand => ({
         }
       : null) as ShopItem | null;
     if (!item) {
-      await message.reply('❌ Ese ítem no existe en la tienda.');
+      await message.reply(tr(L, '❌ Ese ítem no existe en la tienda.', '❌ That item does not exist in the shop.'));
       return;
     }
 

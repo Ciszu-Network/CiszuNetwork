@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { LINKS, BOT_ASSETS } from '../config/links';
 import { resolveFeatureForCommand, isPremiumCommand } from '../config/features';
 import { getFeatureState, isPremiumBeta } from '../services/featureFlags';
+import { langOf, tr } from '../services/i18n';
 
 const emojiMap: Record<string, string> = {
   ping: '🏓', pong: '🏓', help: '📖', say: '💬', directsay: '💬', confess: '🤫',
@@ -43,6 +44,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     const commands = message.client.commands as unknown as {
       commands: Map<string, BotCommand>;
       aliases: Map<string, string>;
@@ -90,7 +92,7 @@ const command: BotCommand = {
       }
       embed.setThumbnail(BOT_ASSETS.isotype);
       embed.setFooter({
-        text: `CiszuBot • Solicitado por ${message.author.tag}`,
+        text: tr(L, `CiszuBot • Solicitado por ${message.author.tag}`, `CiszuBot • Requested by ${message.author.tag}`),
         iconURL: message.client.user?.displayAvatarURL(),
       }).setTimestamp();
 
@@ -106,7 +108,7 @@ const command: BotCommand = {
       .setThumbnail(BOT_ASSETS.isotype)
       .setImage(BOT_ASSETS.wordmark)
       .setFooter({
-        text: `CiszuBot • Solicitado por ${message.author.tag}`,
+        text: tr(L, `CiszuBot • Solicitado por ${message.author.tag}`, `CiszuBot • Requested by ${message.author.tag}`),
         iconURL: message.client.user?.displayAvatarURL(),
       })
       .setTimestamp();

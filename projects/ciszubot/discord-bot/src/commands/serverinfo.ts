@@ -1,5 +1,6 @@
 import { ChannelType, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 const verificationLevels: Record<number, string> = {
   0: 'Ninguno', 1: 'Bajo', 2: 'Medio', 3: 'Alto', 4: 'Muy Alto',
@@ -17,6 +18,7 @@ const command: BotCommand = {
     .setDescription('Muestra información detallada del servidor'),
 
   async execute(message, args) {
+    const L = await langOf(message);
     const guild = message.guild;
     if (!guild) {
       const errorEmbed = new EmbedBuilder()
@@ -67,7 +69,7 @@ const command: BotCommand = {
     }
 
     embed.setFooter({
-      text: `CiszuBot • Solicitado por ${message.author.tag}`,
+      text: tr(L, `CiszuBot • Solicitado por ${message.author.tag}`, `CiszuBot • Requested by ${message.author.tag}`),
       iconURL: message.client.user?.displayAvatarURL(),
     }).setTimestamp();
 

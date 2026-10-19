@@ -2,6 +2,7 @@
 import type { BotCommand } from '../types/command';
 import { getWallet, setWallet, randomBetween } from '../services/economy';
 import { getGuildConfig, formatCoins } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
   name: 'gamble',
@@ -14,16 +15,17 @@ const create = (): BotCommand => ({
     .setDescription('Aposta monedas a cara o cruz')
     .addIntegerOption((o) => o.setName('cantidad').setDescription('Cantidad a apostar').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     const cfg = await getGuildConfig(message.guild?.id ?? 'DM');
     const guildId = message.guild?.id ?? 'DM';
     const amount = parseInt(args[0] ?? '', 10);
     if (isNaN(amount) || amount <= 0) {
-      await message.reply('❌ Uso: `cz!gamble <cantidad>`');
+      await message.reply(tr(L, '❌ Uso: `cz!gamble <cantidad>`', '❌ Usage: `cz!gamble <amount>`'));
       return;
     }
     const w = await getWallet(message.author.id, guildId);
     if (w.balance < amount) {
-      await message.reply(`❌ No tienes suficientes monedas (necesitas ${(amount)}).`);
+      await message.reply(tr(L, `❌ No tienes suficientes monedas (necesitas ${(amount)}).`, `❌ You do not have enough coins (you need ${(amount)}).`));
       return;
     }
 
@@ -34,7 +36,7 @@ const create = (): BotCommand => ({
 
     const embed = new EmbedBuilder()
       .setColor(won ? '#00ff88' : '#ff0000')
-      .setTitle(won ? '🪙 ¡Ganaste la apuesta!' : '🪙 Perdiste la apuesta...')
+      .setTitle(won ? tr(L, '🪙 ¡Ganaste la apuesta!', '🪙 You won the bet!') : '🪙 Perdiste la apuesta...')
       .setDescription(
         `Apostaste **${(amount)}**.\n${won ? `¡Ganaste **${(winAmount)}**!` : `Perdiste **${(amount)}**...`}\n\n**Nuevo saldo:** ${(newBalance)}`
       )

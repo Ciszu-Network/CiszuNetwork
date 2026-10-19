@@ -9,6 +9,7 @@
 import type { BotCommand } from '../types/command';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 import { getGuildConfig } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 /** Mensaje claro para errores de jerarquía/permisos (admins, bots, rol superior). */
 function hierarchyError(action: string, error: unknown): string {
@@ -32,22 +33,23 @@ const kick = (): BotCommand => ({
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(true))
     .addStringOption((o) => o.setName('razon').setDescription('Razón').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.KickMembers)) {
-      await message.reply('❌ Necesitas permiso de **Expulsar Miembros**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Expulsar Miembros**.', '❌ You need the **Kick Members** permission.'));
       return;
     }
     const target = message.mentions?.users?.first() ?? (await message.client.users.fetch(args[0]).catch(() => null));
     if (!target) {
-      await message.reply('❌ Uso: `cz!kick @usuario [razón]`');
+      await message.reply(tr(L, '❌ Uso: `cz!kick @usuario [razón]`', '❌ Usage: `cz!kick @user [reason]`'));
       return;
     }
     const member = await message.guild.members.fetch(target.id).catch(() => null);
     if (!member) {
-      await message.reply('❌ Ese usuario no está en el servidor.');
+      await message.reply(tr(L, '❌ Ese usuario no está en el servidor.', '❌ That user is not in the server.'));
       return;
     }
-    const reason = args.slice(1).join(' ') || 'Sin razón';
+    const reason = args.slice(1).join(' ') || tr(L, 'Sin razón', 'No reason');
     try {
       await member.kick(reason);
     } catch (error) {
@@ -56,9 +58,9 @@ const kick = (): BotCommand => ({
     }
     const embed = new EmbedBuilder()
       .setColor('#ff0000')
-      .setTitle('👢 Miembro expulsado')
-      .setDescription(`**${target.tag}** fue expulsado.\n**Razón:** ${reason}`)
-      .setFooter({ text: `Por ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
+      .setTitle(tr(L, '👢 Miembro expulsado', '👢 Member kicked'))
+      .setDescription(tr(L, `**${target.tag}** fue expulsado.\n**Razón:** ${reason}`, `**${target.tag}** was kicked.\n**Reason:** ${reason}`))
+      .setFooter({ text: tr(L, `Por ${message.author.tag}`, `By ${message.author.tag}`), iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },
@@ -78,17 +80,18 @@ const ban = (): BotCommand => ({
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(true))
     .addStringOption((o) => o.setName('razon').setDescription('Razón').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.BanMembers)) {
-      await message.reply('❌ Necesitas permiso de **Banear Miembros**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Banear Miembros**.', '❌ You need the **Ban Members** permission.'));
       return;
     }
     const target = message.mentions?.users?.first() ?? (await message.client.users.fetch(args[0]).catch(() => null));
     if (!target) {
-      await message.reply('❌ Uso: `cz!ban @usuario [razón]`');
+      await message.reply(tr(L, '❌ Uso: `cz!ban @usuario [razón]`', '❌ Usage: `cz!ban @user [reason]`'));
       return;
     }
-    const reason = args.slice(1).join(' ') || 'Sin razón';
+    const reason = args.slice(1).join(' ') || tr(L, 'Sin razón', 'No reason');
     try {
       await message.guild.bans.create(target.id, { reason });
     } catch (error) {
@@ -97,9 +100,9 @@ const ban = (): BotCommand => ({
     }
     const embed = new EmbedBuilder()
       .setColor('#ff0000')
-      .setTitle('🔨 Miembro baneado')
-      .setDescription(`**${target.tag}** fue baneado.\n**Razón:** ${reason}`)
-      .setFooter({ text: `Por ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
+      .setTitle(tr(L, '🔨 Miembro baneado', '🔨 Member banned'))
+      .setDescription(tr(L, `**${target.tag}** fue baneado.\n**Razón:** ${reason}`, `**${target.tag}** was banned.\n**Reason:** ${reason}`))
+      .setFooter({ text: tr(L, `Por ${message.author.tag}`, `By ${message.author.tag}`), iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },
@@ -118,18 +121,19 @@ const unban = (): BotCommand => ({
     .setDefaultMemberPermissions(PermissionFlagsBits.BanMembers)
     .addStringOption((o) => o.setName('id').setDescription('ID del usuario').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.BanMembers)) {
-      await message.reply('❌ Necesitas permiso de **Banear Miembros**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Banear Miembros**.', '❌ You need the **Ban Members** permission.'));
       return;
     }
     const id = (args[0] ?? '').trim();
     if (!/^\d{17,20}$/.test(id)) {
-      await message.reply('❌ Uso: `cz!unban <id>`');
+      await message.reply(tr(L, '❌ Uso: `cz!unban <id>`', '❌ Usage: `cz!unban <id>`'));
       return;
     }
     await message.guild.bans.remove(id).catch(() => undefined);
-    await message.reply(`✅ Usuario <@${id}> desbaneado.`);
+    await message.reply(tr(L, `✅ Usuario <@${id}> desbaneado.`, `✅ User <@${id}> unbanned.`));
   },
 });
 
@@ -147,14 +151,15 @@ const mute = (): BotCommand => ({
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(true))
     .addStringOption((o) => o.setName('razon').setDescription('Razón').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ModerateMembers)) {
-      await message.reply('❌ Necesitas permiso de **Gestionar Miembros**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Miembros**.', '❌ You need the **Moderate Members** permission.'));
       return;
     }
     const target = message.mentions?.users?.first();
     if (!target) {
-      await message.reply('❌ Uso: `cz!mute @usuario [razón]` (indefinido; para tiempo usa `cz!tempmute`)');
+      await message.reply(tr(L, '❌ Uso: `cz!mute @usuario [razón]` (indefinido; para tiempo usa `cz!tempmute`)', '❌ Usage: `cz!mute @user [reason]` (indefinite; for a duration use `cz!tempmute`)'));
       return;
     }
     const member = await message.guild.members.fetch(target.id).catch(() => null);
@@ -164,15 +169,15 @@ const mute = (): BotCommand => ({
     // Para silencios con duración está `cz!tempmute`.
     const cfg = await getGuildConfig(message.guild.id);
     if (!cfg.mute_role_id) {
-      await message.reply('❌ No hay un **rol de mute** configurado. Configúralo en el dashboard (sección General → Roles del servidor) o usa `cz!tempmute @usuario 10m`.');
+      await message.reply(tr(L, '❌ No hay un **rol de mute** configurado. Configúralo en el dashboard (sección General → Roles del servidor) o usa `cz!tempmute @usuario 10m`.', '❌ There is no **mute role** configured. Set it in the dashboard (General → Server roles) or use `cz!tempmute @user 10m`.'));
       return;
     }
     const role = message.guild.roles.cache.get(cfg.mute_role_id);
     if (!role) {
-      await message.reply('❌ El rol de mute configurado ya no existe. Vuelve a configurarlo.');
+      await message.reply(tr(L, '❌ El rol de mute configurado ya no existe. Vuelve a configurarlo.', '❌ The configured mute role no longer exists. Set it again.'));
       return;
     }
-    const reason = args.slice(1).join(' ') || 'Sin razón';
+    const reason = args.slice(1).join(' ') || tr(L, 'Sin razón', 'No reason');
     try {
       await member.roles.add(role, reason);
     } catch (error) {
@@ -181,9 +186,9 @@ const mute = (): BotCommand => ({
     }
     const embed = new EmbedBuilder()
       .setColor('#ff9900')
-      .setTitle('🔇 Miembro silenciado (indefinido)')
-      .setDescription(`**${target.tag}** recibió el rol de mute <@&${role.id}>.\n**Razón:** ${reason}`)
-      .setFooter({ text: `Por ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
+      .setTitle(tr(L, '🔇 Miembro silenciado (indefinido)', '🔇 Member muted (indefinite)'))
+      .setDescription(tr(L, `**${target.tag}** recibió el rol de mute <@&${role.id}>.\n**Razón:** ${reason}`, `**${target.tag}** received the mute role <@&${role.id}>.\n**Reason:** ${reason}`))
+      .setFooter({ text: tr(L, `Por ${message.author.tag}`, `By ${message.author.tag}`), iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },
@@ -215,24 +220,25 @@ const tempmute = (): BotCommand => ({
     .addStringOption((o) => o.setName('duracion').setDescription('Duración (ej: 10m, 2h, 1d; máx 28d)').setRequired(true))
     .addStringOption((o) => o.setName('razon').setDescription('Razón').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ModerateMembers)) {
-      await message.reply('❌ Necesitas permiso de **Gestionar Miembros**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Miembros**.', '❌ You need the **Moderate Members** permission.'));
       return;
     }
     const target = message.mentions?.users?.first();
     if (!target) {
-      await message.reply('❌ Uso: `cz!tempmute @usuario <10m|2h|1d> [razón]`');
+      await message.reply(tr(L, '❌ Uso: `cz!tempmute @usuario <10m|2h|1d> [razón]`', '❌ Usage: `cz!tempmute @user <10m|2h|1d> [reason]`'));
       return;
     }
     const durationMs = parseDuration(args[1] ?? '');
     if (!durationMs) {
-      await message.reply('❌ Duración inválida. Formato: `10m`, `2h`, `1d` (máximo 28 días).');
+      await message.reply(tr(L, '❌ Duración inválida. Formato: `10m`, `2h`, `1d` (máximo 28 días).', '❌ Invalid duration. Format: `10m`, `2h`, `1d` (max 28 days).'));
       return;
     }
     const member = await message.guild.members.fetch(target.id).catch(() => null);
     if (!member) return;
-    const reason = args.slice(2).join(' ') || 'Sin razón';
+    const reason = args.slice(2).join(' ') || tr(L, 'Sin razón', 'No reason');
     try {
       await member.timeout(durationMs, reason);
     } catch (error) {
@@ -242,9 +248,9 @@ const tempmute = (): BotCommand => ({
     const minutes = Math.round(durationMs / 60_000);
     const embed = new EmbedBuilder()
       .setColor('#ff9900')
-      .setTitle('⏱️ Miembro silenciado temporalmente')
-      .setDescription(`**${target.tag}** silenciado por **${args[1]}**.\n**Razón:** ${reason}`)
-      .setFooter({ text: `Por ${message.author.tag} • ${minutes} min`, iconURL: message.author.displayAvatarURL() })
+      .setTitle(tr(L, '⏱️ Miembro silenciado temporalmente', '⏱️ Member temporarily muted'))
+      .setDescription(tr(L, `**${target.tag}** silenciado por **${args[1]}**.\n**Razón:** ${reason}`, `**${target.tag}** muted for **${args[1]}**.\n**Reason:** ${reason}`))
+      .setFooter({ text: tr(L, `Por ${message.author.tag} • ${minutes} min`, `By ${message.author.tag} • ${minutes} min`), iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },
@@ -263,20 +269,21 @@ const unmute = (): BotCommand => ({
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ModerateMembers)) {
-      await message.reply('❌ Necesitas permiso de **Gestionar Miembros**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Miembros**.', '❌ You need the **Moderate Members** permission.'));
       return;
     }
     const target = message.mentions?.users?.first();
     if (!target) {
-      await message.reply('❌ Uso: `cz!unmute @usuario`');
+      await message.reply(tr(L, '❌ Uso: `cz!unmute @usuario`', '❌ Usage: `cz!unmute @user`'));
       return;
     }
     const member = await message.guild.members.fetch(target.id).catch(() => null);
     if (!member) return;
     await member.timeout(null);
-    await message.reply(`✅ **${target.tag}** ya no está silenciado.`);
+    await message.reply(tr(L, `✅ **${target.tag}** ya no está silenciado.`, `✅ **${target.tag}** is no longer muted.`));
   },
 });
 
@@ -294,17 +301,18 @@ const warn = (): BotCommand => ({
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(true))
     .addStringOption((o) => o.setName('razon').setDescription('Razón').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ModerateMembers)) {
-      await message.reply('❌ Necesitas permiso de **Gestionar Miembros**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Miembros**.', '❌ You need the **Moderate Members** permission.'));
       return;
     }
     const target = message.mentions?.users?.first();
     if (!target) {
-      await message.reply('❌ Uso: `cz!warn @usuario [razón]`');
+      await message.reply(tr(L, '❌ Uso: `cz!warn @usuario [razón]`', '❌ Usage: `cz!warn @user [reason]`'));
       return;
     }
-    const reason = args.slice(1).join(' ') || 'Sin razón';
+    const reason = args.slice(1).join(' ') || tr(L, 'Sin razón', 'No reason');
     await db.insert(ciszubotSchema.warns).values({
       guildId: message.guild.id,
       userId: target.id,
@@ -314,8 +322,8 @@ const warn = (): BotCommand => ({
     const embed = new EmbedBuilder()
       .setColor('#ff9900')
       .setTitle('⚠️ Aviso a miembro')
-      .setDescription(`**${target.tag}** fue avisado.\n**Razón:** ${reason}`)
-      .setFooter({ text: `Por ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
+      .setDescription(tr(L, `**${target.tag}** fue avisado.\n**Razón:** ${reason}`, `**${target.tag}** was warned.\n**Reason:** ${reason}`))
+      .setFooter({ text: tr(L, `Por ${message.author.tag}`, `By ${message.author.tag}`), iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },
@@ -334,6 +342,7 @@ const warns = (): BotCommand => ({
     .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const target = message.mentions?.users?.first();
     if (!target) {
@@ -354,14 +363,14 @@ const warns = (): BotCommand => ({
     }));
     const embed = new EmbedBuilder()
       .setColor('#ff9900')
-      .setTitle(`⚠️ Avisos de ${target.tag} (${warnList.length})`)
+      .setTitle(tr(L, `⚠️ Avisos de ${target.tag} (${warnList.length})`, `⚠️ Warnings for ${target.tag} (${warnList.length})`))
       .setDescription(
         warnList.length > 0
           ? warnList
               .slice(0, 40)
               .map((w) => `\`#${w.id}\` — ${w.reason} (por <@${w.moderator}> • <t:${Math.floor(new Date(w.created_at).getTime() / 1000)}:R>)`)
               .join('\n')
-              .slice(0, 4000) + (warnList.length > 40 ? `\n…y ${warnList.length - 40} más.` : '')
+              .slice(0, 4000) + (warnList.length > 40 ? tr(L, `\n…y ${warnList.length - 40} más.`, `\n…and ${warnList.length - 40} more.`) : '')
           : 'Sin avisos. 🎉'
       )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
@@ -383,6 +392,7 @@ const purge = (): BotCommand => ({
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
     .addIntegerOption((o) => o.setName('cantidad').setDescription('1-100').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageMessages)) {
       await message.reply('❌ Necesitas permiso de **Gestionar Mensajes**.');
@@ -395,7 +405,7 @@ const purge = (): BotCommand => ({
     }
     if (message.channel && 'bulkDelete' in message.channel) {
       await (message.channel as { bulkDelete: (n: number) => Promise<unknown> }).bulkDelete(amount + 1);
-      await message.reply(`✅ Borré **${amount}** mensajes.`).catch(() => undefined);
+      await message.reply(tr(L, `✅ Borré **${amount}** mensajes.`, `✅ I deleted **${amount}** messages.`)).catch(() => undefined);
     }
   },
 });

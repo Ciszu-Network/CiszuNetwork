@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { addMoney, randomBetween } from '../services/economy';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 import { getGuildConfig, formatCoins } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
   name: 'daily',
@@ -12,6 +13,7 @@ const create = (): BotCommand => ({
   category: 'Economía',
   slashCommand: new SlashCommandBuilder().setName('daily').setDescription('Reclama tu recompensa diaria'),
   async execute(message) {
+    const L = await langOf(message);
     const guildId = message.guild?.id ?? 'DM';
     const userId = message.author.id;
 
@@ -31,8 +33,8 @@ const create = (): BotCommand => ({
       const remaining = Math.ceil((cooldown - elapsed) / (60 * 1000));
       const embed = new EmbedBuilder()
         .setColor('#ff0000')
-        .setTitle('⏳ ¡Espera!')
-        .setDescription(`Ya reclamaste tu recompensa. Vuelve en **${remaining} minutos**.`)
+        .setTitle(tr(L, '⏳ ¡Espera!', '⏳ Wait!'))
+        .setDescription(tr(L, `Ya reclamaste tu recompensa. Vuelve en **${remaining} minutos**.`, `You already claimed your reward. Come back in **${remaining} minutes**.`))
         .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
         .setTimestamp();
       await message.reply({ embeds: [embed] });
@@ -43,8 +45,8 @@ const create = (): BotCommand => ({
     const bal = await addMoney(userId, guildId, amount, 'daily', 'Recompensa diaria');
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
-      .setTitle('☀️ ¡Recompensa diaria reclamada!')
-      .setDescription(`Recibiste **${(amount)}**.\nTu nuevo saldo es **${(bal ?? 0)}**.`)
+      .setTitle(tr(L, '☀️ ¡Recompensa diaria reclamada!', '☀️ Daily reward claimed!'))
+      .setDescription(tr(L, `Recibiste **${(amount)}**.\nTu nuevo saldo es **${(bal ?? 0)}**.`, `You received **${(amount)}**.\nYour new balance is **${(bal ?? 0)}**.`))
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });

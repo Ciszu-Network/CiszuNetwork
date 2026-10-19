@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 const mensajesSaludo = [
   '¡Qué alegría verte por aquí!', '¡Bienvenido de nuevo!', '¡Espero que tengas un gran día!',
@@ -26,6 +27,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     let targetId = message.author.id;
     if (args.length > 0) {
       const mention = message.mentions?.users.first();
@@ -39,7 +41,7 @@ const command: BotCommand = {
       .setDescription(`¡Hola <@${targetId}>! ${mensajesSaludo[Math.floor(Math.random() * mensajesSaludo.length)]}`)
       .setThumbnail(message.client.user?.displayAvatarURL() ?? null)
       .setFooter({
-        text: `CiszuBot • Solicitado por ${message.author.tag}`,
+        text: tr(L, `CiszuBot • Solicitado por ${message.author.tag}`, `CiszuBot • Requested by ${message.author.tag}`),
         iconURL: message.client.user?.displayAvatarURL(),
       })
       .setTimestamp();

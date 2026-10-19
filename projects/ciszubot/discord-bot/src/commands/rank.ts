@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getLevel, getTopLevels, xpForLevel } from '../services/levels';
+import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
   name: 'rank',
@@ -13,8 +14,9 @@ const create = (): BotCommand => ({
     .setDescription('Muestra tu nivel y XP')
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario a consultar').setRequired(false)),
   async execute(message) {
+    const L = await langOf(message);
     if (!message.guild) {
-      await message.reply('❌ Este comando solo funciona en un servidor.');
+      await message.reply(tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'));
       return;
     }
     const target = message.mentions?.users?.first() ?? message.author;

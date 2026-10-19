@@ -2,6 +2,7 @@
 import type { BotCommand } from '../types/command';
 import { getWallet, setWallet, randomBetween } from '../services/economy';
 import { getGuildConfig, formatCoins } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
   name: 'slot',
@@ -14,16 +15,17 @@ const create = (): BotCommand => ({
     .setDescription('Juega a la máquina tragaperras')
     .addIntegerOption((o) => o.setName('cantidad').setDescription('Cantidad a apostar').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     const cfg = await getGuildConfig(message.guild?.id ?? 'DM');
     const guildId = message.guild?.id ?? 'DM';
     const amount = parseInt(args[0] ?? '', 10);
     if (isNaN(amount) || amount <= 0) {
-      await message.reply('❌ Uso: `cz!slot <cantidad>`');
+      await message.reply(tr(L, '❌ Uso: `cz!slot <cantidad>`', '❌ Usage: `cz!slot <amount>`'));
       return;
     }
     const w = await getWallet(message.author.id, guildId);
     if (w.balance < amount) {
-      await message.reply(`❌ No tienes suficientes monedas (necesitas ${(amount)}).`);
+      await message.reply(tr(L, `❌ No tienes suficientes monedas (necesitas ${(amount)}).`, `❌ You do not have enough coins (you need ${(amount)}).`));
       return;
     }
 

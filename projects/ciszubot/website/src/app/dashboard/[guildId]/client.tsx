@@ -228,15 +228,15 @@ const featSlugOf = (s: SectionKey): string => s.slice('feat:'.length);
  *  en las secciones de configuración (siempre activas salvo kill switch global
  *  desde la devcon). */
 const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPage']; descKey: keyof Dict['guildPage']; premium?: boolean; colorClass?: string }[] = [
-  { slug: 'music', icon: 'music', labelKey: 'featMusic', descKey: 'featMusicDesc', premium: true },
-  { slug: 'search', icon: 'search', labelKey: 'featSearch', descKey: 'featSearchDesc', premium: true },
-  { slug: 'minigames', icon: 'gamepad', labelKey: 'featMinigames', descKey: 'featMinigamesDesc' },
-  { slug: 'giveaways', icon: 'trophy', labelKey: 'featGiveaways', descKey: 'featGiveawaysDesc' },
+  { slug: 'music', icon: 'music', labelKey: 'featMusic', descKey: 'featMusicDesc', premium: true, colorClass: 'text-fuchsia-400' },
+  { slug: 'search', icon: 'search', labelKey: 'featSearch', descKey: 'featSearchDesc', premium: true, colorClass: 'text-cyan-400' },
+  { slug: 'minigames', icon: 'gamepad', labelKey: 'featMinigames', descKey: 'featMinigamesDesc', colorClass: 'text-emerald-400' },
+  { slug: 'giveaways', icon: 'trophy', labelKey: 'featGiveaways', descKey: 'featGiveawaysDesc', colorClass: 'text-amber-400' },
   { slug: 'embeds', icon: 'ri-braces', labelKey: 'featEmbeds', descKey: 'featEmbedsDesc', premium: true, colorClass: 'text-purple-400' },
-  { slug: 'misc', icon: 'box-archive', labelKey: 'featMisc', descKey: 'featMiscDesc' },
-  { slug: 'utility', icon: 'ri-code-s-slash', labelKey: 'featUtility', descKey: 'featUtilityDesc' },
-  { slug: 'moderation', icon: 'gavel', labelKey: 'featModeration', descKey: 'featModerationDesc' },
-  { slug: 'social', icon: 'users', labelKey: 'featSocial', descKey: 'featSocialDesc' },
+  { slug: 'misc', icon: 'box-archive', labelKey: 'featMisc', descKey: 'featMiscDesc', colorClass: 'text-orange-300' },
+  { slug: 'utility', icon: 'ri-code-s-slash', labelKey: 'featUtility', descKey: 'featUtilityDesc', colorClass: 'text-teal-300' },
+  { slug: 'moderation', icon: 'gavel', labelKey: 'featModeration', descKey: 'featModerationDesc', colorClass: 'text-red-400' },
+  { slug: 'social', icon: 'users', labelKey: 'featSocial', descKey: 'featSocialDesc', colorClass: 'text-pink-300' },
 ];
 
 /** Permisos clave del bot (bitfields de Discord). */
