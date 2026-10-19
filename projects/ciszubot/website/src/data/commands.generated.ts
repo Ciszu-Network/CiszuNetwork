@@ -736,6 +736,16 @@ export const COMMANDS: CommandInfo[] = [
     tags: ["utilidad","search","busca","resultados","google"],
   },
   {
+    name: 'suggest',
+    description: 'Envía una sugerencia (y el staff la aprueba o cancela)',
+    aliases: ["sugerencia","sugerir"],
+    usage: 'cz!suggest <texto> · cz!suggest aprobar/cancelar <id> [razón]',
+    category: 'Utilidad',
+    icon: 'settings',
+    premium: false,
+    tags: ["utilidad","suggest","envia","sugerencia","staff","aprueba","cancela"],
+  },
+  {
     name: 'test',
     description: 'Comando de prueba para verificar el funcionamiento del bot',
     aliases: ["prueba","testear","verificar","t","check"],

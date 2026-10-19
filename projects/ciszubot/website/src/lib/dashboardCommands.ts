@@ -103,6 +103,11 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: byNames(['contador']),
     note: 'cz!contador muestra el estado; cz!contador reset reinicia y cz!contador iniciar anuncia el arranque (staff).',
   },
+  suggestions: {
+    title: 'Comandos de sugerencias',
+    commands: byNames(['suggest']),
+    note: 'cz!suggest <texto> envía; cz!suggest aprobar/cancelar <id> [razón] decide (staff). Los votos son con botones 👍/👎.',
+  },
   invites: {
     title: 'Comandos de invitaciones',
     commands: byNames(['invites']),

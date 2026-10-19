@@ -79,6 +79,11 @@ interface GuildConfig {
   counting_style?: 'traditional' | 'sum';
   counting_allow_repeat?: boolean;
   counting_authenticity?: 'solo' | 'dependent';
+  suggestions_enabled?: boolean;
+  suggestions_channel_id?: string | null;
+  suggestions_excluded_role_ids?: string[];
+  suggestions_max_active?: number;
+  suggestions_cooldown_minutes?: number;
   marriage_excluded_role_ids?: string[];
   nitro_repost_mode?: 'auto' | 'manual';
   nitro_excluded_role_ids?: string[];
@@ -131,7 +136,7 @@ interface GuildConfig {
   premium?: boolean;
 }
 
-type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
+type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -168,7 +173,7 @@ const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPag
   ],
 };
 
-const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id'],
   messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
@@ -177,6 +182,7 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   invites: ['invite_points_per', 'invite_rewards'],
   vcs: ['private_channels', 'private_category_id', 'private_vc_hub_id'],
   counting: ['counting_enabled', 'counting_channel_id', 'counting_start', 'counting_style', 'counting_allow_repeat', 'counting_authenticity'],
+  suggestions: ['suggestions_enabled', 'suggestions_channel_id', 'suggestions_excluded_role_ids', 'suggestions_max_active', 'suggestions_cooldown_minutes'],
   history: ['history_enabled', 'history_channel_id'],
   economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
   starboard: ['starboard_channel_id', 'starboard_emoji', 'starboard_min'],
@@ -534,6 +540,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'invites'
     | 'vcs'
     | 'counting'
+    | 'suggestions'
     | 'economy'
     | 'starboard'
     | 'nitro'
@@ -549,7 +556,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
+      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
       setView(saved);
@@ -626,6 +633,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     { key: 'invites', icon: 'address-book', label: 'subnavInvites', tag: 'free' },
     { key: 'vcs', icon: 'cast', label: 'subnavVcs', tag: 'free' },
     { key: 'counting', icon: 'calculator', label: 'subnavCounting', tag: 'free' },
+    { key: 'suggestions', icon: 'lightbulb', label: 'subnavSuggestions', tag: 'free' },
     { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
   ];
 
@@ -868,6 +876,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         counting_style: cfg?.counting_style ?? 'traditional',
         counting_allow_repeat: cfg?.counting_allow_repeat ?? false,
         counting_authenticity: cfg?.counting_authenticity ?? 'dependent',
+        suggestions_enabled: cfg?.suggestions_enabled ?? false,
+        suggestions_channel_id: cfg?.suggestions_channel_id ?? null,
+        suggestions_excluded_role_ids: cfg?.suggestions_excluded_role_ids ?? [],
+        suggestions_max_active: cfg?.suggestions_max_active ?? 0,
+        suggestions_cooldown_minutes: cfg?.suggestions_cooldown_minutes ?? 0,
         marriage_excluded_role_ids: Array.isArray(cfg?.marriage_excluded_role_ids) ? cfg.marriage_excluded_role_ids : [],
         nitro_repost_mode: cfg?.nitro_repost_mode ?? 'auto',
         nitro_excluded_role_ids: Array.isArray(cfg?.nitro_excluded_role_ids) ? cfg.nitro_excluded_role_ids : [],
@@ -2987,6 +3000,88 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               )}
             </div>
             <HelpZone title={SECTION_HELP.counting.title} commands={SECTION_HELP.counting.commands} note={SECTION_HELP.counting.note} />
+          </section>
+          )}
+
+          {view === 'suggestions' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="lightbulb" size={18} className="text-neon-blue" /> {t.suggestionsTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.suggestions.title} commands={SECTION_HELP.suggestions.commands} note={SECTION_HELP.suggestions.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('suggestions')}
+                onImport={(file) => void importFile(file, 'suggestions')}
+              />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.suggestionsHint}</p>
+            <div className="grid gap-5">
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.suggestionsToggle}</p>
+                  <p className="text-xs text-white/50">{t.suggestionsToggleHint}</p>
+                </div>
+                <Toggle on={Boolean(config.suggestions_enabled)} onChange={(v) => update({ suggestions_enabled: v })} />
+              </div>
+              {config.suggestions_enabled && (
+                <div className="grid gap-4">
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.suggestionsChannelLabel}
+                      value={config.suggestions_channel_id ?? null}
+                      placeholder={t.pickChannel}
+                      options={textChannelOptions}
+                      onChange={(v) => update({ suggestions_channel_id: v })}
+                    />
+                  ) : (
+                    <Field label={t.suggestionsChannelLabel} hint={t.manualIdHint}>
+                      <input
+                        className={inputCls}
+                        value={config.suggestions_channel_id ?? ''}
+                        onChange={(e) => update({ suggestions_channel_id: e.target.value || null })}
+                      />
+                    </Field>
+                  )}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <Field label={t.suggestionsMaxActiveLabel} hint={t.suggestionsMaxActiveHint}>
+                      <input
+                        type="number"
+                        min={0}
+                        max={100}
+                        className={inputCls}
+                        value={config.suggestions_max_active ?? 0}
+                        onChange={(e) => update({ suggestions_max_active: Math.max(0, Number(e.target.value) || 0) })}
+                      />
+                    </Field>
+                    <Field label={t.suggestionsCooldownLabel} hint={t.suggestionsCooldownHint}>
+                      <input
+                        type="number"
+                        min={0}
+                        max={1440}
+                        className={inputCls}
+                        value={config.suggestions_cooldown_minutes ?? 0}
+                        onChange={(e) => update({ suggestions_cooldown_minutes: Math.max(0, Number(e.target.value) || 0) })}
+                      />
+                    </Field>
+                  </div>
+                  <Field label={t.suggestionsExcludedLabel} hint={t.suggestionsExcludedHint}>
+                    <MultiSelect
+                      values={config.suggestions_excluded_role_ids ?? []}
+                      options={roleOptions}
+                      placeholder={t.pickRole}
+                      onChange={(v) => update({ suggestions_excluded_role_ids: v })}
+                    />
+                  </Field>
+                </div>
+              )}
+            </div>
+            <HelpZone title={SECTION_HELP.suggestions.title} commands={SECTION_HELP.suggestions.commands} note={SECTION_HELP.suggestions.note} />
           </section>
           )}
 

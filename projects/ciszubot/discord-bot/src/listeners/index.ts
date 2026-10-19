@@ -14,6 +14,7 @@ import {
 } from 'discord.js';
 import { getGuildConfig, getPrefix, GuildConfig } from '../services/configService';
 import { handleCounting } from '../services/counting';
+import { voteSuggestion } from '../services/suggestions';
 import { addXp } from '../services/levels';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 import { logger } from '../services/logger';
@@ -860,6 +861,22 @@ export async function handleButton(interaction: ButtonInteraction, client: Clien
         content: result.ok
           ? `🎉 ¡Estás dentro! Tienes **${result.entries}** entrada(s). ¡Suerte!`
           : `❌ ${result.reason ?? 'No se pudo participar.'}`,
+        ephemeral: true,
+      })
+      .catch(() => undefined);
+    return;
+  }
+
+  // ─── Sugerencias (votos con toggle) ───
+  if (customId.startsWith('sug_up:') || customId.startsWith('sug_down:')) {
+    const dir = customId.startsWith('sug_up:') ? 'up' : 'down';
+    const id = parseInt(customId.split(':')[1] ?? '', 10);
+    const result = await voteSuggestion(client, id, interaction.user.id, dir);
+    await interaction
+      .followUp({
+        content: result.ok
+          ? `✅ Voto registrado (👍 ${result.up} · 👎 ${result.down})` + (result.mine ? ` — tu voto: ${result.mine === 'up' ? '👍 a favor' : '👎 en contra'}` : ' — retiraste tu voto')
+          : `❌ ${result.reason ?? 'No se pudo votar.'}`,
         ephemeral: true,
       })
       .catch(() => undefined);

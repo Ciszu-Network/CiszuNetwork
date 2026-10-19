@@ -142,6 +142,11 @@ export interface GuildConfig {
   counting_style: string;
   counting_allow_repeat: boolean;
   counting_authenticity: string;
+  suggestions_enabled: boolean;
+  suggestions_channel_id: string | null;
+  suggestions_excluded_role_ids: string[];
+  suggestions_max_active: number;
+  suggestions_cooldown_minutes: number;
   marriage_excluded_role_ids: string[];
   nitro_repost_mode: 'auto' | 'manual';
   nitro_excluded_role_ids: string[];
@@ -229,6 +234,11 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   counting_style: 'traditional',
   counting_allow_repeat: false,
   counting_authenticity: 'dependent',
+  suggestions_enabled: false,
+  suggestions_channel_id: null,
+  suggestions_excluded_role_ids: [],
+  suggestions_max_active: 0,
+  suggestions_cooldown_minutes: 0,
   marriage_excluded_role_ids: [],
   nitro_repost_mode: 'auto',
   nitro_excluded_role_ids: [],
@@ -334,6 +344,11 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         counting_style: data.countingStyle ?? DEFAULTS.counting_style,
         counting_allow_repeat: data.countingAllowRepeat ?? DEFAULTS.counting_allow_repeat,
         counting_authenticity: data.countingAuthenticity ?? DEFAULTS.counting_authenticity,
+        suggestions_enabled: data.suggestionsEnabled ?? DEFAULTS.suggestions_enabled,
+        suggestions_channel_id: data.suggestionsChannelId ?? DEFAULTS.suggestions_channel_id,
+        suggestions_excluded_role_ids: asArray(data.suggestionsExcludedRoleIds, DEFAULTS.suggestions_excluded_role_ids),
+        suggestions_max_active: data.suggestionsMaxActive ?? DEFAULTS.suggestions_max_active,
+        suggestions_cooldown_minutes: data.suggestionsCooldownMinutes ?? DEFAULTS.suggestions_cooldown_minutes,
         marriage_excluded_role_ids: asArray(data.marriageExcludedRoleIds, DEFAULTS.marriage_excluded_role_ids),
         nitro_repost_mode: (data.nitroRepostMode as 'auto' | 'manual') ?? DEFAULTS.nitro_repost_mode,
         nitro_excluded_role_ids: asArray(data.nitroExcludedRoleIds, DEFAULTS.nitro_excluded_role_ids),
@@ -414,6 +429,11 @@ export async function updateGuildConfig(
     countingStyle: merged.counting_style,
     countingAllowRepeat: merged.counting_allow_repeat,
     countingAuthenticity: merged.counting_authenticity,
+    suggestionsEnabled: merged.suggestions_enabled,
+    suggestionsChannelId: merged.suggestions_channel_id,
+    suggestionsExcludedRoleIds: merged.suggestions_excluded_role_ids,
+    suggestionsMaxActive: merged.suggestions_max_active,
+    suggestionsCooldownMinutes: merged.suggestions_cooldown_minutes,
     marriageExcludedRoleIds: merged.marriage_excluded_role_ids,
     nitroRepostMode: merged.nitro_repost_mode,
     nitroExcludedRoleIds: merged.nitro_excluded_role_ids,

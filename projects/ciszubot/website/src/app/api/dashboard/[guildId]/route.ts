@@ -139,6 +139,11 @@ const guildConfigPatchSchema = z.object({
   counting_style: z.enum(['traditional', 'sum']).optional(),
   counting_allow_repeat: z.boolean().optional(),
   counting_authenticity: z.enum(['solo', 'dependent']).optional(),
+  suggestions_enabled: z.boolean().optional(),
+  suggestions_channel_id: z.string().max(32).nullable().optional(),
+  suggestions_excluded_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
+  suggestions_max_active: z.number().int().min(0).max(100).optional(),
+  suggestions_cooldown_minutes: z.number().int().min(0).max(1440).optional(),
   marriage_enabled: z.boolean().optional(),
   marriage_allow_admin_pairs: z.boolean().optional(),
   command_global_cooldown: z.number().int().min(0).max(60).optional(),
@@ -247,6 +252,11 @@ interface GuildConfig {
   counting_style?: 'traditional' | 'sum';
   counting_allow_repeat?: boolean;
   counting_authenticity?: 'solo' | 'dependent';
+  suggestions_enabled?: boolean;
+  suggestions_channel_id?: string | null;
+  suggestions_excluded_role_ids?: string[];
+  suggestions_max_active?: number;
+  suggestions_cooldown_minutes?: number;
   marriage_enabled?: boolean;
   marriage_allow_admin_pairs?: boolean;
   command_global_cooldown?: number;
@@ -335,8 +345,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   }
   const body = parsed.data as Partial<GuildConfig>;
   const allowed: Record<string, unknown> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat'];
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled'];
 
   for (const key of stringFields) {
     if (body[key] !== undefined) allowed[key] = String(body[key]);
@@ -347,6 +357,14 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   if (body.xp_rate !== undefined) {
     const rate = Number(body.xp_rate);
     if (rate >= 0.1 && rate <= 10) allowed.xp_rate = rate;
+  }
+  if (body.suggestions_max_active !== undefined) {
+    const value = Number(body.suggestions_max_active);
+    if (Number.isFinite(value) && value >= 0 && value <= 100) allowed.suggestions_max_active = Math.round(value);
+  }
+  if (body.suggestions_cooldown_minutes !== undefined) {
+    const value = Number(body.suggestions_cooldown_minutes);
+    if (Number.isFinite(value) && value >= 0 && value <= 1440) allowed.suggestions_cooldown_minutes = Math.round(value);
   }
   if (body.counting_start !== undefined) {
     const value = Number(body.counting_start);
@@ -364,7 +382,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     const value = Number(body.invite_points_per);
     if (value >= 1 && value <= 100) allowed.invite_points_per = value;
   }
-  for (const roleKey of ['owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'marriage_excluded_role_ids', 'nitro_excluded_role_ids'] as const) {
+  for (const roleKey of ['owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'marriage_excluded_role_ids', 'nitro_excluded_role_ids', 'suggestions_excluded_role_ids'] as const) {
     if (body[roleKey] !== undefined) {
       allowed[roleKey] = Array.isArray(body[roleKey]) ? (body[roleKey] as string[]).slice(0, 20) : [];
     }
@@ -497,6 +515,11 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     counting_style: 'countingStyle',
     counting_allow_repeat: 'countingAllowRepeat',
     counting_authenticity: 'countingAuthenticity',
+    suggestions_enabled: 'suggestionsEnabled',
+    suggestions_channel_id: 'suggestionsChannelId',
+    suggestions_excluded_role_ids: 'suggestionsExcludedRoleIds',
+    suggestions_max_active: 'suggestionsMaxActive',
+    suggestions_cooldown_minutes: 'suggestionsCooldownMinutes',
     marriage_excluded_role_ids: 'marriageExcludedRoleIds',
     nitro_repost_mode: 'nitroRepostMode',
     nitro_excluded_role_ids: 'nitroExcludedRoleIds',

@@ -89,6 +89,11 @@ export const guildConfigs = ciszubot.table(
     countingStyle: text('counting_style').notNull().default('traditional'),
     countingAllowRepeat: boolean('counting_allow_repeat').notNull().default(false),
     countingAuthenticity: text('counting_authenticity').notNull().default('dependent'),
+    suggestionsEnabled: boolean('suggestions_enabled').notNull().default(false),
+    suggestionsChannelId: text('suggestions_channel_id'),
+    suggestionsExcludedRoleIds: jsonb('suggestions_excluded_role_ids').notNull().default([]),
+    suggestionsMaxActive: integer('suggestions_max_active').notNull().default(0),
+    suggestionsCooldownMinutes: integer('suggestions_cooldown_minutes').notNull().default(0),
     marriageExcludedRoleIds: jsonb('marriage_excluded_role_ids').notNull().default([]),
     nitroRepostMode: text('nitro_repost_mode').notNull().default('auto'),
     nitroExcludedRoleIds: jsonb('nitro_excluded_role_ids').notNull().default([]),
@@ -503,6 +508,28 @@ export const botActions = ciszubot.table(
     result: text('result'),
   },
   (t) => [index('idx_bot_actions_pending').on(t.processed, t.createdAt)]
+);
+
+/** Sugerencias de la comunidad (votos + decision del staff). */
+export const suggestions = ciszubot.table(
+  'suggestions',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    guildId: text('guild_id').notNull(),
+    userId: text('user_id').notNull(),
+    channelId: text('channel_id'),
+    messageId: text('message_id'),
+    content: text('content').notNull(),
+    status: text('status').notNull().default('pending'),
+    reason: text('reason'),
+    decidedBy: text('decided_by'),
+    upVotes: integer('up_votes').notNull().default(0),
+    downVotes: integer('down_votes').notNull().default(0),
+    voters: jsonb('voters').notNull().default({}),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    decidedAt: timestamp('decided_at', { withTimezone: true }),
+  },
+  (t) => [index('idx_suggestions_guild').on(t.guildId, t.createdAt)],
 );
 
 /** Estado del canal contador por servidor (conteo actual + reto de suma). */
