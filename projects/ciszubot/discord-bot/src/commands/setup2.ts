@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { updateGuildConfig, getGuildConfig } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 const setupTickets = (): BotCommand => ({
   name: 'setuptickets',
@@ -17,6 +18,7 @@ const setupTickets = (): BotCommand => ({
     .addChannelOption((o) => o.setName('categoria').setDescription('Categoría para los tickets').setRequired(false))
     .addRoleOption((o) => o.setName('rol').setDescription('Rol de soporte').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
       await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
@@ -24,12 +26,12 @@ const setupTickets = (): BotCommand => ({
     }
     if (args[0]?.toLowerCase() === 'off') {
       await updateGuildConfig(message.guild.id, { tickets_enabled: false });
-      await message.reply('✅ Tickets desactivados.');
+      await message.reply(tr(L, '✅ Tickets desactivados.', '✅ Tickets disabled.'));
       return;
     }
     const channel = message.mentions?.channels?.first() ?? message.guild.channels.cache.get(args[0] ?? '');
     if (!channel || channel.type !== 0) {
-      await message.reply('❌ Menciona un canal de texto: `cz!setuptickets #canal [categoría] [@rol]`');
+      await message.reply(tr(L, '❌ Menciona un canal de texto: `cz!setuptickets #canal [categoría] [@rol]`', '❌ Mention a text channel: `cz!setuptickets #channel [category] [@role]`'));
       return;
     }
     const category = message.mentions?.channels?.find?.((c) => c.type === 4);
@@ -88,6 +90,7 @@ const setupLeveling = (): BotCommand => ({
     )
     .addChannelOption((o) => o.setName('canal').setDescription('Canal de anuncios de nivel (opcional)').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
       await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
@@ -95,7 +98,7 @@ const setupLeveling = (): BotCommand => ({
     }
     const state = (args[0] ?? '').toLowerCase();
     if (state !== 'on' && state !== 'off') {
-      await message.reply('❌ Uso: `cz!setupleveling <on|off> [#canal]`');
+      await message.reply(tr(L, '❌ Uso: `cz!setupleveling <on|off> [#canal]`', '❌ Usage: `cz!setupleveling <on|off> [#channel]`'));
       return;
     }
     const channel = message.mentions?.channels?.first();
@@ -104,7 +107,7 @@ const setupLeveling = (): BotCommand => ({
     await message.reply(
       state === 'on'
         ? `✅ Niveles activados${channel ? ` con anuncios en <#${channel.id}>` : ''}. Gana XP hablando en el chat!`
-        : '✅ Niveles desactivados.'
+        : tr(L, '✅ Niveles desactivados.', '✅ Levels disabled.')
     );
   },
 });
@@ -129,6 +132,7 @@ const setupPrivateChannels = (): BotCommand => ({
     )
     .addChannelOption((o) => o.setName('panel').setDescription('Canal donde poner el panel').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
       await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
@@ -136,7 +140,7 @@ const setupPrivateChannels = (): BotCommand => ({
     }
     const state = (args[0] ?? '').toLowerCase();
     if (state !== 'on' && state !== 'off') {
-      await message.reply('❌ Uso: `cz!setupprivate <on|off> [#canal-panel] [categoría]`');
+      await message.reply(tr(L, '❌ Uso: `cz!setupprivate <on|off> [#canal-panel] [categoría]`', '❌ Usage: `cz!setupprivate <on|off> [#panel-channel] [category]`'));
       return;
     }
     const panel = message.mentions?.channels?.find?.((c) => c.type === 0);
@@ -172,7 +176,7 @@ const setupPrivateChannels = (): BotCommand => ({
         ],
       });
     }
-    await message.reply(state === 'on' ? '✅ Canales privados activados.' : '✅ Canales privados desactivados.');
+    await message.reply(state === 'on' ? tr(L, '✅ Canales privados activados.', '✅ Private channels enabled.') : tr(L, '✅ Canales privados desactivados.', '✅ Private channels disabled.'));
   },
 });
 
@@ -189,6 +193,7 @@ const setupLogs = (): BotCommand => ({
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addChannelOption((o) => o.setName('canal').setDescription('Canal de logs').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
       await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
@@ -196,12 +201,12 @@ const setupLogs = (): BotCommand => ({
     }
     if (args[0]?.toLowerCase() === 'off') {
       await updateGuildConfig(message.guild.id, { logs_channel_id: null });
-      await message.reply('✅ Logs desactivados.');
+      await message.reply(tr(L, '✅ Logs desactivados.', '✅ Logs disabled.'));
       return;
     }
     const channel = message.mentions?.channels?.first();
     if (!channel) {
-      await message.reply('❌ Menciona un canal: `cz!setuplogs #canal`');
+      await message.reply(tr(L, '❌ Menciona un canal: `cz!setuplogs #canal`', '❌ Mention a channel: `cz!setuplogs #channel`'));
       return;
     }
     await updateGuildConfig(message.guild.id, { logs_channel_id: channel.id });

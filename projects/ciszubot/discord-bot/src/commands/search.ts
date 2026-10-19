@@ -1,5 +1,6 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
   name: 'search',
@@ -12,9 +13,10 @@ const create = (): BotCommand => ({
     .setDescription('Busca resultados en Google')
     .addStringOption((o) => o.setName('consulta').setDescription('Qué buscar').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     const query = args.join(' ');
     if (!query) {
-      await message.reply('❌ Uso: `cz!search <consulta>`');
+      await message.reply(tr(L, '❌ Uso: `cz!search <consulta>`', '❌ Usage: `cz!search <query>`'));
       return;
     }
     const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;

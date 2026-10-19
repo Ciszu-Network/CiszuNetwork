@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'staff',
@@ -23,6 +24,7 @@ const command: BotCommand = {
     .addSubcommand((s) => s.setName('status').setDescription('Muestra el estado')),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -51,14 +53,14 @@ const command: BotCommand = {
 
     if (sub === 'off') {
       await updateGuildConfig(guildId, { staff_role_id: null });
-      await message.reply('✅ Rol de staff eliminado (solo admins podrán usar los comandos de staff).');
+      await message.reply(tr(L, '✅ Rol de staff eliminado (solo admins podrán usar los comandos de staff).', '✅ Staff role removed (only admins will be able to use staff commands).'));
       return;
     }
 
     if (sub === 'role') {
       const roleId = message.mentions?.roles?.first()?.id;
       if (!roleId) {
-        await message.reply('❌ Uso: `cz!staff role @rol`.');
+        await message.reply(tr(L, '❌ Uso: `cz!staff role @rol`.', '❌ Usage: `cz!staff role @role`.'));
         return;
       }
       await updateGuildConfig(guildId, { staff_role_id: roleId });
@@ -66,7 +68,7 @@ const command: BotCommand = {
       return;
     }
 
-    await message.reply('❌ Subcomandos: `role`, `off`, `status`.');
+    await message.reply(tr(L, '❌ Subcomandos: `role`, `off`, `status`.', '❌ Subcommands: `role`, `off`, `status`.'));
   },
 };
 

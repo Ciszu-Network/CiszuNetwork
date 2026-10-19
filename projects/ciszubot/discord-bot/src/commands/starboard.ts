@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'starboard',
@@ -34,6 +35,7 @@ const command: BotCommand = {
     .addSubcommand((s) => s.setName('status').setDescription('Muestra la configuración actual')),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -63,12 +65,12 @@ const command: BotCommand = {
       const raw = (args[1] ?? '').toLowerCase();
       if (raw === 'off' || raw === 'disable') {
         await updateGuildConfig(guildId, { starboard_channel_id: null });
-        await message.reply('✅ Starboard desactivado.');
+        await message.reply(tr(L, '✅ Starboard desactivado.', '✅ Starboard disabled.'));
         return;
       }
       const channelId = message.mentions?.channels?.first()?.id;
       if (!channelId) {
-        await message.reply('❌ Uso: `cz!starboard channel #canal` o `cz!starboard channel off`.');
+        await message.reply(tr(L, '❌ Uso: `cz!starboard channel #canal` o `cz!starboard channel off`.', '❌ Usage: `cz!starboard channel #channel` or `cz!starboard channel off`.'));
         return;
       }
       await updateGuildConfig(guildId, { starboard_channel_id: channelId });
@@ -79,7 +81,7 @@ const command: BotCommand = {
     if (sub === 'emoji') {
       const emoji = (args[1] ?? '').trim();
       if (!emoji || emoji.length > 64) {
-        await message.reply('❌ Uso: `cz!starboard emoji ⭐`.');
+        await message.reply(tr(L, '❌ Uso: `cz!starboard emoji ⭐`.', '❌ Usage: `cz!starboard emoji ⭐`.'));
         return;
       }
       await updateGuildConfig(guildId, { starboard_emoji: emoji });
@@ -90,7 +92,7 @@ const command: BotCommand = {
     if (sub === 'min') {
       const min = parseInt(args[1] ?? '', 10);
       if (isNaN(min) || min < 1 || min > 100) {
-        await message.reply('❌ Uso: `cz!starboard min <1-100>`.');
+        await message.reply(tr(L, '❌ Uso: `cz!starboard min <1-100>`.', '❌ Usage: `cz!starboard min <1-100>`.'));
         return;
       }
       await updateGuildConfig(guildId, { starboard_min: min });
@@ -98,7 +100,7 @@ const command: BotCommand = {
       return;
     }
 
-    await message.reply('❌ Subcomandos: `channel`, `emoji`, `min`, `status`.');
+    await message.reply(tr(L, '❌ Subcomandos: `channel`, `emoji`, `min`, `status`.', '❌ Subcommands: `channel`, `emoji`, `min`, `status`.'));
   },
 };
 

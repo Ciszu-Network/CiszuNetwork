@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig, TicketCategory, TicketConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
 import { panelComponents, panelEmbed } from '../services/tickets';
+import { langOf, tr } from '../services/i18n';
 
 /** Config del sistema de tickets por categorías (estilo Ticket Tool). */
 const command: BotCommand = {
@@ -32,6 +33,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -82,16 +84,16 @@ const command: BotCommand = {
     if (sub === 'panel') {
       const channelId = message.mentions?.channels?.first()?.id;
       if (!channelId) {
-        await message.reply('❌ Uso: `cz!tickets panel #canal`.');
+        await message.reply(tr(L, '❌ Uso: `cz!tickets panel #canal`.', '❌ Usage: `cz!tickets panel #channel`.'));
         return;
       }
       if (config.categories.length === 0) {
-        await message.reply('❌ Primero crea una categoría: `cz!tickets category add soporte Soporte`.');
+        await message.reply(tr(L, '❌ Primero crea una categoría: `cz!tickets category add soporte Soporte`.', '❌ First create a category: `cz!tickets category add support Support`.'));
         return;
       }
       const channel = message.guild.channels.cache.get(channelId);
       if (!channel || !('send' in channel)) {
-        await message.reply('❌ Canal no válido.');
+        await message.reply(tr(L, '❌ Canal no válido.', '❌ Invalid channel.'));
         return;
       }
       await channel.send({ embeds: [panelEmbed(config)], components: panelComponents(config) });
@@ -103,7 +105,7 @@ const command: BotCommand = {
     if (sub === 'log') {
       const channelId = message.mentions?.channels?.first()?.id;
       if (!channelId) {
-        await message.reply('❌ Uso: `cz!tickets log #canal`.');
+        await message.reply(tr(L, '❌ Uso: `cz!tickets log #canal`.', '❌ Usage: `cz!tickets log #channel`.'));
         return;
       }
       await save({ log_channel_id: channelId });
@@ -114,7 +116,7 @@ const command: BotCommand = {
     if (sub === 'autodelete') {
       const hours = parseInt(args[1] ?? '', 10);
       if (isNaN(hours) || hours < 0 || hours > 720) {
-        await message.reply('❌ Uso: `cz!tickets autodelete <horas>` (0 = borrado inmediato).');
+        await message.reply(tr(L, '❌ Uso: `cz!tickets autodelete <horas>` (0 = borrado inmediato).', '❌ Usage: `cz!tickets autodelete <hours>` (0 = delete immediately).'));
         return;
       }
       await save({ auto_delete_hours: hours });
@@ -128,7 +130,7 @@ const command: BotCommand = {
         const id = (args[2] ?? '').toLowerCase().replace(/[^a-z0-9-]/g, '');
         const label = args.slice(3).join(' ').trim() || id;
         if (!id) {
-          await message.reply('❌ Uso: `cz!tickets category add <id> <nombre>` (ej: `category add soporte Soporte técnico`).');
+          await message.reply(tr(L, '❌ Uso: `cz!tickets category add <id> <nombre>` (ej: `category add soporte Soporte técnico`).', '❌ Usage: `cz!tickets category add <id> <name>` (e.g.: `category add support Tech support`).'));
           return;
         }
         if (config.categories.some((c) => c.id === id)) {
@@ -158,7 +160,7 @@ const command: BotCommand = {
         await message.reply(`✅ Categoría \`${id}\` eliminada (si existía).`);
         return;
       }
-      await message.reply('❌ Subcomandos: `category add <id> <nombre>` · `category remove <id>`.');
+      await message.reply(tr(L, '❌ Subcomandos: `category add <id> <nombre>` · `category remove <id>`.', '❌ Subcommands: `category add <id> <name>` · `category remove <id>`.'));
       return;
     }
 
@@ -175,7 +177,7 @@ const command: BotCommand = {
       const value = args.slice(3).join(' ').trim();
 
       if (field === 'label') {
-        if (!value) return void (await message.reply('❌ Uso: `cz!tickets cat <id> label <texto>`.'));
+        if (!value) return void (await message.reply(tr(L, '❌ Uso: `cz!tickets cat <id> label <texto>`.', '❌ Usage: `cz!tickets cat <id> label <text>`.')));
         await update({ label: value.slice(0, 100) });
         await message.reply(`✅ \`${id}\` → label: **${value}**.`);
         return;
@@ -192,7 +194,7 @@ const command: BotCommand = {
       }
       if (field === 'discord') {
         const catId = message.mentions?.channels?.find?.((c) => c.type === 4)?.id;
-        if (!catId) return void (await message.reply('❌ Menciona una categoría de Discord: `cz!tickets cat <id> discord <categoría>`.'));
+        if (!catId) return void (await message.reply(tr(L, '❌ Menciona una categoría de Discord: `cz!tickets cat <id> discord <categoría>`.', '❌ Mention a Discord category: `cz!tickets cat <id> discord <category>`.')));
         await update({ discord_category_id: catId });
         await message.reply(`✅ \`${id}\` → los tickets se crearán en <#${catId}>.`);
         return;
@@ -205,7 +207,7 @@ const command: BotCommand = {
           await message.reply(`✅ \`${id}\` → rol <@&${roleId}> quitado.`);
           return;
         }
-        if (!roleId) return void (await message.reply('❌ Uso: `cz!tickets cat <id> role @rol` o `... role remove @rol`.'));
+        if (!roleId) return void (await message.reply(tr(L, '❌ Uso: `cz!tickets cat <id> role @rol` o `... role remove @rol`.', '❌ Usage: `cz!tickets cat <id> role @role` or `... role remove @role`.')));
         await update({ role_ids: Array.from(new Set([...category.role_ids, roleId])).slice(0, 10) });
         await message.reply(`✅ \`${id}\` → staff: <@&${roleId}> (${category.role_ids.length + 1} rol(es)).`);
         return;
@@ -227,27 +229,27 @@ const command: BotCommand = {
           await message.reply(`✅ \`${id}\` → formulario eliminado (apertura directa).`);
           return;
         }
-        if (!value) return void (await message.reply('❌ Uso: `cz!tickets cat <id> form Pregunta 1; Pregunta 2` (máx. 5).'));
+        if (!value) return void (await message.reply(tr(L, '❌ Uso: `cz!tickets cat <id> form Pregunta 1; Pregunta 2` (máx. 5).', '❌ Usage: `cz!tickets cat <id> form Question 1; Question 2` (max 5).')));
         const form = value.split(';').map((s) => s.trim()).filter(Boolean).slice(0, 5);
         await update({ form });
         await message.reply(`✅ \`${id}\` → formulario de ${form.length} pregunta(s).`);
         return;
       }
       if (field === 'welcome') {
-        if (!value) return void (await message.reply('❌ Uso: `cz!tickets cat <id> welcome <texto>` (variable {user}).'));
+        if (!value) return void (await message.reply(tr(L, '❌ Uso: `cz!tickets cat <id> welcome <texto>` (variable {user}).', '❌ Usage: `cz!tickets cat <id> welcome <text>` (variable {user}).')));
         await update({ welcome: value.slice(0, 1000) });
         await message.reply(`✅ \`${id}\` → mensaje de bienvenida actualizado.`);
         return;
       }
       if (field === 'color') {
         const color = value.startsWith('#') ? value : `#${value}`;
-        if (!/^#[0-9a-fA-F]{6}$/.test(color)) return void (await message.reply('❌ Uso: `cz!tickets cat <id> color #00d4ff`.'));
+        if (!/^#[0-9a-fA-F]{6}$/.test(color)) return void (await message.reply(tr(L, '❌ Uso: `cz!tickets cat <id> color #00d4ff`.', '❌ Usage: `cz!tickets cat <id> color #00d4ff`.')));
         await update({ color });
         await message.reply(`✅ \`${id}\` → color ${color}.`);
         return;
       }
 
-      await message.reply('❌ Campos: `label`, `emoji`, `desc`, `discord`, `role`, `grant`, `form`, `welcome`, `color`.');
+      await message.reply(tr(L, '❌ Campos: `label`, `emoji`, `desc`, `discord`, `role`, `grant`, `form`, `welcome`, `color`.', '❌ Fields: `label`, `emoji`, `desc`, `discord`, `role`, `grant`, `form`, `welcome`, `color`.'));
       return;
     }
 

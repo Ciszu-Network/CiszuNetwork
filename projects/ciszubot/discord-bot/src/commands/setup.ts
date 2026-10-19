@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 const setPrefix = (): BotCommand => ({
   name: 'setprefix',
@@ -15,14 +16,15 @@ const setPrefix = (): BotCommand => ({
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addStringOption((o) => o.setName('prefijo').setDescription('Nuevo prefijo').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-      await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Servidor**.', '❌ You need the **Manage Server** permission.'));
       return;
     }
     const prefix = (args[0] ?? '').trim();
     if (!prefix || prefix.length > 3) {
-      await message.reply('❌ El prefijo debe tener 1-3 caracteres.');
+      await message.reply(tr(L, '❌ El prefijo debe tener 1-3 caracteres.', '❌ The prefix must be 1-3 characters long.'));
       return;
     }
     await updateGuildConfig(message.guild.id, { prefix });
@@ -55,14 +57,15 @@ const setLang = (): BotCommand => ({
         .setRequired(true)
     ),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-      await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Servidor**.', '❌ You need the **Manage Server** permission.'));
       return;
     }
     const lang = (args[0] ?? '').toLowerCase();
     if (lang !== 'es' && lang !== 'en') {
-      await message.reply('❌ Uso: `cz!setlang <es|en>`');
+      await message.reply(tr(L, '❌ Uso: `cz!setlang <es|en>`', '❌ Usage: `cz!setlang <es|en>`'));
       return;
     }
     await updateGuildConfig(message.guild.id, { lang });
@@ -84,14 +87,15 @@ const setupWelcome = (): BotCommand => ({
     .addChannelOption((o) => o.setName('canal').setDescription('Canal de bienvenidas').setRequired(true))
     .addStringOption((o) => o.setName('mensaje').setDescription('Mensaje (variables: {user} {guild} {members})').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-      await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Servidor**.', '❌ You need the **Manage Server** permission.'));
       return;
     }
     const channel = (message.mentions?.channels?.first() ?? message.guild.channels.cache.get(args[0] ?? '')) as never as { id: string } | undefined;
     if (!channel) {
-      await message.reply('❌ Menciona un canal: `cz!setupwelcome #canal [mensaje]`');
+      await message.reply(tr(L, '❌ Menciona un canal: `cz!setupwelcome #canal [mensaje]`', '❌ Mention a channel: `cz!setupwelcome #channel [message]`'));
       return;
     }
     const msg = args.slice(1).join(' ') || 'Bienvenido/a {user} a {guild}!';
@@ -114,14 +118,15 @@ const setupGoodbye = (): BotCommand => ({
     .addChannelOption((o) => o.setName('canal').setDescription('Canal de despedidas').setRequired(true))
     .addStringOption((o) => o.setName('mensaje').setDescription('Mensaje').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-      await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Servidor**.', '❌ You need the **Manage Server** permission.'));
       return;
     }
     const channel = (message.mentions?.channels?.first() ?? message.guild.channels.cache.get(args[0] ?? '')) as never as { id: string } | undefined;
     if (!channel) {
-      await message.reply('❌ Menciona un canal: `cz!setupgoodbye #canal [mensaje]`');
+      await message.reply(tr(L, '❌ Menciona un canal: `cz!setupgoodbye #canal [mensaje]`', '❌ Mention a channel: `cz!setupgoodbye #channel [message]`'));
       return;
     }
     const msg = args.slice(1).join(' ') || 'Adiós {user}, que te vaya bien!';
@@ -143,19 +148,20 @@ const setupAutorole = (): BotCommand => ({
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
     .addRoleOption((o) => o.setName('rol').setDescription('Rol a asignar').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-      await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Servidor**.', '❌ You need the **Manage Server** permission.'));
       return;
     }
     if (args[0]?.toLowerCase() === 'off') {
       await updateGuildConfig(message.guild.id, { autorole_ids: [] });
-      await message.reply('✅ Autorol desactivado.');
+      await message.reply(tr(L, '✅ Autorol desactivado.', '✅ Autorole disabled.'));
       return;
     }
     const role = message.mentions?.roles?.first() ?? message.guild.roles.cache.get(args[0] ?? '');
     if (!role) {
-      await message.reply('❌ Menciona un rol: `cz!setupautorole <@rol|off>`');
+      await message.reply(tr(L, '❌ Menciona un rol: `cz!setupautorole <@rol|off>`', '❌ Mention a role: `cz!setupautorole <@role|off>`'));
       return;
     }
     const cfg = await updateGuildConfig(message.guild.id, { autorole_ids: [role.id] });
@@ -191,20 +197,21 @@ const setupCounters = (): BotCommand => ({
     )
     .addStringOption((o) => o.setName('nombre').setDescription('Nombre del canal con {n}').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (message.member && !message.member.permissions.has(PermissionFlagsBits.ManageGuild)) {
-      await message.reply('❌ Necesitas permiso de **Gestionar Servidor**.');
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Servidor**.', '❌ You need the **Manage Server** permission.'));
       return;
     }
     const type = (args[0] ?? '').toLowerCase();
     if (type === 'off' || args[0]?.toLowerCase() === 'off') {
       await updateGuildConfig(message.guild.id, { counters: [] });
-      await message.reply('✅ Contadores desactivados.');
+      await message.reply(tr(L, '✅ Contadores desactivados.', '✅ Counters disabled.'));
       return;
     }
     const valid = ['members', 'online', 'bots', 'humans', 'channels', 'roles'];
     if (!valid.includes(type)) {
-      await message.reply('❌ Uso: `cz!setupcounters <members|online|bots|humans|channels|roles> <nombre-con-{n}>`');
+      await message.reply(tr(L, '❌ Uso: `cz!setupcounters <members|online|bots|humans|channels|roles> <nombre-con-{n}>`', '❌ Usage: `cz!setupcounters <members|online|bots|humans|channels|roles> <name-with-{n}>`'));
       return;
     }
     const name = args.slice(1).join('-').replace('{n}', '0') || `${type}-0`;

@@ -2,6 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashComman
 import type { BotCommand } from '../types/command';
 import { BOT_COLORS, BOT_FOOTER, LINKS } from '../config/links';
 import { config } from '../config/index';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'status',
@@ -15,23 +16,24 @@ const command: BotCommand = {
     .setDescription('Muestra el estado en vivo del bot y su web'),
 
   async execute(message) {
+    const L = await langOf(message);
     const totalServers = message.client.guilds?.cache.size ?? 0;
     const totalUsers = message.client.guilds?.cache.reduce((acc, g) => acc + (g.memberCount ?? 0), 0) ?? 0;
     const uptime = formatUptime(message.client.uptime ?? 0);
 
     const embed = new EmbedBuilder()
       .setColor(BOT_COLORS.success)
-      .setTitle('📊 Estado de CiszuBot')
+      .setTitle(tr(L, '📊 Estado de CiszuBot', '📊 CiszuBot status'))
       .setDescription(
         `El bot está **en línea** y operativo. Estado en vivo disponible también en la web: ${LINKS.website}`,
       )
       .addFields(
-        { name: '🟢 Estado', value: 'Online', inline: true },
+        { name: tr(L, '🟢 Estado', '🟢 Status'), value: 'Online', inline: true },
         { name: '🏠 Servidores', value: String(totalServers), inline: true },
         { name: '👥 Usuarios', value: String(totalUsers), inline: true },
-        { name: '⏱️ Uptime', value: uptime, inline: true },
+        { name: tr(L, '⏱️ Uptime', '⏱️ Uptime'), value: uptime, inline: true },
         { name: '🏓 Latencia API', value: `${Math.round(message.client.ws.ping)}ms`, inline: true },
-        { name: '📦 Versión', value: config.version ?? 'v3.0.0', inline: true },
+        { name: tr(L, '📦 Versión', '📦 Version'), value: config.version ?? 'v3.0.0', inline: true },
       )
       .setFooter(BOT_FOOTER(`Solicitado por ${message.author.tag}`, message.client.user?.displayAvatarURL()))
       .setTimestamp();

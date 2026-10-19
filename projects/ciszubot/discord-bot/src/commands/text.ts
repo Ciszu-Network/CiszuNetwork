@@ -1,5 +1,6 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 function reverseText(text: string): string {
   return text.split('').reverse().join('');
@@ -57,10 +58,11 @@ const create = (): BotCommand => ({
     )
     .addStringOption((o) => o.setName('texto').setDescription('Texto a convertir').setRequired(true)),
   async execute(message, args) {
+    const L = await langOf(message);
     const style = (args[0] ?? '').toLowerCase();
     const text = args.slice(1).join(' ') || 'ejemplo';
     if (!['reverse', 'uwu', 'clap', 'bubble'].includes(style)) {
-      await message.reply('❌ Uso: `cz!text <reverse|uwu|clap|bubble> <texto>`');
+      await message.reply(tr(L, '❌ Uso: `cz!text <reverse|uwu|clap|bubble> <texto>`', '❌ Usage: `cz!text <reverse|uwu|clap|bubble> <text>`'));
       return;
     }
 

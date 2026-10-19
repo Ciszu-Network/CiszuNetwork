@@ -6,6 +6,7 @@ import { config } from '../config';
 import { BOT_ASSETS } from '../config/links';
 import { invalidateFlagsCache } from '../services/featureFlags';
 import { FEATURE_DEFS } from '../config/features';
+import { langOf, tr } from '../services/i18n';
 
 /** ID del dueño del ecosistema: siempre tiene acceso a la categoría secreta. */
 const OWNER_ID = '627304822017622016';
@@ -79,8 +80,9 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!(await hasSecretAccess(message))) {
-      await message.reply('🔒 Este comando no existe.');
+      await message.reply(tr(L, '🔒 Este comando no existe.', '🔒 This command does not exist.'));
       return;
     }
     if (!message.guild) return;
@@ -95,7 +97,7 @@ const command: BotCommand = {
       const mins = Math.floor((uptimeSec % 3600) / 60);
       const embed = new EmbedBuilder()
         .setColor('#8b5cf6')
-        .setTitle('🛰️ Estado real del bot')
+        .setTitle(tr(L, '🛰️ Estado real del bot', '🛰️ Bot real status'))
         .addFields(
           { name: 'Versión', value: `v${config.version}`, inline: true },
           { name: 'Uptime', value: `${days}d ${hours}h ${mins}m`, inline: true },
@@ -134,7 +136,7 @@ const command: BotCommand = {
       ]);
       const embed = new EmbedBuilder()
         .setColor('#8b5cf6')
-        .setTitle('📊 Estadísticas de la base de datos')
+        .setTitle(tr(L, '📊 Estadísticas de la base de datos', '📊 Database statistics'))
         .addFields(
           { name: '👛 Wallets', value: String(wallets), inline: true },
           { name: '📈 Niveles', value: String(levels), inline: true },
@@ -175,7 +177,7 @@ const command: BotCommand = {
       const targetGuild = (args[1] ?? '').trim();
       const action = (args[2] ?? '').toLowerCase();
       if (!/^\d{17,20}$/.test(targetGuild) || !['beta', 'premium', 'off'].includes(action)) {
-        await message.reply('❌ Uso: `cz!secret premium <guildId> beta|premium|off`.');
+        await message.reply(tr(L, '❌ Uso: `cz!secret premium <guildId> beta|premium|off`.', '❌ Usage: `cz!secret premium <guildId> beta|premium|off`.'));
         return;
       }
       if (action === 'off') {
@@ -198,7 +200,7 @@ const command: BotCommand = {
       const action = (args[1] ?? '').toLowerCase();
       const userId = (args[2] ?? '').trim();
       if ((action !== 'add' && action !== 'remove') || !/^\d{17,20}$/.test(userId)) {
-        await message.reply('❌ Uso: `cz!secret whitelist add|remove <userId>`.');
+        await message.reply(tr(L, '❌ Uso: `cz!secret whitelist add|remove <userId>`.', '❌ Usage: `cz!secret whitelist add|remove <userId>`.'));
         return;
       }
       const cfg = await getGuildConfig(guildId);
@@ -211,7 +213,7 @@ const command: BotCommand = {
       return;
     }
 
-    await message.reply('❌ Subcomandos: `status`, `config`, `stats`, `feature`, `premium`, `whitelist`.');
+    await message.reply(tr(L, '❌ Subcomandos: `status`, `config`, `stats`, `feature`, `premium`, `whitelist`.', '❌ Subcommands: `status`, `config`, `stats`, `feature`, `premium`, `whitelist`.'));
   },
 };
 

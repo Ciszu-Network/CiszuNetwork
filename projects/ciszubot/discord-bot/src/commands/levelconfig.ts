@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 /** Niveles reales: mensaje personalizado + roles por nivel. */
 const command: BotCommand = {
@@ -44,6 +45,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -52,7 +54,7 @@ const command: BotCommand = {
     const statusEmbed = () =>
       new EmbedBuilder()
         .setColor(cfg.leveling_enabled ? '#22c55e' : '#6b7280')
-        .setTitle('📈 Niveles')
+        .setTitle(tr(L, '📈 Niveles', '📈 Levels'))
         .setDescription(
           `**Estado:** ${cfg.leveling_enabled ? '✅ Activado' : '⛔ Desactivado'}\n` +
             `**Canal de anuncios:** ${cfg.level_channel_id ? `<#${cfg.level_channel_id}>` : 'el mismo canal'}\n` +
@@ -91,12 +93,12 @@ const command: BotCommand = {
       const raw = (args[1] ?? '').toLowerCase();
       if (raw === 'off') {
         await updateGuildConfig(guildId, { level_channel_id: null });
-        await message.reply('✅ Los anuncios de nivel se enviarán en el mismo canal del mensaje.');
+        await message.reply(tr(L, '✅ Los anuncios de nivel se enviarán en el mismo canal del mensaje.', '✅ Level announcements will be sent in the same channel as the message.'));
         return;
       }
       const channelId = message.mentions?.channels?.first()?.id;
       if (!channelId) {
-        await message.reply('❌ Uso: `cz!levelconfig channel #canal` o `cz!levelconfig channel off`.');
+        await message.reply(tr(L, '❌ Uso: `cz!levelconfig channel #canal` o `cz!levelconfig channel off`.', '❌ Usage: `cz!levelconfig channel #channel` or `cz!levelconfig channel off`.'));
         return;
       }
       await updateGuildConfig(guildId, { level_channel_id: channelId });
@@ -107,7 +109,7 @@ const command: BotCommand = {
     if (sub === 'xp') {
       const rate = parseInt(args[1] ?? '', 10);
       if (isNaN(rate) || rate < 1 || rate > 10) {
-        await message.reply('❌ Uso: `cz!levelconfig xp <1-10>`.');
+        await message.reply(tr(L, '❌ Uso: `cz!levelconfig xp <1-10>`.', '❌ Usage: `cz!levelconfig xp <1-10>`.'));
         return;
       }
       await updateGuildConfig(guildId, { xp_rate: rate });
@@ -118,12 +120,12 @@ const command: BotCommand = {
     if (sub === 'message') {
       const text = args.slice(1).join(' ').trim();
       if (!text) {
-        await message.reply('❌ Uso: `cz!levelconfig message <texto>` (variables: `{user}` `{level}` `{guild}`) o `reset`.');
+        await message.reply(tr(L, '❌ Uso: `cz!levelconfig message <texto>` (variables: `{user}` `{level}` `{guild}`) o `reset`.', '❌ Usage: `cz!levelconfig message <text>` (variables: `{user}` `{level}` `{guild}`) or `reset`.'));
         return;
       }
-      const value = text.toLowerCase() === 'reset' ? '🎉 ¡{user} subió al nivel {level} en {guild}!' : text.slice(0, 500);
+      const value = text.toLowerCase() === 'reset' ? tr(L, '🎉 ¡{user} subió al nivel {level} en {guild}!', '🎉 {user} reached level {level} in {guild}!') : text.slice(0, 500);
       await updateGuildConfig(guildId, { level_message: value });
-      await message.reply('✅ Mensaje de subida de nivel guardado.');
+      await message.reply(tr(L, '✅ Mensaje de subida de nivel guardado.', '✅ Level-up message saved.'));
       return;
     }
 
@@ -131,7 +133,7 @@ const command: BotCommand = {
       const level = parseInt(args[1] ?? '', 10);
       const roleId = message.mentions?.roles?.first()?.id;
       if (isNaN(level) || level < 1 || !roleId) {
-        await message.reply('❌ Uso: `cz!levelconfig role <nivel> @rol` (si ya existe ese nivel, se reemplaza).');
+        await message.reply(tr(L, '❌ Uso: `cz!levelconfig role <nivel> @rol` (si ya existe ese nivel, se reemplaza).', '❌ Usage: `cz!levelconfig role <level> @role` (if that level exists, it is replaced).'));
         return;
       }
       const roles = [...cfg.level_roles.filter((r) => r.level !== level), { level, role_id: roleId }];
@@ -140,7 +142,7 @@ const command: BotCommand = {
       return;
     }
 
-    await message.reply('❌ Subcomandos: `status`, `on`, `off`, `channel`, `xp`, `message`, `role`.');
+    await message.reply(tr(L, '❌ Subcomandos: `status`, `on`, `off`, `channel`, `xp`, `message`, `role`.', '❌ Subcommands: `status`, `on`, `off`, `channel`, `xp`, `message`, `role`.'));
   },
 };
 
