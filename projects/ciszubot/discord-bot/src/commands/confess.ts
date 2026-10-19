@@ -1,5 +1,6 @@
-import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { EmbedBuilder, SlashCommandBuilder, TextChannel } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { getGuildConfig } from '../services/configService';
 
 const command: BotCommand = {
   name: 'confess',
@@ -36,7 +37,16 @@ const command: BotCommand = {
       .setFooter({ text: 'CiszuBot', iconURL: message.client.user?.displayAvatarURL() })
       .setTimestamp();
 
-    await message.channel?.send({ embeds: [embed] });
+    // Canal de confesiones configurado (dashboard → Confesiones); si no, el actual.
+    let targetChannel = message.channel as TextChannel | null;
+    if (message.guild) {
+      const cfg = await getGuildConfig(message.guild.id);
+      if (cfg.confess_channel_id) {
+        const configured = message.guild.channels.cache.get(cfg.confess_channel_id) as TextChannel | undefined;
+        if (configured && configured.isTextBased()) targetChannel = configured;
+      }
+    }
+    await targetChannel?.send({ embeds: [embed] });
 
     if (message.guild) {
       try {

@@ -6,7 +6,7 @@ const command: BotCommand = {
   description: 'Muestra información detallada del usuario',
   aliases: ['perfil', 'usuario', 'info-usuario', 'userinfo', 'u', 'perfil-usuario'],
   usage: 'cz!profile [@usuario]',
-  category: 'Información',
+  category: 'Social',
 
   slashCommand: new SlashCommandBuilder()
     .setName('profile')

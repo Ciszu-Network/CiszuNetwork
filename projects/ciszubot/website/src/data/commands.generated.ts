@@ -322,6 +322,16 @@ export const COMMANDS: CommandInfo[] = [
     tags: ["social","present","presenta","usuario","tarjeta","publica"],
   },
   {
+    name: 'profile',
+    description: 'Muestra información detallada del usuario',
+    aliases: ["perfil","usuario","info-usuario","userinfo","u","perfil-usuario"],
+    usage: 'cz!profile [@usuario]',
+    category: 'Social',
+    icon: 'people',
+    premium: false,
+    tags: ["social","profile","muestra","informacion","detallada","usuario"],
+  },
+  {
     name: 'whoiam',
     description: 'Tu tarjeta de perfil en este servidor',
     aliases: ["quiensoy","quien-soy","perfil"],
@@ -573,16 +583,6 @@ export const COMMANDS: CommandInfo[] = [
     icon: 'info',
     premium: false,
     tags: ["información","premium","informacion","activacion","ciszubot"],
-  },
-  {
-    name: 'profile',
-    description: 'Muestra información detallada del usuario',
-    aliases: ["perfil","usuario","info-usuario","userinfo","u","perfil-usuario"],
-    usage: 'cz!profile [@usuario]',
-    category: 'Información',
-    icon: 'info',
-    premium: false,
-    tags: ["información","profile","muestra","informacion","detallada","usuario"],
   },
   {
     name: 'serverinfo',

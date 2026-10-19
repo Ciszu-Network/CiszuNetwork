@@ -161,6 +161,7 @@ const guildConfigPatchSchema = z.object({
   nsfw_autopost_enabled: z.boolean().optional(),
   nsfw_autopost_minutes: z.number().int().min(15).max(10080).optional(),
   nsfw_commands_enabled: z.boolean().optional(),
+  confess_channel_id: z.string().max(32).nullable().optional(),
   marriage_enabled: z.boolean().optional(),
   marriage_allow_admin_pairs: z.boolean().optional(),
   command_global_cooldown: z.number().int().min(0).max(60).optional(),
@@ -291,6 +292,7 @@ interface GuildConfig {
   nsfw_autopost_enabled?: boolean;
   nsfw_autopost_minutes?: number;
   nsfw_commands_enabled?: boolean;
+  confess_channel_id?: string | null;
   marriage_enabled?: boolean;
   marriage_allow_admin_pairs?: boolean;
   command_global_cooldown?: number;
@@ -379,7 +381,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   }
   const body = parsed.data as Partial<GuildConfig>;
   const allowed: Record<string, unknown> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id'];
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id', 'confess_channel_id'];
   const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed', 'autoposts_enabled', 'nsfw_enabled', 'nsfw_autopost_enabled', 'nsfw_commands_enabled'];
 
   for (const key of stringFields) {
@@ -593,6 +595,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     nsfw_autopost_enabled: 'nsfwAutopostEnabled',
     nsfw_autopost_minutes: 'nsfwAutopostMinutes',
     nsfw_commands_enabled: 'nsfwCommandsEnabled',
+    confess_channel_id: 'confessChannelId',
     marriage_excluded_role_ids: 'marriageExcludedRoleIds',
     nitro_repost_mode: 'nitroRepostMode',
     nitro_excluded_role_ids: 'nitroExcludedRoleIds',

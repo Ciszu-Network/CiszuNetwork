@@ -111,6 +111,7 @@ export const guildConfigs = ciszubot.table(
     nsfwAutopostEnabled: boolean('nsfw_autopost_enabled').notNull().default(false),
     nsfwAutopostMinutes: integer('nsfw_autopost_minutes').notNull().default(60),
     nsfwCommandsEnabled: boolean('nsfw_commands_enabled').notNull().default(false),
+    confessChannelId: text('confess_channel_id'),
     marriageExcludedRoleIds: jsonb('marriage_excluded_role_ids').notNull().default([]),
     nitroRepostMode: text('nitro_repost_mode').notNull().default('auto'),
     nitroExcludedRoleIds: jsonb('nitro_excluded_role_ids').notNull().default([]),

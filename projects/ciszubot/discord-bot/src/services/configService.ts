@@ -164,6 +164,7 @@ export interface GuildConfig {
   nsfw_autopost_enabled: boolean;
   nsfw_autopost_minutes: number;
   nsfw_commands_enabled: boolean;
+  confess_channel_id: string | null;
   marriage_excluded_role_ids: string[];
   nitro_repost_mode: 'auto' | 'manual';
   nitro_excluded_role_ids: string[];
@@ -273,6 +274,7 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   nsfw_autopost_enabled: false,
   nsfw_autopost_minutes: 60,
   nsfw_commands_enabled: false,
+  confess_channel_id: null,
   marriage_excluded_role_ids: [],
   nitro_repost_mode: 'auto',
   nitro_excluded_role_ids: [],
@@ -400,6 +402,7 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         nsfw_autopost_enabled: data.nsfwAutopostEnabled ?? DEFAULTS.nsfw_autopost_enabled,
         nsfw_autopost_minutes: data.nsfwAutopostMinutes ?? DEFAULTS.nsfw_autopost_minutes,
         nsfw_commands_enabled: data.nsfwCommandsEnabled ?? DEFAULTS.nsfw_commands_enabled,
+        confess_channel_id: data.confessChannelId ?? DEFAULTS.confess_channel_id,
         marriage_excluded_role_ids: asArray(data.marriageExcludedRoleIds, DEFAULTS.marriage_excluded_role_ids),
         nitro_repost_mode: (data.nitroRepostMode as 'auto' | 'manual') ?? DEFAULTS.nitro_repost_mode,
         nitro_excluded_role_ids: asArray(data.nitroExcludedRoleIds, DEFAULTS.nitro_excluded_role_ids),
@@ -502,6 +505,7 @@ export async function updateGuildConfig(
     nsfwAutopostEnabled: merged.nsfw_autopost_enabled,
     nsfwAutopostMinutes: merged.nsfw_autopost_minutes,
     nsfwCommandsEnabled: merged.nsfw_commands_enabled,
+    confessChannelId: merged.confess_channel_id,
     marriageExcludedRoleIds: merged.marriage_excluded_role_ids,
     nitroRepostMode: merged.nitro_repost_mode,
     nitroExcludedRoleIds: merged.nitro_excluded_role_ids,

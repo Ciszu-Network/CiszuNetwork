@@ -101,6 +101,7 @@ interface GuildConfig {
   nsfw_autopost_enabled?: boolean;
   nsfw_autopost_minutes?: number;
   nsfw_commands_enabled?: boolean;
+  confess_channel_id?: string | null;
   marriage_excluded_role_ids?: string[];
   nitro_repost_mode?: 'auto' | 'manual';
   nitro_excluded_role_ids?: string[];
@@ -171,11 +172,11 @@ const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPag
     { slug: 'minigame_8ball', labelKey: 'feat8ball', descKey: 'feat8ballDesc' },
   ],
   social: [
+    { slug: 'util_profile', labelKey: 'utilProfile', descKey: 'utilProfileDesc' },
     { slug: 'social_afk', labelKey: 'socialAfk', descKey: 'socialAfkDesc' },
     { slug: 'social_marriage', labelKey: 'socialMarriage', descKey: 'socialMarriageDesc' },
   ],
   utility: [
-    { slug: 'util_profile', labelKey: 'utilProfile', descKey: 'utilProfileDesc' },
     { slug: 'util_avatar', labelKey: 'utilAvatar', descKey: 'utilAvatarDesc' },
     { slug: 'util_animal', labelKey: 'utilAnimal', descKey: 'utilAnimalDesc' },
     { slug: 'util_serverinfo', labelKey: 'utilServerinfo', descKey: 'utilServerinfoDesc' },
@@ -927,6 +928,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         nsfw_autopost_enabled: cfg?.nsfw_autopost_enabled ?? false,
         nsfw_autopost_minutes: cfg?.nsfw_autopost_minutes ?? 60,
         nsfw_commands_enabled: cfg?.nsfw_commands_enabled ?? false,
+        confess_channel_id: cfg?.confess_channel_id ?? null,
         marriage_excluded_role_ids: Array.isArray(cfg?.marriage_excluded_role_ids) ? cfg.marriage_excluded_role_ids : [],
         nitro_repost_mode: cfg?.nitro_repost_mode ?? 'auto',
         nitro_excluded_role_ids: Array.isArray(cfg?.nitro_excluded_role_ids) ? cfg.nitro_excluded_role_ids : [],
@@ -1873,6 +1875,30 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     />
                   </div>
                 ))}
+              </div>
+            )}
+
+            {/* Confesiones: canal destino configurable (vista Misceláneo). */}
+            {activeFeature.slug === 'misc' && config.features?.['misc'] !== false && config.features?.['misc_confess'] !== false && (
+              <div className="mt-4 ml-2 border-l-2 border-neon-pink/30 pl-4">
+                {hasGuildData ? (
+                  <SelectField
+                    label={t.confessChannelLabel}
+                    value={config.confess_channel_id ?? null}
+                    placeholder={t.pickChannel}
+                    options={textChannelOptions}
+                    onChange={(v) => update({ confess_channel_id: v })}
+                  />
+                ) : (
+                  <Field label={t.confessChannelLabel} hint={t.manualIdHint}>
+                    <input
+                      className={inputCls}
+                      value={config.confess_channel_id ?? ''}
+                      onChange={(e) => update({ confess_channel_id: e.target.value || null })}
+                    />
+                  </Field>
+                )}
+                <p className="mt-2 text-[10px] text-white/35">{t.confessChannelHint}</p>
               </div>
             )}
 
