@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
 import { db, ciszubotSchema, eq, and } from '../services/supabase';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'privatevc',
@@ -39,6 +40,7 @@ const command: BotCommand = {
     .addSubcommand((s) => s.setName('status').setDescription('Muestra la configuración')),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -58,19 +60,19 @@ const command: BotCommand = {
     if (sub === 'rename' || sub === 'limit' || sub === 'delete') {
       const channel = await ownChannel();
       if (!channel) {
-        await message.reply('❌ No tienes un canal privado activo.');
+        await message.reply(tr(L, '❌ No tienes un canal privado activo.', '❌ You do not have an active private channel.'));
         return;
       }
       if (sub === 'delete') {
         await db.delete(ciszubotSchema.privateChannels).where(eq(ciszubotSchema.privateChannels.channelId, channel.id));
         await channel.delete('Canal privado cerrado por su dueño').catch(() => undefined);
-        await message.reply('✅ Tu canal privado fue eliminado.');
+        await message.reply(tr(L, '✅ Tu canal privado fue eliminado.', '✅ Your private channel was deleted.'));
         return;
       }
       if (sub === 'rename') {
         const name = args.slice(1).join(' ').trim().slice(0, 90);
         if (!name) {
-          await message.reply('❌ Uso: `cz!privatevc rename <nombre>`.');
+          await message.reply(tr(L, '❌ Uso: `cz!privatevc rename <nombre>`.', '❌ Usage: `cz!privatevc rename <name>`.'));
           return;
         }
         await channel.setName(name).catch(() => undefined);
@@ -79,11 +81,11 @@ const command: BotCommand = {
       }
       const limit = parseInt(args[1] ?? '', 10);
       if (isNaN(limit) || limit < 0 || limit > 99) {
-        await message.reply('❌ Uso: `cz!privatevc limit <0-99>` (0 = sin límite).');
+        await message.reply(tr(L, '❌ Uso: `cz!privatevc limit <0-99>` (0 = sin límite).', '❌ Usage: `cz!privatevc limit <0-99>` (0 = no limit).'));
         return;
       }
       if (channel.type !== ChannelType.GuildVoice) {
-        await message.reply('❌ Tu canal privado no es de voz.');
+        await message.reply(tr(L, '❌ Tu canal privado no es de voz.', '❌ Your private channel is not a voice channel.'));
         return;
       }
       await (channel as VoiceChannel).setUserLimit(limit).catch(() => undefined);
@@ -94,7 +96,7 @@ const command: BotCommand = {
     if (!sub || sub === 'status') {
       const embed = new EmbedBuilder()
         .setColor(cfg.private_vc_hub_id ? '#22c55e' : '#6b7280')
-        .setTitle('🔒 Canales de voz privados')
+        .setTitle(tr(L, '🔒 Canales de voz privados', '🔒 Private voice channels'))
         .setDescription(
           `**Estado:** ${cfg.private_vc_hub_id ? '✅ Activados' : '⛔ Desactivados'}\n` +
             `**Hub:** ${cfg.private_vc_hub_id ? `<#${cfg.private_vc_hub_id}>` : 'no configurado'}\n` +
@@ -115,14 +117,14 @@ const command: BotCommand = {
 
     if (sub === 'off') {
       await updateGuildConfig(guildId, { private_vc_hub_id: null });
-      await message.reply('✅ Canales privados desactivados.');
+      await message.reply(tr(L, '✅ Canales privados desactivados.', '✅ Private channels disabled.'));
       return;
     }
 
     if (sub === 'setup') {
       const hubId = message.mentions?.channels?.first()?.id;
       if (!hubId) {
-        await message.reply('❌ Uso: `cz!privatevc setup #hub [@categoría]`.');
+        await message.reply(tr(L, '❌ Uso: `cz!privatevc setup #hub [@categoría]`.', '❌ Usage: `cz!privatevc setup #hub [@category]`.'));
         return;
       }
       const category = message.mentions?.channels?.find?.((c) => c.type === ChannelType.GuildCategory)?.id;
@@ -135,7 +137,7 @@ const command: BotCommand = {
       return;
     }
 
-    await message.reply('❌ Subcomandos: `setup`, `off`, `rename`, `limit`, `delete`, `status`.');
+    await message.reply(tr(L, '❌ Subcomandos: `setup`, `off`, `rename`, `limit`, `delete`, `status`.', '❌ Subcommands: `setup`, `off`, `rename`, `limit`, `delete`, `status`.'));
   },
 };
 

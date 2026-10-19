@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { LINKS, BOT_COLORS, BOT_FOOTER, BOT_ASSETS } from '../config/links';
 import { isPremiumBeta, isPremiumGuild } from '../services/featureFlags';
 import { db, ciszubotSchema, eq, sql } from '../services/supabase';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'premium',
@@ -32,6 +33,7 @@ const command: BotCommand = {
     .addSubcommand((s) => s.setName('deactivate').setDescription('Desactiva Premium en este servidor (solo admins)')),
 
   async execute(message, args) {
+    const L = await langOf(message);
     const beta = await isPremiumBeta();
     const sub = (args[0] ?? '').toLowerCase();
 
@@ -48,7 +50,7 @@ const command: BotCommand = {
       const row = rows[0];
       const embed = new EmbedBuilder()
         .setColor(active ? '#22c55e' : '#6b7280')
-        .setTitle('⭐ Premium de este servidor')
+        .setTitle(tr(L, '⭐ Premium de este servidor', '⭐ This server\'s Premium'))
         .setDescription(
           `**Estado:** ${active ? '✅ Activo' : '⛔ No activo'}\n` +
             `**Plan:** ${row?.plan ?? '—'}\n` +
@@ -64,12 +66,12 @@ const command: BotCommand = {
     if (sub === 'activate' || sub === 'deactivate') {
       if (!message.guild) return;
       if (!isAdmin) {
-        await message.reply('❌ Solo los administradores pueden gestionar el Premium del servidor.');
+        await message.reply(tr(L, '❌ Solo los administradores pueden gestionar el Premium del servidor.', '❌ Only administrators can manage the server Premium.'));
         return;
       }
       if (sub === 'deactivate') {
         await db.delete(ciszubotSchema.premiumGuilds).where(eq(ciszubotSchema.premiumGuilds.guildId, message.guild.id));
-        await message.reply('✅ Premium desactivado en este servidor.');
+        await message.reply(tr(L, '✅ Premium desactivado en este servidor.', '✅ Premium disabled on this server.'));
         return;
       }
       const plan = (args[1] ?? '').toLowerCase() === 'premium' ? 'premium' : 'beta';
@@ -82,7 +84,7 @@ const command: BotCommand = {
         });
       const embed = new EmbedBuilder()
         .setColor('#fbbf24')
-        .setTitle('⭐ ¡Premium activado!')
+        .setTitle(tr(L, '⭐ ¡Premium activado!', '⭐ Premium activated!'))
         .setDescription(
           `El plan **${plan}** quedó activo para **todo el servidor**.\n\n` +
             'Funciones desbloqueadas: música, búsqueda, embeds personalizados, drops ilimitados y más.',
@@ -95,7 +97,7 @@ const command: BotCommand = {
 
     const embed = new EmbedBuilder()
       .setColor('#fbbf24')
-      .setTitle('⭐ CiszuBot Premium')
+      .setTitle(tr(L, '⭐ CiszuBot Premium', '⭐ CiszuBot Premium'))
       .setThumbnail(BOT_ASSETS.isotype)
       .setImage(BOT_ASSETS.banner)
       .setDescription(
@@ -109,7 +111,7 @@ const command: BotCommand = {
 
     if (beta) {
       embed.addFields({
-        name: '🧪 BETA — gratis por ahora',
+        name: tr(L, '🧪 BETA — gratis por ahora', '🧪 BETA — free for now'),
         value: 'Todas las funciones premium son **gratis** durante la beta. ¡Disfrútalas sin costo!',
       });
     }

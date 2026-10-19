@@ -3,6 +3,7 @@ import type { BotCommand, SimulatedMessage } from '../types/command';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
 import { db, ciszubotSchema, eq, and, desc, sql } from '../services/supabase';
+import { langOf, tr } from '../services/i18n';
 
 async function countInvites(guildId: string, userId: string): Promise<number> {
   const rows = await db
@@ -38,6 +39,7 @@ const command: BotCommand = {
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(false)),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -50,7 +52,7 @@ const command: BotCommand = {
       }
       const points = parseInt(args[1] ?? '', 10);
       if (isNaN(points) || points < 1 || points > 100) {
-        await message.reply('❌ Uso: `cz!invites points <1-100>` (puntos por invitación válida).');
+        await message.reply(tr(L, '❌ Uso: `cz!invites points <1-100>` (puntos por invitación válida).', '❌ Usage: `cz!invites points <1-100>` (points per valid invite).'));
         return;
       }
       await updateGuildConfig(guildId, { invite_points_per: points });
@@ -66,7 +68,7 @@ const command: BotCommand = {
       if ((args[1] ?? '').toLowerCase() === 'remove') {
         const threshold = parseInt(args[2] ?? '', 10);
         if (isNaN(threshold)) {
-          await message.reply('❌ Uso: `cz!invites reward remove <n>`.');
+          await message.reply(tr(L, '❌ Uso: `cz!invites reward remove <n>`.', '❌ Usage: `cz!invites reward remove <n>`.'));
           return;
         }
         const rewards = cfg.invite_rewards.filter((r) => r.invites !== threshold);
@@ -77,7 +79,7 @@ const command: BotCommand = {
       const threshold = parseInt(args[1] ?? '', 10);
       const roleId = message.mentions?.roles?.first()?.id;
       if (isNaN(threshold) || threshold < 1 || !roleId) {
-        await message.reply('❌ Uso: `cz!invites reward <n> @rol` (ej: `cz!invites reward 10 @Activo`).');
+        await message.reply(tr(L, '❌ Uso: `cz!invites reward <n> @rol` (ej: `cz!invites reward 10 @Activo`).', '❌ Usage: `cz!invites reward <n> @role` (e.g.: `cz!invites reward 10 @Active`).'));
         return;
       }
       const rewards = [...cfg.invite_rewards.filter((r) => r.invites !== threshold), { invites: threshold, role_id: roleId }];
@@ -93,7 +95,7 @@ const command: BotCommand = {
       }
       const target = message.mentions?.users?.first();
       if (!target) {
-        await message.reply('❌ Uso: `cz!invites reset @usuario`.');
+        await message.reply(tr(L, '❌ Uso: `cz!invites reset @usuario`.', '❌ Usage: `cz!invites reset @user`.'));
         return;
       }
       await db
@@ -118,7 +120,7 @@ const command: BotCommand = {
 
     if (top.length > 0) {
       embed.addFields({
-        name: '🏆 Top invitadores',
+        name: tr(L, '🏆 Top invitadores', '🏆 Top inviters'),
         value: top
           .map((t, i) => `**${i + 1}.** <@${t.userId}> — ${t.total} punto(s)`)
           .join('\n')
@@ -128,7 +130,7 @@ const command: BotCommand = {
     }
     if (cfg.invite_rewards.length > 0) {
       embed.addFields({
-        name: '🎁 Recompensas',
+        name: tr(L, '🎁 Recompensas', '🎁 Rewards'),
         value: cfg.invite_rewards
           .sort((a, b) => a.invites - b.invites)
           .map((r) => `${r.invites} invitaciones → <@&${r.role_id}>`)

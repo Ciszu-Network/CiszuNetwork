@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'nitro',
@@ -18,6 +19,7 @@ const command: BotCommand = {
     .addSubcommand((s) => s.setName('status').setDescription('Muestra el estado')),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -26,7 +28,7 @@ const command: BotCommand = {
     if (!sub || sub === 'status') {
       const embed = new EmbedBuilder()
         .setColor(cfg.nitro_repost_enabled ? '#22c55e' : '#6b7280')
-        .setTitle('✨ Emojis Nitro')
+        .setTitle(tr(L, '✨ Emojis Nitro', '✨ Nitro emojis'))
         .setDescription(
           `**Estado:** ${cfg.nitro_repost_enabled ? '✅ Activado' : '⛔ Desactivado'}\n\n` +
             'Cuando alguien usa un emoji externo que el bot no puede usar, el bot reenvía su mensaje ' +
@@ -50,7 +52,7 @@ const command: BotCommand = {
       return;
     }
 
-    await message.reply('❌ Subcomandos: `on`, `off`, `status`.');
+    await message.reply(tr(L, '❌ Subcomandos: `on`, `off`, `status`.', '❌ Subcommands: `on`, `off`, `status`.'));
   },
 };
 

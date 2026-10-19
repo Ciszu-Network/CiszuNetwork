@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.
 import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 const TYPES = ['members', 'bots', 'humans', 'channels', 'roles', 'online'] as const;
 
@@ -43,6 +44,7 @@ const command: BotCommand = {
     .addSubcommand((s) => s.setName('list').setDescription('Lista los contadores')),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -51,7 +53,7 @@ const command: BotCommand = {
     const listEmbed = () =>
       new EmbedBuilder()
         .setColor('#00d4ff')
-        .setTitle('📊 Contadores del servidor')
+        .setTitle(tr(L, '📊 Contadores del servidor', '📊 Server counters'))
         .setDescription(
           cfg.counters.length > 0
             ? cfg.counters.map((c) => `• **${c.type}** → <#${c.channel_id}>`).join('\n')
@@ -90,7 +92,7 @@ const command: BotCommand = {
       return;
     }
 
-    await message.reply('❌ Subcomandos: `add`, `remove`, `list`.');
+    await message.reply(tr(L, '❌ Subcomandos: `add`, `remove`, `list`.', '❌ Subcommands: `add`, `remove`, `list`.'));
   },
 };
 

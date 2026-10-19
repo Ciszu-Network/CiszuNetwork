@@ -1,6 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { BOT_COLORS, BOT_FOOTER, LINKS } from '../config/links';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'bump',
@@ -14,20 +15,21 @@ const command: BotCommand = {
     .setDescription('Bumpea y promociona el servidor en las listas de Discord'),
 
   async execute(message) {
+    const L = await langOf(message);
     const embed = new EmbedBuilder()
       .setColor(BOT_COLORS.secondary)
-      .setTitle('🚀 Bump del servidor')
+      .setTitle(tr(L, '🚀 Bump del servidor', '🚀 Server bump'))
       .setDescription(
         'Ayuda a que nuestro servidor crezca bumpeándolo en las listas de servidores. Cada bump lo posiciona mejor y lo muestra a más gente.',
       )
       .addFields(
         {
-          name: '📣 Disboard',
+          name: tr(L, '📣 Disboard', '📣 Disboard'),
           value: 'Haz clic en el botón para abrir el servidor en Disboard y usar su bump (o usa el bot de Disboard con `!d bump` dentro del servidor).',
           inline: false,
         },
         {
-          name: '⭐ Top.gg',
+          name: tr(L, '⭐ Top.gg', '⭐ Top.gg'),
           value: 'Vota y comparte nuestro servidor en Top.gg para conseguir más visibilidad.',
           inline: false,
         },

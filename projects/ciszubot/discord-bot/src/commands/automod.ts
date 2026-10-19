@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig, AutomodConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 const FLAGS: Array<keyof Omit<AutomodConfig, 'words'>> = ['links', 'invites', 'caps', 'spam', 'flood'];
 
@@ -45,6 +46,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -54,7 +56,7 @@ const command: BotCommand = {
     const statusEmbed = () =>
       new EmbedBuilder()
         .setColor(cfg.automod_enabled ? '#22c55e' : '#6b7280')
-        .setTitle('🛡️ Automod')
+        .setTitle(tr(L, '🛡️ Automod', '🛡️ Automod'))
         .setDescription(
           `**Estado:** ${cfg.automod_enabled ? '✅ Activado' : '⛔ Desactivado'}\n\n` +
             FLAGS.map((f) => `${am[f] ? '✅' : '⬜'} **${f}**`).join('\n') +
@@ -95,7 +97,7 @@ const command: BotCommand = {
       const action = (args[1] ?? '').toLowerCase();
       const word = args.slice(2).join(' ').trim().toLowerCase();
       if ((action !== 'add' && action !== 'remove') || !word) {
-        await message.reply('❌ Uso: `cz!automod word add|remove <palabra>`.');
+        await message.reply(tr(L, '❌ Uso: `cz!automod word add|remove <palabra>`.', '❌ Usage: `cz!automod word add|remove <word>`.'));
         return;
       }
       const words =
@@ -107,7 +109,7 @@ const command: BotCommand = {
       return;
     }
 
-    await message.reply('❌ Subcomandos: `status`, `on`, `off`, `links|invites|caps|spam on|off`, `word add|remove`.');
+    await message.reply(tr(L, '❌ Subcomandos: `status`, `on`, `off`, `links|invites|caps|spam on|off`, `word add|remove`.', '❌ Subcommands: `status`, `on`, `off`, `links|invites|caps|spam on|off`, `word add|remove`.'));
   },
 };
 

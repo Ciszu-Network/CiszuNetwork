@@ -1,5 +1,6 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 const TYPES: Record<string, string> = {
   cat: 'https://cataas.com/cat',
@@ -25,9 +26,10 @@ const create = (): BotCommand => ({
         .setRequired(false)
     ),
   async execute(message, args) {
+    const L = await langOf(message);
     const type = (args[0] ?? '').toLowerCase();
     if (!TYPES[type]) {
-      await message.reply('❌ Uso: `cz!animal <cat|dog|fox|duck>`');
+      await message.reply(tr(L, '❌ Uso: `cz!animal <cat|dog|fox|duck>`', '❌ Usage: `cz!animal <cat|dog|fox|duck>`'));
       return;
     }
     try {
@@ -46,7 +48,7 @@ const create = (): BotCommand => ({
         .setTimestamp();
       await message.reply({ embeds: [embed] });
     } catch {
-      await message.reply('❌ No pude obtener una imagen, inténtalo de nuevo.');
+      await message.reply(tr(L, '❌ No pude obtener una imagen, inténtalo de nuevo.', '❌ I could not fetch an image, try again.'));
     }
   },
 });

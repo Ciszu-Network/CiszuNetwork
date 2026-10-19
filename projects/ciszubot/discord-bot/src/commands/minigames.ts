@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { randomBetween } from '../services/economy';
+import { langOf, tr } from '../services/i18n';
 
 const dice = (): BotCommand => ({
   name: 'dice',
@@ -10,11 +11,12 @@ const dice = (): BotCommand => ({
   category: 'Diversión',
   slashCommand: new SlashCommandBuilder().setName('dice').setDescription('Lanza un dado (1-6)'),
   async execute(message) {
+    const L = await langOf(message);
     const value = randomBetween(1, 6);
     const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
-      .setTitle('🎲 ¡Lanzaste el dado!')
+      .setTitle(tr(L, '🎲 ¡Lanzaste el dado!', '🎲 You rolled the dice!'))
       .setDescription(`${faces[value - 1]} Te salió el **${value}**.`)
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() });
     await message.reply({ embeds: [embed] });
@@ -38,6 +40,7 @@ const rps = (): BotCommand => ({
         .setRequired(true)
     ),
   async execute(message, args) {
+    const L = await langOf(message);
     const options = ['piedra', 'papel', 'tijeras'] as const;
     const emojis = { piedra: '🪨', papel: '📄', tijeras: '✂️' } as const;
     // Acepta español E inglés (multilingüe): el idioma del servidor no limita
@@ -53,17 +56,17 @@ const rps = (): BotCommand => ({
     };
     const player = aliases[(args[0] ?? '').toLowerCase()] as 'piedra' | 'papel' | 'tijeras' | undefined;
     if (!player) {
-      await message.reply('❌ Uso: `cz!rps <piedra|papel|tijeras>` · `cz!rps <rock|paper|scissors>`');
+      await message.reply(tr(L, '❌ Uso: `cz!rps <piedra|papel|tijeras>` · `cz!rps <rock|paper|scissors>`', '❌ Usage: `cz!rps <rock|paper|scissors>` · `cz!rps <piedra|papel|tijeras>`'));
       return;
     }
     const botChoice = options[randomBetween(0, 2)];
     const result =
       player === botChoice
-        ? '🤝 ¡Empate!'
+        ? tr(L, '🤝 ¡Empate!', '🤝 It\'s a tie!')
         : (player === 'piedra' && botChoice === 'tijeras') ||
           (player === 'papel' && botChoice === 'piedra') ||
           (player === 'tijeras' && botChoice === 'papel')
-          ? '🎉 ¡Ganaste!'
+          ? tr(L, '🎉 ¡Ganaste!', '🎉 You won!')
           : '😢 Perdiste...';
 
     const embed = new EmbedBuilder()
@@ -83,6 +86,7 @@ const rate = (): BotCommand => ({
   category: 'Diversión',
   slashCommand: new SlashCommandBuilder().setName('rate').setDescription('Rating aleatorio'),
   async execute(message, args) {
+    const L = await langOf(message);
     const thing = args.join(' ') || 'tu día';
     const value = randomBetween(0, 100);
     const embed = new EmbedBuilder()

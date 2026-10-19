@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { db, ciszubotSchema, eq, and, or } from '../services/supabase';
 import { setProposal } from '../services/proposals';
 import { getGuildConfig } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 async function findMarriage(guildId: string, userId: string) {
   const m = ciszubotSchema.marriages;
@@ -26,19 +27,20 @@ const marry: BotCommand = {
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(true)),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const target = message.mentions?.users?.first();
     if (!target) {
-      await message.reply('❌ Uso: `cz!marry @usuario`.');
+      await message.reply(tr(L, '❌ Uso: `cz!marry @usuario`.', '❌ Usage: `cz!marry @user`.'));
       return;
     }
     if (target.id === message.author.id) {
-      await message.reply('❌ No puedes casarte contigo mismo... ¿o sí? 🤔');
+      await message.reply(tr(L, '❌ No puedes casarte contigo mismo... ¿o sí? 🤔', '❌ You cannot marry yourself... or can you? 🤔'));
       return;
     }
     const targetUser = await message.client.users.fetch(target.id).catch(() => null);
     if (targetUser?.bot) {
-      await message.reply('❌ No puedes casarte con un bot. 😅');
+      await message.reply(tr(L, '❌ No puedes casarte con un bot. 😅', '❌ You cannot marry a bot. 😅'));
       return;
     }
 
@@ -47,7 +49,7 @@ const marry: BotCommand = {
     // usuario↔usuario siempre permitido.
     const cfg = await getGuildConfig(message.guild.id);
     if (cfg.marriage_enabled === false) {
-      await message.reply('❌ El casamiento está desactivado en este servidor.');
+      await message.reply(tr(L, '❌ El casamiento está desactivado en este servidor.', '❌ Marriage is disabled on this server.'));
       return;
     }
     type MemberLike = { roles: { cache: { has(id: string): boolean } }; permissions: { has(p: string): boolean } } | null;
@@ -56,18 +58,18 @@ const marry: BotCommand = {
     const excluded = cfg.marriage_excluded_role_ids;
     const hasExcludedRole = (m: MemberLike): boolean => Boolean(m && excluded.some((r) => m.roles.cache.has(r)));
     if (hasExcludedRole(proposerMember) || hasExcludedRole(targetMember)) {
-      await message.reply('❌ Una de las partes tiene un rol excluido del casamiento en este servidor.');
+      await message.reply(tr(L, '❌ Una de las partes tiene un rol excluido del casamiento en este servidor.', '❌ One of the parties has a role excluded from marriage on this server.'));
       return;
     }
     const isAdmin = (m: MemberLike): boolean => Boolean(m && m.permissions.has('ManageGuild'));
     if (cfg.marriage_allow_admin_pairs === false && isAdmin(proposerMember) && isAdmin(targetMember)) {
-      await message.reply('❌ En este servidor los administradores no pueden casarse entre ellos (regla configurable).');
+      await message.reply(tr(L, '❌ En este servidor los administradores no pueden casarse entre ellos (regla configurable).', '❌ On this server admins cannot marry each other (configurable rule).'));
       return;
     }
 
     const existing = await findMarriage(message.guild.id, message.author.id);
     if (existing) {
-      await message.reply('❌ Ya estás casado/a. Usa `cz!divorce` primero.');
+      await message.reply(tr(L, '❌ Ya estás casado/a. Usa `cz!divorce` primero.', '❌ You are already married. Use `cz!divorce` first.'));
       return;
     }
     const targetMarriage = await findMarriage(message.guild.id, target.id);
@@ -86,7 +88,7 @@ const marry: BotCommand = {
 
     const embed = new EmbedBuilder()
       .setColor('#ff69b4')
-      .setTitle('💍 ¡Propuesta de matrimonio!')
+      .setTitle(tr(L, '💍 ¡Propuesta de matrimonio!', '💍 Marriage proposal!'))
       .setDescription(`**${message.author.tag}** le propone matrimonio a **${target.tag ?? target.username}**.\n\n¿Aceptas? (60 segundos)`)
       .setFooter({ text: 'CiszuBot • Social', iconURL: message.client.user?.displayAvatarURL() })
       .setTimestamp();
@@ -109,10 +111,11 @@ const divorce: BotCommand = {
   slashCommand: new SlashCommandBuilder().setName('divorce').setDescription('Divórciate de tu pareja'),
 
   async execute(message) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const marriage = await findMarriage(message.guild.id, message.author.id);
     if (!marriage) {
-      await message.reply('❌ No estás casado/a.');
+      await message.reply(tr(L, '❌ No estás casado/a.', '❌ You are not married.'));
       return;
     }
     const partnerId = marriage.userId === message.author.id ? marriage.partnerId : marriage.userId;
@@ -142,6 +145,7 @@ const partner: BotCommand = {
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(false)),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const mentioned = message.mentions?.users?.first();
     const userId = mentioned?.id ?? message.author.id;

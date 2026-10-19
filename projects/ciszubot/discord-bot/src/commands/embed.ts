@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { db, ciszubotSchema, eq, and } from '../services/supabase';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
 import { logger } from '../services/logger';
+import { langOf, tr } from '../services/i18n';
 
 interface EmbedData {
   title?: string;
@@ -94,6 +95,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     if (!(await isStaff(message))) {
       await message.reply(STAFF_ERROR);
@@ -119,7 +121,7 @@ const command: BotCommand = {
       const raw = args.slice(2).join(' ');
       const data = parseJson(raw);
       if (!name || !data) {
-        await message.reply('❌ Uso: `cz!embed save <nombre> <json>`.');
+        await message.reply(tr(L, '❌ Uso: `cz!embed save <nombre> <json>`.', '❌ Usage: `cz!embed save <name> <json>`.'));
         return;
       }
       const existing = await db
@@ -157,7 +159,7 @@ const command: BotCommand = {
       const channelId = message.mentions?.channels?.first()?.id;
       const target = channelId ? message.guild.channels.cache.get(channelId) : message.channel;
       if (!target || !('send' in target)) {
-        await message.reply('❌ Canal no válido.');
+        await message.reply(tr(L, '❌ Canal no válido.', '❌ Invalid channel.'));
         return;
       }
       const embed = buildEmbed(row.data as EmbedData);
@@ -168,7 +170,7 @@ const command: BotCommand = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ embeds: [embed.toJSON()] }),
           });
-          await message.reply('✅ Embed enviado por webhook.');
+          await message.reply(tr(L, '✅ Embed enviado por webhook.', '✅ Embed sent via webhook.'));
           return;
         } catch (error) {
           logger.warn('embed webhook send:', error);
@@ -205,7 +207,7 @@ const command: BotCommand = {
       const name = (args[1] ?? '').trim().toLowerCase();
       const url = (args[2] ?? '').trim();
       if (!name || !/^https:\/\/discord(app)?\.com\/api\/webhooks\//.test(url)) {
-        await message.reply('❌ Uso: `cz!embed webhook <nombre> <url de webhook de Discord>`.');
+        await message.reply(tr(L, '❌ Uso: `cz!embed webhook <nombre> <url de webhook de Discord>`.', '❌ Usage: `cz!embed webhook <name> <Discord webhook URL>`.'));
         return;
       }
       const rows = await db
@@ -222,7 +224,7 @@ const command: BotCommand = {
       return;
     }
 
-    await message.reply('❌ Subcomandos: `json`, `save`, `send`, `list`, `delete`, `webhook`.');
+    await message.reply(tr(L, '❌ Subcomandos: `json`, `save`, `send`, `list`, `delete`, `webhook`.', '❌ Subcommands: `json`, `save`, `send`, `list`, `delete`, `webhook`.'));
   },
 };
 

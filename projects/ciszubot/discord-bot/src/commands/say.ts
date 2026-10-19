@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'say',
@@ -16,12 +17,13 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (args.length === 0) {
       const errorEmbed = new EmbedBuilder()
         .setColor('#8b5cf6')
-        .setTitle('❌ Error')
+        .setTitle(tr(L, '❌ Error', '❌ Error'))
         .setDescription('Debes proporcionar un mensaje para que el bot lo repita.')
-        .addFields({ name: '📝 Uso correcto', value: `\`${this.usage}\``, inline: false })
+        .addFields({ name: tr(L, '📝 Uso correcto', '📝 Correct usage'), value: `\`${this.usage}\``, inline: false })
         .setFooter({ text: 'CiszuBot', iconURL: message.client.user?.displayAvatarURL() })
         .setTimestamp();
       return message.reply({ embeds: [errorEmbed] });

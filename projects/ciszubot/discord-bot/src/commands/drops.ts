@@ -4,6 +4,7 @@ import { getGuildConfig, updateGuildConfig, DropEntry } from '../services/config
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
 import { isPremiumGuild } from '../services/featureFlags';
 import { FREE_DROP_LIMIT } from '../services/drops';
+import { langOf, tr } from '../services/i18n';
 
 const DEFAULT_ENTRY = (id: string, name: string): DropEntry => ({
   id,
@@ -45,6 +46,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -57,7 +59,7 @@ const command: BotCommand = {
     const statusEmbed = () =>
       new EmbedBuilder()
         .setColor(list.some((d) => d.enabled) ? '#22c55e' : '#6b7280')
-        .setTitle('💎 Drops de dinero')
+        .setTitle(tr(L, '💎 Drops de dinero', '💎 Money drops'))
         .setDescription(
           `**Plan:** ${premium ? '⭐ Premium (drops ilimitados)' : `🆓 Free (hasta ${FREE_DROP_LIMIT} drops)`}\n` +
             `**Drops configurados:** ${list.length}${premium ? '' : ` / ${FREE_DROP_LIMIT}`}\n\n` +
@@ -91,7 +93,7 @@ const command: BotCommand = {
       const id = (args[1] ?? '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 20);
       const name = args.slice(2).join(' ').trim() || id;
       if (!id) {
-        await message.reply('❌ Uso: `cz!drops add <id> [nombre]` (ej: `cz!drops add drop1 Lluvia de monedas`).');
+        await message.reply(tr(L, '❌ Uso: `cz!drops add <id> [nombre]` (ej: `cz!drops add drop1 Lluvia de monedas`).', '❌ Usage: `cz!drops add <id> [name]` (e.g.: `cz!drops add drop1 Coin rain`).'));
         return;
       }
       if (list.some((d) => d.id === id)) {
@@ -121,7 +123,7 @@ const command: BotCommand = {
     // Subcomandos por drop: cz!drops <id> <campo> ...
     const entry = list.find((d) => d.id === sub);
     if (!entry) {
-      await message.reply('❌ Subcomandos: `status`, `add`, `remove` o `cz!drops <id> <campo>` (mira `cz!drops status`).');
+      await message.reply(tr(L, '❌ Subcomandos: `status`, `add`, `remove` o `cz!drops <id> <campo>` (mira `cz!drops status`).', '❌ Subcommands: `status`, `add`, `remove` or `cz!drops <id> <field>` (see `cz!drops status`).'));
       return;
     }
     const field = (args[1] ?? '').toLowerCase();
@@ -134,14 +136,14 @@ const command: BotCommand = {
     }
     if (field === 'name') {
       const name = args.slice(2).join(' ').trim();
-      if (!name) return void (await message.reply('❌ Uso: `cz!drops <id> name <nombre>`.'));
+      if (!name) return void (await message.reply(tr(L, '❌ Uso: `cz!drops <id> name <nombre>`.', '❌ Usage: `cz!drops <id> name <name>`.')));
       await patch({ name: name.slice(0, 50) });
       await message.reply(`✅ Nombre del drop \`${entry.id}\`: **${name}**.`);
       return;
     }
     if (field === 'channel') {
       const channelId = message.mentions?.channels?.first()?.id;
-      if (!channelId) return void (await message.reply('❌ Uso: `cz!drops <id> channel #canal [remove]`.'));
+      if (!channelId) return void (await message.reply(tr(L, '❌ Uso: `cz!drops <id> channel #canal [remove]`.', '❌ Usage: `cz!drops <id> channel #channel [remove]`.')));
       const remove = (args[2] ?? '').toLowerCase() === 'remove';
       const channels = remove
         ? entry.channels.filter((c) => c !== channelId)
@@ -154,7 +156,7 @@ const command: BotCommand = {
       const min = parseInt(args[2] ?? '', 10);
       const max = parseInt(args[3] ?? '', 10);
       if (isNaN(min) || isNaN(max) || min < 1 || max < min || max > 1_000_000) {
-        return void (await message.reply('❌ Uso: `cz!drops <id> amount <min> <max>`.'));
+        return void (await message.reply(tr(L, '❌ Uso: `cz!drops <id> amount <min> <max>`.', '❌ Usage: `cz!drops <id> amount <min> <max>`.')));
       }
       await patch({ min, max });
       await message.reply(`✅ Cantidad de \`${entry.id}\`: **${min}–${max}** ${cfg.coin_emoji}.`);
@@ -164,7 +166,7 @@ const command: BotCommand = {
       const min = parseInt(args[2] ?? '', 10);
       const max = parseInt(args[3] ?? '', 10);
       if (isNaN(min) || isNaN(max) || min < 5 || max < min || max > 1440) {
-        return void (await message.reply('❌ Uso: `cz!drops <id> interval <min> <max>` (mínimo 5 min).'));
+        return void (await message.reply(tr(L, '❌ Uso: `cz!drops <id> interval <min> <max>` (mínimo 5 min).', '❌ Usage: `cz!drops <id> interval <min> <max>` (minimum 5 min).')));
       }
       await patch({ interval_min: min, interval_max: max });
       await message.reply(`✅ Intervalo de \`${entry.id}\`: **${min}–${max} min**.`);
@@ -172,15 +174,15 @@ const command: BotCommand = {
     }
     if (field === 'message') {
       const text = args.slice(2).join(' ').trim();
-      if (!text) return void (await message.reply('❌ Uso: `cz!drops <id> message <texto>` o `reset`.'));
+      if (!text) return void (await message.reply(tr(L, '❌ Uso: `cz!drops <id> message <texto>` o `reset`.', '❌ Usage: `cz!drops <id> message <text>` or `reset`.')));
       const value = text.toLowerCase() === 'reset' ? null : text.slice(0, 300);
       await patch({ message: value });
-      await message.reply(value ? '✅ Mensaje personalizado guardado.' : '✅ Mensaje restaurado al por defecto.');
+      await message.reply(value ? tr(L, '✅ Mensaje personalizado guardado.', '✅ Custom message saved.') : tr(L, '✅ Mensaje restaurado al por defecto.', '✅ Message restored to default.'));
       return;
     }
     if (field === 'exclude') {
       const roleId = message.mentions?.roles?.first()?.id;
-      if (!roleId) return void (await message.reply('❌ Uso: `cz!drops <id> exclude @rol` (repite para quitarlo).'));
+      if (!roleId) return void (await message.reply(tr(L, '❌ Uso: `cz!drops <id> exclude @rol` (repite para quitarlo).', '❌ Usage: `cz!drops <id> exclude @role` (repeat to remove it).')));
       const excluded = entry.excluded_roles.includes(roleId)
         ? entry.excluded_roles.filter((r) => r !== roleId)
         : [...entry.excluded_roles, roleId];
@@ -189,7 +191,7 @@ const command: BotCommand = {
       return;
     }
 
-    await message.reply('❌ Campos por drop: `on|off`, `name`, `channel`, `amount`, `interval`, `message`, `exclude`.');
+    await message.reply(tr(L, '❌ Campos por drop: `on|off`, `name`, `channel`, `amount`, `interval`, `message`, `exclude`.', '❌ Fields per drop: `on|off`, `name`, `channel`, `amount`, `interval`, `message`, `exclude`.'));
   },
 };
 

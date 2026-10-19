@@ -4,6 +4,7 @@ import { getGuildConfig, updateGuildConfig, AllianceConfig } from '../services/c
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
 import { getTopAlliancePoints, getAlliancePoints } from '../services/alliances';
 import { formatCoins } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 const EMBED_FIELDS = ['title', 'description', 'color'] as const;
 
@@ -30,6 +31,7 @@ const command: BotCommand = {
     .addSubcommand((s) => s.setName('top').setDescription('Leaderboard de puntos de alianza')),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -39,7 +41,7 @@ const command: BotCommand = {
     const statusEmbed = async () => {
       const embed = new EmbedBuilder()
         .setColor(config.enabled ? '#22c55e' : '#6b7280')
-        .setTitle('🤝 Sistema de alianzas')
+        .setTitle(tr(L, '🤝 Sistema de alianzas', '🤝 Alliance system'))
         .setDescription(
           `**Estado:** ${config.enabled ? '✅ Activado' : '⛔ Desactivado'}\n` +
             `**Canal:** ${config.channel_id ? `<#${config.channel_id}>` : 'no configurado'}\n` +
@@ -67,7 +69,7 @@ const command: BotCommand = {
       const mine = await getAlliancePoints(guildId, message.author.id);
       const embed = new EmbedBuilder()
         .setColor('#22c55e')
-        .setTitle('🏆 Leaderboard de alianzas')
+        .setTitle(tr(L, '🏆 Leaderboard de alianzas', '🏆 Alliance leaderboard'))
         .setDescription(
           top.length > 0
             ? top.map((t, i) => `**${i + 1}.** <@${t.userId}> — **${t.points}** punto(s)`).join('\n')
@@ -96,7 +98,7 @@ const command: BotCommand = {
     if (sub === 'channel') {
       const channelId = message.mentions?.channels?.first()?.id;
       if (!channelId) {
-        await message.reply('❌ Uso: `cz!alliance channel #canal`.');
+        await message.reply(tr(L, '❌ Uso: `cz!alliance channel #canal`.', '❌ Usage: `cz!alliance channel #channel`.'));
         return;
       }
       await save({ channel_id: channelId, enabled: true });
@@ -108,7 +110,7 @@ const command: BotCommand = {
       const roleId = message.mentions?.roles?.first()?.id ?? null;
       if ((args[1] ?? '').toLowerCase() === 'off') {
         await save(sub === 'role' ? { role_id: null } : { notify_role_id: null });
-        await message.reply('✅ Rol quitado.');
+        await message.reply(tr(L, '✅ Rol quitado.', '✅ Role removed.'));
         return;
       }
       if (!roleId) {
@@ -123,11 +125,11 @@ const command: BotCommand = {
     if (sub === 'cooldown') {
       const hours = parseInt(args[1] ?? '', 10);
       if (isNaN(hours) || hours < 0 || hours > 8760) {
-        await message.reply('❌ Uso: `cz!alliance cooldown <horas>` (0 = sin cooldown).');
+        await message.reply(tr(L, '❌ Uso: `cz!alliance cooldown <horas>` (0 = sin cooldown).', '❌ Usage: `cz!alliance cooldown <hours>` (0 = no cooldown).'));
         return;
       }
       await save({ cooldown_hours: hours });
-      await message.reply(hours === 0 ? '✅ Sin cooldown: 1 anuncio por usuario.' : `✅ Cooldown: **${hours}h** por usuario.`);
+      await message.reply(hours === 0 ? tr(L, '✅ Sin cooldown: 1 anuncio por usuario.', '✅ No cooldown: 1 ad per user.') : `✅ Cooldown: **${hours}h** por usuario.`);
       return;
     }
 
@@ -146,7 +148,7 @@ const command: BotCommand = {
       const action = (args[1] ?? '').toLowerCase();
       const word = args.slice(2).join(' ').trim().toLowerCase();
       if ((action !== 'add' && action !== 'remove') || !word) {
-        await message.reply('❌ Uso: `cz!alliance word add|remove <palabra>`.');
+        await message.reply(tr(L, '❌ Uso: `cz!alliance word add|remove <palabra>`.', '❌ Usage: `cz!alliance word add|remove <word>`.'));
         return;
       }
       const words =
@@ -177,7 +179,7 @@ const command: BotCommand = {
       const type = (args[1] ?? '').toLowerCase();
       const minutes = parseInt(args[2] ?? '1440', 10);
       if (!['none', 'mute', 'kick', 'ban'].includes(type)) {
-        await message.reply('❌ Uso: `cz!alliance sanction none|mute|kick|ban [minutos]`.');
+        await message.reply(tr(L, '❌ Uso: `cz!alliance sanction none|mute|kick|ban [minutos]`.', '❌ Usage: `cz!alliance sanction none|mute|kick|ban [minutes]`.'));
         return;
       }
       await save({ sanction: type as AllianceConfig['sanction'], sanction_minutes: isNaN(minutes) ? 1440 : minutes });
@@ -207,7 +209,7 @@ const command: BotCommand = {
       const roleId = message.mentions?.roles?.first()?.id;
       const money = parseInt(args.find((a) => /^\d{2,}$/.test(a) && Number(a) !== points) ?? '', 10);
       if (isNaN(points) || points < 1) {
-        await message.reply('❌ Uso: `cz!alliance reward <puntos> [@rol] [dinero]` (ej: `cz!alliance reward 5 @Aliado 500`).');
+        await message.reply(tr(L, '❌ Uso: `cz!alliance reward <puntos> [@rol] [dinero]` (ej: `cz!alliance reward 5 @Aliado 500`).', '❌ Usage: `cz!alliance reward <points> [@role] [money]` (e.g.: `cz!alliance reward 5 @Ally 500`).'));
         return;
       }
       const rewards = [...config.rewards.filter((r) => r.points !== points), { points, role_id: roleId, money: isNaN(money) ? undefined : money }];

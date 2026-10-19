@@ -1,6 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { BOT_COLORS, BOT_FOOTER, LINKS } from '../config/links';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'donate',
@@ -14,14 +15,15 @@ const command: BotCommand = {
     .setDescription('Apoya el desarrollo del bot con una donación'),
 
   async execute(message) {
+    const L = await langOf(message);
     const embed = new EmbedBuilder()
       .setColor(BOT_COLORS.secondary)
-      .setTitle('💜 Apoya el proyecto')
+      .setTitle(tr(L, '💜 Apoya el proyecto', '💜 Support the project'))
       .setDescription(
         'CiszuBot es un proyecto sin ánimo de lucro. Si te gusta el bot y quieres apoyar su desarrollo, cualquier donación es bienvenida y ayuda a mantener los servicios en línea.',
       )
       .addFields(
-        { name: '💜 Patreon', value: 'Suscripción mensual con recompensas exclusivas.', inline: false },
+        { name: tr(L, '💜 Patreon', '💜 Patreon'), value: 'Suscripción mensual con recompensas exclusivas.', inline: false },
         { name: '☕ Ko-fi', value: 'Invítale un café al creador, sin compromiso.', inline: false },
         { name: '☕ Buy Me a Coffee', value: 'Donación única, rápida y sin registro.', inline: false },
       )
