@@ -452,6 +452,16 @@ export const COMMANDS: CommandInfo[] = [
     premium: false,
     tags: ["diversión","text","convierte","texto","estilos","reverse","uwu","clap","bubble"],
   },
+  {
+    name: 'trivia',
+    description: 'Preguntas de trivia con puntuación, leaderboard y recompensas',
+    aliases: ["pregunta","quiz"],
+    usage: 'cz!trivia [facil|media|dificil|mixta|top|stop|add ...]',
+    category: 'Diversión',
+    icon: 'gamepad',
+    premium: false,
+    tags: ["diversión","trivia","preguntas","puntuacion","leaderboard","recompensas"],
+  },
   // ─── Música ───
   {
     name: 'loop',

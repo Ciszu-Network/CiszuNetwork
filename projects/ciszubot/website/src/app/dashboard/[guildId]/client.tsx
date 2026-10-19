@@ -88,6 +88,12 @@ interface GuildConfig {
   polls_excluded_role_ids?: string[];
   polls_max_active?: number;
   polls_cooldown_minutes?: number;
+  trivia_enabled?: boolean;
+  trivia_excluded_role_ids?: string[];
+  trivia_timed?: boolean;
+  trivia_time_seconds?: number;
+  trivia_difficulty?: 'easy' | 'medium' | 'hard' | 'mixed';
+  trivia_rewards?: { points: number; role_id: string }[];
   marriage_excluded_role_ids?: string[];
   nitro_repost_mode?: 'auto' | 'manual';
   nitro_excluded_role_ids?: string[];
@@ -140,7 +146,7 @@ interface GuildConfig {
   premium?: boolean;
 }
 
-type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
+type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -177,7 +183,7 @@ const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPag
   ],
 };
 
-const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id'],
   messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
@@ -188,6 +194,7 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   counting: ['counting_enabled', 'counting_channel_id', 'counting_start', 'counting_style', 'counting_allow_repeat', 'counting_authenticity'],
   suggestions: ['suggestions_enabled', 'suggestions_channel_id', 'suggestions_excluded_role_ids', 'suggestions_max_active', 'suggestions_cooldown_minutes'],
   polls: ['polls_enabled', 'polls_excluded_role_ids', 'polls_max_active', 'polls_cooldown_minutes'],
+  trivia: ['trivia_enabled', 'trivia_excluded_role_ids', 'trivia_timed', 'trivia_time_seconds', 'trivia_difficulty', 'trivia_rewards'],
   history: ['history_enabled', 'history_channel_id'],
   economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
   starboard: ['starboard_channel_id', 'starboard_emoji', 'starboard_min'],
@@ -547,6 +554,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'counting'
     | 'suggestions'
     | 'polls'
+    | 'trivia'
     | 'economy'
     | 'starboard'
     | 'nitro'
@@ -562,7 +570,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'polls', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
+      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'polls', 'trivia', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
       setView(saved);
@@ -641,6 +649,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     { key: 'counting', icon: 'calculator', label: 'subnavCounting', tag: 'free' },
     { key: 'suggestions', icon: 'lightbulb', label: 'subnavSuggestions', tag: 'free' },
     { key: 'polls', icon: 'chart-pie', label: 'subnavPolls', tag: 'free' },
+    { key: 'trivia', icon: 'circle-question', label: 'subnavTrivia', tag: 'free' },
     { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
   ];
 
@@ -892,6 +901,12 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         polls_excluded_role_ids: cfg?.polls_excluded_role_ids ?? [],
         polls_max_active: cfg?.polls_max_active ?? 0,
         polls_cooldown_minutes: cfg?.polls_cooldown_minutes ?? 0,
+        trivia_enabled: cfg?.trivia_enabled ?? false,
+        trivia_excluded_role_ids: cfg?.trivia_excluded_role_ids ?? [],
+        trivia_timed: cfg?.trivia_timed ?? true,
+        trivia_time_seconds: cfg?.trivia_time_seconds ?? 60,
+        trivia_difficulty: cfg?.trivia_difficulty ?? 'mixed',
+        trivia_rewards: Array.isArray(cfg?.trivia_rewards) ? cfg.trivia_rewards : [],
         marriage_excluded_role_ids: Array.isArray(cfg?.marriage_excluded_role_ids) ? cfg.marriage_excluded_role_ids : [],
         nitro_repost_mode: cfg?.nitro_repost_mode ?? 'auto',
         nitro_excluded_role_ids: Array.isArray(cfg?.nitro_excluded_role_ids) ? cfg.nitro_excluded_role_ids : [],
@@ -3158,6 +3173,143 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               )}
             </div>
             <HelpZone title={SECTION_HELP.polls.title} commands={SECTION_HELP.polls.commands} note={SECTION_HELP.polls.note} />
+          </section>
+          )}
+
+          {view === 'trivia' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="circle-question" size={18} className="text-neon-blue" /> {t.triviaTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.trivia.title} commands={SECTION_HELP.trivia.commands} note={SECTION_HELP.trivia.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('trivia')}
+                onImport={(file) => void importFile(file, 'trivia')}
+              />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.triviaHint}</p>
+            <div className="grid gap-5">
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.triviaToggle}</p>
+                  <p className="text-xs text-white/50">{t.triviaToggleHint}</p>
+                </div>
+                <Toggle on={Boolean(config.trivia_enabled)} onChange={(v) => update({ trivia_enabled: v })} />
+              </div>
+              {config.trivia_enabled && (
+                <div className="grid gap-4">
+                  <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-white/80">{t.triviaTimedLabel}</p>
+                      <p className="text-[10px] text-white/40">{t.triviaTimedHint}</p>
+                    </div>
+                    <Toggle on={config.trivia_timed !== false} onChange={(v) => update({ trivia_timed: v })} />
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    {config.trivia_timed !== false && (
+                      <Field label={t.triviaTimeLabel} hint={t.triviaTimeHint}>
+                        <input
+                          type="number"
+                          min={10}
+                          max={600}
+                          className={inputCls}
+                          value={config.trivia_time_seconds ?? 60}
+                          onChange={(e) => update({ trivia_time_seconds: Math.min(600, Math.max(10, Number(e.target.value) || 60)) })}
+                        />
+                      </Field>
+                    )}
+                    <Field label={t.triviaDifficultyLabel} hint={t.triviaDifficultyHint}>
+                      <NiceSelect
+                        value={config.trivia_difficulty ?? 'mixed'}
+                        options={[
+                          { id: 'easy', label: t.triviaDiffEasy },
+                          { id: 'medium', label: t.triviaDiffMedium },
+                          { id: 'hard', label: t.triviaDiffHard },
+                          { id: 'mixed', label: t.triviaDiffMixed },
+                        ]}
+                        onChange={(v) => update({ trivia_difficulty: v as 'easy' | 'medium' | 'hard' | 'mixed' })}
+                      />
+                    </Field>
+                  </div>
+                  <Field label={t.triviaExcludedLabel} hint={t.triviaExcludedHint}>
+                    <MultiSelect
+                      values={config.trivia_excluded_role_ids ?? []}
+                      options={roleOptions}
+                      placeholder={t.pickRole}
+                      onChange={(v) => update({ trivia_excluded_role_ids: v })}
+                    />
+                  </Field>
+                  <div>
+                    <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">{t.triviaRewardsLabel}</p>
+                    <p className="mb-3 text-[10px] text-white/35">{t.triviaRewardsHint}</p>
+                    <div className="grid gap-2">
+                      {(config.trivia_rewards ?? []).map((row, idx) => (
+                        <div key={`tr-${idx}`} className="flex items-center gap-2">
+                          <input
+                            type="number"
+                            min={1}
+                            className={`${inputCls} w-28`}
+                            value={row.points}
+                            onChange={(e) => {
+                              const next = (config.trivia_rewards ?? []).map((r, i) => (i === idx ? { ...r, points: Math.max(1, Number(e.target.value) || 1) } : r));
+                              update({ trivia_rewards: next });
+                            }}
+                          />
+                          {hasGuildData ? (
+                            <NiceSelect
+                              value={row.role_id || null}
+                              options={roleOptions}
+                              placeholder={t.pickRole}
+                              onChange={(v) => {
+                                const next = (config.trivia_rewards ?? []).map((r, i) => (i === idx ? { ...r, role_id: v ?? '' } : r));
+                                update({ trivia_rewards: next });
+                              }}
+                            />
+                          ) : (
+                            <input
+                              className={inputCls}
+                              value={row.role_id}
+                              onChange={(e) => {
+                                const next = (config.trivia_rewards ?? []).map((r, i) => (i === idx ? { ...r, role_id: e.target.value } : r));
+                                update({ trivia_rewards: next });
+                              }}
+                            />
+                          )}
+                          <button
+                            type="button"
+                            className="rounded-lg border border-red-400/30 px-3 py-2 text-xs font-bold text-red-300 hover:bg-red-400/10"
+                            onClick={() => update({ trivia_rewards: (config.trivia_rewards ?? []).filter((_, i) => i !== idx) })}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                      <button
+                        type="button"
+                        className="rounded-lg border border-white/15 px-3 py-2 text-xs font-bold text-white/70 hover:bg-white/5"
+                        onClick={() =>
+                          update({
+                            trivia_rewards: [
+                              ...(config.trivia_rewards ?? []),
+                              { points: ((config.trivia_rewards ?? []).at(-1)?.points ?? 0) + 5, role_id: roleOptions[0]?.id ?? '' },
+                            ],
+                          })
+                        }
+                      >
+                        + {t.triviaRewardsAdd}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+            <HelpZone title={SECTION_HELP.trivia.title} commands={SECTION_HELP.trivia.commands} note={SECTION_HELP.trivia.note} />
           </section>
           )}
 

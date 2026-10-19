@@ -16,6 +16,7 @@ import { getGuildConfig, getPrefix, GuildConfig } from '../services/configServic
 import { handleCounting } from '../services/counting';
 import { voteSuggestion } from '../services/suggestions';
 import { closePoll, resumePolls, votePoll } from '../services/polls';
+import { handleTriviaMessage } from '../services/trivia';
 import { addXp } from '../services/levels';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 import { logger } from '../services/logger';
@@ -618,6 +619,7 @@ export function registerListeners(client: Client): void {
       });
       void handleAfk(message);
       void handleCounting(message, cfg);
+      void handleTriviaMessage(client, message, cfg);
     })();
   });
 

@@ -148,6 +148,12 @@ const guildConfigPatchSchema = z.object({
   polls_excluded_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
   polls_max_active: z.number().int().min(0).max(100).optional(),
   polls_cooldown_minutes: z.number().int().min(0).max(1440).optional(),
+  trivia_enabled: z.boolean().optional(),
+  trivia_excluded_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
+  trivia_timed: z.boolean().optional(),
+  trivia_time_seconds: z.number().int().min(10).max(600).optional(),
+  trivia_difficulty: z.enum(['easy', 'medium', 'hard', 'mixed']).optional(),
+  trivia_rewards: z.array(z.object({ points: z.number().int().min(1).max(100000), role_id: z.string().min(1).max(32) })).max(20).optional(),
   marriage_enabled: z.boolean().optional(),
   marriage_allow_admin_pairs: z.boolean().optional(),
   command_global_cooldown: z.number().int().min(0).max(60).optional(),
@@ -265,6 +271,12 @@ interface GuildConfig {
   polls_excluded_role_ids?: string[];
   polls_max_active?: number;
   polls_cooldown_minutes?: number;
+  trivia_enabled?: boolean;
+  trivia_excluded_role_ids?: string[];
+  trivia_timed?: boolean;
+  trivia_time_seconds?: number;
+  trivia_difficulty?: 'easy' | 'medium' | 'hard' | 'mixed';
+  trivia_rewards?: { points: number; role_id: string }[];
   marriage_enabled?: boolean;
   marriage_allow_admin_pairs?: boolean;
   command_global_cooldown?: number;
@@ -354,7 +366,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   const body = parsed.data as Partial<GuildConfig>;
   const allowed: Record<string, unknown> = {};
   const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed'];
 
   for (const key of stringFields) {
     if (body[key] !== undefined) allowed[key] = String(body[key]);
@@ -365,6 +377,13 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   if (body.xp_rate !== undefined) {
     const rate = Number(body.xp_rate);
     if (rate >= 0.1 && rate <= 10) allowed.xp_rate = rate;
+  }
+  if (body.trivia_time_seconds !== undefined) {
+    const value = Number(body.trivia_time_seconds);
+    if (Number.isFinite(value) && value >= 10 && value <= 600) allowed.trivia_time_seconds = Math.round(value);
+  }
+  if (body.trivia_rewards !== undefined) {
+    allowed.trivia_rewards = Array.isArray(body.trivia_rewards) ? body.trivia_rewards.slice(0, 20) : [];
   }
   if (body.polls_max_active !== undefined) {
     const value = Number(body.polls_max_active);
@@ -398,7 +417,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     const value = Number(body.invite_points_per);
     if (value >= 1 && value <= 100) allowed.invite_points_per = value;
   }
-  for (const roleKey of ['owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'marriage_excluded_role_ids', 'nitro_excluded_role_ids', 'suggestions_excluded_role_ids', 'polls_excluded_role_ids'] as const) {
+  for (const roleKey of ['owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'marriage_excluded_role_ids', 'nitro_excluded_role_ids', 'suggestions_excluded_role_ids', 'polls_excluded_role_ids', 'trivia_excluded_role_ids'] as const) {
     if (body[roleKey] !== undefined) {
       allowed[roleKey] = Array.isArray(body[roleKey]) ? (body[roleKey] as string[]).slice(0, 20) : [];
     }
@@ -540,6 +559,12 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     polls_excluded_role_ids: 'pollsExcludedRoleIds',
     polls_max_active: 'pollsMaxActive',
     polls_cooldown_minutes: 'pollsCooldownMinutes',
+    trivia_enabled: 'triviaEnabled',
+    trivia_excluded_role_ids: 'triviaExcludedRoleIds',
+    trivia_timed: 'triviaTimed',
+    trivia_time_seconds: 'triviaTimeSeconds',
+    trivia_difficulty: 'triviaDifficulty',
+    trivia_rewards: 'triviaRewards',
     marriage_excluded_role_ids: 'marriageExcludedRoleIds',
     nitro_repost_mode: 'nitroRepostMode',
     nitro_excluded_role_ids: 'nitroExcludedRoleIds',

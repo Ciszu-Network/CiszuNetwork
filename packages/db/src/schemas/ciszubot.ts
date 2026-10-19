@@ -98,6 +98,12 @@ export const guildConfigs = ciszubot.table(
     pollsExcludedRoleIds: jsonb('polls_excluded_role_ids').notNull().default([]),
     pollsMaxActive: integer('polls_max_active').notNull().default(0),
     pollsCooldownMinutes: integer('polls_cooldown_minutes').notNull().default(0),
+    triviaEnabled: boolean('trivia_enabled').notNull().default(false),
+    triviaExcludedRoleIds: jsonb('trivia_excluded_role_ids').notNull().default([]),
+    triviaTimed: boolean('trivia_timed').notNull().default(true),
+    triviaTimeSeconds: integer('trivia_time_seconds').notNull().default(60),
+    triviaDifficulty: text('trivia_difficulty').notNull().default('mixed'),
+    triviaRewards: jsonb('trivia_rewards').notNull().default([]),
     marriageExcludedRoleIds: jsonb('marriage_excluded_role_ids').notNull().default([]),
     nitroRepostMode: text('nitro_repost_mode').notNull().default('auto'),
     nitroExcludedRoleIds: jsonb('nitro_excluded_role_ids').notNull().default([]),
@@ -512,6 +518,35 @@ export const botActions = ciszubot.table(
     result: text('result'),
   },
   (t) => [index('idx_bot_actions_pending').on(t.processed, t.createdAt)]
+);
+
+/** Preguntas de trivia personalizadas por servidor. */
+export const triviaQuestions = ciszubot.table(
+  'trivia_questions',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    guildId: text('guild_id').notNull(),
+    question: text('question').notNull(),
+    answers: jsonb('answers').notNull().default([]),
+    difficulty: text('difficulty').notNull().default('medium'),
+    addedBy: text('added_by'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('idx_trivia_questions_guild').on(t.guildId, t.difficulty)],
+);
+
+/** Puntuacion de trivia (leaderboard). */
+export const triviaScores = ciszubot.table(
+  'trivia_scores',
+  {
+    guildId: text('guild_id').notNull(),
+    userId: text('user_id').notNull(),
+    points: integer('points').notNull().default(0),
+    correct: integer('correct').notNull().default(0),
+    played: integer('played').notNull().default(0),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('idx_trivia_scores_rank').on(t.guildId, t.points)],
 );
 
 /** Encuestas (votos anonimos/publicos, duracion, ganador). */

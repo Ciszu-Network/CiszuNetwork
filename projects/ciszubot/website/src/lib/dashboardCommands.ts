@@ -113,6 +113,11 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: byNames(['poll']),
     note: 'cz!poll <pregunta> | opción 1 | opción 2 [--anon] [--tiempo 30m]; cz!poll cerrar <id> (autor/staff).',
   },
+  trivia: {
+    title: 'Comandos de trivia',
+    commands: byNames(['trivia']),
+    note: 'cz!trivia [facil|media|dificil|mixta] inicia; cz!trivia top muestra el ranking; cz!trivia add <pregunta> | resp1 | resp2 agrega preguntas (staff).',
+  },
   invites: {
     title: 'Comandos de invitaciones',
     commands: byNames(['invites']),
