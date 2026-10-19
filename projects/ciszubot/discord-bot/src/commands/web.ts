@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { BOT_COLORS, BOT_FOOTER, LINKS } from '../config/links';
+import { langOf, tr } from '../services/i18n';
 
 /**
  * Un comando por página clave de la web (la autenticación incluida).
@@ -62,6 +63,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     const key = (args[0] ?? '').toLowerCase();
     const resolved = ALIASES[key] ?? key;
     const page = PAGES[resolved];
@@ -85,14 +87,14 @@ const command: BotCommand = {
 
     const embed = new EmbedBuilder()
       .setColor(BOT_COLORS.primary)
-      .setTitle('🌐 Páginas de la web')
+      .setTitle(tr(L, '🌐 Páginas de la web', '🌐 Website pages'))
       .setDescription(
         Object.entries(PAGES)
           .map(([slug, p]) => `• \`cz!web ${slug}\` — ${p.label}`)
           .join('\n')
           .slice(0, 4096),
       )
-      .setFooter(BOT_FOOTER(`Solicitado por ${message.author.tag}`, message.client.user?.displayAvatarURL()))
+      .setFooter(BOT_FOOTER(tr(L, `Solicitado por ${message.author.tag}`, `Requested by ${message.author.tag}`), message.client.user?.displayAvatarURL()))
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },

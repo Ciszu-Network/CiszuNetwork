@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 function render(text: string, vars: Record<string, string>): string {
   let out = text;
@@ -35,6 +36,7 @@ const command: BotCommand = {
     .addSubcommand((s) => s.setName('status').setDescription('Muestra la configuración actual')),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -43,7 +45,7 @@ const command: BotCommand = {
     if (!sub || sub === 'status') {
       const embed = new EmbedBuilder()
         .setColor(cfg.welcome_channel_id ? '#22c55e' : '#6b7280')
-        .setTitle('👋 Bienvenidas')
+        .setTitle(tr(L, '👋 Bienvenidas', '👋 Welcomes'))
         .setDescription(
           `**Canal:** ${cfg.welcome_channel_id ? `<#${cfg.welcome_channel_id}>` : 'no configurado'}\n` +
             `**Mensaje:** ${cfg.welcome_message}\n\n` +
@@ -65,27 +67,27 @@ const command: BotCommand = {
       const raw = (args[1] ?? '').toLowerCase();
       if (raw === 'off' || raw === 'disable') {
         await updateGuildConfig(guildId, { welcome_channel_id: null });
-        await message.reply('✅ Bienvenidas desactivadas.');
+        await message.reply(tr(L, '✅ Bienvenidas desactivadas.', '✅ Welcomes disabled.'));
         return;
       }
       const channelId = message.mentions?.channels?.first()?.id;
       if (!channelId) {
-        await message.reply('❌ Uso: `cz!welcome channel #canal` o `cz!welcome channel off`.');
+        await message.reply(tr(L, '❌ Uso: `cz!welcome channel #canal` o `cz!welcome channel off`.', '❌ Usage: `cz!welcome channel #channel` or `cz!welcome channel off`.'));
         return;
       }
       await updateGuildConfig(guildId, { welcome_channel_id: channelId });
-      await message.reply(`✅ Canal de bienvenidas: <#${channelId}>.`);
+      await message.reply(tr(L, `✅ Canal de bienvenidas: <#${channelId}>.`, `✅ Welcome channel: <#${channelId}>.`));
       return;
     }
 
     if (sub === 'message') {
       const text = args.slice(1).join(' ').trim();
       if (!text) {
-        await message.reply('❌ Uso: `cz!welcome message <texto>` (variables: `{user}` `{username}` `{guild}` `{members}`).');
+        await message.reply(tr(L, '❌ Uso: `cz!welcome message <texto>` (variables: `{user}` `{username}` `{guild}` `{members}`).', '❌ Usage: `cz!welcome message <text>` (variables: `{user}` `{username}` `{guild}` `{members}`).'));
         return;
       }
       await updateGuildConfig(guildId, { welcome_message: text.slice(0, 500) });
-      await message.reply('✅ Mensaje de bienvenida guardado.');
+      await message.reply(tr(L, '✅ Mensaje de bienvenida guardado.', '✅ Welcome message saved.'));
       return;
     }
 
@@ -97,11 +99,11 @@ const command: BotCommand = {
         guild: message.guild.name,
         members: String(message.guild.memberCount),
       });
-      await message.reply(`🧪 **Prueba de bienvenida:**\n${text}`);
+      await message.reply(tr(L, `🧪 **Prueba de bienvenida:**\n${text}`, `🧪 **Welcome test:**\n${text}`));
       return;
     }
 
-    await message.reply('❌ Subcomandos: `channel`, `message`, `test`, `status`.');
+    await message.reply(tr(L, '❌ Subcomandos: `channel`, `message`, `test`, `status`.', '❌ Subcommands: `channel`, `message`, `test`, `status`.'));
   },
 };
 

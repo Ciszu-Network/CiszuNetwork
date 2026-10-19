@@ -1,5 +1,6 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
   name: 'avatar',
@@ -12,11 +13,12 @@ const create = (): BotCommand => ({
     .setDescription('Muestra el avatar de un usuario')
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario').setRequired(false)),
   async execute(message) {
+    const L = await langOf(message);
     const target = message.mentions?.users?.first() ?? message.author;
     const avatar = target.displayAvatarURL?.({ size: 1024 }) ?? message.author.displayAvatarURL({ size: 1024 });
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
-      .setTitle(`🖼️ Avatar de ${target.username ?? target.tag ?? target.id}`)
+      .setTitle(tr(L, `🖼️ Avatar de ${target.username ?? target.tag ?? target.id}`, `🖼️ ${target.username ?? target.tag ?? target.id} avatar`))
       .setImage(avatar)
       .setDescription(`[Descargar](${avatar})`)
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
