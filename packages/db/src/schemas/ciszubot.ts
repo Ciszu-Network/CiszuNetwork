@@ -520,6 +520,21 @@ export const botActions = ciszubot.table(
   (t) => [index('idx_bot_actions_pending').on(t.processed, t.createdAt)]
 );
 
+/** Comandos personalizados del servidor (cz!<trigger>). */
+export const customCommands = ciszubot.table(
+  'custom_commands',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    guildId: text('guild_id').notNull(),
+    trigger: text('trigger').notNull(),
+    response: text('response').notNull(),
+    createdBy: text('created_by'),
+    uses: integer('uses').notNull().default(0),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('idx_custom_commands_guild').on(t.guildId, t.trigger)],
+);
+
 /** Preguntas de trivia personalizadas por servidor. */
 export const triviaQuestions = ciszubot.table(
   'trivia_questions',

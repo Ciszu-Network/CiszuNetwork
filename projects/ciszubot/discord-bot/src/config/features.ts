@@ -32,6 +32,7 @@ export const FEATURE_DEFS: FeatureDef[] = [
   { slug: 'suggestions', label: 'Sugerencias', commands: ['suggest'] },
   { slug: 'polls', label: 'Encuestas', commands: ['poll'] },
   { slug: 'trivia', label: 'Trivia', commands: ['trivia'] },
+  { slug: 'customcmd', label: 'Comandos personalizados', commands: ['customcmd'] },
   { slug: 'embeds', label: 'Embeds personalizados', commands: ['embed'] },
   // Social: solo perfiles/AFK/casamiento (alianzas e invitaciones van aparte).
   { slug: 'social_afk', label: 'AFK', commands: ['afk'] },

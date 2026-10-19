@@ -21,6 +21,7 @@ import { initErrorTracking, captureError } from './services/sentry';
 import { gateCommand } from './utils/commandGate';
 import { resolveFeatureForCommand, isPremiumCommand } from './config/features';
 import { getFeatureState, isPremiumBeta } from './services/featureFlags';
+import { runCustomCommand } from './services/customCommands';
 
 initErrorTracking();
 
@@ -327,6 +328,21 @@ client.on('messageCreate', async (message) => {
 
     const command = client.commands.get(commandName);
     if (!command) {
+      // Comandos personalizados del servidor (cz!<trigger>) antes de "no encontrado".
+      if (message.guild) {
+        const handled = await runCustomCommand(
+          message.guild.id,
+          commandName.toLowerCase(),
+          {
+            userId: message.author.id,
+            username: message.author.username,
+            guildName: message.guild.name,
+            memberCount: message.guild.memberCount,
+          },
+          (content: string) => message.reply(content as never),
+        ).catch(() => false);
+        if (handled) return;
+      }
       logger.warn(`Comando desconocido: ${commandName} por ${message.author.tag}`);
       const embed = new EmbedBuilder()
         .setColor('#FF0000')

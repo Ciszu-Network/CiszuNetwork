@@ -646,6 +646,16 @@ export const COMMANDS: CommandInfo[] = [
     tags: ["utilidad","contador","estado","control","canal"],
   },
   {
+    name: 'customcmd',
+    description: 'Crea tus propios comandos del servidor (cz!<trigger>)',
+    aliases: ["cc","miscomandos"],
+    usage: 'cz!customcmd add <trigger> <respuesta> · del <trigger> · list',
+    category: 'Utilidad',
+    icon: 'settings',
+    premium: false,
+    tags: ["utilidad","customcmd","crea","tus","propios","comandos","servidor","trigger"],
+  },
+  {
     name: 'donate',
     description: 'Apoya el desarrollo del bot con una donación',
     aliases: ["donar","donación","donacion","apoyo","support","patreon","kofi","ko-fi"],
