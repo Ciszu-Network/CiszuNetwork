@@ -1,6 +1,7 @@
 import { EmbedBuilder, SlashCommandBuilder, TextChannel } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getGuildConfig } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'confess',
@@ -17,12 +18,13 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (args.length === 0) {
       const errorEmbed = new EmbedBuilder()
         .setColor('#8b5cf6')
-        .setTitle('❌ Error')
-        .setDescription('Debes proporcionar un mensaje para confesarlo anónimamente.')
-        .addFields({ name: '📝 Uso correcto', value: `\`${this.usage}\``, inline: false })
+        .setTitle(tr(L, '❌ Error', '❌ Error'))
+        .setDescription(tr(L, 'Debes proporcionar un mensaje para confesarlo anónimamente.', 'You must provide a message to confess anonymously.'))
+        .addFields({ name: tr(L, '📝 Uso correcto', '📝 Correct usage'), value: `\`${this.usage}\``, inline: false })
         .setFooter({ text: 'CiszuBot', iconURL: message.client.user?.displayAvatarURL() })
         .setTimestamp();
       return message.reply({ embeds: [errorEmbed] });
@@ -31,9 +33,9 @@ const command: BotCommand = {
     const confessionMessage = args.join(' ');
     const embed = new EmbedBuilder()
       .setColor('#8b5cf6')
-      .setTitle('🤫 Confesión Anónima')
+      .setTitle(tr(L, '🤫 Confesión Anónima', '🤫 Anonymous Confession'))
       .setDescription(confessionMessage)
-      .addFields({ name: '👤 Autor', value: 'Usuario Anónimo', inline: true })
+      .addFields({ name: '👤 Autor', value: tr(L, 'Usuario Anónimo', 'Anonymous User'), inline: true })
       .setFooter({ text: 'CiszuBot', iconURL: message.client.user?.displayAvatarURL() })
       .setTimestamp();
 
@@ -54,8 +56,8 @@ const command: BotCommand = {
       } catch {
         const deleteEmbed = new EmbedBuilder()
           .setColor('#8b5cf6')
-          .setTitle('⚠️ Advertencia')
-          .setDescription('No pude borrar tu mensaje original. Asegúrate de que el bot tenga permisos para eliminar mensajes.')
+          .setTitle(tr(L, '⚠️ Advertencia', '⚠️ Warning'))
+          .setDescription(tr(L, 'No pude borrar tu mensaje original. Asegúrate de que el bot tenga permisos para eliminar mensajes.', 'I could not delete your original message. Make sure the bot has permission to delete messages.'))
           .setFooter({ text: 'CiszuBot', iconURL: message.client.user?.displayAvatarURL() })
           .setTimestamp();
         const temp = await message.reply({ embeds: [deleteEmbed] });

@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getGuildConfig, updateGuildConfig } from '../services/configService';
 import { isStaff, STAFF_ERROR } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'goodbye',
@@ -29,6 +30,7 @@ const command: BotCommand = {
     .addSubcommand((s) => s.setName('status').setDescription('Muestra la configuración actual')),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const guildId = message.guild.id;
     const cfg = await getGuildConfig(guildId);
@@ -37,12 +39,12 @@ const command: BotCommand = {
     if (!sub || sub === 'status') {
       const embed = new EmbedBuilder()
         .setColor(cfg.goodbye_channel_id ? '#22c55e' : '#6b7280')
-        .setTitle('👋 Despedidas')
+        .setTitle(tr(L, '👋 Despedidas', '👋 Goodbyes'))
         .setDescription(
           `**Canal:** ${cfg.goodbye_channel_id ? `<#${cfg.goodbye_channel_id}>` : 'no configurado'}\n` +
             `**Mensaje:** ${cfg.goodbye_message}\n\n` +
             'Variables: `{user}` `{username}` `{guild}` `{members}`\n' +
-            'Configura: `cz!goodbye channel #canal` · `cz!goodbye message Adiós {user}` · `cz!goodbye test`',
+            tr(L, 'Configura: `cz!goodbye channel #canal` · `cz!goodbye message Adiós {user}` · `cz!goodbye test`', 'Configure: `cz!goodbye channel #channel` · `cz!goodbye message Goodbye {user}` · `cz!goodbye test`'),
         )
         .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
         .setTimestamp();
@@ -59,7 +61,7 @@ const command: BotCommand = {
       const raw = (args[1] ?? '').toLowerCase();
       if (raw === 'off' || raw === 'disable') {
         await updateGuildConfig(guildId, { goodbye_channel_id: null });
-        await message.reply('✅ Despedidas desactivadas.');
+        await message.reply(tr(L, '✅ Despedidas desactivadas.', '✅ Goodbyes disabled.'));
         return;
       }
       const channelId = message.mentions?.channels?.first()?.id;

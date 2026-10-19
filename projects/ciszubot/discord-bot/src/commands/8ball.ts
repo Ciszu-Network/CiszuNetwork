@@ -1,5 +1,6 @@
 import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
+import { langOf, tr } from '../services/i18n';
 
 const respuestas = [
   'Sí, definitivamente', 'Es cierto', 'Es muy probable', 'Las perspectivas son buenas',
@@ -29,12 +30,13 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (args.length === 0) {
       const errorEmbed = new EmbedBuilder()
         .setColor('#8b5cf6')
-        .setTitle('❌ Error')
-        .setDescription('Debes hacer una pregunta para que la bola 8 te responda.')
-        .addFields({ name: '📝 Uso correcto', value: `\`${this.usage}\``, inline: false })
+        .setTitle(tr(L, '❌ Error', '❌ Error'))
+        .setDescription(tr(L, 'Debes hacer una pregunta para que la bola 8 te responda.', 'You must ask a question for the magic 8-ball to answer.'))
+        .addFields({ name: tr(L, '📝 Uso correcto', '📝 Correct usage'), value: `\`${this.usage}\``, inline: false })
         .setFooter({ text: 'CiszuBot', iconURL: message.client.user?.displayAvatarURL() })
         .setTimestamp();
       return message.reply({ embeds: [errorEmbed] });
@@ -45,7 +47,7 @@ const command: BotCommand = {
 
     const embed = new EmbedBuilder()
       .setColor('#8b5cf6')
-      .setTitle('🎱 Bola 8 Mágica')
+      .setTitle(tr(L, '🎱 Bola 8 Mágica', '🎱 Magic 8-Ball'))
       .setDescription(`**Pregunta:** ${pregunta}\n\n**Respuesta:** ${respuesta}`)
       .setFooter({
         text: `CiszuBot • Consultada por ${message.author.tag}`,

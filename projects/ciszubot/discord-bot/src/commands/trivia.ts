@@ -4,6 +4,7 @@ import { BOT_COLORS, BOT_FOOTER } from '../config/links';
 import { getGuildConfig } from '../services/configService';
 import { addTriviaQuestion, startTrivia, stopTrivia, triviaLeaderboard } from '../services/trivia';
 import { isStaff } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 const DIFF_ALIASES: Record<string, string> = {
   facil: 'easy',
@@ -58,6 +59,7 @@ const command: BotCommand = {
     .addStringOption((o) => o.setName('pregunta').setDescription('Pregunta y respuestas separadas con | (para add)').setRequired(false)),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const cfg = await getGuildConfig(message.guild.id);
     const first = (args[0] ?? '').toLowerCase();
@@ -66,10 +68,10 @@ const command: BotCommand = {
       const top = await triviaLeaderboard(message.guild.id);
       const embed = new EmbedBuilder()
         .setColor(BOT_COLORS.primary)
-        .setTitle('🏆 Ranking de trivia')
+        .setTitle(tr(L, '🏆 Ranking de trivia', '🏆 Trivia ranking'))
         .setDescription(
           top.length === 0
-            ? 'Todavía no hay puntuaciones. ¡Usa `cz!trivia` para empezar!'
+            ? tr(L, 'Todavía no hay puntuaciones. ¡Usa `cz!trivia` para empezar!', 'No scores yet. Use `cz!trivia` to get started!')
             : top.map((r, i) => `**${i + 1}.** <@${r.userId}> — **${r.points}** punto(s) (${r.correct} correctas)`).join('\n'),
         )
         .setFooter(BOT_FOOTER(message.author.tag, message.client.user?.displayAvatarURL()))
@@ -81,18 +83,18 @@ const command: BotCommand = {
     if (first === 'stop' || first === 'detener') {
       const staff = Boolean(message.member?.permissions.has(PermissionFlagsBits.ManageGuild)) || (await isStaff(message).catch(() => false));
       if (!staff) {
-        await message.reply('❌ Solo el staff puede detener la trivia.');
+        await message.reply(tr(L, '❌ Solo el staff puede detener la trivia.', '❌ Only staff can stop the trivia.'));
         return;
       }
       const res = await stopTrivia(message.client, message.channel?.id ?? '');
-      await message.reply(res.ok ? '🛑 Trivia detenida.' : `❌ ${res.reason ?? 'No hay trivia activa.'}`);
+      await message.reply(res.ok ? tr(L, '🛑 Trivia detenida.', '🛑 Trivia stopped.') : `❌ ${res.reason ?? 'No hay trivia activa.'}`);
       return;
     }
 
     if (first === 'add' || first === 'agregar') {
       const staff = Boolean(message.member?.permissions.has(PermissionFlagsBits.ManageGuild)) || (await isStaff(message).catch(() => false));
       if (!staff) {
-        await message.reply('❌ Solo el staff puede agregar preguntas.');
+        await message.reply(tr(L, '❌ Solo el staff puede agregar preguntas.', '❌ Only staff can add questions.'));
         return;
       }
       let tokens = args.slice(1);
@@ -108,11 +110,11 @@ const command: BotCommand = {
       const segments = tokens.join(' ').split('|').map((s) => s.trim()).filter(Boolean);
       const question = segments.shift() ?? '';
       if (!question || segments.length === 0) {
-        await message.reply('❌ Uso: `cz!trivia add <pregunta> | <respuesta 1> | <respuesta 2>... [--facil|--dificil]`');
+        await message.reply(tr(L, '❌ Uso: `cz!trivia add <pregunta> | <respuesta 1> | <respuesta 2>... [--facil|--dificil]`', '❌ Usage: `cz!trivia add <question> | <answer 1> | <answer 2>... [--easy|--hard]`'));
         return;
       }
       const res = await addTriviaQuestion(message.guild.id, question, segments, difficulty, message.author.id);
-      await message.reply(res.ok ? '✅ Pregunta agregada a la trivia del servidor.' : `❌ ${res.reason ?? 'No se pudo agregar.'}`);
+      await message.reply(res.ok ? tr(L, '✅ Pregunta agregada a la trivia del servidor.', '✅ Question added to the server trivia.') : `❌ ${res.reason ?? 'No se pudo agregar.'}`);
       return;
     }
 
@@ -122,7 +124,7 @@ const command: BotCommand = {
       ? [...(message.member.roles as unknown as { cache: Map<string, unknown> }).cache.keys()]
       : [];
     if (cfg.trivia_excluded_role_ids.length > 0 && memberRoles.some((r) => cfg.trivia_excluded_role_ids.includes(r))) {
-      await message.reply('❌ Tienes un rol excluido de la trivia.');
+      await message.reply(tr(L, '❌ Tienes un rol excluido de la trivia.', '❌ You have a role excluded from trivia.'));
       return;
     }
     const res = await startTrivia(message.client, message.channel as TextChannel, cfg, difficulty, message.author.tag);

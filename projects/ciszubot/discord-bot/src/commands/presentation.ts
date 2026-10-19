@@ -2,6 +2,7 @@ import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { BOT_COLORS, BOT_FOOTER, LINKS, BOT_ASSETS } from '../config/links';
 import { isStaff } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 /**
  * Comandos de presentación/perfil:
@@ -34,20 +35,21 @@ const whoareyou = (): BotCommand => ({
   category: 'Información',
   // Sin versión slash (Discord limita a 100 comandos globales): cz!whoareyou
   async execute(message) {
+    const L = await langOf(message);
     const client = message.client;
     const embed = new EmbedBuilder()
       .setColor(BOT_COLORS.primary)
-      .setTitle('🤖 ¿Quién soy?')
+      .setTitle(tr(L, '🤖 ¿Quién soy?', '🤖 Who am I?'))
       .setThumbnail(BOT_ASSETS.isotype)
       .setDescription(
         `Soy **CiszuBot**, el bot oficial de **Ciszu Network** — el ecosistema digital de **Ciszuko Antony**.\n\n` +
           'Gestiono economía, niveles, sorteos, moderación, tickets, alianzas, embeds y mucho más, todo configurable desde mi dashboard.',
       )
       .addFields(
-        { name: '👤 Creador', value: 'Ciszuko Antony (Ciszu Network)', inline: true },
-        { name: '🌐 Web', value: LINKS.websiteLabel, inline: true },
-        { name: '🏠 Servidores', value: `${client.guilds.cache.size}`, inline: true },
-        { name: '🧩 Comandos', value: 'Slash (/) y prefijo `cz!`', inline: true },
+        { name: tr(L, '👤 Creador', '👤 Creator'), value: 'Ciszuko Antony (Ciszu Network)', inline: true },
+        { name: tr(L, '🌐 Web', '🌐 Website'), value: LINKS.websiteLabel, inline: true },
+        { name: tr(L, '🏠 Servidores', '🏠 Servers'), value: `${client.guilds.cache.size}`, inline: true },
+        { name: tr(L, '🧩 Comandos', '🧩 Commands'), value: tr(L, 'Slash (/) y prefijo `cz!`', 'Slash (/) and `cz!` prefix'), inline: true },
         { name: '💎 Premium', value: `${LINKS.website}/premium`, inline: true },
         { name: '📚 Docs', value: `${LINKS.website}/documentation`, inline: true },
       )
@@ -65,9 +67,10 @@ const whoiam = (): BotCommand => ({
   category: 'Social',
   // Sin versión slash (Discord limita a 100 comandos globales): cz!whoiam
   async execute(message) {
+    const L = await langOf(message);
     const card = await memberCard(message, message.author.id);
     if (!card) {
-      await message.reply('❌ No pude leer tu perfil en este servidor.');
+      await message.reply(tr(L, '❌ No pude leer tu perfil en este servidor.', '❌ I could not read your profile in this server.'));
       return;
     }
     const { member, roles, top, staff } = card;
@@ -75,13 +78,13 @@ const whoiam = (): BotCommand => ({
       .setColor(BOT_COLORS.primary)
       .setTitle(`🪪 ${member.displayName}`)
       .setThumbnail(member.displayAvatarURL({ size: 256 }))
-      .setDescription(staff ? '👑 Miembro del **staff**' : '🙋 Miembro de la comunidad')
+      .setDescription(staff ? tr(L, '👑 Miembro del **staff**', '👑 **Staff** member') : tr(L, '🙋 Miembro de la comunidad', '🙋 Community member'))
       .addFields(
-        { name: '🏷️ Usuario', value: `${member.user.tag}`, inline: true },
-        { name: '⭐ Rol más alto', value: top ? `<@&${top.id}>` : 'Sin roles', inline: true },
-        { name: '🧩 Roles', value: `${roles.size}`, inline: true },
-        { name: '📅 En el servidor desde', value: ts(member.joinedAt), inline: true },
-        { name: '🕒 Cuenta creada', value: ts(member.user.createdAt), inline: true },
+        { name: tr(L, '🏷️ Usuario', '🏷️ User'), value: `${member.user.tag}`, inline: true },
+        { name: tr(L, '⭐ Rol más alto', '⭐ Highest role'), value: top ? `<@&${top.id}>` : tr(L, tr(L, tr(L, 'Sin roles', 'No roles'), 'No roles'), 'No roles'), inline: true },
+        { name: tr(L, '🧩 Roles', '🧩 Roles'), value: `${roles.size}`, inline: true },
+        { name: tr(L, '📅 En el servidor desde', '📅 In the server since'), value: ts(member.joinedAt), inline: true },
+        { name: tr(L, '🕒 Cuenta creada', '🕒 Account created'), value: ts(member.user.createdAt), inline: true },
         { name: '🆔 ID', value: `\`${member.id}\``, inline: true },
       )
       .setFooter(BOT_FOOTER(message.author.tag, message.client.user?.displayAvatarURL()))
@@ -98,21 +101,22 @@ const whoismyrol = (): BotCommand => ({
   category: 'Social',
   // Sin versión slash (Discord limita a 100 comandos globales): cz!whoismyrol
   async execute(message) {
+    const L = await langOf(message);
     const card = await memberCard(message, message.author.id);
     if (!card) {
-      await message.reply('❌ No pude leer tus roles en este servidor.');
+      await message.reply(tr(L, '❌ No pude leer tus roles en este servidor.', '❌ I could not read your roles in this server.'));
       return;
     }
     const { member, roles, top, staff } = card;
-    const list = roles.map((r) => `<@&${r.id}>`).slice(0, 40).join(' · ') || 'Sin roles';
+    const list = roles.map((r) => `<@&${r.id}>`).slice(0, 40).join(' · ') || tr(L, tr(L, 'Sin roles', 'No roles'), 'No roles');
     const embed = new EmbedBuilder()
       .setColor(staff ? BOT_COLORS.secondary : BOT_COLORS.primary)
       .setTitle(`🎭 Roles de ${member.displayName}`)
       .setDescription(list.slice(0, 4000))
       .addFields(
-        { name: '⭐ Rol más alto', value: top ? `<@&${top.id}>` : 'Sin roles', inline: true },
-        { name: '🧩 Total', value: `${roles.size} rol(es)`, inline: true },
-        { name: '🛡️ Rango', value: staff ? 'Staff (con permisos de gestión)' : 'Miembro', inline: true },
+        { name: tr(L, '⭐ Rol más alto', '⭐ Highest role'), value: top ? `<@&${top.id}>` : tr(L, tr(L, tr(L, 'Sin roles', 'No roles'), 'No roles'), 'No roles'), inline: true },
+        { name: tr(L, '🧩 Total', '🧩 Total'), value: `${roles.size} ` + tr(L, 'rol(es)', 'role(s)'), inline: true },
+        { name: tr(L, '🛡️ Rango', '🛡️ Rank'), value: staff ? tr(L, 'Staff (con permisos de gestión)', 'Staff (with management permissions)') : tr(L, 'Miembro', 'Member'), inline: true },
       )
       .setFooter(BOT_FOOTER(message.author.tag, message.client.user?.displayAvatarURL()))
       .setTimestamp();
@@ -131,6 +135,7 @@ const present = (): BotCommand => ({
     .setDescription('Presenta a un usuario')
     .addUserOption((o) => o.setName('usuario').setDescription('Usuario a presentar').setRequired(false)),
   async execute(message, args) {
+    const L = await langOf(message);
     const target = message.mentions?.users?.first();
     if (!target) {
       // El bot se presenta a sí mismo, con un resumen de estado estilo humano.
@@ -141,25 +146,25 @@ const present = (): BotCommand => ({
       const days = Math.floor(uptimeMs / 86_400_000);
       const hours = Math.floor((uptimeMs % 86_400_000) / 3_600_000);
       const moods = [
-        'Hoy me siento genial acompañando a la comunidad 🎉',
-        'Ando con mucha energía, listo para lo que pidan ⚡',
-        'Tranquilo pero atento, como siempre 😌',
+        tr(L, 'Hoy me siento genial acompañando a la comunidad 🎉', 'I feel great accompanying the community today 🎉'),
+        tr(L, 'Ando con mucha energía, listo para lo que pidan ⚡', 'Lots of energy today, ready for anything ⚡'),
+        tr(L, 'Tranquilo pero atento, como siempre 😌', 'Calm but attentive, as always 😌'),
       ];
       const mood = moods[new Date().getDate() % moods.length];
       const embed = new EmbedBuilder()
         .setColor(BOT_COLORS.primary)
-        .setTitle('👋 ¡Hola! Soy CiszuBot')
+        .setTitle(tr(L, '👋 ¡Hola! Soy CiszuBot', '👋 Hi! I am CiszuBot'))
         .setThumbnail(BOT_ASSETS.isotype)
         .setDescription(
           `Un gusto, me presento: soy el bot oficial de **Ciszu Network**, creado por **Ciszuko Antony**.\n\n${mood}`,
         )
         .addFields(
-          { name: '🏠 Dónde vivo', value: `${guilds} servidor(es)`, inline: true },
-          { name: '👥 A quiénes cuido', value: `${members} miembro(s)`, inline: true },
-          { name: '⏱️ Despierto desde hace', value: `${days}d ${hours}h sin dormir`, inline: true },
-          { name: '🧩 Lo que hago', value: 'Economía, niveles, sorteos, moderación, tickets, alianzas y más.', inline: false },
+          { name: tr(L, '🏠 Dónde vivo', '🏠 Where I live'), value: `${guilds} ` + tr(L, 'servidor(es)', 'server(s)'), inline: true },
+          { name: tr(L, '👥 A quiénes cuido', '👥 Who I take care of'), value: `${members} ` + tr(L, 'miembro(s)', 'member(s)'), inline: true },
+          { name: tr(L, '⏱️ Despierto desde hace', '⏱️ Awake for'), value: `${days}d ${hours}h ` + tr(L, 'sin dormir', 'without sleeping'), inline: true },
+          { name: tr(L, '🧩 Lo que hago', '🧩 What I do'), value: tr(L, 'Economía, niveles, sorteos, moderación, tickets, alianzas y más.', 'Economy, levels, giveaways, moderation, tickets, alliances and more.'), inline: false },
           { name: '🌐 Mi casa', value: LINKS.websiteLabel, inline: true },
-          { name: '💬 ¿Hablamos?', value: 'Usa `cz!help` o el dashboard', inline: true },
+          { name: tr(L, '💬 ¿Hablamos?', '💬 Talk to me?'), value: tr(L, 'Usa `cz!help` o el dashboard', 'Use `cz!help` or the dashboard'), inline: true },
         )
         .setFooter(BOT_FOOTER(message.author.tag, client.user?.displayAvatarURL()))
         .setTimestamp();
@@ -169,7 +174,7 @@ const present = (): BotCommand => ({
     const guild = message.guild!;
     const member = await guild.members.fetch(target.id).catch(() => null);
     if (!member) {
-      await message.reply('❌ No encontré a ese usuario en el servidor.');
+      await message.reply(tr(L, '❌ No encontré a ese usuario en el servidor.', '❌ I could not find that user in the server.'));
       return;
     }
     const roles = member.roles.cache
@@ -183,7 +188,7 @@ const present = (): BotCommand => ({
       .setDescription(
         `Todos den la bienvenida a <@${member.id}>.\n\n` +
           `**Usuario:** ${member.user.tag}\n` +
-          `**Rol más alto:** ${top ? `<@&${top.id}>` : 'Sin roles'}\n` +
+          `**Rol más alto:** ${top ? `<@&${top.id}>` : tr(L, tr(L, 'Sin roles', 'No roles'), 'No roles')}\n` +
           `**En el servidor desde:** ${ts(member.joinedAt)}\n` +
           `**Roles:** ${roles.size}`,
       )

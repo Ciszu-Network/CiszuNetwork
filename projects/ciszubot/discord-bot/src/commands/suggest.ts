@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { getGuildConfig } from '../services/configService';
 import { createSuggestion, decideSuggestion } from '../services/suggestions';
 import { isStaff } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 /**
  * cz!suggest <texto> — envía una sugerencia al canal configurado.
@@ -34,6 +35,7 @@ const command: BotCommand = {
     .addStringOption((o) => o.setName('razon').setDescription('Razón de la decisión (staff)').setRequired(false)),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const cfg = await getGuildConfig(message.guild.id);
     const first = (args[0] ?? '').toLowerCase();
@@ -41,33 +43,33 @@ const command: BotCommand = {
     if (first === 'aprobar' || first === 'cancelar') {
       const staff = Boolean(message.member?.permissions.has(PermissionFlagsBits.ManageGuild)) || (await isStaff(message).catch(() => false));
       if (!staff) {
-        await message.reply('❌ Solo el staff puede aprobar o cancelar sugerencias.');
+        await message.reply(tr(L, '❌ Solo el staff puede aprobar o cancelar sugerencias.', '❌ Only staff can approve or cancel suggestions.'));
         return;
       }
       const id = parseInt(args[1] ?? '', 10);
       if (!id || Number.isNaN(id)) {
-        await message.reply('❌ Uso: `cz!suggest aprobar/cancelar <id> [razón]`');
+        await message.reply(tr(L, '❌ Uso: `cz!suggest aprobar/cancelar <id> [razón]`', '❌ Usage: `cz!suggest approve/cancel <id> [reason]`'));
         return;
       }
       const reason = args.slice(2).join(' ') || null;
       const res = await decideSuggestion(message.client, id, message.author.id, first === 'aprobar' ? 'approved' : 'cancelled', reason);
-      await message.reply(res.ok ? `✅ Sugerencia #${id} ${first === 'aprobar' ? 'aprobada' : 'cancelada'}.` : `❌ ${res.reason ?? 'No se pudo decidir.'}`);
+      await message.reply(res.ok ? tr(L, `✅ Sugerencia #${id} ${first === 'aprobar' ? 'aprobada' : 'cancelada'}.`, `✅ Suggestion #${id} ${first === 'aprobar' ? 'approved' : 'cancelled'}.`) : `❌ ${res.reason ?? 'No se pudo decidir.'}`);
       return;
     }
 
     if (!cfg.suggestions_enabled || !cfg.suggestions_channel_id) {
-      await message.reply('❌ El sistema de sugerencias no está activado o no tiene canal configurado (dashboard → Sugerencias).');
+      await message.reply(tr(L, '❌ El sistema de sugerencias no está activado o no tiene canal configurado (dashboard → Sugerencias).', '❌ The suggestions system is not enabled or has no channel configured (dashboard → Suggestions).'));
       return;
     }
     const channel = message.guild.channels.cache.get(cfg.suggestions_channel_id) as TextChannel | undefined;
     if (!channel || !channel.isTextBased()) {
-      await message.reply('❌ El canal de sugerencias configurado ya no existe o no es de texto.');
+      await message.reply(tr(L, '❌ El canal de sugerencias configurado ya no existe o no es de texto.', '❌ The configured suggestions channel no longer exists or is not a text channel.'));
       return;
     }
 
     const content = (first === 'enviar' ? args.slice(1) : args).join(' ').trim();
     if (!content) {
-      await message.reply('❌ Uso: `cz!suggest <texto de tu sugerencia>`');
+      await message.reply(tr(L, '❌ Uso: `cz!suggest <texto de tu sugerencia>`', '❌ Usage: `cz!suggest <your suggestion text>`'));
       return;
     }
 
@@ -83,9 +85,9 @@ const command: BotCommand = {
       memberRoles,
     );
     if (res.ok) {
-      await message.reply(`✅ Sugerencia **#${res.id}** enviada a <#${channel.id}>. ¡La comunidad puede votar!`);
+      await message.reply(tr(L, `✅ Sugerencia **#${res.id}** enviada a <#${channel.id}>. ¡La comunidad puede votar!`, `✅ Suggestion **#${res.id}** sent to <#${channel.id}>. The community can vote!`));
     } else {
-      await message.reply(`❌ ${res.reason ?? 'No se pudo enviar la sugerencia.'}`);
+      await message.reply(tr(L, `❌ ${res.reason ?? 'No se pudo enviar la sugerencia.'}`, `❌ ${res.reason ?? 'Could not send the suggestion.'}`));
     }
   },
 };

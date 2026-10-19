@@ -2,6 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashComman
 import type { BotCommand } from '../types/command';
 import { BOT_COLORS, BOT_FOOTER, LINKS, BOT_ASSETS } from '../config/links';
 import { getGuildConfig } from '../services/configService';
+import { langOf, tr } from '../services/i18n';
 
 /**
  * Promoción del ecosistema: `cz!promo` (resumen) y `cz!promo largo`
@@ -110,6 +111,7 @@ const command: BotCommand = {
     ),
 
   async execute(message, args) {
+    const L = await langOf(message);
     const wantsLong = ['largo', 'long', 'extendido'].includes((args[0] ?? '').toLowerCase());
 
     if (wantsLong) {
@@ -139,25 +141,25 @@ const command: BotCommand = {
 
     const embed = new EmbedBuilder()
       .setColor(BOT_COLORS.primary)
-      .setTitle('🌐 Ecosistema Ciszu Network')
+      .setTitle(tr(L, '🌐 Ecosistema Ciszu Network', '🌐 Ciszu Network ecosystem'))
       .setDescription(
-        'Descubre todo lo que hay detrás del bot: la organización, la web del bot y el portfolio de CiszukoAntony.\n\n' +
+        tr(L, 'Descubre todo lo que hay detrás del bot: la organización, la web del bot y el portfolio de CiszukoAntony.\n\n', 'Discover everything behind the bot: the organization, the bot website and the CiszukoAntony portfolio.\n\n') +
           '💡 Usa `cz!promo largo` para el mensaje completo (en el idioma del servidor).',
       )
       .addFields(
         {
           name: `🤖 CiszuBot — ${LINKS.websiteLabel}`,
-          value: 'Web oficial del bot: estado en vivo, comandos, soporte, votaciones y donaciones.',
+          value: tr(L, 'Web oficial del bot: estado en vivo, comandos, soporte, votaciones y donaciones.', 'Official bot website: live status, commands, support, voting and donations.'),
           inline: false,
         },
         {
           name: `🌍 Ciszu Network — ${LINKS.networkLabel}`,
-          value: 'Web principal de la organización: el ecosistema digital de CiszukoAntony y sus proyectos.',
+          value: tr(L, 'Web principal de la organización: el ecosistema digital de CiszukoAntony y sus proyectos.', 'Organization main website: the CiszukoAntony digital ecosystem and its projects.'),
           inline: false,
         },
         {
           name: `🎨 Ciszuko Antony — ${LINKS.antonyLabel}`,
-          value: 'Portfolio personal: logos, medios y música del creador.',
+          value: tr(L, 'Portfolio personal: logos, medios y música del creador.', 'Personal portfolio: logos, media and music by the creator.'),
           inline: false,
         },
       )

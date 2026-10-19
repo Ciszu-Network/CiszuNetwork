@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { getGuildConfig } from '../services/configService';
 import { createPoll, closePoll } from '../services/polls';
 import { isStaff } from '../utils/permissions';
+import { langOf, tr } from '../services/i18n';
 
 /** Duración estilo 10m / 2h / 1d. */
 function parseDuration(raw: string): number | null {
@@ -35,6 +36,7 @@ const command: BotCommand = {
     .addIntegerOption((o) => o.setName('cerrar').setDescription('ID de encuesta a cerrar (autor/staff)').setRequired(false)),
 
   async execute(message, args) {
+    const L = await langOf(message);
     if (!message.guild) return;
     const cfg = await getGuildConfig(message.guild.id);
     const first = (args[0] ?? '').toLowerCase();
@@ -42,7 +44,7 @@ const command: BotCommand = {
     if (first === 'cerrar' || first === 'close') {
       const id = parseInt(args[1] ?? '', 10);
       if (!id || Number.isNaN(id)) {
-        await message.reply('❌ Uso: `cz!poll cerrar <id>`');
+        await message.reply(tr(L, '❌ Uso: `cz!poll cerrar <id>`', '❌ Usage: `cz!poll close <id>`'));
         return;
       }
       const staff = Boolean(message.member?.permissions.has(PermissionFlagsBits.ManageGuild)) || (await isStaff(message).catch(() => false));
@@ -83,7 +85,7 @@ const command: BotCommand = {
     const options = segments;
 
     if (!question || options.length < 2) {
-      await message.reply('❌ Uso: `cz!poll <pregunta> | opción 1 | opción 2 [| ...] [--anon] [--tiempo 30m]`');
+      await message.reply(tr(L, '❌ Uso: `cz!poll <pregunta> | opción 1 | opción 2 [| ...] [--anon] [--tiempo 30m]`', '❌ Usage: `cz!poll <question> | option 1 | option 2 [| ...] [--anon] [--time 30m]`'));
       return;
     }
 
