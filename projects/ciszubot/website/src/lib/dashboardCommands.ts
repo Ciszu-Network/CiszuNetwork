@@ -108,6 +108,11 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: byNames(['suggest']),
     note: 'cz!suggest <texto> envía; cz!suggest aprobar/cancelar <id> [razón] decide (staff). Los votos son con botones 👍/👎.',
   },
+  polls: {
+    title: 'Comandos de encuestas',
+    commands: byNames(['poll']),
+    note: 'cz!poll <pregunta> | opción 1 | opción 2 [--anon] [--tiempo 30m]; cz!poll cerrar <id> (autor/staff).',
+  },
   invites: {
     title: 'Comandos de invitaciones',
     commands: byNames(['invites']),

@@ -15,6 +15,7 @@ import {
 import { getGuildConfig, getPrefix, GuildConfig } from '../services/configService';
 import { handleCounting } from '../services/counting';
 import { voteSuggestion } from '../services/suggestions';
+import { closePoll, resumePolls, votePoll } from '../services/polls';
 import { addXp } from '../services/levels';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
 import { logger } from '../services/logger';
@@ -730,6 +731,7 @@ export function registerListeners(client: Client): void {
   client.once(Events.ClientReady, (readyClient) => {
     for (const guild of readyClient.guilds.cache.values()) {
       void resumeActiveGiveaways(guild);
+      void resumePolls(readyClient);
       void refreshInvites(readyClient, guild.id);
     }
   });
@@ -879,6 +881,30 @@ export async function handleButton(interaction: ButtonInteraction, client: Clien
           : `❌ ${result.reason ?? 'No se pudo votar.'}`,
         ephemeral: true,
       })
+      .catch(() => undefined);
+    return;
+  }
+
+  // ─── Encuestas (votos y cierre) ───
+  if (customId.startsWith('poll_vote:')) {
+    const parts = customId.split(':');
+    const id = parseInt(parts[1] ?? '', 10);
+    const idx = parseInt(parts[2] ?? '', 10);
+    const result = await votePoll(client, id, interaction.user.id, idx);
+    await interaction
+      .followUp({
+        content: result.ok ? (result.changed ? '✅ Voto cambiado.' : '✅ Voto registrado.') : `❌ ${result.reason ?? 'No se pudo votar.'}`,
+        ephemeral: true,
+      })
+      .catch(() => undefined);
+    return;
+  }
+  if (customId.startsWith('poll_close:')) {
+    const id = parseInt(customId.split(':')[1] ?? '', 10);
+    const staff = Boolean(interaction.memberPermissions?.has('ManageGuild'));
+    const result = await closePoll(client, id, { id: interaction.user.id, staff });
+    await interaction
+      .followUp({ content: result.ok ? '🔒 Encuesta cerrada.' : `❌ ${result.reason ?? 'No se pudo cerrar.'}`, ephemeral: true })
       .catch(() => undefined);
     return;
   }

@@ -94,6 +94,10 @@ export const guildConfigs = ciszubot.table(
     suggestionsExcludedRoleIds: jsonb('suggestions_excluded_role_ids').notNull().default([]),
     suggestionsMaxActive: integer('suggestions_max_active').notNull().default(0),
     suggestionsCooldownMinutes: integer('suggestions_cooldown_minutes').notNull().default(0),
+    pollsEnabled: boolean('polls_enabled').notNull().default(true),
+    pollsExcludedRoleIds: jsonb('polls_excluded_role_ids').notNull().default([]),
+    pollsMaxActive: integer('polls_max_active').notNull().default(0),
+    pollsCooldownMinutes: integer('polls_cooldown_minutes').notNull().default(0),
     marriageExcludedRoleIds: jsonb('marriage_excluded_role_ids').notNull().default([]),
     nitroRepostMode: text('nitro_repost_mode').notNull().default('auto'),
     nitroExcludedRoleIds: jsonb('nitro_excluded_role_ids').notNull().default([]),
@@ -508,6 +512,27 @@ export const botActions = ciszubot.table(
     result: text('result'),
   },
   (t) => [index('idx_bot_actions_pending').on(t.processed, t.createdAt)]
+);
+
+/** Encuestas (votos anonimos/publicos, duracion, ganador). */
+export const polls = ciszubot.table(
+  'polls',
+  {
+    id: bigserial('id', { mode: 'number' }).primaryKey(),
+    guildId: text('guild_id').notNull(),
+    channelId: text('channel_id').notNull(),
+    messageId: text('message_id'),
+    authorId: text('author_id').notNull(),
+    question: text('question').notNull(),
+    options: jsonb('options').notNull().default([]),
+    votes: jsonb('votes').notNull().default({}),
+    anonymous: boolean('anonymous').notNull().default(false),
+    endsAt: timestamp('ends_at', { withTimezone: true }),
+    ended: boolean('ended').notNull().default(false),
+    winnerIndex: integer('winner_index'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('idx_polls_guild').on(t.guildId, t.createdAt)],
 );
 
 /** Sugerencias de la comunidad (votos + decision del staff). */

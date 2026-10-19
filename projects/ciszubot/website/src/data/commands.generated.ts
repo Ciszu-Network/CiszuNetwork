@@ -706,6 +706,16 @@ export const COMMANDS: CommandInfo[] = [
     tags: ["utilidad","ping","muestra","bot","pong"],
   },
   {
+    name: 'poll',
+    description: 'Crea una encuesta con votos (anónimos o públicos) y cierre por tiempo o manual',
+    aliases: ["encuesta","votacion","vote"],
+    usage: 'cz!poll <pregunta> | opción 1 | opción 2 [--anon] [--tiempo 30m]',
+    category: 'Utilidad',
+    icon: 'settings',
+    premium: false,
+    tags: ["utilidad","poll","crea","encuesta","votos","anonimos","publicos","cierre","tiempo"],
+  },
+  {
     name: 'pong',
     description: 'Muestra el ping del bot con "ping"',
     aliases: ["latencia2","ms2","pongping","p2"],

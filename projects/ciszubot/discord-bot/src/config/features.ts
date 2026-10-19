@@ -30,6 +30,7 @@ export const FEATURE_DEFS: FeatureDef[] = [
   { slug: 'giveaways', label: 'Sorteos (giveaways)', commands: ['giveaway', 'gend'] },
   { slug: 'counting', label: 'Contador', commands: ['contador'] },
   { slug: 'suggestions', label: 'Sugerencias', commands: ['suggest'] },
+  { slug: 'polls', label: 'Encuestas', commands: ['poll'] },
   { slug: 'embeds', label: 'Embeds personalizados', commands: ['embed'] },
   // Social: solo perfiles/AFK/casamiento (alianzas e invitaciones van aparte).
   { slug: 'social_afk', label: 'AFK', commands: ['afk'] },

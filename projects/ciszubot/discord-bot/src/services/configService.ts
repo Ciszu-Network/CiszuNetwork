@@ -147,6 +147,10 @@ export interface GuildConfig {
   suggestions_excluded_role_ids: string[];
   suggestions_max_active: number;
   suggestions_cooldown_minutes: number;
+  polls_enabled: boolean;
+  polls_excluded_role_ids: string[];
+  polls_max_active: number;
+  polls_cooldown_minutes: number;
   marriage_excluded_role_ids: string[];
   nitro_repost_mode: 'auto' | 'manual';
   nitro_excluded_role_ids: string[];
@@ -239,6 +243,10 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   suggestions_excluded_role_ids: [],
   suggestions_max_active: 0,
   suggestions_cooldown_minutes: 0,
+  polls_enabled: true,
+  polls_excluded_role_ids: [],
+  polls_max_active: 0,
+  polls_cooldown_minutes: 0,
   marriage_excluded_role_ids: [],
   nitro_repost_mode: 'auto',
   nitro_excluded_role_ids: [],
@@ -349,6 +357,10 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         suggestions_excluded_role_ids: asArray(data.suggestionsExcludedRoleIds, DEFAULTS.suggestions_excluded_role_ids),
         suggestions_max_active: data.suggestionsMaxActive ?? DEFAULTS.suggestions_max_active,
         suggestions_cooldown_minutes: data.suggestionsCooldownMinutes ?? DEFAULTS.suggestions_cooldown_minutes,
+        polls_enabled: data.pollsEnabled ?? DEFAULTS.polls_enabled,
+        polls_excluded_role_ids: asArray(data.pollsExcludedRoleIds, DEFAULTS.polls_excluded_role_ids),
+        polls_max_active: data.pollsMaxActive ?? DEFAULTS.polls_max_active,
+        polls_cooldown_minutes: data.pollsCooldownMinutes ?? DEFAULTS.polls_cooldown_minutes,
         marriage_excluded_role_ids: asArray(data.marriageExcludedRoleIds, DEFAULTS.marriage_excluded_role_ids),
         nitro_repost_mode: (data.nitroRepostMode as 'auto' | 'manual') ?? DEFAULTS.nitro_repost_mode,
         nitro_excluded_role_ids: asArray(data.nitroExcludedRoleIds, DEFAULTS.nitro_excluded_role_ids),
@@ -434,6 +446,10 @@ export async function updateGuildConfig(
     suggestionsExcludedRoleIds: merged.suggestions_excluded_role_ids,
     suggestionsMaxActive: merged.suggestions_max_active,
     suggestionsCooldownMinutes: merged.suggestions_cooldown_minutes,
+    pollsEnabled: merged.polls_enabled,
+    pollsExcludedRoleIds: merged.polls_excluded_role_ids,
+    pollsMaxActive: merged.polls_max_active,
+    pollsCooldownMinutes: merged.polls_cooldown_minutes,
     marriageExcludedRoleIds: merged.marriage_excluded_role_ids,
     nitroRepostMode: merged.nitro_repost_mode,
     nitroExcludedRoleIds: merged.nitro_excluded_role_ids,
