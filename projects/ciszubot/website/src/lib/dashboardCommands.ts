@@ -123,6 +123,16 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: [],
     note: 'Sin comandos: el bot publica automáticamente en los canales configurados según el intervalo de cada entrada.',
   },
+  confessions: {
+    title: 'Comandos de confesiones',
+    commands: byNames(['confess']),
+    note: 'cz!confess envía una confesión anónima al canal configurado en esta sección.',
+  },
+  customcmd: {
+    title: 'Comandos personalizados',
+    commands: byNames(['customcmd']),
+    note: 'cz!customcmd add <trigger> <respuesta> · del <trigger> · list. También se gestionan desde esta sección.',
+  },
   nsfw: {
     title: 'Comandos +18',
     commands: byNames(['nsfwpic']),

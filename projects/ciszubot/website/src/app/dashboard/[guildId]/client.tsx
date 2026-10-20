@@ -154,7 +154,7 @@ interface GuildConfig {
   premium?: boolean;
 }
 
-type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'nsfw' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
+type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -191,7 +191,7 @@ const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPag
   ],
 };
 
-const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'nsfw' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id'],
   messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
@@ -205,6 +205,8 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   trivia: ['trivia_enabled', 'trivia_excluded_role_ids', 'trivia_timed', 'trivia_time_seconds', 'trivia_difficulty', 'trivia_rewards'],
   autoposts: ['autoposts_enabled', 'autoposts'],
   nsfw: ['nsfw_enabled', 'nsfw_channel_id', 'nsfw_autopost_enabled', 'nsfw_autopost_minutes', 'nsfw_commands_enabled'],
+  confessions: ['confess_channel_id'],
+  customcmd: [],
   history: ['history_enabled', 'history_channel_id'],
   economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
   starboard: ['starboard_channel_id', 'starboard_emoji', 'starboard_min'],
@@ -567,6 +569,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'trivia'
     | 'autoposts'
     | 'nsfw'
+    | 'confessions'
+    | 'customcmd'
     | 'economy'
     | 'starboard'
     | 'nitro'
@@ -578,11 +582,39 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'history'
     | `feat:${string}`;
   const [view, setView] = useState<GuildView>('general');
+  const [customCmds, setCustomCmds] = useState<Array<{ id: number; trigger: string; response: string; uses: number; created_by: string | null }>>([]);
+  const [ccTrigger, setCcTrigger] = useState('');
+  const [ccResponse, setCcResponse] = useState('');
+  const [ccBusy, setCcBusy] = useState(false);
+  const ccGuildId = () => (typeof window === 'undefined' ? '' : (window.location.pathname.split('/')[2] ?? ''));
+  const reloadCustomCmds = async () => {
+    try {
+      const r = await fetch('/api/dashboard/' + ccGuildId() + '/customcommands');
+      const data = await r.json();
+      setCustomCmds(Array.isArray(data.items) ? data.items : []);
+    } catch { /* ignore */ }
+  };
+  const addCustomCmd = async () => {
+    if (!ccTrigger.trim() || !ccResponse.trim() || ccBusy) return;
+    setCcBusy(true);
+    try {
+      const r = await fetch('/api/dashboard/' + ccGuildId() + '/customcommands', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ trigger: ccTrigger.trim(), response: ccResponse.trim() }) });
+      if (r.ok) { setCcTrigger(''); setCcResponse(''); await reloadCustomCmds(); }
+    } finally { setCcBusy(false); }
+  };
+  const delCustomCmd = async (trigger: string) => {
+    await fetch('/api/dashboard/' + ccGuildId() + '/customcommands', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ trigger }) });
+    await reloadCustomCmds();
+  };
+  useEffect(() => {
+    if (view !== 'customcmd') return;
+    void reloadCustomCmds();
+  }, [view]);
   useEffect(() => {
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'polls', 'trivia', 'autoposts', 'nsfw', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
+      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'polls', 'trivia', 'autoposts', 'nsfw', 'confessions', 'customcmd', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
       setView(saved);
@@ -664,6 +696,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     { key: 'trivia', icon: 'circle-question', label: 'subnavTrivia', tag: 'free' },
     { key: 'autoposts', icon: 'bullhorn', label: 'subnavAutoposts', tag: 'free' },
     { key: 'nsfw', icon: 'triangle-exclamation', label: 'subnavNsfw', tag: 'free' },
+    { key: 'confessions', icon: 'heart', label: 'subnavConfessions', tag: 'free' },
+    { key: 'customcmd', icon: 'terminal', label: 'subnavCustomCmd', tag: 'free' },
     { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
   ];
 
@@ -1878,29 +1912,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </div>
             )}
 
-            {/* Confesiones: canal destino configurable (vista Misceláneo). */}
-            {activeFeature.slug === 'misc' && config.features?.['misc'] !== false && config.features?.['misc_confess'] !== false && (
-              <div className="mt-4 ml-2 border-l-2 border-neon-pink/30 pl-4">
-                {hasGuildData ? (
-                  <SelectField
-                    label={t.confessChannelLabel}
-                    value={config.confess_channel_id ?? null}
-                    placeholder={t.pickChannel}
-                    options={textChannelOptions}
-                    onChange={(v) => update({ confess_channel_id: v })}
-                  />
-                ) : (
-                  <Field label={t.confessChannelLabel} hint={t.manualIdHint}>
-                    <input
-                      className={inputCls}
-                      value={config.confess_channel_id ?? ''}
-                      onChange={(e) => update({ confess_channel_id: e.target.value || null })}
-                    />
-                  </Field>
-                )}
-                <p className="mt-2 text-[10px] text-white/35">{t.confessChannelHint}</p>
-              </div>
-            )}
+
 
             {/* Manager de giveaways: lista en tiempo real + acciones + creación */}
             {activeFeature.slug === 'giveaways' && (
@@ -3575,6 +3587,85 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               )}
             </div>
             <HelpZone title={SECTION_HELP.nsfw.title} commands={SECTION_HELP.nsfw.commands} note={SECTION_HELP.nsfw.note} />
+          </section>
+          )}
+          {view === 'confessions' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="heart" size={18} className="text-neon-pink" /> {t.confessionsTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.confessions.title} commands={SECTION_HELP.confessions.commands} note={SECTION_HELP.confessions.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('confessions')}
+                onImport={(file) => void importFile(file, 'confessions')}
+              />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.confessionsHint}</p>
+            <div className="grid gap-5">
+              {hasGuildData ? (
+                <SelectField
+                  label={t.confessChannelLabel}
+                  value={config.confess_channel_id ?? null}
+                  placeholder={t.pickChannel}
+                  options={textChannelOptions}
+                  onChange={(v) => update({ confess_channel_id: v })}
+                />
+              ) : (
+                <Field label={t.confessChannelLabel} hint={t.manualIdHint}>
+                  <input className={inputCls} value={config.confess_channel_id ?? ''} onChange={(e) => update({ confess_channel_id: e.target.value || null })} />
+                </Field>
+              )}
+              <p className="text-[10px] text-white/35">{t.confessChannelHint}</p>
+            </div>
+            <HelpZone title={SECTION_HELP.confessions.title} commands={SECTION_HELP.confessions.commands} note={SECTION_HELP.confessions.note} />
+          </section>
+          )}
+
+          {view === 'customcmd' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="terminal" size={18} className="text-neon-blue" /> {t.customcmdTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.customcmd.title} commands={SECTION_HELP.customcmd.commands} note={SECTION_HELP.customcmd.note} />
+              <Badge kind="free" dict={dict} />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.customcmdHint}</p>
+            <div className="grid gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label={t.customcmdTriggerLabel}>
+                  <input className={inputCls} value={ccTrigger} maxLength={20} placeholder="reglas" onChange={(e) => setCcTrigger(e.target.value.replace(/[^a-zA-Z0-9]/g, '').toLowerCase())} />
+                </Field>
+                <Field label={t.customcmdResponseLabel}>
+                  <input className={inputCls} value={ccResponse} maxLength={1000} onChange={(e) => setCcResponse(e.target.value)} />
+                </Field>
+              </div>
+              <button type="button" disabled={ccBusy || !ccTrigger.trim() || !ccResponse.trim()} className="justify-self-start rounded-lg border border-neon-blue/40 px-4 py-2 text-xs font-bold text-neon-blue hover:bg-neon-blue/10 disabled:opacity-40" onClick={() => void addCustomCmd()}>
+                + {t.customcmdAdd}
+              </button>
+              <p className="text-[10px] text-white/35">{t.customcmdLimit}</p>
+              <div className="grid gap-2">
+                {customCmds.length === 0 && <p className="text-xs text-white/40">{t.customcmdEmpty}</p>}
+                {customCmds.map((row) => (
+                  <div key={row.id} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-white/85">cz!{row.trigger} <span className="text-white/35">· {row.uses} {t.customcmdUses}</span></p>
+                      <p className="truncate text-[10px] text-white/40">{row.response}</p>
+                    </div>
+                    <button type="button" className="rounded-lg border border-red-400/30 px-3 py-1.5 text-[10px] font-bold text-red-300 hover:bg-red-400/10" onClick={() => void delCustomCmd(row.trigger)}>
+                      {t.customcmdDelete}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <HelpZone title={SECTION_HELP.customcmd.title} commands={SECTION_HELP.customcmd.commands} note={SECTION_HELP.customcmd.note} />
           </section>
           )}
 
