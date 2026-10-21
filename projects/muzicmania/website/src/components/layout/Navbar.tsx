@@ -1,26 +1,28 @@
 'use client';
 
+import { SiteSearch } from '@ciszu/ui';
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 type TimeoutRef = React.MutableRefObject<ReturnType<typeof setTimeout> | null>;
 import Link from 'next/link';
 import Image from 'next/image';
-import { resolveAssetPath } from '@ciszunetwork/cdn';
-import { useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
-import { PreferencesModal, RememberSessionPrompt, SanctionNotice } from '@ciszu/ui';
-import { usePathname, useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
-import { useAppStore } from '@/store';
-import { supabase } from '@/config/supabase';
+import {  resolveAssetPath } from '@ciszunetwork/cdn';
+import {  useZoomStatus, publishHeaderMode, useToast } from '@ciszu/ui';
+import {  PreferencesModal, RememberSessionPrompt, SanctionNotice } from '@ciszu/ui';
+import {  usePathname, useRouter } from 'next/navigation';
+import {  useSearchParams } from 'next/navigation';
+import {  useAppStore } from '@/store';
+import {  supabase } from '@/config/supabase';
 
 // ── All icons and configs migrated to src/config/navigation.tsx ───────────────────
-import { I, HEADER_NAV_LINKS as NAV_LINKS, INFO_DROPDOWN_LINKS, COMMUNITY_LINKS, GENERAL_INFO_LINKS, LEGAL_LINKS, ALL_PAGES } from '@/config/navigation';
-import { isTauri } from '@/lib/isTauri';
-import { getGuestName } from '@/lib/guest';
-import { loadPreferences, applyZoom, setMuteTab, updatePreferences, consumeReloadToastMsg, reloadAfterPrefChange } from '@/lib/preferences';
-import { fill, getDict, parseLang, readCookieLang } from '@/lib/i18n';
+import {  I, HEADER_NAV_LINKS as NAV_LINKS, INFO_DROPDOWN_LINKS, COMMUNITY_LINKS, GENERAL_INFO_LINKS, LEGAL_LINKS, ALL_PAGES } from '@/config/navigation';
+import {  isTauri } from '@/lib/isTauri';
+import {  getGuestName } from '@/lib/guest';
+import {  loadPreferences, applyZoom, setMuteTab, updatePreferences, consumeReloadToastMsg, reloadAfterPrefChange } from '@/lib/preferences';
+import {  fill, getDict, parseLang, readCookieLang } from '@/lib/i18n';
 import PreferencesPanel from '@/components/molecules/PreferencesPanel';
-import { LANGUAGE_OPTIONS, isLangAvailable } from '@ciszu/ui';
+import {  LANGUAGE_OPTIONS, isLangAvailable } from '@ciszu/ui';
 
 // El desplegable "Information" es el índice completo: incluye las páginas que
 // ya no viven en el header (foro, changelog, reviews, descarga, feedback,
@@ -519,47 +521,19 @@ export const NavbarContent = () => {
         {isSearchOpen && (
           <div ref={searchRef} className="border-t border-white/5 bg-[#070710]/98 backdrop-blur-2xl">
             <div className="max-w-screen-xl mx-auto px-4 py-3">
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">{I.search}</span>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  placeholder={dict.nav.search}
-                  value={query}
-                  onChange={e => setQuery(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && suggestions[0]) { router.push(suggestions[0].href); setIsSearchOpen(false); }}}
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 focus:border-neon-blue rounded-xl text-white placeholder:text-gray-600 outline-none text-sm transition-all font-header font-bold"
-                />
-              </div>
-              
-              {/* Reset search button ONLY when no results and there is a query */}
-              {0 < query.trim().length && suggestions.length === 0 && (
-                 <div className="flex flex-col items-center justify-center py-6 animate-fade-in-down space-y-3">
-                    <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">{fill(dict.search.noResults, { query })}</p>
-                    <button 
-                      onClick={() => setQuery('')}
-                      className="px-6 py-2 bg-neon-blue/20 border border-neon-blue/40 text-neon-blue rounded-full font-header font-bold text-[10px] uppercase tracking-widest hover:bg-neon-blue hover:text-black transition-all active:scale-95"
-                    >
-                      {dict.search.reset}
-                    </button>
-                 </div>
-              )}
-
-              {/* Suggestions grid - ONLY SHOW WHEN TYPING AND HAS RESULTS */}
-              {query.trim().length > 0 && suggestions.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-3 animate-fade-in-down">
-                  {suggestions.map((p) => (
-                    <Link key={p.href} href={p.href}
-                      prefetch={false}
-                      onClick={() => setIsSearchOpen(false)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 hover:border-neon-blue/50 hover:text-neon-blue text-white text-xs font-header font-bold transition-all cursor-pointer"
-                    >
-                      <span className="opacity-70 shrink-0">{p.icon}</span>
-                      <span className="truncate">{p.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
+              <SiteSearch
+                autoFocus
+                pages={ALL_PAGES.map((p) => ({
+                  href: p.href,
+                  label: p.name,
+                  category: 'Páginas',
+                  keywords: p.keywords,
+                }))}
+                categories={['Páginas']}
+                placeholder={dict.nav.search}
+                pagesLabel="Páginas"
+                emptyLabel={fill(dict.search.noResults, { query })}
+              />
             </div>
           </div>
         )}

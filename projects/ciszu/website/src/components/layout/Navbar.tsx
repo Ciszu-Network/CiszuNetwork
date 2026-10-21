@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
-import { useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, RememberSessionPrompt, SanctionNotice } from '@ciszu/ui';
+import { SiteSearch, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, RememberSessionPrompt, SanctionNotice } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { supabase } from '@/config/supabase';
@@ -557,51 +557,19 @@ export const NavbarContent = () => {
         {isSearchOpen && (
           <div ref={searchRef} className="border-t border-white/5 bg-[#070710]/98 backdrop-blur-2xl">
             <div className="max-w-screen-xl mx-auto px-4 py-3">
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
-                  <Search className="w-5 h-5" />
-                </span>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  placeholder={dict.nav.searchPlaceholder}
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && suggestions[0]) { window.location.href = suggestions[0].href; } }}
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 focus:border-brand-light rounded-xl text-white placeholder:text-gray-600 outline-none text-sm transition-all font-header font-bold"
-                />
-              </div>
-
-              {0 < searchQuery.trim().length && suggestions.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-6 animate-fade-in-down space-y-3">
-                  <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">
-                    {dict.nav.searchNoResults.replace('{q}', searchQuery)}
-                  </p>
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="mt-3 px-6 py-2 rounded-full text-[10px] uppercase tracking-widest font-header font-bold bg-brand-light/20 border border-brand-light/40 text-brand-light hover:bg-brand-light hover:text-black transition-all active:scale-95 cursor-pointer"
-                  >
-                    {dict.nav.searchReset}
-                  </button>
-                </div>
-              )}
-
-              {searchQuery.trim().length > 0 && suggestions.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-3 animate-fade-in-down">
-                  {suggestions.map((p) => (
-                    <Link
-                      key={p.href}
-                      href={p.href}
-                      prefetch={false}
-                      onClick={() => setShowSearch(false)}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 hover:border-brand-light/50 hover:text-brand-light text-white text-xs font-header font-bold transition-all cursor-pointer"
-                    >
-                      <span className="opacity-70 shrink-0">{p.icon}</span>
-                      <span className="truncate">{p.name}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
+              <SiteSearch
+                autoFocus
+                pages={ALL_PAGES.map((p) => ({
+                  href: p.href,
+                  label: p.name,
+                  category: 'Páginas',
+                  keywords: p.keywords,
+                }))}
+                categories={['Páginas']}
+                placeholder={dict.nav.searchPlaceholder}
+                pagesLabel="Páginas"
+                emptyLabel={dict.nav.searchNoResults.replace('{q}', searchQuery)}
+              />
             </div>
           </div>
         )}
