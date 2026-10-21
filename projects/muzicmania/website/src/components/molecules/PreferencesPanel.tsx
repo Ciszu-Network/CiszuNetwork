@@ -135,7 +135,7 @@ export default function PreferencesPanel() {
   };
 
   return (
-    <div className="px-2 pt-1 pb-2 space-y-4">
+    <div className="relative z-[60] px-2 pt-1 pb-2 space-y-4">
       {/* Tema y Idioma: mismos controles que el navbar */}
       <div className="flex items-center justify-between gap-2">
         {/* Theme toggle (mismo estilo que el sidebar del navbar) */}

@@ -158,11 +158,7 @@ export function consumeReloadToastMsg(): string | null {
 }
 
 export function reloadAfterPrefChange(msg: string): void {
+  // Ya NO se recarga la pagina: tema/idioma se aplican al instante (mejor UX).
   setReloadToastMsg(msg);
-  if (typeof window !== 'undefined') {
-    // Recarga VOLUNTARIA (acción de la UI: tema/idioma): se marca para que el
-    // AdBlockerGuard no la trate como F5 manual y no vuelva a aparecer.
-    markVoluntaryReload();
-    window.location.reload();
-  }
+  markVoluntaryReload();
 }
