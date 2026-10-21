@@ -84,7 +84,10 @@ export function resolveBotStatus(status: BotStatus | null, now: number): Resolve
   if (!status) return { online: false, mode: 'auto', reason: null, since: null };
   const mode: 'auto' | 'manual' = status.mode === 'manual' ? 'manual' : 'auto';
   if (mode === 'manual') {
-    const online = Boolean(status.online);
+    // En manual también exigimos heartbeat fresco: "online" forzado no debe
+    // ocultar una caída real (crash/suspensión del hosting). El offline manual
+    // (online=false) se respeta tal cual.
+    const online = Boolean(status.online) && isHeartbeatFresh(status.last_seen, now);
     return {
       online,
       mode,
