@@ -416,6 +416,20 @@ function PlayPageContent() {
   const [inputDeviceList, setInputDeviceList] = useState<MediaDeviceInfo[]>([]);
   const [showAudioDeviceDropdown, setShowAudioDeviceDropdown] = useState(false);
   const [showInputDeviceDropdown, setShowInputDeviceDropdown] = useState(false);
+  const [scanningDevices, setScanningDevices] = useState(false);
+  const rescanDevices = async (kind: 'input' | 'output') => {
+    setScanningDevices(true);
+    try {
+      if (kind === 'input') await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => undefined);
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      if (kind === 'input') setInputDeviceList(devices.filter(d => d.kind === 'audioinput'));
+      else setAudioDeviceList(devices.filter(d => d.kind === 'audiooutput'));
+    } catch {
+      /* ignore */
+    } finally {
+      setScanningDevices(false);
+    }
+  };
   // hitSound moved to useAppStore
   const [graphicsQuality, setGraphicsQuality] = useState<'very_low' | 'low' | 'medium' | 'high' | 'ultra'>(() => { if (typeof window !== 'undefined') return (localStorage.getItem('graphics_quality') as any) || 'high'; return 'high'; });
   const [disableGlow, setDisableGlow] = useState(() => { if (typeof window !== 'undefined') return localStorage.getItem('graphics_disable_glow') === 'true'; return false; });
@@ -555,11 +569,14 @@ function PlayPageContent() {
   // Audio device detection
   useEffect(() => {
     const detectDevices = async () => {
+      setScanningDevices(true);
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
         setAudioDeviceList(devices.filter(d => d.kind === 'audiooutput'));
         setInputDeviceList(devices.filter(d => d.kind === 'audioinput'));
-      } catch {}
+      } finally {
+        setScanningDevices(false);
+      }
     };
     detectDevices();
     navigator.mediaDevices?.addEventListener('devicechange', detectDevices);
@@ -4308,8 +4325,11 @@ function PlayPageContent() {
                                 <div className="w-3 h-3 ml-auto">{showInputDeviceDropdown ? I.chevronUp : I.chevronDown}</div>
                               </button>
                               {showInputDeviceDropdown && (
-                                <div className="absolute z-20 mt-1 w-full bg-[#1a1a2e] border border-white/10 rounded-xl overflow-hidden shadow-xl max-h-48 overflow-y-auto">
-                                  {inputDeviceList.length === 0 ? (
+                                <div className="absolute z-[120] mt-1 w-full bg-[#1a1a2e] border border-white/10 rounded-xl overflow-hidden shadow-xl max-h-48 overflow-y-auto">
+                    {scanningDevices && (
+                      <div className="px-4 py-3 text-[9px] text-neon-cyan text-center animate-pulse uppercase tracking-widest">Buscando dispositivos…</div>
+                    )}
+                                  {!scanningDevices && inputDeviceList.length === 0 ? (
                                     <div className="px-4 py-3 text-[9px] text-gray-500 text-center space-y-2">
                                       <p>{t.pages.play.noMics}</p>
                                       <button onClick={async () => {
@@ -4324,13 +4344,7 @@ function PlayPageContent() {
                                     </div>
                                   ) : (
                                     <>
-                                      <button onClick={async () => {
-                                        try {
-                                          await navigator.mediaDevices.getUserMedia({ audio: true });
-                                          const devices = await navigator.mediaDevices.enumerateDevices();
-                                          setInputDeviceList(devices.filter(d => d.kind === 'audioinput'));
-                                        } catch {}
-                                      }} className="w-full px-4 py-2 text-[8px] font-bold uppercase tracking-widest text-neon-cyan hover:bg-white/5 transition-all flex items-center justify-center gap-1 border-b border-white/5">
+                                      <button onClick={() => void rescanDevices('input')} className="w-full px-4 py-2 text-[8px] font-bold uppercase tracking-widest text-neon-cyan hover:bg-white/5 transition-all flex items-center justify-center gap-1 border-b border-white/5">
                                         <div className="w-3 h-3">{I.refresh}</div> RE-ESCANEAR
                                       </button>
                                       {inputDeviceList.map(d => (
@@ -4383,27 +4397,20 @@ function PlayPageContent() {
                                 <div className="w-3 h-3 ml-auto">{showAudioDeviceDropdown ? I.chevronUp : I.chevronDown}</div>
                               </button>
                               {showAudioDeviceDropdown && (
-                                <div className="absolute z-20 mt-1 w-full bg-[#1a1a2e] border border-white/10 rounded-xl overflow-hidden shadow-xl max-h-48 overflow-y-auto">
-                                  {audioDeviceList.length === 0 ? (
+                                <div className="absolute z-[120] mt-1 w-full bg-[#1a1a2e] border border-white/10 rounded-xl overflow-hidden shadow-xl max-h-48 overflow-y-auto">
+                    {scanningDevices && (
+                      <div className="px-4 py-3 text-[9px] text-neon-cyan text-center animate-pulse uppercase tracking-widest">Buscando dispositivos…</div>
+                    )}
+                                  {!scanningDevices && audioDeviceList.length === 0 ? (
                                     <div className="px-4 py-3 text-[9px] text-gray-500 text-center space-y-2">
                                       <p>{t.pages.play.noOutputs}</p>
-                                      <button onClick={async () => {
-                                        try {
-                                          const devices = await navigator.mediaDevices.enumerateDevices();
-                                          setAudioDeviceList(devices.filter(d => d.kind === 'audiooutput'));
-                                        } catch {}
-                                      }} className="mt-2 text-neon-cyan hover:underline flex items-center justify-center gap-1">
+                                      <button onClick={() => void rescanDevices('output')} className="mt-2 text-neon-cyan hover:underline flex items-center justify-center gap-1">
                                         <div className="w-3 h-3">{I.refresh}</div> Actualizar
                                       </button>
                                     </div>
                                   ) : (
                                     <>
-                                      <button onClick={async () => {
-                                        try {
-                                          const devices = await navigator.mediaDevices.enumerateDevices();
-                                          setAudioDeviceList(devices.filter(d => d.kind === 'audiooutput'));
-                                        } catch {}
-                                      }} className="w-full px-4 py-2 text-[8px] font-bold uppercase tracking-widest text-neon-cyan hover:bg-white/5 transition-all flex items-center justify-center gap-1 border-b border-white/5">
+                                      <button onClick={() => void rescanDevices('output')} className="w-full px-4 py-2 text-[8px] font-bold uppercase tracking-widest text-neon-cyan hover:bg-white/5 transition-all flex items-center justify-center gap-1 border-b border-white/5">
                                         <div className="w-3 h-3">{I.refresh}</div> RE-ESCANEAR
                                       </button>
                                       {audioDeviceList.map(d => (
