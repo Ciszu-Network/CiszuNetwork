@@ -1,3 +1,4 @@
+import 'pixi.js/unsafe-eval';
 import { useEffect, useRef, useCallback } from 'react';
 import { Application, Graphics, Text, Container, TextStyle } from 'pixi.js';
 import { GameNote, GAME_CONFIG, HIT_TOLERANCES } from '@/hooks/useGameEngine';

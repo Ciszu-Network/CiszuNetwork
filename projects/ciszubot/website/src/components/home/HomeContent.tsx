@@ -53,7 +53,8 @@ export default function HomeContent({ status, serverNow }: HomeContentProps) {
           title={dict.ecosystem.providedTitle}
           description={dict.ecosystem.providedDesc}
           visitHref="https://ciszunetwork.vercel.app"
-          projectsHref="https://ciszunetwork.vercel.app/projects"
+          projectsHref="/help"
+          variant="help"
         />
       </div>
 

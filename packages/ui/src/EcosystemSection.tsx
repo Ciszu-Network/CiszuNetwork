@@ -21,16 +21,48 @@ export interface EcosystemSectionProps {
   projectsHref?: string;
   visitLabel?: string;
   projectsLabel?: string;
+  /** Idioma forzado; si falta se detecta del <html lang> / localStorage. */
+  lang?: 'es' | 'en';
+  /** 'help' cambia el segundo botón a "Ayuda/Help" (webs sin /projects). */
+  variant?: 'projects' | 'help';
 }
 
 export function EcosystemSection({
-  title = 'Project provided by CiszuNetwork',
-  description = 'This project is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony.',
+  title,
+  description,
   visitHref = 'https://ciszunetwork.vercel.app',
   projectsHref = '/projects',
-  visitLabel = 'Visit CiszuNetwork',
-  projectsLabel = 'View All Projects',
+  visitLabel,
+  projectsLabel,
+  lang,
+  variant = 'projects',
 }: EcosystemSectionProps) {
+  // Detección de idioma del sitio (los toggles de las webs actualizan <html lang>).
+  const detected =
+    typeof document === 'undefined'
+      ? 'es'
+      : document.documentElement.lang || (typeof localStorage !== 'undefined' ? localStorage.getItem('lang') : null) || 'es';
+  const L: 'es' | 'en' = (lang ?? detected).toLowerCase().startsWith('en') ? 'en' : 'es';
+  const TXT =
+    L === 'en'
+      ? {
+          title: 'Project provided by CiszuNetwork',
+          description: 'This project is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony.',
+          visit: 'Visit CiszuNetwork',
+          projects: 'View All Projects',
+          help: 'Help & info',
+        }
+      : {
+          title: 'Proyecto promovido por CiszuNetwork',
+          description: 'Este proyecto forma parte del ecosistema de Ciszu Network. Descubre más proyectos y herramientas creados por Ciszuko Antony.',
+          visit: 'Visitar CiszuNetwork',
+          projects: 'Ver todos los proyectos',
+          help: 'Ayuda e información',
+        };
+  const finalTitle = title ?? TXT.title;
+  const finalDescription = description ?? TXT.description;
+  const finalVisitLabel = visitLabel ?? TXT.visit;
+  const finalProjectsLabel = projectsLabel ?? (variant === 'help' ? TXT.help : TXT.projects);
   return (
     <section className="relative py-16 border-t border-white/5">
       <div className="max-w-screen-xl mx-auto px-4 text-center">
@@ -49,8 +81,8 @@ export function EcosystemSection({
             </div>
 
             <div className="flex flex-col items-center gap-2">
-              <h2 className="text-2xl md:text-3xl font-bold text-white">{title}</h2>
-              <p className="text-muted max-w-xl mx-auto text-sm md:text-base">{description}</p>
+              <h2 className="text-2xl md:text-3xl font-bold text-white">{finalTitle}</h2>
+              <p className="text-muted max-w-xl mx-auto text-sm md:text-base">{finalDescription}</p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
@@ -60,7 +92,7 @@ export function EcosystemSection({
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-brand to-brand-light text-white font-bold rounded-xl shadow-lg shadow-brand/30 hover:shadow-2xl hover:shadow-brand/40 hover:scale-105 transition-all"
               >
-                {visitLabel}
+                {finalVisitLabel}
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
@@ -69,7 +101,7 @@ export function EcosystemSection({
                 href={projectsHref}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white/5 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 hover:scale-105 transition-all"
               >
-                {projectsLabel}
+                {finalProjectsLabel}
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>

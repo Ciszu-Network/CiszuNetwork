@@ -1,3 +1,4 @@
+import 'pixi.js/unsafe-eval';
 import { useState, useCallback, useRef, useEffect, RefObject } from 'react';
 import { LevelConfig, ChartData, ChartNote, LevelEvent, ArrowSkinId } from '@/types/level';
 import { useEventsEngine, EventsState } from './useEventsEngine';

@@ -847,8 +847,8 @@ const es = {
       startNow: 'EMPEZAR AHORA',
       thePortal: 'El Portal',
       portalSub: 'Transciende las dimensiones rítmicas',
-      attrProvided: 'Project provided by CiszuNetwork',
-      attrPartOf: 'MuzicMania is part of the Ciszu Network ecosystem. Discover more projects and tools built by Ciszuko Antony.',
+      attrProvided: 'Proyecto promovido por CiszuNetwork',
+      attrPartOf: 'MuzicMania forma parte del ecosistema de Ciszu Network. Descubre más proyectos y herramientas creados por Ciszuko Antony.',
     },
     stats: {
       statsTitle: 'ESTADÍSTICAS',

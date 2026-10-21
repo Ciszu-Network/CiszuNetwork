@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import { supabase } from '@/config/supabase';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { trackCover, trackDisc } from '@/utils/musicAssets';
@@ -578,7 +578,8 @@ export default function HomeContent() {
         title={t.pages.homeBody.attrProvided}
         description={t.pages.homeBody.attrPartOf}
         visitHref="https://ciszunetwork.vercel.app"
-        projectsHref="/projects"
+        projectsHref="/help"
+        variant="help"
       />
       </section>
     </div>
