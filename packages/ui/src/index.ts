@@ -275,3 +275,6 @@ export type { EcosystemSectionProps } from './EcosystemSection';
 
 export { default as Ac3Section } from './Ac3Section';
 export type { Ac3SectionProps } from './Ac3Section';
+
+export { SiteSearch } from './SiteSearch';
+export type { SiteSearchProps, SearchPageItem, SearchUserItem } from './SiteSearch';

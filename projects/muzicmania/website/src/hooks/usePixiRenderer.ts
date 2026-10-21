@@ -105,6 +105,14 @@ export function usePixiRenderer(options: PixiGameRendererOptions): PixiGameRende
     });
 
     container.appendChild(app.canvas as HTMLCanvasElement);
+    // El canvas mantiene el aspect ratio del juego: al entrar/salir de
+    // pantalla completa el contenedor cambia de forma y sin esto el canvas
+    // se estira (flechas distorsionadas). object-fit: contain => letterbox.
+    const canvasEl = app.canvas as HTMLCanvasElement;
+    canvasEl.style.width = '100%';
+    canvasEl.style.height = '100%';
+    canvasEl.style.display = 'block';
+    canvasEl.style.objectFit = 'contain';
     appRef.current = app;
 
     const startX = (width - PLAYFIELD_WIDTH) / 2;

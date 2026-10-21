@@ -15,6 +15,7 @@ import PreferencesPanel from '@/components/layout/PreferencesPanel';
 import { PreferencesModal, RememberSessionPrompt, SanctionNotice } from '@ciszu/ui';
 import { LOGO_ISOTIPO_CIRCLE, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 import { useClientI18n } from '@/hooks/useClientI18n';
+import { SiteSearch } from '@ciszu/ui';
 
 // Header = solo lo esencial. TODO lo demás se indexa en el desplegable
 // "Information" (un único punto de entrada) para no duplicar enlaces en el
@@ -70,6 +71,13 @@ const NAV_HIDE_CLS: string[] = [
   'hidden min-[1360px]:flex',
   'hidden min-[1440px]:flex',
 ];
+
+const searchCategoryOf = (href: string): string => {
+  if (['/commands', '/stats', '/changelog', '/invite', '/explore', '/downloads', '/dashboard'].includes(href)) return 'Bot';
+  if (['/support', '/contact', '/feedback', '/faq', '/help', '/forum'].includes(href)) return 'Soporte';
+  if (['/rules', '/terms', '/privacy', '/policy', '/license', '/guidelines'].includes(href)) return 'Legal';
+  return 'Información';
+};
 
 const SEARCH_PAGES: { href: string; labelKey: string; icon: string; keywords: string[] }[] = [
   { href: '/', labelKey: 'home', icon: 'home', keywords: ['inicio', 'home', 'main'] },
@@ -670,53 +678,20 @@ export default function Navbar({ account }: NavbarProps) {
       {searchOpen && (
         <div ref={searchRef} className="absolute left-0 right-0 top-[64px] border-b border-border bg-[#0a0a14]/95 backdrop-blur-2xl shadow-2xl animate-fade-in-down">
           <div className="max-w-screen-xl mx-auto px-4 py-4">
-            <div className="relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 flex items-center">
-                <Search className="w-5 h-5" />
-              </span>
-              <input
-                ref={inputRef}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Escape') setSearchOpen(false);
-                  if (e.key === 'Enter' && suggestions.length > 0) {
-                    window.location.href = suggestions[0].href;
-                  }
-                }}
-                placeholder={dict.nav.search}
-                className="w-full bg-white/5 border border-white/10 focus:border-neon-blue placeholder:text-gray-600 text-white rounded-xl py-3 pl-12 pr-4 text-sm outline-none transition-all font-header font-bold"
-              />
-            </div>
-            {query.trim().length > 0 && suggestions.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-3">
-                {suggestions.map((p) => (
-                  <Link
-                    key={p.href}
-                    href={p.href}
-                    prefetch={false}
-                    onClick={() => { setSearchOpen(false); setQuery(''); }}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 text-white text-xs font-header font-bold hover:border-neon-blue/50 hover:text-neon-blue hover:shadow-[0_0_12px_rgba(0,212,255,0.2)] transition-all"
-                  >
-                    <span className="w-4 h-4 shrink-0 opacity-70 flex items-center justify-center">
-                      <Icon name={p.icon} size={14} />
-                    </span>
-                    <span className="truncate">{dict.nav[p.labelKey as keyof typeof dict.nav]}</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-            {0 < query.trim().length && suggestions.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-8 animate-fade-in-down">
-                <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic animate-pulse">{dict.nav.searchHint}</p>
-                <button
-                  onClick={() => setQuery('')}
-                  className="mt-3 px-6 py-2 rounded-full text-[10px] uppercase tracking-widest font-header font-bold bg-neon-blue/20 border border-neon-blue/40 text-neon-blue hover:bg-neon-blue hover:text-black transition-all active:scale-95 cursor-pointer"
-                >
-                  {dict.nav.resetSearch}
-                </button>
-              </div>
-            )}
+            <SiteSearch
+              autoFocus
+              pages={SEARCH_PAGES.map((p) => ({
+                href: p.href,
+                label: dict.nav[p.labelKey as keyof typeof dict.nav],
+                icon: p.icon,
+                category: searchCategoryOf(p.href),
+                keywords: p.keywords,
+              }))}
+              categories={['Bot', 'Soporte', 'Legal', 'Información']}
+              placeholder={dict.nav.search}
+              pagesLabel="Páginas"
+              emptyLabel={dict.nav.searchHint}
+            />
           </div>
         </div>
       )}
