@@ -12,6 +12,7 @@ import AuthMenu, { GuestIcon } from '@/components/auth/AuthMenu';
 import { getGuestName } from '@/lib/guest';
 import { navLabel, t, type Dict } from '@/lib/i18n';
 import { useI18n } from '@/components/providers/I18nProvider';
+import { SiteSearch } from '@ciszu/ui';
 
 const UserIcon = () => (
   <svg viewBox="0 0 24 24" className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -51,6 +52,13 @@ const GROUP_LABEL_KEYS: Record<string, keyof Dict['nav']['groups']> = {
   Information: 'information',
   Music: 'music',
   Socials: 'socials',
+};
+
+const searchCategoryOf = (href: string): string => {
+  if (['/portfolio', '/projects', '/services', '/muzicmania', '/ciszubot', '/ciszukoantony', '/courses', '/downloads'].includes(href)) return 'Portfolio';
+  if (['/about', '/team', '/information', '/credits', '/contact'].includes(href)) return 'Información';
+  if (['/rules', '/terms', '/privacy', '/policy', '/license', '/guidelines'].includes(href)) return 'Legal';
+  return 'General';
 };
 
 export default function Navbar() {
@@ -413,40 +421,19 @@ export default function Navbar() {
         {searchOpen && (
           <div ref={searchRef} className="border-t border-white/5 bg-[#070712]/95 backdrop-blur-2xl">
             <div className="max-w-3xl mx-auto px-4 py-3">
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">{I.search}</span>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter' && suggestions[0]) { router.push(suggestions[0].href); closeSearch(); } }}
-                  placeholder={dict.nav.search}
-                  className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 focus:border-neon-blue rounded-xl text-white placeholder:text-gray-600 outline-none text-sm transition-all font-header font-bold"
-                />
-              </div>
-
-              {0 < q.length && suggestions.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-6 animate-fade-in-down space-y-3">
-                  <p className="text-gray-500 font-header font-black uppercase text-xs tracking-widest italic">{dict.nav.noResults} &quot;{searchQuery.trim()}&quot;</p>
-                  <button onClick={() => setSearchQuery('')}
-                    className="px-6 py-2 bg-neon-blue/20 border border-neon-blue/40 text-neon-blue rounded-full font-header font-bold text-[10px] uppercase tracking-widest hover:bg-neon-blue hover:text-white transition-all active:scale-95">
-                     {dict.common.resetSearch}
-                  </button>
-                </div>
-              )}
-
-              {q.length > 0 && suggestions.length > 0 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 mt-3 animate-fade-in-down">
-                  {suggestions.map((p) => (
-                    <Link key={p.href} href={p.href} prefetch={false} onClick={closeSearch}
-                      className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/5 hover:border-neon-blue/50 hover:text-neon-blue text-white text-xs font-header font-bold transition-all cursor-pointer">
-                      <span className="opacity-70 shrink-0">{pageIcon(p.href)}</span>
-                      <span className="truncate">{p.title}</span>
-                    </Link>
-                  ))}
-                </div>
-              )}
+              <SiteSearch
+                autoFocus
+                pages={SEARCH_INDEX.map((p) => ({
+                  href: p.href,
+                  label: p.title,
+                  category: searchCategoryOf(p.href),
+                  keywords: p.keywords,
+                }))}
+                categories={['Portfolio', 'Información', 'Legal', 'General']}
+                placeholder={dict.nav.search}
+                pagesLabel="Páginas"
+                emptyLabel={dict.nav.noResults + ' ' + searchQuery.trim()}
+              />
             </div>
           </div>
         )}
