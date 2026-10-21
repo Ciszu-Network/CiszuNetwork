@@ -253,7 +253,19 @@ function PlayPageContent() {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [isDifficultyOpen, setIsDifficultyOpen] = useState(false);
   const { musicVol, setMusicVol, sfxVol, setSfxVol, syncGlobalVolume, hitSound, setHitSound } = useAppStore();
-  const [inputMode, setInputMode] = useState<'arrows' | 'wasd' | 'custom'>('arrows');
+  const [inputMode, setInputMode] = useState<'arrows' | 'wasd' | 'custom' | 'touch'>('arrows');
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(pointer: coarse)');
+    setIsTouchDevice(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsTouchDevice(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+  // Movil: los controles son SIEMPRE tactiles (segun pide el onboarding).
+  useEffect(() => {
+    if (isTouchDevice) setInputMode('touch');
+  }, [isTouchDevice]);
   const [customKeys, setCustomKeys] = useState<[string, string, string, string]>(['KeyA', 'KeyS', 'KeyW', 'KeyD']);
   const [editingKeyIndex, setEditingKeyIndex] = useState<number | null>(null);
   const [showHitZoneVisuals, setShowHitZoneVisuals] = useState(false);
@@ -5521,6 +5533,24 @@ function PlayPageContent() {
           </div>
         </div>
       </div>
+      {isTouchDevice && (
+        <div data-touch-controls className="fixed inset-x-0 bottom-6 z-[150] flex justify-center gap-3 pointer-events-none md:hidden">
+          {[{ lane: 3, label: '←' }, { lane: 1, label: '↓' }, { lane: 2, label: '↑' }, { lane: 0, label: '→' }].map((b) => (
+            <button
+              key={b.lane}
+              type="button"
+              aria-label={'Lane ' + b.lane}
+              onPointerDown={(e) => {
+                e.preventDefault();
+                activeHandleInput(b.lane);
+              }}
+              className="pointer-events-auto w-16 h-16 rounded-2xl border-2 border-white/20 bg-black/60 backdrop-blur text-white text-2xl font-black active:scale-95 active:bg-neon-cyan/30 select-none touch-none"
+            >
+              {b.label}
+            </button>
+          ))}
+        </div>
+      )}
       <AuthWarningModal isOpen={isAuthWarningOpen} onClose={() => setIsAuthWarningOpen(false)} />
 
       <AnimatePresence>
