@@ -180,11 +180,11 @@ export const Footer = () => {
           {/* LEFT: Brand & Community */}
           <div className="flex flex-col items-center text-center xl:w-2/5 border-b xl:border-b-0 xl:border-r border-white/10 pb-8 xl:pb-0 xl:pr-10">
             <Link href="/" className="flex flex-col items-center gap-4 cursor-pointer group hover:scale-105 active:scale-95 transition-all duration-300 mb-6">
-              <Image
-                src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
-                alt="Isotipo" width={72} height={72}
-                className="drop-shadow-neon-blue group-hover:drop-shadow-[0_0_25px_rgba(0,212,255,0.9)] transition-all duration-300"
-              />
+              <svg viewBox="0 0 24 24" width={72} height={72} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="text-neon-cyan drop-shadow-neon-blue group-hover:drop-shadow-[0_0_25px_rgba(0,212,255,0.9)] transition-all duration-300" aria-label="MuzicMania">
+                <path d="M9 18V5l12-2v13" />
+                <circle cx="6" cy="18" r="3" />
+                <circle cx="18" cy="16" r="3" />
+              </svg>
               <Image
                 src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg')}
                 alt="MuzicMania" width={220} height={48}

@@ -744,3 +744,21 @@ body.focus-mode [data-focus-container] {
 .light [class*="bg-brand"] .text-white,
 .light .text-white[class*="bg-neon"],
 .light [class*="bg-neon"] .text-white { color: #ffffff !important; }
+
+/* ── Tema claro: auditoria completa (oct 2026) ───────────── */
+/* Texto neutro (header/footer/main): en claro pasa a tinta oscura. */
+.light header .text-white,
+.light footer .text-white,
+.light main .text-white { color: #0d1526 !important; }
+.light .text-gray-100,
+.light .text-gray-200,
+.light .text-gray-300 { color: #334155 !important; }
+.light .text-gray-400 { color: #475569 !important; }
+.light .text-gray-500 { color: #64748b !important; }
+/* Superficies oscuras hardcodeadas (#0xxxxx / #1xxxxx) -> claras. */
+.light [class*="bg-[#0"],
+.light [class*="bg-[#1"] { background-color: #ffffff !important; }
+.light header [class*="bg-[#0"],
+.light header [class*="bg-[#1"],
+.light footer [class*="bg-[#0"],
+.light footer [class*="bg-[#1"] { background-color: #f5f7fc !important; }
