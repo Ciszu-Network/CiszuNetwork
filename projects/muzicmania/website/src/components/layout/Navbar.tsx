@@ -179,14 +179,14 @@ export const NavbarContent = () => {
       return `relative group flex items-center gap-0 hover:gap-1.5 px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 cursor-pointer border hover:-translate-y-0.5 active:scale-95 ${
         active
           ? 'border-green-500 bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.6)] text-black gap-1.5 -translate-y-0.5 animate-pulse'
-          : 'border-transparent text-white hover:border-green-500 hover:bg-green-500 hover:!text-black hover:shadow-[0_0_20px_rgba(34,197,94,0.5)]'
+          : 'border-transparent text-black dark:text-white hover:border-green-500 hover:bg-green-500 hover:!text-black hover:shadow-[0_0_20px_rgba(34,197,94,0.5)]'
       }`;
     }
     
     return `relative group flex items-center gap-0 hover:gap-1.5 px-3 py-1.5 rounded-lg font-header font-bold text-sm transition-all duration-300 cursor-pointer border hover:-translate-y-0.5 active:scale-95 ${
       active
-        ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue gap-1.5 -translate-y-0.5 hover:text-white'
-        : 'border-transparent text-white hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]'
+        ? 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue gap-1.5 -translate-y-0.5 hover:text-black dark:text-white'
+        : 'border-transparent text-black dark:text-white hover:border-neon-blue hover:bg-neon-blue/15 hover:text-neon-blue hover:shadow-[0_0_10px_rgba(0,212,255,0.2)]'
     }`;
   };
 
@@ -335,7 +335,7 @@ export const NavbarContent = () => {
                        {INFO_LINKS.map((s) => (
                          <Link key={s.name} href={s.href}
                            prefetch={false}
-                           className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${isActive(s.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-white' : 'text-white hover:text-neon-blue hover:bg-white/5'}`}
+                           className={`flex items-center gap-3 px-4 py-2 text-sm font-header font-bold transition-all cursor-pointer ${isActive(s.href) ? 'text-neon-blue bg-neon-blue/5 hover:text-black dark:text-white' : 'text-black dark:text-white hover:text-neon-blue hover:bg-white/5'}`}
                          >
                            <span className="opacity-70">{s.icon}</span>{s.name}
                          </Link>
@@ -353,7 +353,7 @@ export const NavbarContent = () => {
                 ref={searchToggleRef}
                 onClick={toggleSearch}
                 className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.2)] ${
-                  isSearchOpen ? 'bg-neon-blue border-neon-blue text-black' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
+                  isSearchOpen ? 'bg-neon-blue border-neon-blue text-black' : 'bg-white/5 border-white/20 text-black dark:text-white hover:border-neon-blue'
                 }`}
                 title={dict.nav.search}
               >
@@ -363,7 +363,7 @@ export const NavbarContent = () => {
               {/* Hamburger contextual toggle (ALWAYS VISIBLE NEXT TO SEARCH) */}
               <button
                 className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.2)] ${
-                  isMenuOpen ? 'bg-neon-blue border-neon-blue text-black' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
+                  isMenuOpen ? 'bg-neon-blue border-neon-blue text-black' : 'bg-white/5 border-white/20 text-black dark:text-white hover:border-neon-blue'
                 }`}
                 onClick={toggleMenu}
                 title={dict.menu.mainMenu}
@@ -382,7 +382,7 @@ export const NavbarContent = () => {
                     {user.avatar_url ? (
                       <Image src={user.avatar_url} alt={user.display_name} fill className="object-cover" />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center text-white font-black text-xs">
+                      <div className="w-full h-full bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center text-black dark:text-white font-black text-xs">
                         {user.display_name.charAt(0).toUpperCase()}
                       </div>
                     )}
@@ -392,8 +392,8 @@ export const NavbarContent = () => {
                     onClick={toggleAcceder}
                     className={`flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] ${
                       isAccederOpen
-                        ? 'bg-gradient-to-r from-neon-blue/40 via-[#6600ff]/40 to-neon-pink/40 border-neon-pink text-white'
-                        : 'bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 border-white/20 text-white hover:border-neon-pink'
+                        ? 'bg-gradient-to-r from-neon-blue/40 via-[#6600ff]/40 to-neon-pink/40 border-neon-pink text-black dark:text-white'
+                        : 'bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 border-white/20 text-black dark:text-white hover:border-neon-pink'
                     }`}
                     title={guestName || dict.common.guest}
                   >
@@ -418,13 +418,13 @@ export const NavbarContent = () => {
                             {user.avatar_url ? (
                               <Image src={user.avatar_url} alt={user.display_name} fill className="object-cover" />
                             ) : (
-                              <div className="w-full h-full bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center text-white font-black text-xs">
+                              <div className="w-full h-full bg-gradient-to-br from-neon-blue to-neon-purple flex items-center justify-center text-black dark:text-white font-black text-xs">
                                 {user.display_name.charAt(0).toUpperCase()}
                               </div>
                             )}
                           </div>
                           <div className="min-w-0">
-                            <p className="text-white font-black text-xs uppercase tracking-widest truncate">{user.display_name}</p>
+                            <p className="text-black dark:text-white font-black text-xs uppercase tracking-widest truncate">{user.display_name}</p>
                             <p className="text-gray-500 text-[10px] font-bold truncate">@{user.username}</p>
                           </div>
                         </div>
@@ -437,7 +437,7 @@ export const NavbarContent = () => {
                             </svg>
                           </div>
                           <div className="min-w-0">
-                            <p className="text-white font-black text-xs uppercase tracking-widest truncate">{guestName || dict.common.guest}</p>
+                            <p className="text-black dark:text-white font-black text-xs uppercase tracking-widest truncate">{guestName || dict.common.guest}</p>
                             <p className="text-gray-500 text-[10px] font-bold truncate">@{guestName.replace(/^Invitado/i, 'invitado').replace(/^Guest/i, 'guest').toLowerCase()}</p>
                           </div>
                           <p className="mt-2 w-full text-[10px] font-bold text-amber-400/80">{dict.nav.guestNotice}</p>
@@ -472,20 +472,20 @@ export const NavbarContent = () => {
                       ) : (
                         <div className="grid grid-cols-2 border-b border-white/5">
                           <Link href="/login"
-                            className="flex flex-col items-center gap-2 p-5 text-white font-header font-bold text-sm bg-gradient-to-br from-neon-green/30 to-neon-green/5 border-r border-white/10 hover:from-neon-green/50 transition-all cursor-pointer group shadow-[inset_0_0_20px_rgba(0,255,136,0.1)] hover:shadow-[inset_0_0_30px_rgba(0,255,136,0.3)]"
+                            className="flex flex-col items-center gap-2 p-5 text-black dark:text-white font-header font-bold text-sm bg-gradient-to-br from-neon-green/30 to-neon-green/5 border-r border-white/10 hover:from-neon-green/50 transition-all cursor-pointer group shadow-[inset_0_0_20px_rgba(0,255,136,0.1)] hover:shadow-[inset_0_0_30px_rgba(0,255,136,0.3)]"
                           >
-                            <span className="w-10 h-10 rounded-full bg-neon-green/20 border border-neon-green/50 flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(0,255,136,0.8)] group-hover:bg-neon-green/40 transition-all text-neon-green group-hover:text-white">
+                            <span className="w-10 h-10 rounded-full bg-neon-green/20 border border-neon-green/50 flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(0,255,136,0.8)] group-hover:bg-neon-green/40 transition-all text-neon-green group-hover:text-black dark:text-white">
                               {I.login}
                             </span>
-                            <span className="text-neon-green group-hover:text-white drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]">{dict.menu.signIn}</span>
+                            <span className="text-neon-green group-hover:text-black dark:text-white drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]">{dict.menu.signIn}</span>
                           </Link>
                           <Link href="/register"
-                            className="flex flex-col items-center gap-2 p-5 text-white font-header font-bold text-sm bg-gradient-to-bl from-neon-pink/30 to-neon-pink/5 hover:from-neon-pink/50 transition-all cursor-pointer group shadow-[inset_0_0_20px_rgba(255,51,204,0.1)] hover:shadow-[inset_0_0_30px_rgba(255,51,204,0.3)]"
+                            className="flex flex-col items-center gap-2 p-5 text-black dark:text-white font-header font-bold text-sm bg-gradient-to-bl from-neon-pink/30 to-neon-pink/5 hover:from-neon-pink/50 transition-all cursor-pointer group shadow-[inset_0_0_20px_rgba(255,51,204,0.1)] hover:shadow-[inset_0_0_30px_rgba(255,51,204,0.3)]"
                           >
-                            <span className="w-10 h-10 rounded-full bg-neon-pink/20 border border-neon-pink/50 flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(255,51,204,0.8)] group-hover:bg-neon-pink/40 transition-all text-neon-pink group-hover:text-white">
+                            <span className="w-10 h-10 rounded-full bg-neon-pink/20 border border-neon-pink/50 flex items-center justify-center group-hover:shadow-[0_0_15px_rgba(255,51,204,0.8)] group-hover:bg-neon-pink/40 transition-all text-neon-pink group-hover:text-black dark:text-white">
                               {I.register}
                             </span>
-                            <span className="text-neon-pink group-hover:text-white drop-shadow-[0_0_8px_rgba(255,51,204,0.8)]">{dict.menu.signUp}</span>
+                            <span className="text-neon-pink group-hover:text-black dark:text-white drop-shadow-[0_0_8px_rgba(255,51,204,0.8)]">{dict.menu.signUp}</span>
                           </Link>
                         </div>
                       )}
@@ -610,8 +610,8 @@ export const NavbarContent = () => {
                         <Link key={link.name} href={link.href} onClick={() => setIsMenuOpen(false)}
                           className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[15px] group mb-1 active:scale-95 border ${
                             active
-                              ? (isPlay ? 'border-green-500 bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.6)] text-black animate-pulse' : 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue hover:text-white')
-                              : (isPlay ? 'border-transparent text-white hover:border-green-500 hover:bg-green-500 hover:text-black hover:shadow-[0_0_20px_rgba(34,197,94,0.5)]' : 'border-transparent text-gray-300 hover:text-neon-cyan hover:bg-white/5 hover:border-white/10')
+                              ? (isPlay ? 'border-green-500 bg-green-500 shadow-[0_0_15px_rgba(34,197,94,0.6)] text-black animate-pulse' : 'border-neon-blue bg-neon-blue/20 shadow-[0_0_15px_rgba(0,212,255,0.3)] text-neon-blue hover:text-black dark:text-white')
+                              : (isPlay ? 'border-transparent text-black dark:text-white hover:border-green-500 hover:bg-green-500 hover:text-black hover:shadow-[0_0_20px_rgba(34,197,94,0.5)]' : 'border-transparent text-gray-300 hover:text-neon-cyan hover:bg-white/5 hover:border-white/10')
                           }`}
                         >
                           <div className="flex items-center gap-4">
@@ -632,11 +632,11 @@ export const NavbarContent = () => {
                     <p className="px-4 text-[10px] font-black text-white/30 uppercase tracking-[0.2em] mb-2">{dict.menu.infoSupport}</p>
                     {INFO_LINKS.map((link) => (
                       <Link key={link.name} href={link.href} prefetch={false} onClick={() => setIsMenuOpen(false)}
-                        className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[14px] group mb-1 active:scale-95 ${isActive(link.href) ? 'bg-neon-blue/10 border border-neon-blue/30 text-neon-cyan shadow-[inset_0_0_15px_rgba(0,212,255,0.1)] hover:text-white' : 'border border-transparent text-white hover:text-neon-cyan hover:bg-neon-blue/5 hover:border-neon-blue/20'}`}
+                        className={`flex justify-start items-center px-4 py-3 rounded-2xl transition-all font-header font-bold text-[14px] group mb-1 active:scale-95 ${isActive(link.href) ? 'bg-neon-blue/10 border border-neon-blue/30 text-neon-cyan shadow-[inset_0_0_15px_rgba(0,212,255,0.1)] hover:text-black dark:text-white' : 'border border-transparent text-black dark:text-white hover:text-neon-cyan hover:bg-neon-blue/5 hover:border-neon-blue/20'}`}
                       >
                          <div className="flex items-center gap-4">
                           <span className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isActive(link.href) ? 'bg-neon-cyan/20 text-neon-cyan shadow-[0_0_10px_rgba(0,212,255,0.3)]' : 'bg-black/40 text-white/60 group-hover:text-neon-cyan group-hover:bg-neon-blue/10'}`}>{link.icon}</span>
-                          <span className="truncate text-white group-hover:text-neon-cyan transition-colors">{link.name}</span>
+                          <span className="truncate text-black dark:text-white group-hover:text-neon-cyan transition-colors">{link.name}</span>
                         </div>
                       </Link>
                     ))}
@@ -670,7 +670,7 @@ export const NavbarContent = () => {
                         setIsMenuOpen(false);
                       }}
                       className={`flex items-center gap-4 px-4 py-3 rounded-xl text-sm font-header font-bold transition-all group ${
-                        lang === l.code ? 'bg-neon-blue/20 text-neon-cyan border border-neon-blue/30' : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
+                        lang === l.code ? 'bg-neon-blue/20 text-neon-cyan border border-neon-blue/30' : 'text-gray-400 hover:text-black dark:text-white hover:bg-white/5 border border-transparent'
                       } ${unavailable ? 'opacity-40 grayscale cursor-not-allowed' : 'cursor-pointer'}`}
                     >
                       <div className="shrink-0 transition-transform duration-300 group-hover:scale-110 shadow-lg ring-1 ring-white/10 rounded-full">

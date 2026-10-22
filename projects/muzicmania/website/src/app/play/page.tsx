@@ -184,7 +184,9 @@ function PlayPageContent() {
     audioInfo,
     isAudioInitialized,
     lang,
-    setLang
+    setLang,
+    darkMode,
+    setDarkMode
   } = useAppStore();
   const t = useT();
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
@@ -1929,7 +1931,7 @@ function PlayPageContent() {
                     {/* Mode Options */}
                     <div className="flex flex-col gap-0.5 px-3 pt-5">
                     {[
-                      { id: 'historia', label: '{t.pages.play.storyMode}', icon: I.book, desc: 'Descubre la historia de MuzicMania', locked: true, lockReason: 'beta', pronto: true },
+                      { id: 'historia', label: t.pages.play.storyMode, icon: I.book, desc: 'Descubre la historia de MuzicMania', locked: true, lockReason: 'beta', pronto: true },
                       { id: 'solo', label: 'MODO SOLO', icon: I.music, desc: 'Juega partidas individuales con 4 dificultades y canciones variadas' },
                       { id: 'multijugador', label: 'MULTIJUGADOR', icon: I.radio, desc: 'Compite contra otros jugadores', soon: true, lockReason: 'beta' },
                       { id: 'crear', label: 'CREAR', icon: I.customize, desc: 'Crea y comparte tus propios niveles', locked: true, lockReason: 'account' },
@@ -1988,7 +1990,7 @@ function PlayPageContent() {
                         { id: 'inventario', label: 'INVENTARIO', icon: I.backpack, color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', hoverBg: 'hover:bg-yellow-500/20', onClick: () => { setHubSidebarView('main'); setIsInventarioOpen(true); } },
                         { id: 'ayuda', label: 'AYUDA', icon: I.help, color: 'text-neon-cyan', bg: 'bg-neon-cyan/10', border: 'border-neon-cyan/20', hoverBg: 'hover:bg-neon-cyan/20', onClick: () => { setHubSidebarView('main'); setIsHelpOpen(true); } },
                         { id: 'info', label: 'INFO', icon: I.about, color: 'text-neon-blue', bg: 'bg-neon-blue/10', border: 'border-neon-blue/20', hoverBg: 'hover:bg-neon-blue/20', onClick: () => { setHubSidebarView('main'); setIsInfoOpen(true); } },
-                        { id: 'creditos', label: '{t.pages.play.creditsLabel}', icon: I.starOutline, color: 'text-neon-pink', bg: 'bg-neon-pink/10', border: 'border-neon-pink/20', hoverBg: 'hover:bg-neon-pink/20', onClick: () => { setHubSidebarView('main'); setIsCreditsOpen(true); } },
+                        { id: 'creditos', label: t.pages.play.creditsLabel, icon: I.starOutline, color: 'text-neon-pink', bg: 'bg-neon-pink/10', border: 'border-neon-pink/20', hoverBg: 'hover:bg-neon-pink/20', onClick: () => { setHubSidebarView('main'); setIsCreditsOpen(true); } },
                         { id: 'leaderboard', label: 'LEADERBOARD', icon: I.trophy, color: 'text-yellow-500', bg: 'bg-yellow-500/10', border: 'border-yellow-500/20', hoverBg: 'hover:bg-yellow-500/20', onClick: () => { window.open('/leaderboard', '_blank'); } },
                         { id: 'forum', label: 'FORUM', icon: I.forum, color: 'text-neon-cyan', bg: 'bg-neon-cyan/10', border: 'border-neon-cyan/20', hoverBg: 'hover:bg-neon-cyan/20', onClick: () => { window.open('/forum', '_blank'); } },
                         { id: 'redes', label: 'REDES', icon: I.discord, color: 'text-neon-green', bg: 'bg-neon-green/10', border: 'border-neon-green/20', hoverBg: 'hover:bg-neon-green/20', onClick: () => { setHubSidebarView('main'); setIsRedesOpen(true); } },
@@ -2119,7 +2121,7 @@ function PlayPageContent() {
                     <AnimatePresence>
                     {hubHoveredMode && (() => {
                       const previews: Record<string,{icon:React.ReactNode,title:string,color:string,bg:string,desc:string,stats:{label:string,value:string}[]}> = {
-                        historia: {icon:I.book,title:'{t.pages.play.storyMode}',color:'from-gray-500 via-white to-gray-600',bg:'from-white/5 to-white/5',desc:'Sumérgete en la historia de MuzicMania. Descubre secretos, desbloquea canciones y avanza por capítulos.',stats:[{label:'CAPÍTULOS',value:'Sin definir'},{label:'SECRETOS',value:'Por descubrir'},{label:'CANON',value:'Historia principal'}]},
+                        historia: {icon:I.book,title: t.pages.play.storyMode,color:'from-gray-500 via-white to-gray-600',bg:'from-white/5 to-white/5',desc:'Sumérgete en la historia de MuzicMania. Descubre secretos, desbloquea canciones y avanza por capítulos.',stats:[{label:'CAPÍTULOS',value:'Sin definir'},{label:'SECRETOS',value:'Por descubrir'},{label:'CANON',value:'Historia principal'}]},
                         solo: {icon:I.music,title:'MODO SOLO',color:'from-neon-cyan via-white to-neon-blue',bg:'from-neon-cyan/20 to-neon-blue/20',desc:'Demuestra tu habilidad rítmica en partidas individuales. Elige entre 4 dificultades y completa cada canción al ritmo perfecto.',stats:[{label:'ESTILO',value:'Individual'},{label:'PRECISIÓN',value:'Descripción'},{label:'SUPERVIVENCIA',value:'Descripción'}]},
                         multijugador: {icon:I.radio,title:'MULTIJUGADOR',color:'from-neon-pink via-white to-neon-purple',bg:'from-neon-pink/20 to-neon-purple/20',desc:'Compite en tiempo real contra otros jugadores. Sube en el ranking global y conviértete en leyenda.',stats:[{label:'ESTILO',value:'Competitivo'},{label:'MULTI-OPCIONES',value:'Próximamente'},{label:'ESTADO',value:'Próximamente'}]},
                         crear: {icon:I.customize,title:'CREAR',color:'from-emerald-500 via-white to-teal-500',bg:'from-emerald-500/20 to-teal-500/20',desc:'Diseña tus propios niveles con nuestro editor integrado. Comparte tus creaciones con la comunidad.',stats:[{label:'EDITOR',value:'Editor visual de niveles'},{label:'PUBLICAR',value:'Comparte con la comunidad'},{label:'SELECTORES',value:'Aparece en selectores'}]},
@@ -2162,13 +2164,13 @@ function PlayPageContent() {
                         inventario: {icon:I.backpack,title:'INVENTARIO',color:'text-yellow-500',desc:'Gestiona tus skins, efectos y objetos coleccionables'},
                         ayuda: {icon:I.help,title:'AYUDA',color:'text-neon-cyan',desc:'Guía de controles, puntuación y mecánicas del juego'},
                         info: {icon:I.about,title:'INFORMACIÓN',color:'text-neon-blue',desc:'Información general sobre MuzicMania'},
-                        creditos: {icon:I.starOutline,title:'{t.pages.play.creditsLabel}',color:'text-neon-pink',desc:'Conoce al equipo detrás de MuzicMania'},
+                        creditos: {icon:I.starOutline,title: t.pages.play.creditsLabel,color:'text-neon-pink',desc:'Conoce al equipo detrás de MuzicMania'},
                         leaderboard: {icon:I.trophy,title:'LEADERBOARD',color:'text-yellow-500',desc:'Clasificación global de los mejores jugadores'},
                         forum: {icon:I.forum,title:'FORUM',color:'text-neon-cyan',desc:'Comunidad, discusiones y contenido del equipo'},
                         redes: {icon:I.discord,title:'REDES',color:'text-neon-green',desc:'Síguenos en todas las plataformas'},
-                        changelog: {icon:I.clock,title:'CHANGELOG',color:'text-orange-500',desc:'{t.pages.play.latestUpdates2} y cambios del juego'},
+                        changelog: {icon:I.clock,title:'CHANGELOG',color:'text-orange-500',desc: t.pages.play.latestUpdates2 + ' y cambios del juego'},
                         otros: {icon:I.sliders,title:'OTROS',color:'text-neon-purple',desc:'Enlaces rápidos a otras secciones de la plataforma'},
-                        config: {icon:I.settings,title:'{t.pages.play.settingsLabel}',color:'text-neon-purple',desc:'Ajusta la configuración del juego, audio, controles y apariencia'},
+                        config: {icon:I.settings,title: t.pages.play.settingsLabel,color:'text-neon-purple',desc:'Ajusta la configuración del juego, audio, controles y apariencia'},
                       };
                       const op = optionPreviews[hubSelectedOption];
                       if (!op) return null;
@@ -2310,7 +2312,7 @@ function PlayPageContent() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button onClick={() => { setHubError({title:'FUNCIÓN BETA',desc:'El cambio de tema no está disponible en esta versión. Por defecto el juego está en modo oscuro.'}); }}
+                      <button onClick={() => { const next = !darkMode; setDarkMode(next); updatePreferences({ theme: next ? 'dark' : 'light' }); }}
                         className="group flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full transition-all duration-300"
                         title={t.pages.play.ariaTheme}
                       >
@@ -3165,7 +3167,7 @@ function PlayPageContent() {
                 {showRightPanel && (
                   <motion.div initial={{x:320}} animate={{x:0}} exit={{x:320}}
                     transition={{type:'spring',damping:25,stiffness:300}}
-                    className="absolute top-0 right-0 bottom-0 z-50 w-80 bg-[#0a0a0a] border-l border-white/10 shadow-2xl flex flex-col"
+                    className="absolute top-0 right-0 bottom-0 z-50 w-[min(20rem,92vw)] max-h-full overflow-y-auto bg-[#0a0a0a] border-l border-white/10 shadow-2xl flex flex-col"
                   >
                     <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
                       <h3 className="text-xs font-header font-black uppercase tracking-tight text-white">{t.pages.play.latestChanges}</h3>
@@ -3819,7 +3821,7 @@ function PlayPageContent() {
                      {[
                        { label: 'Score', val: activeGameState.score.toLocaleString(), cls: 'text-white', icon: I.stats, iconCls: 'text-neon-cyan' },
                        { label: 'Max Combo', val: `${activeGameState.maxCombo}x`, cls: 'text-neon-pink', icon: I.trophy, iconCls: 'text-yellow-500' },
-                       { label: '{t.pages.play.accuracy}', val: `${activeGameState.accuracy}%`, cls: 'text-neon-cyan', icon: I.target, iconCls: 'text-neon-cyan' },
+                       { label: t.pages.play.accuracy, val: `${activeGameState.accuracy}%`, cls: 'text-neon-cyan', icon: I.target, iconCls: 'text-neon-cyan' },
                        { label: 'Errores', val: activeGameState.hits.miss, cls: 'text-red-500', icon: I.circleX, iconCls: 'text-red-400' },
                        { label: 'Punt. Máx', val: activeGameState.maxPotentialScore.toLocaleString(), cls: 'text-gray-300', icon: I.star, iconCls: 'text-yellow-400' },
                        { label: 'KPS', val: `${activeGameState.kps}`, cls: 'text-neon-green', icon: I.zap, iconCls: 'text-neon-green' },
@@ -4088,8 +4090,8 @@ function PlayPageContent() {
                               <polyline points="20 6 9 17 4 12"/>
                             </svg>
                           </button>
-                          <button onClick={() => setHubError({title:'FUNCIÓN BETA',desc:'El cambio de tema no está disponible en esta versión. Por defecto el juego está en modo oscuro.'})}
-                            className="w-full py-4 text-sm font-black uppercase tracking-widest rounded-xl border border-white/10 bg-white/5 text-gray-500 flex items-center justify-center gap-3 cursor-not-allowed opacity-40"
+                          <button onClick={() => { const next = !darkMode; setDarkMode(next); updatePreferences({ theme: next ? 'dark' : 'light' }); }}
+                            className="w-full py-4 text-sm font-black uppercase tracking-widest rounded-xl border border-white/10 bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 flex items-center justify-center gap-3 transition-all"
                           >
                             <div className="w-4 h-4">{I.sun}</div>
                             Claro
@@ -4351,13 +4353,13 @@ function PlayPageContent() {
                                           setInputDeviceList(devices.filter(d => d.kind === 'audioinput'));
                                         } catch { setHubError({title:'ERROR DE PERMISOS',desc:'No se pudo acceder al micrófono. Verifica los permisos del navegador.'}); }
                                       }} className="mt-2 text-neon-cyan hover:underline flex items-center justify-center gap-1">
-                                        <div className="w-3 h-3">{I.refresh}</div> {t.pages.play.requestPermissions}
+                                        <div className={'w-3 h-3 ' + (scanningDevices ? 'animate-spin' : '')}>{I.refresh}</div> {t.pages.play.requestPermissions}
                                       </button>
                                     </div>
                                   ) : (
                                     <>
                                       <button onClick={() => void rescanDevices('input')} className="w-full px-4 py-2 text-[8px] font-bold uppercase tracking-widest text-neon-cyan hover:bg-white/5 transition-all flex items-center justify-center gap-1 border-b border-white/5">
-                                        <div className="w-3 h-3">{I.refresh}</div> RE-ESCANEAR
+                                        <div className={'w-3 h-3 ' + (scanningDevices ? 'animate-spin' : '')}>{I.refresh}</div> RE-ESCANEAR
                                       </button>
                                       {inputDeviceList.map(d => (
                                         <button key={d.deviceId} onClick={() => {
@@ -4417,13 +4419,13 @@ function PlayPageContent() {
                                     <div className="px-4 py-3 text-[9px] text-gray-500 text-center space-y-2">
                                       <p>{t.pages.play.noOutputs}</p>
                                       <button onClick={() => void rescanDevices('output')} className="mt-2 text-neon-cyan hover:underline flex items-center justify-center gap-1">
-                                        <div className="w-3 h-3">{I.refresh}</div> Actualizar
+                                        <div className={'w-3 h-3 ' + (scanningDevices ? 'animate-spin' : '')}>{I.refresh}</div> Actualizar
                                       </button>
                                     </div>
                                   ) : (
                                     <>
                                       <button onClick={() => void rescanDevices('output')} className="w-full px-4 py-2 text-[8px] font-bold uppercase tracking-widest text-neon-cyan hover:bg-white/5 transition-all flex items-center justify-center gap-1 border-b border-white/5">
-                                        <div className="w-3 h-3">{I.refresh}</div> RE-ESCANEAR
+                                        <div className={'w-3 h-3 ' + (scanningDevices ? 'animate-spin' : '')}>{I.refresh}</div> RE-ESCANEAR
                                       </button>
                                       {audioDeviceList.map(d => (
                                         <button key={d.deviceId} onClick={() => {
@@ -5209,7 +5211,7 @@ function PlayPageContent() {
                         { label: 'Puntuación', val: lm.score.toLocaleString(), cls: 'text-white' },
                         { label: 'Punt. Máxima', val: lm.maxPotentialScore?.toLocaleString() || '-', cls: 'text-yellow-400' },
                         { label: 'Max Combo', val: `${lm.maxCombo}x`, cls: 'text-white' },
-                        { label: '{t.pages.play.accuracy}', val: `${lm.accuracy}%`, cls: 'text-neon-cyan' },
+                        { label: t.pages.play.accuracy, val: `${lm.accuracy}%`, cls: 'text-neon-cyan' },
                         { label: 'Errores', val: lm.mistakes, cls: 'text-neon-pink' },
                         { label: 'KPS', val: lm.kps, cls: 'text-neon-green' },
                         { label: 'Vida Final', val: `${lm.life}%`, cls: lm.life > 50 ? 'text-green-400' : 'text-red-400' },
