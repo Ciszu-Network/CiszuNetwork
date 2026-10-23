@@ -675,5 +675,16 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 10 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 22 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.
+
+## Historial — Sesión 21-22 oct 2026
+
+- **Seguridad**: next 15.5.28, @sentry/nextjs 10.75.2, storybook 10.6.3, vitest 5.0.5/4.1.12, vite 8.3.5, fastify 5.12.6; `pnpm audit --prod` sin vulnerabilidades.
+- **@ciszu/ui**: nuevo componente `SiteSearch` (buscador global con filtros, orden, páginas y usuarios) adoptado por las 4 webs.
+- **Muzicmania**: tema claro completo (capa `.light`), nota musical en header/footer, tema funcional sin recarga, hub sin títulos con llaves, panel de config responsive, táctil móvil y canvas sin distorsión.
+- **Ciszubot**: v3.20.4, disclaimer offline corregido, manager de comandos propios y confesiones separadas en el dashboard.
+- **Changelogs**: 4 entradas publicadas en `ciszunetwork.global_changelogs`.
+- **Mantenimiento**: ~8.2 GB liberados (temp + caches `.next`).
+
+_Última revisión: 22 oct 2026._

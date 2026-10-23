@@ -301,4 +301,15 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 _Última revisión: 3 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-10-03
+ÚLTIMA ACTUALIZACIÓN: 2026-10-22
+## Sesión 21-22 oct 2026 — seguridad, buscador global y estabilidad
+
+- **Seguridad (crítico)**: actualizadas todas las dependencias vulnerables — next 15.5.28 (RCE SVG Image Optimization + DoS Server Actions), @sentry/nextjs 10.75.2 (bypass tunnel), storybook 10.6.3 (code injection preview/dev server), vitest 5.0.5 / 4.1.12 + @vitest/mocker 5.0.5 + @vitest/ui 5.0.5, vite 8.3.5 (launch-editor), fastify 5.12.6 (header validation). `pnpm audit --prod`: 0 vulnerabilidades. Tests 367/367.
+- **Buscador global**: componente `SiteSearch` en `@ciszu/ui` (filtros por categoría multicheck, orden asc/desc, fila de páginas, mosaico de usuarios con avatar y botón de perfil, `@` fuerza usuarios) integrado en las 4 webs.
+- **Muzicmania**: tema claro con capa `.light` completa en `globals.scss`; header/footer con nota musical en lugar del isotipo; botones de tema funcionales en hub y ajustes (sin recarga); títulos del hub con llaves literales corregidos; panel de configuración responsive; spinner animado en escaneo de dispositivos; dropdowns de dispositivos por delante; controles táctiles móviles; canvas con aspect ratio fijo en fullscreen; `pixi.js/unsafe-eval`.
+- **Ciszubot**: v3.20.4; disclaimer de offline corregido (modo manual exige heartbeat fresco); dashboard con manager de comandos personalizados, sección separada de confesiones e iconos corregidos (registry 321 iconos).
+- **Changelogs**: publicadas 4 entradas (una por web) en `ciszunetwork.global_changelogs`.
+- **Mantenimiento**: liberados ~8.2 GB (`.opencode/temp` 3.1 GB + caches `.next` 5.1 GB); eliminado archivo basura en la raíz.
+- **Estado servicios**: bot online (Bot-Hosting renovado; v3.20.4), Vercel free con margen tras el reset de cuota, Supabase free, GTM 4 contenedores publicados, AdSense en revisión, Sentry/PostHog/ntfy operativos.
+
+ÚLTIMA ACTUALIZACIÓN: 2026-10-22
