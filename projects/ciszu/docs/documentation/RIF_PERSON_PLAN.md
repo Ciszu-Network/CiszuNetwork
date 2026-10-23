@@ -1,7 +1,7 @@
 ﻿# RIF_PERSON_PLAN — RIF de Persona Natural (SENIAT) — 100% Gratis
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: RIF_PERSON_PLAN_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: trámite del RIF de persona natural en SENIAT (Venezuela) — identidad fiscal
@@ -207,5 +207,5 @@ Este cálculo permite validar un RIF manualmente antes de usarlo en sistemas pro
 | `COMMERCIAL_REGISTRATION_PLAN.md` | Paso previo a la persona jurídica |
 | `COMPANY_REGISTRATION_PLAN.md` | Hoja de ruta global (Fase 0) |
 
-_Última revisión: 13 ago 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
 `FREELANCER_TAX_PLAN.md`, `SAPI_TRADEMARK_PLAN.md`, `COMMERCIAL_REGISTRATION_PLAN.md`.

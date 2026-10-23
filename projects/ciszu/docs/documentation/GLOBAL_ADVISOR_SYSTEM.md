@@ -1,7 +1,7 @@
 # GLOBAL_ADVISOR_SYSTEM — Sistema de Mensajes Globales (Ciszu Network)
 
 Versión: 2.0.0
-Actualización: 2026-08-25
+Actualización: 2026-10-23
 Identificador: GLOBAL_ADVISOR_SYSTEM_V2.0.0_2026_08_25_ciszunetwork
 
 > **Definición**: sistema que permite al staff (admin) enviar **mensajes globales** a una o varias
@@ -271,5 +271,5 @@ devcon. Detalle en `DEV_CONSOLE_SYSTEM.md` §4.6b y en `Disclaimer.tsx` del paqu
 
 ---
 
-_Última revisión: 25 ago 2026. Mantener este documento vivo._
+_Última revisión: 23 oct 2026. Mantener este documento vivo._
 _Relacionados: DEV_CONSOLE_SYSTEM · GLOBAL_COMPONENTS_SYSTEM · DB_SYSTEM · VAULT_SYSTEM · TODO.md_

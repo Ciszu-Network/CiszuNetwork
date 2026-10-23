@@ -1,7 +1,7 @@
 ﻿# VPS_PLAN — Hosting 24/7 para CiszuBot en VPS (recomendación, ago 2026)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: VPS_PLAN_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: plan para mover CiszuBot a un servidor 24/7 (VPS) para que no dependa del
@@ -230,7 +230,7 @@ con menos control (sleeps, límites de ram/CPU).
 **¿El bot necesita base de datos en el VPS?** No: el bot ya está pensado para conectar a
 Supabase cloud (no local). El VPS solo corre el proceso del bot.
 
-_Última revisión: 13 ago 2026._ Relacionado: `MONITORING_SYSTEM.md`, `REMOTE_CONTROL_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `MONITORING_SYSTEM.md`, `REMOTE_CONTROL_SYSTEM.md`,
 `DOCKER_SYSTEM.md`, `SCHEDULE_PROTOCOLS.md`.
 
 ---
@@ -292,5 +292,5 @@ ffmpeg en el host ⇒ probar sin Lavalink y, si falla, apagar con el feature fla
 2. Copiar el ZIP (por storage/USB/nube), descomprimir y `cd` a la carpeta.
 3. `npm run setup && npm start` (o usar `termux-wake-lock` para que no se duerma).
 
-_Última revisión: 10 oct 2026._ Relacionado: `FEATURE_FLAGS_SYSTEM.md`, `DOCKER_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `FEATURE_FLAGS_SYSTEM.md`, `DOCKER_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `REMOTE_CONTROL_SYSTEM.md`, `SCHEDULE_PROTOCOLS.md`.

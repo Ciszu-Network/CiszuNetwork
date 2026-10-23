@@ -1,7 +1,7 @@
 # BACKEND_SYSTEM — Sistema de Backend de los Proyectos (Ciszu Network)
 
 Versión: 1.1.0
-Actualización: 2026-08-14
+Actualización: 2026-10-23
 Identificador: BACKEND_SYSTEM_V1.1.0_2026_08_14_ciszunetwork
 
 > **Definición**: sistema que documenta el **backend** (lado servidor: base de datos, APIs,
@@ -337,5 +337,5 @@ Cada web tiene `src/app/api/*` para lógica serverless:
   problema existe; los descartados NO bloquean el futuro (transición limpia si aplican).
 - Detalle de investigación de cada herramienta en `FRONTEND_SYSTEM.md` §7.3 y `BACKEND_SYSTEM.md` §19-20.
 
-_Última revisión: 14 ago 2026._ Relacionado: `DB_SYSTEM.md`, `CDN_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `DB_SYSTEM.md`, `CDN_SYSTEM.md`,
 `AUTH_SYSTEM.md`, `SECURITY_PROTOCOLS.md`, `FRAMEWORKS_SYSTEM.md`, `FULL_STACK_SYSTEM.md`.

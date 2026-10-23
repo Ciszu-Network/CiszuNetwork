@@ -1,7 +1,7 @@
 # PUBLISHER_SYSTEM — Sistema de Publicación y Distribución (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-30
+Actualización: 2026-10-23
 Identificador: PUBLISHER_SYSTEM_V1.0.0_2026_08_30_ciszunetwork
 
 > **Definición**: pipeline end-to-end de publicación de contenido (web, docs, assets, social, releases) para el ecosistema Ciszu Network. Define automatizaciones, validaciones, flujos y gobernanza.
@@ -160,13 +160,13 @@ jobs:
 | Plataforma | Herramienta | Trigger | Contenido |
 |---|---|---|---|
 | **Twitter/X** | Buffer / Typefully / API nativa | Manual + Webhook release | Hilos, anuncios, clips |
-| **Discord (Webhooks)** | `GLOBAL_ADVISOR_SYSTEM` + custom | Push `main` + `scripts/notify-discord.js` | Anuncios globales, releases, alertas |
+| **Discord (Webhooks)** | `GLOBAL_ADVISOR_SYSTEM` + custom | Push `main` + `pnpm notify` | Anuncios globales, releases, alertas |
 | **Discord (Bot)** | `CiszuBot` (comando `/announce`) | Manual (Admin) | Anuncios servers |
 | **GitHub Releases** | `gh release create` (auto via workflow) | Tag `v*` | Changelog + assets |
 | **YouTube** | YouTube Studio / API | Manual (CEO) | Devlogs, trailers |
 | **TikTok/Reels/Shorts** | CapCut + nativo | Manual (CEO/Mods) | Clips <60s |
 
-### 5.2 Webhook Discord (`scripts/notify-discord.js`)
+### 5.2 Webhook Discord (`pnpm notify`)
 
 ```bash
 # Uso automático en workflows
@@ -274,4 +274,4 @@ pnpm notify "🚀 **Nuevo release v3.2.0**\n\nMuzicMania: nuevo modo ranked + 5 
 
 ---
 
-_Última revisión: 30 ago 2026._
+_Última revisión: 23 oct 2026._

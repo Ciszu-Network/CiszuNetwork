@@ -1,7 +1,7 @@
 ﻿# ONLINE_SERVICES_SYSTEM — Servicios y sitios en línea usados (Ciszu Network)
 
 Versión: 2.1.0
-Actualización: 2026-09-05
+Actualización: 2026-10-23
 Identificador: ONLINE_SERVICES_SYSTEM_V2.1.0_2026_09_05_ciszunetwork
 
 > Inventario oficial de las plataformas online y servicios usados por Ciszu Network (ago 2026).
@@ -237,6 +237,6 @@ tarjeta, cuenta/email, secretos, y actualizar este doc + `AGENTS.md` + `FULL_STA
 - [ ] ¿Los límites free siguen vigentes y sin riesgo de corte?
 - [ ] ¿El inventario está actualizado en este doc, `AGENTS.md` y `VAULT_SYSTEM.md`?
 
-_Última revisión: 5 sep 2026._ Relacionado: `CONTACTS_PROTOCOLS.md`, `VAULT_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `CONTACTS_PROTOCOLS.md`, `VAULT_SYSTEM.md`,
 `ANALYTICS_SYSTEM.md`, `MONITORING_SYSTEM.md`, `PAYMENTS_SYSTEM.md`, `FULL_STACK_SYSTEM.md`,
 `MODELS_LLM_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`, `PACKAGES_SYSTEM.md`.

@@ -1,7 +1,7 @@
 ﻿# SCHEDULE_PROTOCOLS — Horario y agenda
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: SCHEDULE_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: horarios y agenda de trabajo recomendados para Ciszu Network (empresa
@@ -24,7 +24,7 @@ Guía de horarios y agenda de trabajo recomendados para Ciszu Network (empresa u
 
 - **Diario**: estado del bot (heartbeat `ciszubot.bot_status`), monitor UptimeRobot 5 endpoints, revisar ntfy.
 - **Semanal**: `pnpm test`, `pnpm lint`, builds 4 webs, revisar dependabot/audit (`pnpm audit --prod`, `trivy`), revisar stats (PostHog ~1M/mes free), backups DB si aplica (`backup-db.js --scheduled`).
-- **Mensual**: actualizar `AGENTS.md`/`TODO.md`, reintentar token/rotación pendientes (ver `VAULT_SYSTEM.md`, `tokens_a_rotar.md`), revisar to-dos legales.
+- **Mensual**: actualizar `AGENTS.md`/`TODO.md`, reintentar token/rotación pendientes (ver `VAULT_SYSTEM.md` y el registro de rotaciones de `SECURITY_PROTOCOLS.md`), revisar to-dos legales.
 - **Trimestral**: revisar migraciones de framework (Next/Supabase/Discord.js), plan de monetización, roadmap de fases legales (Fase 0→4, ver `COMPANY_REGISTRATION_PLAN.md`).
 
 ## Prioridades (matriz simple)
@@ -201,5 +201,5 @@ el corte nocturno y la cadencia de seguridad (diaria/semanal) del repo.
 Con las métricas de seguimiento: si los pendientes arrastrados bajan y hay días de
 descanso respetados, la agenda funciona; si no, ajustar bloques o prioridades.
 
-_Última revisión: 13 ago 2026._ Relacionado: `GEOGRAPHIC_CONTEXT_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `GEOGRAPHIC_CONTEXT_PROTOCOLS.md`,
 `HEALTH_AND_SAFETY_PROTOCOLS.md`, `WORKFLOW_SYSTEM.md`, `VPS_PLAN.md`.

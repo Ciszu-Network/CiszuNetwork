@@ -1,7 +1,7 @@
 # VISUAL_BUILDERS_SYSTEM — Editores visuales de UI/UX (Ciszu Network)
 
 Versión: 1.2.0
-Actualización: 2026-08-24
+Actualización: 2026-10-23
 Identificador: VISUAL_BUILDERS_SYSTEM_V1.2.0_2026_08_24_ciszunetwork
 
 > **Definición**: sistema que documenta la decisión de qué editor visual de UI/UX usar en el
@@ -621,6 +621,6 @@ superficie de edición no existe (o responde 404) en Vercel.
 - `VAULT_SYSTEM.md` — secretos de Plasmic/Puck/Subframe.
 - `TODO.md` — tarea origen (solo lo edita Ciszuko Antony).
 
-_Última revisión: 24 ago 2026._ Relacionado: `FRONTEND_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `FRONTEND_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`,
 `STYLES_SYSTEM.md`, `PACKAGES_SYSTEM.md`, `CDN_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
 `TOOLS_EVALUATION_PLAN.md`, `VAULT_SYSTEM.md`.

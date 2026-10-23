@@ -1,7 +1,7 @@
 ﻿# TAX_PLAN — Plan Fiscal Integral de Ciszu Network (Venezuela)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: TAX_PLAN_V2.0.0_2026_08_13_ciszunetwork
 
 > **Alcance**: plan fiscal que cubre **todas las personas y entidades** del ecosistema Ciszu
@@ -201,5 +201,5 @@ para la declaración de ISLR es recomendable.
 | `TRADEMARK_PLAN.md` | Marca como activo intangible |
 | `PAYMENTS_SYSTEM.md` | Documentación de pagos recibidos |
 
-_Última revisión: 13 ago 2026._ Relacionado: `RIF_PERSON_PLAN.md`, `COMMERCIAL_REGISTRATION_PLAN.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `RIF_PERSON_PLAN.md`, `COMMERCIAL_REGISTRATION_PLAN.md`,
 `INTERNATIONAL_LLC_PLAN.md`, `TRADEMARK_PLAN.md`, `COMPANY_REGISTRATION_PLAN.md`.

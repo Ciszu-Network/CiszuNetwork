@@ -97,5 +97,5 @@ necesita credenciales de producción en su máquina.
 
 ---
 
-_Última revisión: 09 oct 2026._ Relacionados: `SECURITY_PROTOCOLS.md`, `STAFF_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionados: `SECURITY_PROTOCOLS.md`, `STAFF_SYSTEM.md`,
 `VAULT_SYSTEM.md`, `NTFY_SYSTEM.md`, `REMOTE_CONTROL_SYSTEM.md`, `CONSOLE_SECURITY_SYSTEM.md`.

@@ -1,7 +1,7 @@
 # BRAND_PLAN — Plan de Marca Visual de MuzicMania
 
 Versión: 1.0.0
-Actualización: 2026-08-14
+Actualización: 2026-10-23
 Identificador: BRAND_PLAN_V1.0.0_2026_08_14_ciszunetwork
 
 > **Definición**: plan de marca **visual** del juego de ritmo **MuzicMania**: diseño y
@@ -201,5 +201,5 @@ y holds) con estados de presión/fallo; cada skin tiene su `skin.json`.
 - Multimedia: arrowskins y particleskins configurables, portadas de álbumes musicales.
 - Contenido servido vía `@ciszunetwork/cdn`.
 
-_Última revisión: 2026-08-14._ Relacionado: `TAURI_SYSTEM.md`, `ICON_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `TAURI_SYSTEM.md`, `ICON_SYSTEM.md`,
 `DOC_EXPORT_PROTOCOLS.md`, `README.md`.

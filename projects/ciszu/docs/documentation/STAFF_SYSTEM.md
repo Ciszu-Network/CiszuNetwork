@@ -1,7 +1,7 @@
 # STAFF_SYSTEM — Sistema de Gestión de Empleados (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-25
+Actualización: 2026-10-23
 Identificador: STAFF_SYSTEM_V1.0.0_2026_08_25_ciszunetwork
 
 > **Definición**: sistema que gestiona la **documentación y organización real de los empleados**
@@ -297,7 +297,7 @@ en cada uso de la consola.
 
 ---
 
-_Última revisión: 25 ago 2026._ Relacionado: `EMPLOYEES_SYSTEM.md`, `ORGANIZATIONAL_SCALABILITY_PLAN.md`, `BUSINESS_SYSTEM.md`.
+_Última revisión: 23 oct 2026._ Relacionado: `EMPLOYEES_SYSTEM.md`, `ORGANIZATIONAL_SCALABILITY_PLAN.md`, `BUSINESS_SYSTEM.md`.
 
 ## Autoridad en DB (09 oct 2026)
 

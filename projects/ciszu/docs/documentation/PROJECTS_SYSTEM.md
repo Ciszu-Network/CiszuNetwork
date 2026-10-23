@@ -1,7 +1,7 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
 Versión: 2.1.0
-Actualización: 2026-10-03
+Actualización: 2026-10-23
 Identificador: PROJECTS_SYSTEM_V2.1.0_2026_10_03_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
@@ -675,7 +675,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 22 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.
 
 ## Historial — Sesión 21-22 oct 2026
@@ -687,4 +687,11 @@ _Última revisión: 22 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_S
 - **Changelogs**: 4 entradas publicadas en `ciszunetwork.global_changelogs`.
 - **Mantenimiento**: ~8.2 GB liberados (temp + caches `.next`).
 
-_Última revisión: 22 oct 2026._
+_Última revisión: 23 oct 2026._
+
+## Historial — Sesión 23 oct 2026
+
+- **Arranque/BitLocker**: tareas programadas reapuntadas a stubs en C: con guard de BitLocker y salida silenciosa; Git Updater desactivado.
+- **Docs**: auditoría de 190 documentos, corrección de referencias rotas y refresco de fechas.
+
+_Última revisión: 23 oct 2026._

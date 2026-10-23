@@ -1,7 +1,7 @@
 ﻿# STACK_SYSTEM — Stack Tecnológico del Portfolio (Ciszuko Antony)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: STACK_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema que documenta el stack tecnológico del portfolio de Ciszuko Antony
@@ -215,6 +215,6 @@ conecta directamente a la base de datos.
 - Redes y medios centralizados en `navigation.tsx`; guía de uso en `BRAND_PLAN.md`.
 - Seguridad del stack: middlewares, CSP, Turnstile y rate limiting (reglas en ciszu).
 
-_Última revisión: 13 ago 2026._ Relacionado: `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`,
 `BRAND_PLAN.md`, `README.md`.
 

@@ -1,7 +1,7 @@
 ﻿# STATISTICS_SYSTEM — Estadísticas reales del ecosistema
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: STATISTICS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > Documento con las cifras verificables y actuales de Ciszu Network (ago 2026). Los datos
@@ -199,5 +199,5 @@ Reglas para que un número entre en este documento:
 
 - Convención: append de lo verificado; no reescribir el histórico sin justificación.
 
-_Última revisión: 13 ago 2026._ Relacionado: `ANALYTICS_SYSTEM.md`, `STATUS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `ANALYTICS_SYSTEM.md`, `STATUS_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `DB_SYSTEM.md`.

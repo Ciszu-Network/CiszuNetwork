@@ -1,7 +1,7 @@
 # SERVER_LINK — Enlace Oficial del Servidor de CiszuGamens
 
 Versión: 1.0.0
-Actualización: 2026-09-01
+Actualización: 2026-10-23
 Identificador: SERVER_LINK_V1.0.0_2026_09_01_ciszugamens
 
 > **Definición**: enlace permanente y oficial de invitación al servidor de Discord de
@@ -39,5 +39,5 @@ Discord y siempre redirige a la comunidad.
 
 ---
 
-_Última revisión: 2026-09-01._ Relacionado: `DISCORD_SECURITY_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `DISCORD_SECURITY_PROTOCOLS.md`,
 `DISCORD_SERVER_RULES.md`, `BRAND_PLAN.md`.

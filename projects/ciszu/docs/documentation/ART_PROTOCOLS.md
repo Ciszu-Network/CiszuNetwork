@@ -1,7 +1,7 @@
 # ART_PROTOCOLS — Protocolos Oficiales de Arte (Biblia Artística CISZU NETWORK)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: ART_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 
 > **Estatus**: protocolo oficial vinculante del pipeline artístico de Ciszu Network. Norma

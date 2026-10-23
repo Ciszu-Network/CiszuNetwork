@@ -1,7 +1,7 @@
 # INTERNATIONAL_LLC_PLAN — Internacionalización: LLC en EEUU (FASE CON CAPITAL REAL)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: INTERNATIONAL_LLC_PLAN_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: vía estándar para que Ciszu Network cobre en USD y opere con plataformas
@@ -208,5 +208,5 @@ Sin esas señales, se mantiene la vía NOWPayments/Payoneer (ver `PAYMENTS_SYSTE
 | `BUSINESS_SYSTEM.md` | Fase 2-3 del roadmap de negocio |
 | `VAULT_SYSTEM.md` | Guardar documentos corporativos cifrados |
 
-_Última revisión: 13 ago 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
 `PAYMENTS_SYSTEM.md`, `TRADEMARK_PLAN.md`, `BUSINESS_SYSTEM.md`.

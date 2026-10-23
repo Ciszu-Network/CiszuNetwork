@@ -1,7 +1,7 @@
 # 🧠 CODE_PRINCIPLES_PROTOCOLS — Principios de Programación y Protocolos de Ingeniería (Ciszu Network)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: CODE_PRINCIPLES_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 
 > Documentación para agentes de IA. Define las reglas de oro de diseño y calidad de software
@@ -43,7 +43,7 @@ Reglas operativas que todo agente debe cumplir al tocar el monorepo:
 - **Cómo se aplica en este monorepo**:
   - Lógica compartida de assets → `packages/cdn` (`assetResolver.resolve`, `resolveIcon`).
   - Componentes UI compartidos → `packages/ui` (`Icon.tsx` con registro generado).
-  - Tipos/config compartidos → `packages/config`, `packages/utils`.
+  - Tipos/config compartidos → `packages/utils` (no existe `packages/config`).
   - El sistema de iconos: el registro se genera una sola vez desde `shared/icons/svg/` (nunca duplicar SVGs en las apps).
 - **Equilibrio**: no caer en sobreingeniería — si la lógica es distinta aunque parecida, no forzar la unificación. La regla es no repetirse cuando la lógica es **exactamente la misma**.
 
@@ -212,5 +212,5 @@ Un componente debe comportarse como la mayoría de los desarrolladores esperan:
 - `TESTING_SYSTEM.md` — cómo se prueba cada capa.
 - `WORKFLOW_SYSTEM.md` — protocolo de tarea, inicio y cierre de sesión.
 
-_Última revisión: 13 ago 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `DEVSECOPS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `DEVSECOPS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `TESTING_SYSTEM.md`, `DB_SYSTEM.md`.

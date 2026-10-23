@@ -56,7 +56,7 @@ Los estándares corporativos no se duplican en este proyecto; viven en
   mantienen **intactos**.
 - Contenido en español; identificador y cabecera según `DOCUMENTATION_SYSTEM.md` (ciszu).
 
-_Última revisión: 14 ago 2026._ Relacionado: `DOCUMENTATION_SYSTEM.md` (ciszu),
+_Última revisión: 23 oct 2026._ Relacionado: `DOCUMENTATION_SYSTEM.md` (ciszu),
 `ARCHITECTURE.md`, `STACK_SYSTEM.md`, `WORKFLOW_SYSTEM.md`, `BRAND_PLAN.md`,
 `PROMPTS_PLAN.md`, `PROJECT_STATE.md`.
 

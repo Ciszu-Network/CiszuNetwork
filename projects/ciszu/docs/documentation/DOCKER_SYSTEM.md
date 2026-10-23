@@ -1,7 +1,7 @@
 ﻿# DOCKER_SYSTEM — Docker para Ciszu Network — Beneficios, Plan e Implementación
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: DOCKER_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema Docker del ecosistema: beneficios, plan, implementación y uso de
@@ -222,5 +222,5 @@ build falla con "checksum", `docker build --no-cache` o limpiar volúmenes de ca
 - [ ] `restart: unless-stopped` si es un servicio 24/7.
 - [ ] Actualizar este documento y el mapa de contenedores.
 
-_Última revisión: 13 ago 2026._ Relacionado: `TOOLS_SYSTEM.md`, `DEVSECOPS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `TOOLS_SYSTEM.md`, `DEVSECOPS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `PROJECTS_SYSTEM.md`.

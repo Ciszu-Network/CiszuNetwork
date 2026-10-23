@@ -1,7 +1,7 @@
 # PROJECT_HISTORY — Historia de CiszuAI
 
 Versión: 1.0.0
-Actualización: 2026-10-02
+Actualización: 2026-10-23
 Identificador: PROJECT_HISTORY_V1.0.0_2026_10_02_ciszunetwork
 
 > **Definición**: historial cronológico del proyecto **CiszuAI** (capa de IA de Gemini para
@@ -21,4 +21,4 @@ Identificador: PROJECT_HISTORY_V1.0.0_2026_10_02_ciszunetwork
 
 ---
 
-_Última revisión: 02 oct 2026._ Relacionados: `PROJECT_STATE.md` · `MODELS_LLM_SYSTEM.md` (ciszu) · `MODELS_SKILLS_SYSTEM.md` (ciszu).
+_Última revisión: 23 oct 2026._ Relacionados: `PROJECT_STATE.md` · `MODELS_LLM_SYSTEM.md` (ciszu) · `MODELS_SKILLS_SYSTEM.md` (ciszu).

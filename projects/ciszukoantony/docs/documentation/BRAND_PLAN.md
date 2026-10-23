@@ -1,7 +1,7 @@
 ﻿# BRAND_PLAN — Plan de Marca Visual de Ciszuko Antony
 
 Versión: 1.0.0
-Actualización: 2026-08-14
+Actualización: 2026-10-23
 Identificador: BRAND_PLAN_V1.0.0_2026_08_14_ciszunetwork
 
 > **Definición**: plan de marca **visual** de **Ciszuko Antony** (Francisco García, alias
@@ -218,5 +218,5 @@ la web puede referir `@ciszukoantonY` en la constante `SOCIALS`.
   animados y campanita/like.
 - Todo el arte se sirve vía `@ciszunetwork/cdn`.
 
-_Última revisión: 2026-08-14._ Relacionado: `PROMPTS_PLAN.md`, `STACK_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `PROMPTS_PLAN.md`, `STACK_SYSTEM.md`,
 `ARCHITECTURE.md`, `README.md`.

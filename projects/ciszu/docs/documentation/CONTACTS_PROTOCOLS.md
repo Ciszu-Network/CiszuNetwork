@@ -1,7 +1,7 @@
 ﻿# CONTACTS_PROTOCOLS — Protocolos de Contacto (redes, números, correos, nombres)
 
 Versión: 2.1.0
-Actualización: 2026-09-27
+Actualización: 2026-10-23
 Identificador: CONTACTS_PROTOCOLS_V2.1.0_2026_09_27_ciszunetwork
 
 > Directorio de contacto oficial de Ciszu Network / Ciszuko Antony. Los valores provienen de
@@ -203,5 +203,5 @@ Para añadir un contacto nuevo, rellenar esta ficha en la tabla correspondiente:
 - **Discord**: las invitaciones pueden caducar — revisarlas si el enlace deja de funcionar.
 - **Telegram**: `t.me/<handle>`; distinguir canal vs chat personal por el prefijo del handle.
 
-_Última revisión: 27 sep 2026._ Relacionado: `ONLINE_SERVICES_SYSTEM.md`, `VAULT_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `ONLINE_SERVICES_SYSTEM.md`, `VAULT_SYSTEM.md`,
 `SOCIAL_NETWORK_PROTOCOLS.md`, `PROJECTS_SYSTEM.md`, `AGENTS.md`.

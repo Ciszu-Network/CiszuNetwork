@@ -185,7 +185,7 @@ export function cn(...inputs: ClassValue[]) {
 ### 4.3 Librerías de apoyo
 
 - `recharts`: usar en `/stats` de MuzicMania y páginas de estadísticas generales.
-- `embla-carousel-react`: usar en `/cursos`, `/projects`, galleries.
+- `embla-carousel-react`: usar en `/courses`, `/projects`, galleries.
 - `react-intersection-observer`: usar para reveal animations en home y about.
 - `next-themes`: activar en `MainLayout` o layout global cuando se implemente el toggle.
 
@@ -208,4 +208,4 @@ export function cn(...inputs: ClassValue[]) {
 
 ---
 
-_Última revisión: 13 sep 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `FRONTEND_SYSTEM.md`, `STYLES_SYSTEM.md`, `PACKAGES_SYSTEM.md`, `PROJECTS_SYSTEM.md`, `STATUS_SYSTEM.md`.
+_Última revisión: 23 oct 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `FRONTEND_SYSTEM.md`, `STYLES_SYSTEM.md`, `PACKAGES_SYSTEM.md`, `PROJECTS_SYSTEM.md`, `STATUS_SYSTEM.md`.

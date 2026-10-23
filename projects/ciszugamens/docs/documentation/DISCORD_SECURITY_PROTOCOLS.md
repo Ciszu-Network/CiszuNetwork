@@ -1,7 +1,7 @@
 ﻿# DISCORD_SECURITY_PROTOCOLS — Seguridad del Servidor Discord (CiszuGamens)
 
 Versión: 1.0.0
-Actualización: 2026-08-29
+Actualización: 2026-10-23
 Identificador: DISCORD_SECURITY_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 
 > **Definición**: Protocolos de seguridad, moderación y gestión del servidor Discord de CiszuGamens. Complementa `SECURITY_PROTOCOLS.md` (ciszu) con reglas específicas de Discord.
@@ -92,4 +92,4 @@ Identificador: DISCORD_SECURITY_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

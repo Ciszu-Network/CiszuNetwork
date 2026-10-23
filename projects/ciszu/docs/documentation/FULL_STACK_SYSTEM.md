@@ -1,7 +1,7 @@
 ﻿# FULL_STACK_SYSTEM — Stack tecnológico de Ciszu Network
 
 Versión: 2.2.0
-Actualización: 2026-09-05
+Actualización: 2026-10-23
 Identificador: FULL_STACK_SYSTEM_V2.2.0_2026_09_05_ciszunetwork
 
 > **Definición**: inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos,
@@ -267,7 +267,7 @@ global por defecto. Ver también `TOOLS_SYSTEM.md`.
 | Errores / analítica | Sentry, PostHog, Cloudflare Web Analytics |
 | Entrega | Vercel + GitHub Actions + Docker (bot) |
 
-_Última revisión: 5 sep 2026._ Relacionados: `BACKEND_SYSTEM.md` · `FRONTEND_SYSTEM.md` ·
+_Última revisión: 23 oct 2026._ Relacionados: `BACKEND_SYSTEM.md` · `FRONTEND_SYSTEM.md` ·
 `PACKAGES_SYSTEM.md` · `ORM_SYSTEM.md` · `VAULT_SYSTEM.md` · `TOOLS_SYSTEM.md` ·
 `ONLINE_SERVICES_SYSTEM.md` · `MODELS_LLM_SYSTEM.md` · `UI_COMPONENTS_SYSTEM.md`.
 

@@ -1,7 +1,7 @@
 ﻿# AI_ART_PLAN — APIs de arte IA — decisión y estado (ago 2026)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: AI_ART_PLAN_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: plan de integración de generación de arte con IA en el ecosistema
@@ -201,5 +201,5 @@ comercial; revisar siempre la licencia vigente de cada recurso.
 | `ART_GUIDE.md` | Biblia de prompts y dirección artística |
 | `CDN_MIGRATIONS.md` | Subida y referencia de assets |
 
-_Última revisión: 13 ago 2026._ Relacionado: `ART_GUIDE.md`, `ART_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `ART_GUIDE.md`, `ART_PROTOCOLS.md`,
 `MEDIA_FORMATS_SYSTEM.md`, `TOOLS_SYSTEM.md`, `VAULT_SYSTEM.md`.

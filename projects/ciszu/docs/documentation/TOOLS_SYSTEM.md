@@ -1,7 +1,7 @@
 # TOOLS_SYSTEM — Herramientas de Desarrollo, Productividad y Creatividad
 
 Versión: 3.0.0
-Actualización: 2026-09-05
+Actualización: 2026-10-23
 Identificador: TOOLS_SYSTEM_V3.0.0_2026_09_05_ciszunetwork
 
 > **Definición**: sistema de herramientas del ecosistema: desarrollo (DBeaver, dbvr, Bruno, Fork),
@@ -385,6 +385,6 @@ node scripts/generate-erd.js services/supabase/seeds/seed.sql -o services/supaba
 | Bruno CLI no encontrado | `pnpm setup` + `PNPM_HOME` en PATH |
 | DBeaver no ve la conexión | Refrescar; comparte workspace con dbvr |
 
-_Última revisión: 5 sep 2026._ Relacionado: `DB_SYSTEM.md`, `WORKFLOW_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `DB_SYSTEM.md`, `WORKFLOW_SYSTEM.md`,
 `FULL_STACK_SYSTEM.md`, `KNOWLEDGE_SYSTEM.md`, `STATUS_SYSTEM.md`, `CIBERSECURITY_SYSTEM.md`,
 `ONLINE_SERVICES_SYSTEM.md`, `MODELS_LLM_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`, `PACKAGES_SYSTEM.md`.

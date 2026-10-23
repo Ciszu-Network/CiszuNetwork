@@ -1,7 +1,7 @@
 ﻿# ARCHITECTURE — Arquitectura del Sistema (CiszuBot)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: ARCHITECTURE_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: Documenta la arquitectura real y actual del proyecto CiszuBot: estructura del monorepo, componentes (website Next.js + bot Discord.js en TypeScript + base de datos Supabase), flujos de datos, despliegue y decisiones de diseño.
@@ -273,7 +273,7 @@ Pendiente de definir. Recomendación: **Oracle Cloud Free Tier** (VPS siempre en
 | Heartbeat | Cada 60 s (upsert) |
 | Stats internas | Express en puerto 5000 |
 | Errores | Sentry (`captureError` con contexto: command, user, context) |
-| Logs | `services/logger.ts` + ficheros en `logs/` |
+| Logs | `src/services/logger.ts` + ficheros en `logs/` |
 | Bot lists | top.gg (auto, 30 min) + DiscordBotList (30 min) |
 | Gestión de migraciones | Migraciones SQL versionadas en `services/supabase/migrations/` |
 | Verificación de estado | dbvr (fuentes externas) según `SECURITY_PROTOCOLS.md` (ciszu) |

@@ -177,7 +177,6 @@ Tailwind 4 + PostCSS + ESLint. Assets vía resolver/CDN (`public/` solo docs/pwa
 | `@ciszunetwork/utils`    | Utilidades:`createRateLimiter`, `buildCsp`, `createIast`, `escapeHtml`. Subpaths server-only: `logger` (pino), `schema` (TypeBox), `effect` (retries) — NUNCA en client/edge |
 | `@ciszunetwork/email`    | Envío de emails                                                        |
 | `@ciszunetwork/payments` | Pasarela de pagos                                                      |
-| `@ciszunetwork/config`   | Configuración compartida                                               |
 | `@ciszunetwork/db`       | Capa de datos server-only: schemas Drizzle (ciszubot/muzicmania/ciszunetwork/ciszu) + cliente pg |
 
 Detalle, contratos y reglas de publicación: `PACKAGES_SYSTEM.md`. Un cambio en `packages/**`

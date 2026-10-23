@@ -1,7 +1,7 @@
 ﻿# ERRORS_SYSTEM — Manejo de errores con Sentry
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: ERRORS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema de manejo de errores del ecosistema con Sentry: integración en las
@@ -222,5 +222,5 @@ componente; UptimeRobot avisa cuando el servicio deja de responder estando fuera
 no esperadas (ver "Buenas prácticas de errores"). Los `try/catch` de control de flujo no se
 reportan.
 
-_Última revisión: 13 ago 2026._ Relacionado: `MONITORING_SYSTEM.md`, `ANALYTICS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `MONITORING_SYSTEM.md`, `ANALYTICS_SYSTEM.md`,
 `DEVSECOPS_SYSTEM.md`, `VAULT_SYSTEM.md`.

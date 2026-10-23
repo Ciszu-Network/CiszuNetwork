@@ -1,7 +1,7 @@
 ﻿# WORKFLOW_APP_PROTOCOLS — Workflow de la Aplicación (CiszuGamens)
 
 Versión: 1.0.0
-Actualización: 2026-08-29
+Actualización: 2026-10-23
 Identificador: WORKFLOW_APP_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 
 > **Definición**: Workflow de usuario por página/landing/sitemap y disparadores GitHub para CiszuGamens. Complementa `WORKFLOW_SYSTEM.md` (operación diaria) y `GLOBAL_SYSTEM.md` (ciszu).
@@ -94,4 +94,4 @@ Identificador: WORKFLOW_APP_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

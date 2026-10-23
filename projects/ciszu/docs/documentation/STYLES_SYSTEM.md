@@ -1,7 +1,7 @@
 ﻿# STYLES_SYSTEM — Sistema de Estilos de las Aplicaciones (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: STYLES_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema de estilos global de las aplicaciones: cómo se aplica el color
@@ -212,5 +212,5 @@ externas de Google Fonts en runtime salvo necesidad (rendimiento y privacidad).
 | Imágenes optimizadas | `@ciszu/ui` (`SmartImage`) |
 | Config de webs | `src/config/` (navigation, site) |
 
-_Última revisión: 13 ago 2026._ Relacionado: `COLOR_SYSTEM.md`, `ICON_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `COLOR_SYSTEM.md`, `ICON_SYSTEM.md`,
 `FRAMEWORKS_SYSTEM.md`, `FRONTEND_SYSTEM.md`, `FULL_STACK_SYSTEM.md`.

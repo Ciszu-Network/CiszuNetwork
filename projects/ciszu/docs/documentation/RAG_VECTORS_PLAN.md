@@ -1,7 +1,7 @@
 # RAG_VECTORS_PLAN — Plan de base de datos vectorial (RAG / búsqueda semántica) — Ciszu Network
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: RAG_VECTORS_PLAN_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: plan de base de datos vectorial para RAG/búsqueda semántica. Estado: plan
@@ -204,5 +204,5 @@ cliente/URL, no reescritura (ver §2).
 | `MONITORING_SYSTEM.md` | Monitoreo del pipeline (misma tarea del toDo) |
 | `CACHING_SYSTEM.md` | Caché del endpoint de búsqueda |
 
-_Última revisión: 13 ago 2026._ Relacionado: `MONITORING_SYSTEM.md`, `DB_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `MONITORING_SYSTEM.md`, `DB_SYSTEM.md`,
 `BACKEND_SYSTEM.md`, `SECURITY_PROTOCOLS.md`.

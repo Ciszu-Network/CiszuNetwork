@@ -1,7 +1,7 @@
 # ACTIONS_RUNNERS_SYSTEM — Sistema de Runners y Automatización Local (Ciszu Network)
 
 Versión: 2.0.0
-Actualización: 2026-08-15
+Actualización: 2026-10-23
 Identificador: ACTIONS_RUNNERS_SYSTEM_V2.0.0_2026_08_15_ciszunetwork
 
 > **Definición**: sistema que documenta cómo el monorepo ejecuta sus automatizaciones (CI,
@@ -405,6 +405,6 @@ semgrep usa `setup-python` en Linux, gitleaks descarga el binario de cada OS).
 - [ ] (Futuro) Decidir runner Windows nativo vs Linux/WSL2 para los jobs de seguridad
       (CodeQL, DAST, Semgrep) — ver §5.4.
 
-_Última revisión: 16 ago 2026._ Relacionado: `WORKFLOW_SYSTEM.md`, `DOCKER_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `WORKFLOW_SYSTEM.md`, `DOCKER_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `SECURITY_PROTOCOLS.md`, `VAULT_SYSTEM.md`, `VPS_PLAN.md`,
 `DEVSECOPS_SYSTEM.md`, `PROJECTS_SYSTEM.md`, `STATUS_SYSTEM.md`.

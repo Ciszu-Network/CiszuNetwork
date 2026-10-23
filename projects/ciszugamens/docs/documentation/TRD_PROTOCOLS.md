@@ -1,7 +1,7 @@
 ﻿# TRD_PROTOCOLS — Technical Requirements Document (CiszuGamens)
 
 Versión: 1.0.0
-Actualización: 2026-08-29
+Actualización: 2026-10-23
 Identificador: TRD_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 
 > **Definición**: Requisitos técnicos detallados para la implementación de la landing web de CiszuGamens.
@@ -155,4 +155,4 @@ export const cdn = new AssetResolver();
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

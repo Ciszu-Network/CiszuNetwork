@@ -1,7 +1,7 @@
 # CUSTOMERS_SYSTEM — Sistema de Gestión de Clientes (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-25
+Actualización: 2026-10-23
 Identificador: CUSTOMERS_SYSTEM_V1.0.0_2026_08_25_ciszunetwork
 
 > **Definición**: sistema que gestiona la **documentación y organización real de los clientes**
@@ -239,4 +239,4 @@ La sesión se genera al entrar (`customerscon-<fecha>-<uuid>`).
 
 ---
 
-_Última revisión: 25 ago 2026._ Relacionado: `STAFF_SYSTEM.md`, `BUSINESS_SYSTEM.md`, `EMPLOYEES_SYSTEM.md`.
+_Última revisión: 23 oct 2026._ Relacionado: `STAFF_SYSTEM.md`, `BUSINESS_SYSTEM.md`, `EMPLOYEES_SYSTEM.md`.

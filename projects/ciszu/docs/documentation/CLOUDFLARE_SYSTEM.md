@@ -1,7 +1,7 @@
 # CLOUDFLARE_SYSTEM — Guard de Turnstile (CloudflareGuard)
 
 Versión: 1.1.0
-Actualización: 2026-09-05
+Actualización: 2026-10-23
 Identificador: CLOUDFLARE_SYSTEM_V1.1.0_2026_09_05_ciszunetwork
 
 > **Definición**: sistema de verificación de acceso con Cloudflare Turnstile

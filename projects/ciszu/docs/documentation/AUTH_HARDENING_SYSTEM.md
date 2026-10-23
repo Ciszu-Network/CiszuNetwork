@@ -200,6 +200,6 @@ node scripts/apply-two-factor-routes.mjs
 Los scripts fallan si queda algún marcador `__ALGO__` sin sustituir, así que no
 se pueden generar páginas a medias.
 
-_Última revisión: 19 sep 2026._ Relacionado: `AUTH_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `AUTH_SYSTEM.md`,
 `EMAILS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`, `AD_SYSTEM.md`,
 `CIBERSECURITY_SYSTEM.md`, `BACKEND_SYSTEM.md`.

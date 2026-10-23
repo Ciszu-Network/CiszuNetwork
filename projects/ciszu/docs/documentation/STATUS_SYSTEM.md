@@ -1,7 +1,7 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
 Versión: 2.2.2
-Actualización: 2026-10-03
+Actualización: 2026-10-23
 Identificador: STATUS_SYSTEM_V2.2.2_2026_10_03_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
@@ -298,10 +298,10 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
-_Última revisión: 3 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-10-22
+ÚLTIMA ACTUALIZACIÓN: 2026-10-23
 ## Sesión 21-22 oct 2026 — seguridad, buscador global y estabilidad
 
 - **Seguridad (crítico)**: actualizadas todas las dependencias vulnerables — next 15.5.28 (RCE SVG Image Optimization + DoS Server Actions), @sentry/nextjs 10.75.2 (bypass tunnel), storybook 10.6.3 (code injection preview/dev server), vitest 5.0.5 / 4.1.12 + @vitest/mocker 5.0.5 + @vitest/ui 5.0.5, vite 8.3.5 (launch-editor), fastify 5.12.6 (header validation). `pnpm audit --prod`: 0 vulnerabilidades. Tests 367/367.
@@ -312,4 +312,13 @@ _Última revisión: 3 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_
 - **Mantenimiento**: liberados ~8.2 GB (`.opencode/temp` 3.1 GB + caches `.next` 5.1 GB); eliminado archivo basura en la raíz.
 - **Estado servicios**: bot online (Bot-Hosting renovado; v3.20.4), Vercel free con margen tras el reset de cuota, Supabase free, GTM 4 contenedores publicados, AdSense en revisión, Sentry/PostHog/ntfy operativos.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-10-22
+ÚLTIMA ACTUALIZACIÓN: 2026-10-23
+
+## Sesión 23 oct 2026 — arranque con BitLocker y auditoría documental
+
+- **Arranque silencioso**: las tareas `Ciszu Cloud Backup`, `Ciszu SSH Login Alert` y `opencode-server-ciszu` usan stubs en `C:\Users\fplay\ciszu-tasks\` que comprueban si E: está desbloqueada y salen con exit 0 sin ventanas cuando BitLocker la bloquea (antes el wscript no encontraba el .vbs y mostraba errores al iniciar).
+- **Git Updater**: tarea `Git for Windows Updater` desactivada (fallaba con 0x2); Git se actualiza manualmente con `winget upgrade Git.Git` o el instalador oficial.
+- **Auditoría documental**: 190 docs fuente revisados (enlaces internos 0 rotos); corregidas referencias a paquetes/rutas inexistentes, registro de rotaciones movido a `SECURITY_PROTOCOLS.md` y fechas de revisión refrescadas.
+- **Mantenimiento**: ~8.2 GB liberados de temp/caches (sesión previa).
+
+ÚLTIMA ACTUALIZACIÓN: 2026-10-23

@@ -1,13 +1,13 @@
 # REVIEWS_SYSTEM — Plataformas de valoración y reputación de Ciszu Network
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: REVIEWS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: plataformas de valoración y reputación de los productos públicos del
 > ecosistema (Trustpilot, top.gg, DBL, itch.io, etc.). Complementa a `PAYMENTS_SYSTEM.md`.
 
-**Estado (11 ago 2026)**: verificación de dominio en **Trustpilot** iniciada (archivo HTML `c2b7fd59-74ac-4584-a00d-c3aacd0f931f.html` desplegado y respondiendo 200 en producción). Documenta Trustpilot y el resto de plataformas de valoración/reseñas de los productos públicos del ecosistema. Complementa a `PAYMENTS_SYSTEM.md` (pagos) — **son sistemas independientes**; la verificación de dominio de Trustpilot NO depende de NowPayments ni de ningún proveedor de pago.
+**Estado (23 oct 2026)**: verificación de dominio en **Trustpilot** iniciada en ago 2026 con el archivo HTML de un solo uso (ya **retirado** de `public/` tras la verificación; recrearlo solo si Trustpilot lo solicita de nuevo). Documenta Trustpilot y el resto de plataformas de valoración/reseñas de los productos públicos del ecosistema. Complementa a `PAYMENTS_SYSTEM.md` (pagos) — **son sistemas independientes**; la verificación de dominio de Trustpilot NO depende de NowPayments ni de ningún proveedor de pago.
 
 ## 1. Objetivo
 
@@ -36,7 +36,7 @@ Crear y mantener reputación pública verificada para los productos de Ciszu Net
 
 ### 3.2 Estado real del deploy (11 ago 2026)
 
-- Archivo creado en `projects/ciszu/website/public/c2b7fd59-74ac-4584-a00d-c3aacd0f931f.html` con contenido = el código.
+- Archivo temporal creado en `projects/ciszu/website/public/` (nombre `c2b7fd59-...html`) y **eliminado** después de la verificación.
 - Commit `deab5f2` + push a `main` → deploy Vercel `ciszunetworkpage` (proyecto `ciszunetworkpage`, filtro `ciszunetwork-website`).
 - Verificación con `curl -L`: **HTTP 200**, contenido `c2b7fd59-74ac-4584-a00d-c3aacd0f931f` en `https://ciszunetwork.vercel.app/c2b7fd59-74ac-4584-a00d-c3aacd0f931f.html`.
 - ⚠️ **`cleanUrls: true`** en `vercel.json`: la URL `.html` responde 308 redirect a la versión **sin extensión** (`/c2b7fd59-...`), que es la que devuelve 200 con el contenido. Trustpilot sigue redirects y verifica el contenido final — funciona igualmente.
@@ -196,5 +196,5 @@ bot en top.gg/DBL y alimentan la economía interna del servidor.
 | `ANALYTICS_SYSTEM.md` | Medir el impacto de reviews en conversión |
 | `ONLINE_SERVICES_SYSTEM.md` | Plataformas y cuentas asociadas |
 
-_Última revisión: 13 ago 2026._ Relacionado: `PAYMENTS_SYSTEM.md`, `MONITORING_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `PAYMENTS_SYSTEM.md`, `MONITORING_SYSTEM.md`,
 `ONLINE_SERVICES_SYSTEM.md`, `BUSINESS_SYSTEM.md`.

@@ -1,7 +1,7 @@
 # CDN_SYSTEM — Sistema de CDN y Cloudflare (Ciszu Network)
 
 Versión: 2.0.1
-Actualización: 2026-08-17
+Actualización: 2026-10-23
 Identificador: CDN_SYSTEM_V2.0.1_2026_08_17_ciszunetwork
 
 > **Definición**: este documento define el **sistema completo de distribución de contenido**
@@ -247,7 +247,7 @@ La migración a CDN es el primer paso hacia la reestructuración Turbomonorepo:
 - Configuraciones compartidas centralizadas (TS, Tailwind, ESLint).
 - Pipeline CI/CD más liviano.
 
-Pasos: 1. ✅ CDN migration · 2. `packages/config/` · 3. `packages/ui/` (✅ hecho) ·
+Pasos: 1. ✅ CDN migration · 2. `packages/config/` (descartado, no publicado) · 3. `packages/ui/` (✅ hecho) ·
 4. Unificar build pipeline con remote caching · 5. Centralizar esquemas Supabase.
 
 ## 6. Centralización de Supabase (futuro)
@@ -305,5 +305,5 @@ conjunto de credenciales.
 - `packages/cdn/index.ts` — resolver de assets (`resolveIcon`, `assetResolver`, `deliveryVariants`).
 - `scripts/upload-cdn.js` — subida a Supabase Storage.
 
-_Última revisión: 17 ago 2026._ Relacionado: `MEDIA_FORMATS_SYSTEM.md`, `CACHING_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `MEDIA_FORMATS_SYSTEM.md`, `CACHING_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `DOMAINS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`.

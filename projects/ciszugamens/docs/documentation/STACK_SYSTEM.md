@@ -1,10 +1,12 @@
 ﻿# STACK_SYSTEM — Pila Tecnológica (CiszuGamens)
 
 Versión: 1.0.0
-Actualización: 2026-08-29
+Actualización: 2026-10-23
 Identificador: STACK_SYSTEM_V1.0.0_2026_08_29_ciszugamens
 
 > **Definición**: Pila tecnológica completa del proyecto CiszuGamens por capas, versiones y criterios de selección.
+>
+> **Estado (23 oct 2026)**: proyecto de comunidad (contenido, documentación y servidor Discord). La landing web descrita aquí está planificada pero **no implementada**: no existe paquete `ciszugamens-website` en el workspace.
 
 ## Capas
 
@@ -50,7 +52,6 @@ Identificador: STACK_SYSTEM_V1.0.0_2026_08_29_ciszugamens
 | `@ciszu/ui` | Componentes UI, Ads.tsx, Icon, Modal, Toast, GoogleScripts |
 | `@ciszunetwork/cdn` | `AssetResolver`, `resolveIcon` para logos/banners |
 | `@ciszunetwork/utils` | `createRateLimiter`, `buildCsp`, `escapeHtml` (server-only) |
-| `@ciszunetwork/config` | Configuración compartida (site config, env) |
 
 ## Criterios de selección
 
@@ -82,4 +83,4 @@ pnpm cdn:upload                          # Sube assets a CDN
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

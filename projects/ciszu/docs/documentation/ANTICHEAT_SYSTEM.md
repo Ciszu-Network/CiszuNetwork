@@ -217,5 +217,5 @@ El schema `anticheat` **no se expone por PostgREST** (revocado a anon/authentica
 - `DEV_CONSOLE_SYSTEM.md` — herramientas del staff (ver señales `suspicious`, strikes).
 - MuzicMania — primer juego integrado (reglas `perfect_streak`, `speed_anomaly`, `bot_pattern`).
 
-_Última revisión: 09 oct 2026._ Relacionado: `ACCOUNT_SYSTEM.md`, `DB_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `ACCOUNT_SYSTEM.md`, `DB_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `EMAILS_SYSTEM.md`, `DEV_CONSOLE_SYSTEM.md`.

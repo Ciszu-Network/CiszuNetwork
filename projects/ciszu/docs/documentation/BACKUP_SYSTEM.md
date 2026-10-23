@@ -1,4 +1,4 @@
-# Sistema de Backup Cloud — Ciszu Network
+﻿# Sistema de Backup Cloud — Ciszu Network
 
 > Fecha: 2026-09-05 · Tarea #3 del TODO.md
 > Estado: ✅ Elegido e implementado (script + documentación). Pendiente: crear cuenta Mega y ejecutar `rclone config` una sola vez.
@@ -227,11 +227,11 @@ bash scripts/backup-cloud.sh
 Windows: `Win+R` → `taskschd.msc` → *Crear tarea básica* → nombre `Ciszu Cloud Backup`
 → disparador *Diariamente* → acción *Iniciar programa*:
 
-- Programa: `C:\Program Files\Git\bin\bash.exe`
-- Argumentos: `-lc "cd '/e/Ciszu Network' && bash scripts/backup-cloud.sh"`
-  - ⚠️ Git Bash monta la unidad E: como `/e/` (NO `/mnt/e/`, que es WSL y hace
-    fallar la tarea con código 2). La ruta del monorepo lleva espacio, por eso va
-    entre comillas simples dentro del `-lc`.
+- Programa: `wscript.exe`
+- Argumentos: `"C:\Users\fplay\ciszu-tasks\ciszu-backup.vbs"`
+  - El stub vive en **C:** (no en E:) y comprueba que E: esté **desbloqueada** (BitLocker) antes de lanzar nada; si está bloqueada sale con código 0 **sin ventanas ni errores**. Si E: está lista, lanza en silencio:
+    `C:\Program Files\Git\bin\bash.exe -lc "cd '/e/Ciszu Network' && bash scripts/backup-cloud.sh"`.
+  - ⚠️ Git Bash monta la unidad E: como `/e/` (NO `/mnt/e/`, que es WSL y hace fallar la tarea con código 2). La ruta del monorepo lleva espacio, por eso va entre comillas simples dentro del `-lc`.
 
 Linux/macOS: cron `0 4 * * * cd /ruta/a/CiszuNetwork && bash scripts/backup-cloud.sh >> /tmp/ciszu-backup.log 2>&1`
 
@@ -283,5 +283,9 @@ Linux/macOS: cron `0 4 * * * cd /ruta/a/CiszuNetwork && bash scripts/backup-clou
   (cuenta como omitida). Para un backup fiable, activar en la tarea **"Ejecutar aunque el usuario
   no haya iniciado sesión"** y **"Ejecutar en cuanto sea posible tras una ejecución omitida"**.
 - El backup es incremental: si una ejecución se corta, la siguiente continúa (rclone `sync`).
+**Revisión 23 oct 2026**: la tarea se reapuntó a un stub en `C:\Users\fplay\ciszu-tasks\ciszu-backup.vbs`
+para que un arranque con E: bloqueada por BitLocker no genere diálogos de error (el wscript anterior
+no encontraba `E:\...run-hidden.vbs`). Mismo patrón aplicado a `Ciszu SSH Login Alert`.
+
 - Comandos útiles: `bash scripts/backup-cloud.sh --dry-run` (vista previa),
   `--check` (verificar integridad), `rclone size ciszu-backup:CiszuNetwork --json` (progreso).

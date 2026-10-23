@@ -1,7 +1,7 @@
 ﻿# ARCHITECTURE — Arquitectura del Sistema (CiszuGamens)
 
 Versión: 1.0.0
-Actualización: 2026-08-29
+Actualización: 2026-10-23
 Identificador: ARCHITECTURE_V1.0.0_2026_08_29_ciszugamens
 
 > **Definición**: Documenta la arquitectura real y actual del proyecto **CiszuGamens**: comunidad gaming con servidor Discord activo, landing page Next.js y assets servidos vía CDN (Supabase Storage).
@@ -152,4 +152,4 @@ Admin → Dashboard (futuro) → CDN upload → Assets actualizados
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

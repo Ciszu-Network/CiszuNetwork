@@ -1,7 +1,7 @@
 ﻿# WORKFLOW_SYSTEM — Flujo de Trabajo (CiszuGamens)
 
 Versión: 1.0.0
-Actualización: 2026-08-29
+Actualización: 2026-10-23
 Identificador: WORKFLOW_SYSTEM_V1.0.0_2026_08_29_ciszugamens
 
 > **Definición**: Flujo de trabajo operativo del proyecto CiszuGamens: comandos, pipelines, convenciones git, CI/CD y protocolos de equipo.
@@ -86,4 +86,4 @@ pnpm cdn:upload    # Sube projects/ciszugamens/content/** a ciszu-cdn
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

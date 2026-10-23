@@ -1,7 +1,7 @@
 # STACK_SYSTEM — Pila Tecnológica (CiszuBot)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: STACK_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: Documenta la pila tecnológica completa y actual del proyecto CiszuBot por capas (website, bot, base de datos, despliegue y herramientas), con versiones exactas tomadas de los manifiestos del repositorio.

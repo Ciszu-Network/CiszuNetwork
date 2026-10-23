@@ -1,7 +1,7 @@
 # ICON_SYSTEM — Sistema de Iconos (Ciszu Network)
 
 Versión: 2.0.1
-Actualización: 2026-10-04
+Actualización: 2026-10-23
 Identificador: ICON_SYSTEM_V2.0.1_2026_10_04_ciszunetwork
 
 > Documenta los dos sistemas de iconos en uso, sus diferencias, ventajas/desventajas
@@ -203,5 +203,5 @@ Los iconos son componentes React pre-compilados de un vendor confiable → JSX r
 - `TOOLS_SYSTEM.md` — script `generate-icon-registry.js` y demás generadores.
 - `SECURITY_PROTOCOLS.md` — regla `dangerouslySetInnerHTML` + DOMPurify / guard SSR.
 
-_Última revisión: 4 oct 2026._ Relacionado: `MATERIAL_ICONS_PROTOCOLS.md`, `MEDIA_FORMATS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `MATERIAL_ICONS_PROTOCOLS.md`, `MEDIA_FORMATS_SYSTEM.md`,
 `CDN_SYSTEM.md`, `TOOLS_SYSTEM.md`.

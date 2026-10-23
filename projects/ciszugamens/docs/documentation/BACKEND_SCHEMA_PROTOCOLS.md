@@ -1,7 +1,7 @@
 ﻿# BACKEND_SCHEMA_PROTOCOLS — Backend + Schema (CiszuGamens)
 
 Versión: 1.0.0
-Actualización: 2026-08-29
+Actualización: 2026-10-23
 Identificador: BACKEND_SCHEMA_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 
 > **Definición**: Esquema de datos y backend para CiszuGamens. Actualmente sin backend propio; usa Supabase compartido para CDN y potencial futuro de auth/dashboard.
@@ -151,4 +151,4 @@ pnpm --filter @ciszunetwork/db exec drizzle-kit migrate --schema=ciszugamens
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

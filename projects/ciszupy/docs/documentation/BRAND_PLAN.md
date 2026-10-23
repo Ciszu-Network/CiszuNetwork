@@ -1,7 +1,7 @@
 ﻿# BRAND_PLAN — Plan de Marca Visual de CiszuBot
 
 Versión: 1.0.0
-Actualización: 2026-08-14
+Actualización: 2026-10-23
 Identificador: BRAND_PLAN_V1.0.0_2026_08_14_ciszunetwork
 
 > **Definición**: plan de marca **visual** de **CiszuBot**: diseño y variantes de logos,
@@ -201,5 +201,5 @@ ecosistema.
 - Multimedia: banner, 3 flyers, thumbnail y muestras de logo (fondo/círculo/contorno).
 - Contenido servido vía `@ciszunetwork/cdn`.
 
-_Última revisión: 2026-08-14._ Relacionado: `ARCHITECTURE.md`, `STACK_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `ARCHITECTURE.md`, `STACK_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `DISCORD_SECURITY_PROTOCOLS.md`, `README.md`.

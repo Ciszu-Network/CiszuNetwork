@@ -130,5 +130,5 @@ A partir de ahora el rango de un staff puede estar acotado a proyectos:
 - `SECURITY_PROTOCOLS.md` — reglas de seguridad generales.
 - `DB_SYSTEM.md` — el schema `internal` no se expone por PostgREST; solo servicio.
 
-_Última revisión: 06 oct 2026._ Relacionado: `DEV_CONSOLE_SYSTEM.md`, `STAFF_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `DEV_CONSOLE_SYSTEM.md`, `STAFF_SYSTEM.md`,
 `EMAILS_SYSTEM.md`, `TODO.md`.

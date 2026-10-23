@@ -1,7 +1,7 @@
 ﻿# KNOWLEDGE_SYSTEM — Estrategias de aprendizaje e investigación
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: KNOWLEDGE_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: estrategias de aprendizaje e investigación del ecosistema: fuentes
@@ -44,8 +44,8 @@ como `EF_ENGLISH_ASSESSMENT_URL` y `SIMPLILEARN_ENGLISH_URL` y se resuelven al v
   oficial (CEFR). URL en vault (`EF_ENGLISH_ASSESSMENT_URL`).
 - **Simplilearn**: curso de inglés de la plataforma Simplilearn. URL en vault
   (`SIMPLILEARN_ENGLISH_URL`).
-- **Página pública `/cursos`**: la web de Ciszu Network expone el catálogo de cursos
-  en `projects/ciszu/website/src/app/cursos/page.tsx` (rutas `/cursos`, enlazada en
+- **Página pública `/courses`**: la web de Ciszu Network expone el catálogo de cursos
+  en `projects/ciszu/website/src/app/courses/page.tsx` (rutas `/courses`, enlazada en
   navbar y sitemap). El primer curso (único por ahora) es el de INGLÉS con EF SET;
   el enlace del curso (URL pública de activación) vive como constante en la página
   y abre en otra pestaña (`target="_blank"`). La URL oficial se mantiene también en
@@ -245,13 +245,13 @@ para esto.
 Marcarla como pendiente en `TODO.md` con referencia a la fuente; no escribirla
 como hecho confirmado en los docs hasta verificarla empíricamente.
 
-_Última revisión: 13 ago 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `TOOLS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `TOOLS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `CODE_PRINCIPLES_PROTOCOLS.md`.
 
 ## AC3 — Aprendizaje Completo Cruzado Continuo (C3L)
 
 Versión: 1.0.0
-Actualización: 2026-09-12
+Actualización: 2026-10-23
 Identificador: AC3_C3L_V1.0.0_2026_09_12_ciszunetwork
 
 > **Definición**: modelo de aprendizaje patentado por Ciszuko Antony que integra
@@ -309,7 +309,7 @@ para creadores independientes y juniors.
 
 ### Documentación relacionada
 
-- Página pública: `projects/ciszu/website/src/app/cursos/page.tsx` (ruta `/cursos`)
+- Página pública: `projects/ciszu/website/src/app/courses/page.tsx` (ruta `/courses`)
 - Componente UI: `packages/ui/src/Ac3Section.tsx`
 - Propuesta original: `projects/ciszu/docs/documentation/` (AC3_C3L_PROPOSAL.md)
 
@@ -340,5 +340,5 @@ legal o seudónimo profesional CiszukoAntony. Esto otorga fecha cierta de creaci
 Permite usar y compartir libremente, obliga a reconocer al autor original y prohíbe 
 la monetización por terceros sin autorización expresa.
 
-_Última revisión: 12 sep 2026._ Relacionado: `KNOWLEDGE_SYSTEM.md`, `FULL_STACK_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `KNOWLEDGE_SYSTEM.md`, `FULL_STACK_SYSTEM.md`,
 `TOOLS_SYSTEM.md`, `WORKFLOW_SYSTEM.md`.

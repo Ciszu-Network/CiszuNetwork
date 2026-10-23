@@ -1,7 +1,7 @@
 ﻿# INSTALLERS_SYSTEM — Sistema de Instaladores y Distribución de Escritorio (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: INSTALLERS_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema que documenta cómo se generan y distribuyen los **instaladores**
@@ -43,7 +43,7 @@ pnpm --filter muzicmania-website tauri build
 
 ### 2.2 Configuración del bundle
 
-En `projects/muzicmania/website/src-tauri/tauri.conf.json`:
+En `projects/muzicmania/launcher/src-tauri/tauri.conf.json`:
 
 ```json
 {
@@ -206,5 +206,5 @@ instalarlo (aviso en la página de descarga).
 - Se distribuye desde `public/downloads/` + página de descarga.
 - Auto-update (Tauri updater) es el siguiente paso cuando haya dominio/CDN estable.
 
-_Última revisión: 13 ago 2026._ Relacionado: `FRAMEWORKS_SYSTEM.md`, `CDN_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `FRAMEWORKS_SYSTEM.md`, `CDN_SYSTEM.md`,
 `PROJECTS_SYSTEM.md`, `FULL_STACK_SYSTEM.md`.

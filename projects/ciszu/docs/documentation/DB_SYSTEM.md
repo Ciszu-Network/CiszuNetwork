@@ -1,7 +1,7 @@
 # DB_SYSTEM — Base de datos Supabase (consultas y administración)
 
 Versión: 2.1.0
-Actualización: 2026-08-14
+Actualización: 2026-10-23
 Identificador: DB_SYSTEM_V2.1.0_2026_08_14_ciszunetwork
 
 > **Definición**: guía de la base de datos de Ciszu Network: esquemas, consultas de
@@ -248,5 +248,5 @@ DBeaver reutiliza las credenciales de `services/supabase/.env`.
 - [ ] RLS y grants comprobados si se usa desde el cliente REST.
 - [ ] Probar primero en Supabase local o con `WHERE 1=0` si es INSERT/UPDATE/DELETE.
 
-_Última revisión: 13 ago 2026._ Relacionado: `BACKEND_SYSTEM.md`, `CACHING_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `BACKEND_SYSTEM.md`, `CACHING_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `TOOLS_SYSTEM.md`.

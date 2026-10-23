@@ -1,7 +1,7 @@
 ﻿# Plan de Registro Legal — Ciszu Network (Venezuela)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: COMPANY_REGISTRATION_PLAN_V2.0.0_2026_08_13_ciszunetwork
 
 **Documento maestro — 10 ago 2026**. Plan por fases para formalizar **Ciszu Network** como

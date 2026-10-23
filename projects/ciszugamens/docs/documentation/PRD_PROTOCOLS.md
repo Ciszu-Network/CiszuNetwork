@@ -1,7 +1,7 @@
 ﻿# PRD_PROTOCOLS — Product Requirements Document (CiszuGamens)
 
 Versión: 1.0.0
-Actualización: 2026-08-29
+Actualización: 2026-10-23
 Identificador: PRD_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 
 > **Definición**: Requisitos de producto para CiszuGamens (comunidad gaming + servidor Discord + landing web). Define qué se construye, para quién y por qué.
@@ -88,4 +88,4 @@ Identificador: PRD_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

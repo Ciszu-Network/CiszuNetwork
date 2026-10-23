@@ -1,7 +1,7 @@
 # TESTING_SYSTEM — Framework de tests en Ciszu Network (2026)
 
 Versión: 2.1.0
-Actualización: 2026-08-16
+Actualización: 2026-10-23
 Identificador: TESTING_SYSTEM_V2.1.0_2026_08_16_ciszunetwork
 
 > Documento de decisión: qué framework usar, por qué, dónde aplicarlo y si es **sobreingeniería** para este monorepo.
@@ -435,4 +435,4 @@ jobs:
 
 ---
 
-_Última revisión: 30 ago 2026._
+_Última revisión: 23 oct 2026._

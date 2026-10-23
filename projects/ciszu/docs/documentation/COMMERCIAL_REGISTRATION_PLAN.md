@@ -1,7 +1,7 @@
 # COMMERCIAL_REGISTRATION_PLAN — Registro Mercantil (SAREN) — Constituir la Empresa
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: COMMERCIAL_REGISTRATION_PLAN_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: cómo convertir "Ciszu Network" de proyecto personal a **persona jurídica**
@@ -201,6 +201,6 @@ Los plazos son orientativos y varían por jurisdicción y carga administrativa.
 | `TAX_PLAN.md` | Régimen fiscal de persona jurídica (RIF J-) |
 | `VAULT_SYSTEM.md` | Guardar acta, RIF y certificados cifrados |
 
-_Última revisión: 13 ago 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
 `RIF_PERSON_PLAN.md`, `TRADEMARK_PLAN.md`, `INTERNATIONAL_LLC_PLAN.md`,
 `BUSINESS_SYSTEM.md`.

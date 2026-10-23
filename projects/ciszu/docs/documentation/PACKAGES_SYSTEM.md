@@ -1,7 +1,7 @@
 ﻿# PACKAGES_SYSTEM — Sistema de Paquetes Compartidos (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: PACKAGES_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema que documenta los **paquetes compartidos** del monorepo (`packages/`):
@@ -278,6 +278,6 @@ Bot, webs y scripts (server)
 | **Peer deps** | React/Next como peer cuando el paquete es UI |
 | **Sin bundlers** | El paquete exporta TS/ESM; el bundler de la app resuelve |
 
-_Última revisión: 13 ago 2026._ Relacionado: `FRONTEND_SYSTEM.md`, `BACKEND_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `FRONTEND_SYSTEM.md`, `BACKEND_SYSTEM.md`,
 `FULL_STACK_SYSTEM.md`, `CDN_SYSTEM.md`, `EMAILS_SYSTEM.md`, `PAYMENTS_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `TESTING_SYSTEM.md`.

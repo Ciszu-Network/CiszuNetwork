@@ -36,4 +36,4 @@ commits como el resto del repo.
 - Los docs de estado quedan exentos del límite de líneas; `TODO.md` solo lo edita Ciszuko
   Antony.
 
-_Última revisión: 16 sep 2026._ Relacionado: `DOCUMENTATION_SYSTEM.md`, `AGENTS.md`.
+_Última revisión: 23 oct 2026._ Relacionado: `DOCUMENTATION_SYSTEM.md`, `AGENTS.md`.

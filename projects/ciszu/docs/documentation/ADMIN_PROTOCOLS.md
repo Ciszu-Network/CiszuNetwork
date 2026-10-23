@@ -110,6 +110,6 @@ sesión de 60 min + internet obligatorio.
 - `ANTICHEAT_SYSTEM.md` — sanciones automáticas y strikes.
 - `ACCOUNT_SYSTEM.md` — cuentas, roles (`user_roles`) y eliminación.
 
-_Última revisión: 09 oct 2026._ Relacionado: `CONSOLE_SECURITY_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `CONSOLE_SECURITY_SYSTEM.md`,
 `MODERATION_PROTOCOLS.md`, `STAFF_SYSTEM.md`, `EMPLOYEES_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `ANTICHEAT_SYSTEM.md`.

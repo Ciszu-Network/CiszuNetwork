@@ -62,4 +62,4 @@ Estándares y planes corporativos aplicables a este proyecto (viven en `projects
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

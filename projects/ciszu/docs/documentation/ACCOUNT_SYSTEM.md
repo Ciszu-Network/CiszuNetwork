@@ -246,6 +246,6 @@ Las cuentas antiguas (auth primitivo) se actualizan a un esquema **versionado** 
 
 ---
 
-_Última revisión: 2026-09-30._ Relacionado: `ACCOUNT_SYSTEM_PLAN.md` (plan y requisitos originales),
+_Última revisión: 23 oct 2026._ Relacionado: `ACCOUNT_SYSTEM_PLAN.md` (plan y requisitos originales),
 `AUTH_SYSTEM.md`, `LOGIN_REGISTER_PROTOCOLS.md`, `DB_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
 `STAFF_SYSTEM.md`, `EMPLOYEES_SYSTEM.md`, `DEV_CONSOLE_SYSTEM.md`, `TODO.md` (solo lectura).

@@ -1,7 +1,7 @@
 # CHANGELOG_SYSTEM — Sistema de Changelog de los Proyectos (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-09-16
+Actualización: 2026-10-23
 Identificador: CHANGELOG_SYSTEM_V1.0.0_2026_09_16_ciszunetwork
 
 > **Definición**: sistema que documenta el registro de cambios público (changelog) compartido por
@@ -305,4 +305,4 @@ lista vacía, relacionadas y ayudantes del roadmap. El runner raíz de Vitest ya
 - `TESTING_SYSTEM.md`: convenciones de tests y runner del monorepo.
 - `DOCUMENTATION_SYSTEM.md`: estándar de cabecera, nomenclatura y límites de líneas.
 
-_Última revisión: 2026-09-16._ Relacionado: `PACKAGES_SYSTEM.md`, `GLOBAL_COMPONENTS_SYSTEM.md`, `TESTING_SYSTEM.md`, `DOCUMENTATION_SYSTEM.md`.
+_Última revisión: 23 oct 2026._ Relacionado: `PACKAGES_SYSTEM.md`, `GLOBAL_COMPONENTS_SYSTEM.md`, `TESTING_SYSTEM.md`, `DOCUMENTATION_SYSTEM.md`.

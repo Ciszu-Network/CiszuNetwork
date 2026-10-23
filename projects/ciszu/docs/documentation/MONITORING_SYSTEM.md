@@ -1,7 +1,7 @@
 # MONITORING_SYSTEM — Sistema de monitoreo externo (UptimeRobot) — Ciszu Network
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: MONITORING_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema de monitoreo externo del ecosistema con UptimeRobot: qué se
@@ -221,5 +221,5 @@ que nadie (si el PC cae, el monitor cae con él).
 **¿Nueva web/CiszuBot API?** Añadir su monitor con el checklist de keyword y alertas
 correspondiente.
 
-_Última revisión: 13 ago 2026._ Relacionado: `CLOUDFLARE_SYSTEM.md`, `RAG_VECTORS_PLAN.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `CLOUDFLARE_SYSTEM.md`, `RAG_VECTORS_PLAN.md`,
 `ERRORS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`, `SCHEDULE_PROTOCOLS.md`.

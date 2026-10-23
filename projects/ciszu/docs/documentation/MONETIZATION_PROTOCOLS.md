@@ -1,7 +1,7 @@
 # MONETIZATION_PROTOCOLS — Monetización de Ciszu Network
 
 Versión: 1.0.0
-Actualización: 2026-08-26
+Actualización: 2026-10-23
 Identificador: MONETIZATION_PROTOCOLS_V1.0.0_2026_08_26_ciszunetwork
 
 > **Definición**: protocolos de monetización de Ciszu Network: donaciones **directas** e
@@ -119,4 +119,4 @@ Los anuncios son la forma "pasiva" de monetizar sin pedir dinero:
 
 ---
 
-_Última revisión: 26 ago 2026._ Relacionado: `AD_SYSTEM.md`, `PAYMENTS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`.
+_Última revisión: 23 oct 2026._ Relacionado: `AD_SYSTEM.md`, `PAYMENTS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`.

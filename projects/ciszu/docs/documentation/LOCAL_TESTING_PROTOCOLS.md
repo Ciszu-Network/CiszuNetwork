@@ -1,7 +1,7 @@
 # LOCAL_TESTING_PROTOCOLS — Protocolos de Pruebas Locales (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-16
+Actualización: 2026-10-23
 Identificador: LOCAL_TESTING_PROTOCOLS_V1.0.0_2026_08_16_ciszunetwork
 
 > **Definición**: protocolo obligatorio de pruebas en local del monorepo: cuándo usar dev
@@ -208,4 +208,4 @@ Notas:          <señales residuales, logs, pendientes>
 - `FRONTEND_SYSTEM.md`, `STYLES_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`.
 - `WORKFLOW_SYSTEM.md` — operación diaria general.
 
-_Última revisión: 16 ago 2026._ Relacionado: `DEV_CONSOLE_SYSTEM.md`, `DEBUGGING_SYSTEM.md`, `TESTING_SYSTEM.md`.
+_Última revisión: 23 oct 2026._ Relacionado: `DEV_CONSOLE_SYSTEM.md`, `DEBUGGING_SYSTEM.md`, `TESTING_SYSTEM.md`.

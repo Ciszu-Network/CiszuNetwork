@@ -1,7 +1,7 @@
 ﻿# REMOTE_CONTROL_SYSTEM — Control Remoto de la Terminal
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: REMOTE_CONTROL_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Sistema**: acceso remoto a la terminal de `ciszu-pc` (Windows) desde el móvil o cualquier dispositivo externo. Solución completa en dos capas: avisos push (ntfy) + terminal real en vivo (Tailscale + OpenSSH Server + Termius + opencode `serve`/`attach`, sin WSL/tmux). Referencia técnica y guía de uso.
@@ -142,7 +142,7 @@ Diagnóstico con el Tecno Spark Go (XOS):
 ### 3.4 opencode serve/attach (headless)
 
 - Servidor headless persistente: `opencode serve --port 4096 --hostname 127.0.0.1`.
-- Arrancado por la tarea programada **`opencode-server-ciszu`** (AtLogOn, oculto, Limited) y por el lanzador si falta (ensure idempotente).
+- Arrancado por la tarea programada **`opencode-server-ciszu`** (AtLogOn, oculto, Limited) y por el lanzador si falta (ensure idempotente). El stub `C:\Users\fplay\opencode-server-ensure.ps1` comprueba que E: esté desbloqueada (BitLocker); si no, sale con exit 0 sin ventanas ni errores.
 - Client: `opencode attach http://127.0.0.1:4096` (mismo comando desde PC y móvil).
 - Las conversaciones se guardan en la db de opencode del PC (persisten entre reinicios del servidor).
 - **Notas**:

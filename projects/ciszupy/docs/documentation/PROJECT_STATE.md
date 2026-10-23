@@ -1,7 +1,7 @@
 ﻿# PROJECT_STATE — Estado de CiszuBot
 
 Versión: 1.1.0
-Actualización: 2026-09-10
+Actualización: 2026-10-23
 Identificador: PROJECT_STATE_V1.1.0_2026_09_10_ciszunetwork
 
 > **Definición**: estado actual del proyecto **CiszuBot** (bot de Discord + landing web +
@@ -49,4 +49,4 @@ Identificador: PROJECT_STATE_V1.1.0_2026_09_10_ciszunetwork
 - **Package Manager**: pnpm
 - **Backend**: Supabase (PostgreSQL + Auth + Storage)
 
-ÚLTIMA ACTUALIZACIÓN: 2026-09-10
+ÚLTIMA ACTUALIZACIÓN: 2026-10-23

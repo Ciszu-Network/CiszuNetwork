@@ -1,7 +1,7 @@
 ﻿# HISTORICAL_CONTEXT_PROTOCOLS — Contexto histórico y tiempos actuales
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: HISTORICAL_CONTEXT_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: contexto histórico de Ciszu Network (ago 2026): línea interna del proyecto,
@@ -207,5 +207,5 @@ marca definido en `BUSINESS_SYSTEM.md` y los textos oficiales de cada web.
 |---|---|
 | 2026-08-13 | V2.0.0: cabecera estandarizada, ampliación de contexto histórico y tablas |
 
-_Última revisión: 13 ago 2026._ Relacionado: `GEOGRAPHIC_CONTEXT_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `GEOGRAPHIC_CONTEXT_PROTOCOLS.md`,
 `BUSINESS_SYSTEM.md`, `COMPANY_REGISTRATION_PLAN.md`, `AGENTS.md`.

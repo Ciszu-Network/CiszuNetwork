@@ -153,6 +153,6 @@ cuenta no existe. Se reemplaza ese flujo por:
 
 ---
 
-_Última revisión: 2026-09-30._ Relacionado: `AUTH_SYSTEM.md`, `LOGIN_REGISTER_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `AUTH_SYSTEM.md`, `LOGIN_REGISTER_PROTOCOLS.md`,
 `DB_SYSTEM.md`, `SECURITY_PROTOCOLS.md`, `STAFF_SYSTEM.md`, `EMPLOYEES_SYSTEM.md`, `CUSTOMERS_SYSTEM.md`,
 `DEV_CONSOLE_SYSTEM.md`, `PROJECT_STATE.md`, `TODO.md` (solo lectura), `STATIC_MIGRATION_PLAN.md`.

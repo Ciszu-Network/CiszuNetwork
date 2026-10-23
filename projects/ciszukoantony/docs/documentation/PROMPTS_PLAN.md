@@ -1,7 +1,7 @@
 ﻿# PROMPTS_PLAN — Plan de Prompts de IA para la Marca (Ciszuko Antony)
 
 Versión: 1.0.0
-Actualización: 2026-08-14
+Actualización: 2026-10-23
 Identificador: PROMPTS_PLAN_V1.0.0_2026_08_14_ciszunetwork
 
 > **Definición**: guía práctica de prompts de IA para gestionar la marca personal de Ciszuko
@@ -224,7 +224,7 @@ prácticas.
 - Reglas: datos verificables, handles de `BRAND_PLAN.md`, rutas de
   `ARCHITECTURE.md`, autoría humana.
 
-_Última revisión: 13 ago 2026._ Relacionado: `BRAND_PLAN.md`, `ARCHITECTURE.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `BRAND_PLAN.md`, `ARCHITECTURE.md`,
 `WORKFLOW_SYSTEM.md`, `README.md`.
 
 

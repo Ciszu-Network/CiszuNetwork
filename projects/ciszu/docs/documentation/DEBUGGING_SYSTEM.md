@@ -1,7 +1,7 @@
 # DEBUGGING_SYSTEM — Sistema de Depuración Local (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-16
+Actualización: 2026-10-23
 Identificador: DEBUGGING_SYSTEM_V1.0.0_2026_08_16_ciszunetwork
 
 > **Definición**: sistema que documenta cómo depurar las 4 webs del monorepo en local:
@@ -216,4 +216,4 @@ en el spec (ver `TESTING_SYSTEM.md`).
 - Frontend: `FRONTEND_SYSTEM.md`, `STYLES_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`.
 - Errores/observabilidad: `ERRORS_SYSTEM.md`.
 
-_Última revisión: 16 ago 2026._ Relacionado: `DEV_CONSOLE_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `TESTING_SYSTEM.md`.
+_Última revisión: 23 oct 2026._ Relacionado: `DEV_CONSOLE_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `TESTING_SYSTEM.md`.

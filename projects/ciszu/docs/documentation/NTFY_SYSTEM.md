@@ -52,5 +52,5 @@
 
 ---
 
-_Última revisión: 09 oct 2026._ Relacionados: `SECURITY_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionados: `SECURITY_PROTOCOLS.md`,
 `ACCESS_CONTROL_SYSTEM.md`, `MONITORING_SYSTEM.md`, `VAULT_SYSTEM.md`.

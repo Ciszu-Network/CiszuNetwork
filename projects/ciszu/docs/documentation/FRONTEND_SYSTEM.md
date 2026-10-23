@@ -1,7 +1,7 @@
 ﻿# FRONTEND_SYSTEM — Sistema de Frontend de los Proyectos (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: FRONTEND_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema que documenta el **frontend** (lado cliente: componentes, estilos,
@@ -331,7 +331,7 @@ export const config = {
 - Seguridad: XSS cero, Turnstile + rate limit, CSP/IAST en middleware.
 - Toda página nueva pasa por el checklist de calidad y verificación externa.
 
-_Última revisión: 13 ago 2026._ Relacionado: `BACKEND_SYSTEM.md`, `FRAMEWORKS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `BACKEND_SYSTEM.md`, `FRAMEWORKS_SYSTEM.md`,
 `STYLES_SYSTEM.md`, `COLOR_SYSTEM.md`, `ICON_SYSTEM.md`, `PACKAGES_SYSTEM.md` (crear),
 `INSTALLERS_SYSTEM.md`, `FULL_STACK_SYSTEM.md`, `SECURITY_PROTOCOLS.md`.
 

@@ -63,7 +63,7 @@ pnpm turbo run lint build
 | `.vercel/project.json`             | ⚠️ Parcial (gitignore permite) | IDs de proyecto Vercel                                                                                                                                    | Verificar que no contenga tokens                                         |
 | `turbo.json`                       | ✅                             | Lista de`globalEnv` (solo **nombres** de vars)                                                                                                            | Seguro — no valores                                                      |
 | `.secretlintrc.json`               | ✅                             | Patrones de detección (regex)                                                                                                                             | Seguro — solo reglas                                                     |
-| `scripts/tokens_a_rotar.md`        | ✅                             | Lista de tokens a rotar (solo nombres, sin valores)                                                                                                       | Seguro — solo referencia                                                 |
+| `SECURITY_PROTOCOLS.md` (§ Registro de rotaciones) | ✅ | Rotaciones (solo nombres, sin valores) | Seguro — solo referencia |
 
 ---
 
@@ -155,7 +155,7 @@ SIMPLELOGIN_RECOVERY_CODES
 3. Actualizar GitHub Actions secrets (`gh secret set`)
 4. Actualizar Vercel Project Settings → Environment Variables
 5. `pnpm deploy:all` (redesplegar 4 webs)
-6. Registrar en `scripts/tokens_a_rotar.md` con fecha y ✅
+6. Registrar en el registro de rotaciones de `SECURITY_PROTOCOLS.md` con fecha y ✅
 
 ---
 
@@ -285,5 +285,5 @@ required_pull_request_reviews:
 
 ---
 
-_Última revisión: 23 ago 2026. Autor: Ciszuko Antony (Ciszu Network)._
+_Última revisión: 23 oct 2026. Autor: Ciszuko Antony (Ciszu Network)._
 **Fuente de verdad:** `projects/ciszu/docs/documentation/`. Estándar: `DOCUMENTATION_SYSTEM.md`.

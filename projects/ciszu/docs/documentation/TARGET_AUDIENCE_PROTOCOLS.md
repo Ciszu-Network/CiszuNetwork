@@ -1,7 +1,7 @@
 ﻿# TARGET_AUDIENCE_PROTOCOLS — Público objetivo
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: TARGET_AUDIENCE_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: público objetivo del ecosistema por producto (ago 2026): perfil general,
@@ -213,5 +213,5 @@ hacia el mercado global.
 Solo si hay datos que lo justifiquen (ver "Reglas de segmentación" y
 `BUSINESS_SYSTEM.md`). Validar antes de invertir tiempo de marketing.
 
-_Última revisión: 13 ago 2026._ Relacionado: `BUSINESS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `BUSINESS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`,
 `ONLINE_SERVICES_SYSTEM.md`, `CONTACTS_PROTOCOLS.md`.

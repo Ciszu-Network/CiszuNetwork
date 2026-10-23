@@ -1,7 +1,7 @@
 # AD_SYSTEM — Sistema de Anuncios de Ciszu Network
 
 Versión: 2.0.0
-Actualización: 2026-08-26
+Actualización: 2026-10-23
 Identificador: AD_SYSTEM_V2.0.0_2026_08_26_ciszunetwork
 
 > **Definición**: sistema de anuncios compartido de Ciszu Network para las 4 webs. Define los
@@ -398,4 +398,4 @@ Sistema de concienciación por adblockers, integrado en las 4 webs (`@ciszu/ui` 
 
 ---
 
-_Última revisión: 26 ago 2026._ Relacionado: `MONETIZATION_PROTOCOLS.md`, `ANALYTICS_SYSTEM.md`, `GOOGLE_SYSTEM.md`.
+_Última revisión: 23 oct 2026._ Relacionado: `MONETIZATION_PROTOCOLS.md`, `ANALYTICS_SYSTEM.md`, `GOOGLE_SYSTEM.md`.

@@ -1,7 +1,7 @@
 # GLOBAL_COMPONENTS_SYSTEM — Sistemas y Componentes Globales de las Webs (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-24
+Actualización: 2026-10-23
 Identificador: GLOBAL_COMPONENTS_SYSTEM_V1.0.0_2026_08_24_ciszunetwork
 
 > **Definición**: documenta los **sistemas y componentes globales** que todas las webs de Ciszu
@@ -454,7 +454,7 @@ publishHeaderMode('island' | 'full');
 
 ---
 
-_Última revisión: 24 ago 2026. Mantener este documento vivo._
+_Última revisión: 23 oct 2026. Mantener este documento vivo._
 _Relacionados: UI_COMPONENTS_SYSTEM · STYLES_SYSTEM · AUTH_SYSTEM · PACKAGES_SYSTEM · GLOBAL_ADVISOR_SYSTEM · TODO.md_
 
 

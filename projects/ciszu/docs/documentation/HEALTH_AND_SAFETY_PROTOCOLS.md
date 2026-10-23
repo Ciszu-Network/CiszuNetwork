@@ -1,7 +1,7 @@
 ﻿# HEALTH_AND_SAFETY_PROTOCOLS — Salud y bienestar laboral
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: HEALTH_AND_SAFETY_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: protocolos de salud física y mental del fundador (empresa unipersonal):
@@ -212,5 +212,5 @@ nuevos síntomas, ajustar la rutina; si hay cambios en el entorno (nuevo equipo,
 mudanza, plan VPS), actualizar las recomendaciones de seguridad eléctrica y
 postura.
 
-_Última revisión: 13 ago 2026._ Relacionado: `SCHEDULE_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `SCHEDULE_PROTOCOLS.md`,
 `REMOTE_CONTROL_SYSTEM.md`, `VAULT_SYSTEM.md`, `VPS_PLAN.md`.

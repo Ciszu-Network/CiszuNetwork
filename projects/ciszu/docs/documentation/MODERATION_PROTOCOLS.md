@@ -135,5 +135,5 @@ no es "una sanción más": es terminal y **no apelable** (ver `ANTICHEAT_SYSTEM.
 - `DEV_CONSOLE_SYSTEM.md` — herramientas de moderación en la consola (usuarios, sitios).
 - `EMAILS_SYSTEM.md` — avisos de sanción con marca.
 
-_Última revisión: 09 oct 2026._ Relacionado: `ANTICHEAT_SYSTEM.md`, `ACCOUNT_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `ANTICHEAT_SYSTEM.md`, `ACCOUNT_SYSTEM.md`,
 `ADMIN_PROTOCOLS.md`, `SECURITY_PROTOCOLS.md`, `DEV_CONSOLE_SYSTEM.md`.

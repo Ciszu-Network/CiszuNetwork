@@ -1,7 +1,7 @@
 # CACHING_SYSTEM — Sistema de Caché de Ciszu Network
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: CACHING_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema de caché del ecosistema. Caché multi-tienda (memoria LRU →
@@ -220,5 +220,5 @@ dbvr sql -ds=supabase "select * from ciszu.counters;"
 pnpm test
 ```
 
-_Última revisión: 13 ago 2026._ Relacionado: `DB_SYSTEM.md`, `BACKEND_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `DB_SYSTEM.md`, `BACKEND_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `TOOLS_SYSTEM.md`, `STATUS_SYSTEM.md`.

@@ -1,7 +1,7 @@
 # OSINT_PROTOCOLS — Protocolos de Inteligencia de Código Abierto
 
 Versión: 1.0.0
-Actualización: 2026-08-18
+Actualización: 2026-10-23
 Identificador: OSINT_PROTOCOLS_V1.0.0_2026_08_18_ciszunetwork
 
 > **Definición**: protocolos operativos de **OSINT** (Open Source INTelligence) del
@@ -330,7 +330,7 @@ Thatsthem con challenge + login). **No automatizar con scripts/curl** — 403 o 
 3. **Rate limits**: respetar los límites de cada servicio (SimpleLogin paginado, HIBP
    límites, etc.). No abusar: cada ítem por separado y con tiempos.
 4. **Rotación**: si un token aparece en logs/chat/commit → rotar (SimpleLogin: regenerar key
-   desde el panel; anotar rotación en `scripts/tokens_a_rotar.md`).
+   desde el panel; anotar rotación en el registro de rotaciones de `SECURITY_PROTOCOLS.md`).
 5. **Bitwarden/vault**: alias, keys y recovery codes de herramientas de seguridad viven en
    vault + Bitwarden según `VAULT_SYSTEM.md`.
 
@@ -430,5 +430,5 @@ cabecera (la cuenta no existe). Preset `quick` tarda ~10-15 s por target.
 
 ---
 
-_Última revisión: 2026-08-18._ Relacionado: `CIBERSECURITY_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `CIBERSECURITY_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
 `VAULT_SYSTEM.md`, `TODO.md`.

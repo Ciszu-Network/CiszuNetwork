@@ -1,7 +1,7 @@
 # 🛡️ DEVSECOPS_SYSTEM — Sistema de Seguridad Integrada (Ciszu Network)
 
 Versión: 2.1.0
-Actualización: 2026-10-10
+Actualización: 2026-10-23
 Identificador: DEVSECOPS_SYSTEM_V2.1.0_2026_10_10_ciszunetwork
 
 > Documentación para agentes de IA. Este documento define la filosofía, los métodos y las
@@ -63,7 +63,7 @@ Filosofía de mover las pruebas de calidad y seguridad **lo más temprano posibl
 
 - **CVE** (Common Vulnerabilities and Exposures): catálogo público mundial de vulnerabilidades. `pnpm audit`/`cargo audit`/trivy consultan bases basadas en CVE (y en Rust, RUSTSEC).
 - **CWE**: taxonomía de tipos de debilidad (usada por semgrep y CodeQL para clasificar findings).
-- **Secret Sprawl** (proliferación de secretos): ocurre cuando credenciales sensibles se multiplican y filtran por error en configs, historial de git o capturas. Mitigación: rotación periódica, `.env` gitignored, hooks pre-commit, lista de rotación `Temp\opencode\tokens_a_rotar.md`.
+- **Secret Sprawl** (proliferación de secretos): ocurre cuando credenciales sensibles se multiplican y filtran por error en configs, historial de git o capturas. Mitigación: rotación periódica, `.env` gitignored, hooks pre-commit, lista de rotación registro de rotaciones en `SECURITY_PROTOCOLS.md`.
 - **OWASP Top 10 / NIST SP 800-218 (SSDF) / ISO/IEC 27001**: marcos de referencia globales que guían las reglas de RLS, auth y manejo de secretos del proyecto.
 
 ## 4. Reglas de oro para el agente (checklist obligatorio)
@@ -117,7 +117,7 @@ Sentry, advisors Supabase)
 ## 9. Incidentes y respuesta
 
 - **Sospecha de secret filter**: rotar la key, cerrar alerta en GitHub, actualizar `VAULT_SYSTEM.md`
-  (lista `tokens_a_rotar` en `Temp\opencode\tokens_a_rotar.md`).
+  (lista `tokens_a_rotar` en registro de rotaciones en `SECURITY_PROTOCOLS.md`).
 - **Vulnerabilidad dependencia**: `pnpm audit` / `cargo audit`, actualizar paquete, re-build.
 - **Ataque en runtime**: logs Vercel filtrando `[IAST]`, Sentry, ZAP manual contra la web.
 - **Repo público**: rotar TODAS las keys de Turnstile (pendiente cuando GitHub sea público).
@@ -290,6 +290,6 @@ comprometidas):
 5. **Restaurar**: reactivar webs (`site-control off`), desplegar de nuevo desde
    `main` y confirmar CI en verde.
 
-_Última revisión: 10 oct 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `CODE_PRINCIPLES_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `CODE_PRINCIPLES_PROTOCOLS.md`,
 `VAULT_SYSTEM.md`, `TESTING_SYSTEM.md`, `report/seguridad_escalabilidad_report-2026-09-30.md`,
 `ACCOUNT_SYSTEM.md`.

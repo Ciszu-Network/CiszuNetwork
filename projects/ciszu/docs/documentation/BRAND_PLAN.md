@@ -1,7 +1,7 @@
 # BRAND_PLAN — Plan de Marca Visual del Ecosistema (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-14
+Actualización: 2026-10-23
 Identificador: BRAND_PLAN_V1.0.0_2026_08_14_ciszunetwork
 
 > **Definición**: plan de marca **visual** del ecosistema Ciszu Network: diseño de logos
@@ -238,5 +238,5 @@ detalla en su propio `BRAND_PLAN.md`.
   Inter/Exo_2 (bot).
 - Multimedia centralizado en `content/` de cada proyecto y servido vía `@ciszunetwork/cdn`.
 
-_Última revisión: 2026-08-14._ Relacionado: `COLOR_SYSTEM.md`, `STYLES_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `COLOR_SYSTEM.md`, `STYLES_SYSTEM.md`,
 `ICON_SYSTEM.md`, `ART_PROTOCOLS.md`, `ARCHITECTURE.md`, `README.md`.

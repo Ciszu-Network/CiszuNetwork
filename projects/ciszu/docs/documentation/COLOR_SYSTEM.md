@@ -1,7 +1,7 @@
 # COLOR_SYSTEM — Sistema de Colores (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: COLOR_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema oficial de color del ecosistema: paletas, tokens CSS/Tailwind,
@@ -218,5 +218,5 @@ console.log(cyan('[OK]') + ' ' + neon(s));
 - [ ] Nuevos colores: añadir al `@theme` de cada web + a este documento.
 - [ ] En scripts: usar ANSI directo (sin librerías).
 
-_Última revisión: 13 ago 2026._ Relacionado: `STYLES_SYSTEM.md`, `ICON_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `STYLES_SYSTEM.md`, `ICON_SYSTEM.md`,
 `TOOLS_SYSTEM.md`, `ARCHITECTURE.md`.

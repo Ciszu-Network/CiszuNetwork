@@ -1,7 +1,7 @@
 # MCP_PROTOCOLS — Protocolos de Servidores MCP (Model Context Protocol)
 
 Versión: 1.0.0
-Actualización: 2026-08-19
+Actualización: 2026-10-23
 Identificador: MCP_PROTOCOLS_V1.0.0_2026_08_19_ciszunetwork
 
 > **Definición**: protocolo y catálogo de servidores MCP del ecosistema: qué son, cómo se
@@ -219,5 +219,5 @@ tener las tools. Para hacerlos operativos hay que registrarlos en opencode (§4)
 - `DB_SYSTEM.md` / `PAYMENTS_SYSTEM.md` / `UI_COMPONENTS_SYSTEM.md` — dominos donde un MCP añade valor.
 - Config real de VSCode: `C:\Users\fplay\AppData\Roaming\Code\User\mcp.json`.
 
-_Última revisión: 19 ago 2026._ Relacionado: `LSP_PROTOCOLS.md`, `OPENCODE_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `LSP_PROTOCOLS.md`, `OPENCODE_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
 `DB_SYSTEM.md`, `PAYMENTS_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`.

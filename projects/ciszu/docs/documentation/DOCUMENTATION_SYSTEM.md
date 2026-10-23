@@ -1,7 +1,7 @@
 # DOCUMENTATION_SYSTEM — Sistema de Documentación de los Proyectos (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: DOCUMENTATION_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema que define **cómo funciona la documentación** del ecosistema: normas
@@ -95,7 +95,7 @@ Todo doc **debe** empezar con una cabecera de 6 líneas:
 # <NOMBRE> — Título descriptivo (Ciszu Network)
 
 Versión: X.Y.Z
-Actualización: AAAA-MM-DD
+Actualización: 2026-10-23
 Identificador: <NOMBRE>_V<X.Y.Z>_<AAAA>_<MM>_<DD>_ciszunetwork
 
 > **Definición**: resumen de 1-2 líneas de qué documenta este doc.
@@ -117,7 +117,7 @@ Identificador: <NOMBRE>_V<X.Y.Z>_<AAAA>_<MM>_<DD>_ciszunetwork
 # AUTH_SYSTEM — Sistema de Autenticación (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: AUTH_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema que documenta la autenticación (Supabase Auth, OAuth, sesiones JWT)
@@ -404,5 +404,5 @@ solo por Ciszuko Antony.
 - Este doc es la **plantilla de replicación** para otros proyectos y el estándar que
   reemplaza el sistema antiguo de documentación.
 
-_Última revisión: 13 ago 2026._ Relacionado: `FRONTEND_SYSTEM.md`, `BACKEND_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `FRONTEND_SYSTEM.md`, `BACKEND_SYSTEM.md`,
 `PACKAGES_SYSTEM.md`, `WORKFLOW_SYSTEM.md`, `STATUS_SYSTEM.md`, `AGENTS.md`.

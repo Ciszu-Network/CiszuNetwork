@@ -183,7 +183,7 @@ música puede no sobrevivir (transcodificación); para probar:
 
 ---
 
-_Última revisión: 10 oct 2026._ Relacionado: `ACCESS_CONTROL_SYSTEM.md` (gate de
+_Última revisión: 23 oct 2026._ Relacionado: `ACCESS_CONTROL_SYSTEM.md` (gate de
 consolas), `CONSOLE_SECURITY_SYSTEM.md`, `DEV_CONSOLE_SYSTEM.md`, `DB_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `PAYMENTS_SYSTEM.md` (futuro checkout), `MONETIZATION_PROTOCOLS.md`,
 `VPS_PLAN.md` (despliegue del bot), `AGENTS.md`.

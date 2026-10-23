@@ -1,7 +1,7 @@
 ﻿# BRAND_PLAN — Identidad Visual (CiszuGamens)
 
 Versión: 1.0.0
-Actualización: 2026-08-29
+Actualización: 2026-10-23
 Identificador: BRAND_PLAN_V1.0.0_2026_08_29_ciszugamens
 
 > **Definición**: Identidad visual completa de CiszuGamens: paleta, tipografía, logos, assets y reglas de uso.
@@ -88,4 +88,4 @@ Subida: `pnpm cdn:upload` desde raíz.
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

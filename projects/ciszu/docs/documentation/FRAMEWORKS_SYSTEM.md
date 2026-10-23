@@ -1,7 +1,7 @@
 ﻿# FRAMEWORKS_SYSTEM — Sistema de Frameworks (Ciszu Network)
 
 Versión: 1.1.0
-Actualización: 2026-08-19
+Actualización: 2026-10-23
 Identificador: FRAMEWORKS_SYSTEM_V1.1.0_2026_08_19_ciszunetwork
 
 > **Definición**: sistema que documenta los **frameworks** (concepto de informática:
@@ -265,6 +265,6 @@ Testing: Vitest (unit) + Playwright (E2E) + next build (verificación local) + S
 | Playwright | 1.62.1 |
 | supabase-js | v2.x |
 
-_Última revisión: 19 ago 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `INSTALLERS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `INSTALLERS_SYSTEM.md`,
 `BACKEND_SYSTEM.md`, `IT_GLOSSARY_PROTOCOLS.md`, `COLOR_SYSTEM.md`, `VISUAL_BUILDERS_SYSTEM.md`,
 `ORM_SYSTEM.md`.

@@ -1,7 +1,7 @@
 # ANALYTICS_SYSTEM — Sistema Global de Analíticas (Ciszu Network)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: ANALYTICS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: el sistema global de analíticas es la arquitectura completa que captura,
@@ -281,7 +281,7 @@ PostHog (producto) + Sentry (errores) + Vercel SI (CWV) + UptimeRobot (uptime) +
 - [ ] Actualizar `STATISTICS_SYSTEM.md` con cifras reales cuando haya histórico.
 - [ ] Evaluar reverse proxy (Worker) cuando el tráfico/privacidad lo exija.
 
-_Última revisión: 13 ago 2026._ Relacionado: `CLOUDFLARE_SYSTEM` → `CDN_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `CLOUDFLARE_SYSTEM` → `CDN_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `ERRORS_SYSTEM.md`, `CACHING_SYSTEM.md`, `STATISTICS_SYSTEM.md`.
 
 ## Verificación del bloque GA4 + GTM + AdSense (19 sep 2026)

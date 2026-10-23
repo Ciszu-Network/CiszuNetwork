@@ -1,7 +1,7 @@
 # AUTH_SYSTEM — Plan de autenticación (Auth Roadmap) — Ciszu Network
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: AUTH_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Estado**: plan a futuro aprobado (10 ago 2026). Documento de decisión: **Supabase-first,

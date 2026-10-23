@@ -1,7 +1,7 @@
 # CIBERSECURITY_SYSTEM — Ciberseguridad del Ecosistema
 
 Versión: 1.0.0
-Actualización: 2026-08-18
+Actualización: 2026-10-23
 Identificador: CIBERSECURITY_SYSTEM_V1.0.0_2026_08_18_ciszunetwork
 
 > **Definición**: sistema de ciberseguridad oficial de Ciszu Network — las **herramientas**
@@ -298,7 +298,7 @@ Recordatorio de `SECURITY_PROTOCOLS` para esta área:
 1. Secretos NUNCA en fallbacks de código ni hardcodes; solo `process.env.X` (server-only).
 2. `NEXT_PUBLIC_` solo para valores públicos por diseño.
 3. Verificación externa en todo cambio de policies/funciones/endpoints.
-4. Rotar cualquier secreto expuesto (`scripts/tokens_a_rotar.md`).
+4. Rotar cualquier secreto expuesto (registro de rotaciones en `SECURITY_PROTOCOLS.md`).
 
 ---
 
@@ -714,4 +714,4 @@ echo "$(date -Iseconds) | IPs: $(wc -l < /tmp/blocklist_ips.txt) | YARA: $(grep 
 
 ---
 
-_Última revisión: 30 ago 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `OSINT_PROTOCOLS.md`, `VAULT_SYSTEM.md`, `TODO.md`, `TESTING_SYSTEM.md` §10 (FULL_TESTING).
+_Última revisión: 23 oct 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `OSINT_PROTOCOLS.md`, `VAULT_SYSTEM.md`, `TODO.md`, `TESTING_SYSTEM.md` §10 (FULL_TESTING).

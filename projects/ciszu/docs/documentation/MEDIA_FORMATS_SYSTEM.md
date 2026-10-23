@@ -1,7 +1,7 @@
 ﻿# MEDIA_FORMATS_SYSTEM — Sistema de Formatos de Ciszu Network
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: MEDIA_FORMATS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Documento maestro de formatos** — imagen, vídeo, audio y no-multimedia.

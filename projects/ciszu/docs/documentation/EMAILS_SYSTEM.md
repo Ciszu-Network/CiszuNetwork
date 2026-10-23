@@ -1,7 +1,7 @@
 # EMAILS_SYSTEM — Emails transaccionales (Supabase hoy → Resend con dominio)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: EMAILS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema de emails transaccionales del ecosistema. Estado: Supabase Auth
@@ -254,7 +254,7 @@ El ecosistema deja preparado el canal SMS sin depender de un proveedor concreto:
 - **Activación**: añadir al vault + Vercel `SMS_PROVIDER` (y `SMS_API_KEY` si no es Textbelt) y
   llamar `sendSms()` desde los flujos que lo requieran (p. ej. avisos anticheat o seguridad).
 
-_Última revisión: 13 ago 2026._ Relacionado: `DOMAINS_SYSTEM.md`, `PAYMENTS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `DOMAINS_SYSTEM.md`, `PAYMENTS_SYSTEM.md`,
 `CLOUDFLARE_SYSTEM.md`, `VAULT_SYSTEM.md`.
 
 ## Emails propios con marca (19 sep 2026)

@@ -1,7 +1,7 @@
 # GOOGLE_SYSTEM — Negocio de Google y reseñas de Google de Ciszu Network
 
 Versión: 1.0.0
-Actualización: 2026-08-17
+Actualización: 2026-10-23
 Identificador: GOOGLE_SYSTEM_V1.0.0_2026_08_17_ciszunetwork
 
 > **Definición**: perfil de negocio de Google (Google Business Profile) de Ciszu Network,
@@ -177,7 +177,7 @@ SSR**; `GoogleAnalytics` hace el tracking client). Config por env (Vercel/`.env.
 - `ONLINE_SERVICES_SYSTEM.md` — servicios online gestionados de la cuenta del usuario.
 - `BUSINESS_SYSTEM.md` — identidad corporativa de Ciszu Network.
 
-_Última revisión: 26 ago 2026._ Relacionados: `REVIEWS_SYSTEM.md` · `VAULT_SYSTEM.md` · `AD_SYSTEM.md` · `ANALYTICS_SYSTEM.md` · `SEO_PLAN.md` · `TOOLS_SYSTEM.md`.
+_Última revisión: 23 oct 2026._ Relacionados: `REVIEWS_SYSTEM.md` · `VAULT_SYSTEM.md` · `AD_SYSTEM.md` · `ANALYTICS_SYSTEM.md` · `SEO_PLAN.md` · `TOOLS_SYSTEM.md`.
 
 ## 9. Herramientas SEO de Google (Alertas, Trends, Keyword Planner) — AGOSTO 2026
 

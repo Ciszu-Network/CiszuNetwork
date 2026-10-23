@@ -1,7 +1,7 @@
 ﻿# BUSINESS_SYSTEM — Modelos, Estrategia y Estructura de negocio
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: BUSINESS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: marco completo del negocio de Ciszu Network (ago 2026): modelos de
@@ -206,4 +206,4 @@ ecosistema es `ciszunetwork@outlook.com`.
 | `REVIEWS_SYSTEM.md` | Reputación y confianza social |
 | `ONLINE_SERVICES.md` | Fuente de verdad de costos/servicios |
 
-_Última revisión: 13 ago 2026._
+_Última revisión: 23 oct 2026._

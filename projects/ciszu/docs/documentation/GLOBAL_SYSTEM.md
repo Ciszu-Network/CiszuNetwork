@@ -1,7 +1,7 @@
 ﻿# GLOBAL_SYSTEM — Sistema Global y Flujo de Trabajo (Ciszu Network)
 
 Versión: 2.0.0
-Actualización: 2026-08-26
+Actualización: 2026-10-23
 Identificador: GLOBAL_SYSTEM_V2.0.0_2026_08_26_ciszunetwork
 
 > **Definición**: sistema global del ecosistema (antiguo WORKFLOW_SYSTEM): operación diaria del
@@ -255,6 +255,6 @@ curl -sI https://ciszunetwork.vercel.app | Select-String -Pattern "200"  # prod
 - `TOOLS_SYSTEM.md` — instalación y uso de las herramientas citadas.
 - `ARCHITECTURE.md` — por qué existen estos comandos y rutas.
 
-_Última revisión: 13 ago 2026._ Relacionado: `CODE_PRINCIPLES_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `CODE_PRINCIPLES_PROTOCOLS.md`,
 `DEVSECOPS_SYSTEM.md`, `TOOLS_SYSTEM.md`, `PROJECTS_SYSTEM.md`.
 

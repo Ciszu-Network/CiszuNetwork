@@ -1,7 +1,7 @@
 # OPENCODE_SYSTEM — Comandos y Voz para OpenCode
 
 Versión: 2.1.0
-Actualización: 2026-08-19
+Actualización: 2026-10-23
 Identificador: OPENCODE_SYSTEM_V2.1.0_2026_08_19_ciszunetwork
 
 Sistema de comandos personalizados y voz bidireccional (STT/TTS) para la terminal opencode en Windows.
@@ -265,6 +265,6 @@ hacia el agente**. Activado en este ecosistema vía `"lsp": true` en `opencode.j
 - ntfy: `scripts/ntfy-notif.js` + doc `MONITORING_SYSTEM.md` / `REMOTE_CONTROL_SYSTEM.md`
 - MCP: `opencode.json` global (`C:\Users\fplay\.config\opencode\opencode.json`)
 
-_Última revisión: 23 ago 2026._ Relacionado: `LSP_PROTOCOLS.md`, `MCP_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `LSP_PROTOCOLS.md`, `MCP_PROTOCOLS.md`,
 `FRAMEWORKS_SYSTEM.md`, `TESTING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `AGENTS.md` (§6.7),
 `REMOTE_CONTROL_SYSTEM.md`, `MONITORING_SYSTEM.md`, `MODELS_LLM_SYSTEM.md`.

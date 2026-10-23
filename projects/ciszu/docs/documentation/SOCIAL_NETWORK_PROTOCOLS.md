@@ -1,7 +1,7 @@
 ﻿# SOCIAL_NETWORK_PROTOCOLS — Redes Sociales Oficiales (Ciszu Network)
 
 Versión: 1.1.0
-Actualización: 2026-09-27
+Actualización: 2026-10-23
 Identificador: SOCIAL_NETWORK_PROTOCOLS_V1.1.0_2026_09_27_ciszunetwork
 
 > **Definición**: registro canónico de todas las cuentas oficiales del ecosistema Ciszu Network, guidelines de uso, governance y protocolos de publicación cruzada. Las URLs de las cuentas de Ciszuko Antony se contrastan contra la fuente real del portfolio: `projects/ciszukoantony/website/src/data/socials.ts` + `src/config/navigation.tsx`.
@@ -178,4 +178,4 @@ Identificador: SOCIAL_NETWORK_PROTOCOLS_V1.1.0_2026_09_27_ciszunetwork
 
 ---
 
-_Última revisión: 27 sep 2026._
+_Última revisión: 23 oct 2026._

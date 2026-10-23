@@ -1,7 +1,7 @@
 # EMPLOYEES_SYSTEM — Modelo Organizacional de Empleados (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-25
+Actualización: 2026-10-23
 Identificador: EMPLOYEES_SYSTEM_V1.0.0_2026_08_25_ciszunetwork
 
 > **Definición**: modelo organizacional de Ciszu Network: catálogo de **20 cargos** (significado,
@@ -260,4 +260,4 @@ Quién puede: quien tenga permiso `quitar` y jerarquía sobre el cargo. La baja:
 
 ---
 
-_Última revisión: 25 ago 2026._ Relacionado: `STAFF_SYSTEM.md`, `ORGANIZATIONAL_SCALABILITY_PLAN.md`, `BUSINESS_SYSTEM.md`.
+_Última revisión: 23 oct 2026._ Relacionado: `STAFF_SYSTEM.md`, `ORGANIZATIONAL_SCALABILITY_PLAN.md`, `BUSINESS_SYSTEM.md`.

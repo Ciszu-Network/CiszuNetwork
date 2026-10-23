@@ -1,7 +1,7 @@
 # MARKETING_PLAN — Plan de Marketing Online (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-30
+Actualización: 2026-10-23
 Identificador: MARKETING_PLAN_V1.0.0_2026_08_30_ciszunetwork
 
 > **Definición**: estrategia de marketing digital unificada para el ecosistema Ciszu Network (4 webs + comunidad CiszuGamens). Define objetivos, canales, audiencias, KPIs, presupuesto y calendario.
@@ -152,4 +152,4 @@ Identificador: MARKETING_PLAN_V1.0.0_2026_08_30_ciszunetwork
 
 ---
 
-_Última revisión: 30 ago 2026._
+_Última revisión: 23 oct 2026._

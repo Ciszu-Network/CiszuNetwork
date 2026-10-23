@@ -1,7 +1,7 @@
 ﻿# ARCHITECTURE — Arquitectura del Portfolio (Ciszuko Antony)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: ARCHITECTURE_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema que documenta la estructura del portfolio de Ciszuko Antony
@@ -239,6 +239,6 @@ con RLS. Los paquetes compartidos y las políticas se documentan en ciszu.
   se sirven desde Supabase Storage vía `assetResolver`.
 - La configuración de navegación, redes y títulos está centralizada en `navigation.tsx`.
 
-_Última revisión: 13 ago 2026._ Relacionado: `STACK_SYSTEM.md`, `WORKFLOW_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `STACK_SYSTEM.md`, `WORKFLOW_SYSTEM.md`,
 `BRAND_PLAN.md`, `PROMPTS_PLAN.md`, `README.md`.
 

@@ -1,7 +1,7 @@
 # MODELS_SKILLS_SYSTEM — Galería de Skills del Agente OpenCode
 
 Versión: 1.0.0
-Actualización: 2026-08-31
+Actualización: 2026-10-23
 Identificador: MODELS_SKILLS_SYSTEM_V1.0.0_2026_08_31_ciszunetwork
 
 > **Definición**: sistema que documenta las **skills instalables** para el agente opencode
@@ -291,6 +291,6 @@ claro).
 
 ---
 
-_Última revisión: 2026-08-31._ Relacionado: `OPENCODE_SYSTEM.md` (voz + comandos),
+_Última revisión: 23 oct 2026._ Relacionado: `OPENCODE_SYSTEM.md` (voz + comandos),
 `MODELS_LLM_SYSTEM.md` (historial/facturación de modelos), `TOOLS_SYSTEM.md` (clones y
 herramientas), `VAULT_SYSTEM.md`, `AGENTS.md` (raíz), `DOCUMENTATION_SYSTEM.md`.

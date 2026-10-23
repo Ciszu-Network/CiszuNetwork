@@ -1,7 +1,7 @@
 ﻿# SECURITY_PROTOCOLS — Protocolos de Seguridad del Ecosistema
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: SECURITY_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 
 > **Qué es este documento**: protocolos **permanentes y accionables** de seguridad para el
@@ -204,7 +204,7 @@ Protocolo mínimo del vault:
   checklist se corren periódicamente.
 - ACLs NTFS (fplay+SYSTEM) sobre identity, `.env`, `.env.age` y bundles.
 - `update-env-keys.js` cifra los backups que genera antes de cada rotación.
-- Los tokens en rotación se listan en `scripts/tokens_a_rotar.md` (sin valores).
+- Los tokens en rotación se anotan en el **registro de rotaciones** de este documento (sin valores).
 
 **Reglas de credenciales**:
 - Los archivos que documentan secrets en texto plano están **eliminados/redactados** y no
@@ -282,7 +282,7 @@ Principio rector: **acceso de rol mínimo** — no dar acceso de infra a quien n
   requerimiento pide "configurar CORS" → consultar `CORS_SYSTEM.md` antes de tocar nada.
 - **Escalabilidad organizacional** (repartir permisos por rol cuando el equipo crezca):
   `ORGANIZATIONAL_SCALABILITY_PLAN.md`. La cuenta ya es GitHub Organization `Ciszu-Network`.
-- **Rotación de credenciales**: lista en `scripts/tokens_a_rotar.md`; el protocolo de rotación
+- **Rotación de credenciales**: registro de rotaciones en este documento; el protocolo de rotación
   y backup de `.env` está en `scripts/update-env-keys.js` + `VAULT_SYSTEM.md`.
 - **Secret scanning**: gitleaks en CI (diff) + secretlint pre-commit local + auditoría manual
   del bundle compilado tras cada build.
@@ -330,7 +330,8 @@ secretos.
   (`.opencode/temp/pfirewall.log`); 5432 bloqueado; SMB (445) bloqueado en Públicas; SMB1 apagado
   y firma requerida. (El self-hosted de ntfy quedó descartado: sin regla 8080.)
 - **Detección**: tarea programada **"Ciszu SSH Login Alert"** (cada 5 min) alerta por ntfy ante
-  nuevos logins SSH (Security 4624 con sshd).
+  nuevos logins SSH (Security 4624 con sshd). Usa un stub en `C:\Users\fplay\ciszu-tasks\ciszu-ssh-alert.vbs`
+  que sale en silencio (exit 0) si E: está bloqueada por BitLocker.
 - **opencode**: sin servidor expuesto (TUI local); regla: `opencode serve` jamás en interfaces
   públicas (solo localhost/Tailscale). `.opencode/data/auth.json` contiene credenciales de
   proveedores del agente: tratar como secreto.
@@ -340,3 +341,16 @@ secretos.
   dispositivos propios, check mode para SSH. Ver `REMOTE_CONTROL_SYSTEM.md`.
 - **Cuentas externas**: `internal.external_accounts` con secretos cifrados (AES-GCM) y reveal
   auditado solo-owner; gestión desde staffcon `accounts` (ver `ACCESS_CONTROL_SYSTEM.md` §8).
+
+---
+
+## Registro de rotaciones
+
+> El antiguo `scripts/tokens_a_rotar.md` se retiró (commit `143dbc78`) al quedar resuelta la
+> solicitud pendiente. Las rotaciones se anotan aquí (solo nombres y fechas, nunca valores).
+
+| Fecha | Secreto | Estado |
+|---|---|---|
+| 2026-10-23 | Sin rotaciones abiertas | ✅ |
+
+_Última revisión: 23 oct 2026._

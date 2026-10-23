@@ -1,7 +1,7 @@
 # LSP_PROTOCOLS — Protocolos de Servidores LSP (Language Server Protocol)
 
 Versión: 1.0.0
-Actualización: 2026-08-19
+Actualización: 2026-10-23
 Identificador: LSP_PROTOCOLS_V1.0.0_2026_08_19_ciszunetwork
 
 > **Definición**: protocolo y catálogo de servidores LSP del ecosistema, cómo se usan en el
@@ -238,5 +238,5 @@ remota por ntfy/SSH usa el mismo server y hereda el estado del PC (ver `REMOTE_C
 - `TESTING_SYSTEM.md` §9A — Next.js como capa 0 de verificación.
 - `LOCAL_TESTING_PROTOCOLS.md` §3.3 — verificación por comando obligatoria.
 
-_Última revisión: 19 ago 2026._ Relacionado: `OPENCODE_SYSTEM.md`, `AGENTS.md`, `FRAMEWORKS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `OPENCODE_SYSTEM.md`, `AGENTS.md`, `FRAMEWORKS_SYSTEM.md`,
 `TESTING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `MCP_PROTOCOLS.md`.

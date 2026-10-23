@@ -1,7 +1,7 @@
 # CORS — Sistema, verificación y plan de implementación futura (11 ago 2026)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: CORS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: documento maestro del matiz "CORS" del toDo de BD. Conclusión verificada:
@@ -208,5 +208,5 @@ decisión de permitir o negar queda en las capas JWT + RLS + rate limits.
 - [ ] Mantener rate limits y auth por encima del filtro de origen (no duplicar responsabilidad).
 - [ ] Verificar con `curl` desde un Origin ajeno (debe fallar/403) y desde uno permitido.
 
-_Última revisión: 13 ago 2026._ Relacionado: `BACKEND_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `BACKEND_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
 `CLOUDFLARE_SYSTEM.md`, `DOMAINS_SYSTEM.md`, `CDN_SYSTEM.md`.

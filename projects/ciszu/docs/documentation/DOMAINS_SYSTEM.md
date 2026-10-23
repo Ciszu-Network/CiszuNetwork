@@ -1,7 +1,7 @@
 # DOMAINS_SYSTEM — Sistema de Dominios de Ciszu Network
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: DOMAINS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: plan maestro de dominios del ecosistema: estado actual (vercel.app gratis),
@@ -201,5 +201,5 @@ Comprar dominio (registrar) → Configurar DNS (Vercel/CF) → Añadir a proyect
 - **Sin tarjeta (PayPal)** → Porkbun ($11.08/.com estable, WHOIS + email forwarding gratis).
 - **Evitar**: Namecheap (renovación +64% → $18.48), GoDaddy/IONOS (upsells), Vercel Domains (sin email).
 
-_Última revisión: 13 ago 2026._ Relacionado: `CLOUDFLARE_SYSTEM.md`, `EMAILS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `CLOUDFLARE_SYSTEM.md`, `EMAILS_SYSTEM.md`,
 `ONLINE_SERVICES_SYSTEM.md`, `ARCHITECTURE.md`.

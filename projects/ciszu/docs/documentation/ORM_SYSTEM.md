@@ -1,7 +1,7 @@
 # ORM_SYSTEM — Drizzle ORM (capa de datos server-side)
 
 Versión: 1.0.0
-Actualización: 2026-08-14
+Actualización: 2026-10-23
 Identificador: ORM_SYSTEM_V1.0.0_2026_08_14_ciszunetwork
 
 > **Definición**: documenta el ORM oficial de Ciszu Network (**Drizzle ORM** vía `@ciszunetwork/db`),
@@ -193,5 +193,5 @@ tengan queries server-side que lo ameriten (hoy usan Supabase para contenido pú
 
 ---
 
-_Última revisión: 14 ago 2026._ Relacionado: `DB_SYSTEM.md`, `PACKAGES_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `DB_SYSTEM.md`, `PACKAGES_SYSTEM.md`,
 `BACKEND_SYSTEM.md`, `FULL_STACK_SYSTEM.md`, `SECURITY_PROTOCOLS.md`.

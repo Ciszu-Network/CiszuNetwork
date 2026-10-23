@@ -1,7 +1,7 @@
 # VAULT_SYSTEM — Protección del vault de credenciales — plan y estado (10 ago 2026)
 
 Versión: 2.2.0
-Actualización: 2026-08-18
+Actualización: 2026-10-23
 Identificador: VAULT_SYSTEM_V2.2.0_2026_08_18_ciszunetwork
 
 > **Definición**: protección de los archivos locales de credenciales (`.env`/vault) de Ciszu
@@ -24,7 +24,7 @@ Identificador: VAULT_SYSTEM_V2.2.0_2026_08_18_ciszunetwork
 | Otros usuarios de Windows | Idem | ACLs NTFS (solo fplay + SYSTEM) |
 | Subida accidental a git/nube de una copia | Fuga | `.gitignore` + historial limpio + gitleaks + copias cifradas con age |
 | Pérdida del disco / corrupción del `.env` | Pérdida de los 28 secrets | Copia maestra **cifrada** (age) + vault en la nube (usuario) |
-| Exposición si el repo se hace público | Secrets en historial | Rotación (`scripts/tokens_a_rotar.md`) |
+| Exposición si el repo se hace público | Secrets en historial | Rotación (registro de rotaciones en `SECURITY_PROTOCOLS.md`) |
 
 **Estado honesto**: hoy (10 ago 2026) el archivo `.env` en claro sigue existiendo en disco
 porque los scripts del flujo diario lo leen. La protección REAL en reposo la da BitLocker
@@ -208,7 +208,7 @@ powershell -File scripts\vault.ps1 backup
 6. BitLocker activo: `Get-BitLockerVolume` (como admin) → Protection ON en C: y E:.
 7. Vault de la nube actualizado (coincide con `services/supabase/.env`).
 8. `Get-ChildItem C:\Users\fplay\.ciszu` → identity presente (ACL fplay+SYSTEM).
-9. `scripts/tokens_a_rotar.md` — sin ítems abiertos.
+9. `SECURITY_PROTOCOLS.md` → registro de rotaciones — sin ítems abiertos.
 
 ---
 

@@ -1,7 +1,7 @@
 ﻿# UIDBUXDB_PROTOCOLS — UI/UX Design Brief (CiszuGamens)
 
 Versión: 1.0.0
-Actualización: 2026-08-29
+Actualización: 2026-10-23
 Identificador: UIDBUXDB_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 
 > **Definición**: Brief de diseño UI/UX para la landing web de CiszuGamens. Define principios, patrones, componentes y especificaciones visuales.
@@ -156,4 +156,4 @@ Identificador: UIDBUXDB_PROTOCOLS_V1.0.0_2026_08_29_ciszugamens
 
 ---
 
-_Última revisión: 29 ago 2026._
+_Última revisión: 23 oct 2026._

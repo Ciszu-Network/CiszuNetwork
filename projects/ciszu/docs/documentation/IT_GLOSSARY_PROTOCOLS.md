@@ -1,7 +1,7 @@
 ﻿# IT_GLOSSARY_PROTOCOLS — Glosario de Términos de Informática (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: IT_GLOSSARY_PROTOCOLS_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: glosario de referencia de términos informáticos usados en el monorepo.
@@ -236,5 +236,5 @@ Identificador: IT_GLOSSARY_PROTOCOLS_V1.0.0_2026_08_13_ciszunetwork
 - Mantener orden alfabético dentro de cada sección.
 - Los docs del sistema enlazan el glosario en su pie de "Relacionado".
 
-_Última revisión: 13 ago 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `FRAMEWORKS_SYSTEM.md`,
+_Última revisión: 23 oct 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `FRAMEWORKS_SYSTEM.md`,
 `BACKEND_SYSTEM.md`, `IT_GLOSSARY` es el índice conceptual del stack.

@@ -1,7 +1,7 @@
 # MATERIAL_ICONS_PROTOCOLS — Material Icon Theme, Catálogo y Protocolos (v5.36.1)
 
 Versión: 2.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: MATERIAL_ICONS_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 
 > Estatus: **protocolo oficial** de iconografía del monorepo. Documento GENERADO por

@@ -1,7 +1,7 @@
 ﻿# DISCORD_SECURITY_PROTOCOLS — Protocolos de Seguridad de Discord (CiszuBot)
 
 Versión: 1.0.0
-Actualización: 2026-08-13
+Actualización: 2026-10-23
 Identificador: DISCORD_SECURITY_PROTOCOLS_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: Protocolos de seguridad específicos del bot de Discord (CiszuBot): protección del token, permisos de invitación, rate limits de la API de Discord, manejo de datos de usuarios, verificación de comandos y checklist de auditoría. Lo genérico del ecosistema vive en `SECURITY_PROTOCOLS.md` (ciszu).
