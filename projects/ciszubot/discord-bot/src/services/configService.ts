@@ -90,6 +90,13 @@ export interface TicketConfig {
   categories: TicketCategory[];
 }
 
+export interface NewsChannels {
+  anime: string | null;
+  games: string | null;
+  steam: string | null;
+  tech: string | null;
+}
+
 export interface GuildConfig {
   guild_id: string;
   prefix: string;
@@ -159,6 +166,8 @@ export interface GuildConfig {
   trivia_rewards: Array<{ points: number; role_id: string }>;
   autoposts_enabled: boolean;
   autoposts: Array<{ id: string; type: string; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }>;
+  news_enabled: boolean;
+  news_channels: NewsChannels;
   nsfw_enabled: boolean;
   nsfw_channel_id: string | null;
   nsfw_autopost_enabled: boolean;
@@ -269,6 +278,8 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   trivia_rewards: [],
   autoposts_enabled: false,
   autoposts: [],
+  news_enabled: false,
+  news_channels: { anime: null, games: null, steam: null, tech: null },
   nsfw_enabled: false,
   nsfw_channel_id: null,
   nsfw_autopost_enabled: false,
@@ -397,6 +408,8 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         trivia_rewards: (data.triviaRewards as Array<{ points: number; role_id: string }>) ?? DEFAULTS.trivia_rewards,
         autoposts_enabled: data.autopostsEnabled ?? DEFAULTS.autoposts_enabled,
         autoposts: asArray(data.autoposts, DEFAULTS.autoposts) as typeof DEFAULTS.autoposts,
+        news_enabled: data.newsEnabled ?? DEFAULTS.news_enabled,
+        news_channels: asObject(data.newsChannels, DEFAULTS.news_channels) as NewsChannels,
         nsfw_enabled: data.nsfwEnabled ?? DEFAULTS.nsfw_enabled,
         nsfw_channel_id: data.nsfwChannelId ?? DEFAULTS.nsfw_channel_id,
         nsfw_autopost_enabled: data.nsfwAutopostEnabled ?? DEFAULTS.nsfw_autopost_enabled,
@@ -500,6 +513,8 @@ export async function updateGuildConfig(
     triviaRewards: merged.trivia_rewards,
     autopostsEnabled: merged.autoposts_enabled,
     autoposts: merged.autoposts,
+    newsEnabled: merged.news_enabled,
+    newsChannels: merged.news_channels,
     nsfwEnabled: merged.nsfw_enabled,
     nsfwChannelId: merged.nsfw_channel_id,
     nsfwAutopostEnabled: merged.nsfw_autopost_enabled,

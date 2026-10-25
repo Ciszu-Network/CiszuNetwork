@@ -1,8 +1,8 @@
 # STACK_SYSTEM — Pila Tecnológica (CiszuBot)
 
-Versión: 1.0.0
-Actualización: 2026-10-23
-Identificador: STACK_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
+Versión: 1.1.0
+Actualización: 2026-10-24
+Identificador: STACK_SYSTEM_V1.1.0_2026_10_24_ciszunetwork
 
 > **Definición**: Documenta la pila tecnológica completa y actual del proyecto CiszuBot por capas (website, bot, base de datos, despliegue y herramientas), con versiones exactas tomadas de los manifiestos del repositorio.
 
@@ -117,14 +117,16 @@ Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/u
 | `src/services/economy.ts` | Economía (wallets, transacciones) |
 | `src/services/levels.ts` | XP y niveles |
 | `src/services/music.ts` | Cola y reproducción de audio |
-| `src/services/giveaways.ts` | Sorteos |
+| `src/services/giveaways.ts` | Sorteos (índice #N automático, cupos 1–10 free reutilizables; premium ilimitado) |
+| `src/services/nitro.ts` | Detección de emojis externos, exclusión por rol y reenvío por webhook |
+| `src/services/news.ts` | Noticias verificadas: parser RSS/JSON propio, allowlist, dedupe, traducción best-effort y loop de 120 s |
 | `src/services/configService.ts` | Config por servidor (caché en memoria) |
 | `src/services/botlists.ts` | Posting de stats a bot lists |
 | `src/services/statsServer.ts` | Express interno de métricas |
 | `src/services/supabase.ts` | Cliente Supabase (service_role) |
 | `src/services/sentry.ts` | Inicialización de Sentry |
 | `src/services/logger.ts` | Logging |
-| `src/listeners/index.ts` | Eventos: XP, AFK, snipe, welcome, botones (tickets, privados) |
+| `src/listeners/index.ts` | Eventos: XP, AFK, snipe, nitro, welcome, botones (tickets, privados) |
 
 ## 5. Capa de datos — Supabase
 
@@ -136,6 +138,8 @@ Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/u
 - **Verificación**: con `dbvr` (fuentes externas) tras cada migración, según `SECURITY_PROTOCOLS.md` (ciszu).
 
 Tablas (13): `guild_configs`, `wallets`, `transactions`, `shop_items`, `inventory`, `levels`, `warns`, `tickets`, `giveaways`, `afk`, `alliances`, `discord_users`, `snipes` + `bot_status` (heartbeat).
+
+`guild_configs` incluye `news_enabled` (boolean), `news_channels` (jsonb con un canal por categoría) y `news_seen` (jsonb interno de dedupe, no expuesto en el dashboard). El sistema de noticias no añade dependencias: usa `fetch` nativo y un parser RSS/Atom mínimo.
 
 ## 6. Capa de despliegue
 

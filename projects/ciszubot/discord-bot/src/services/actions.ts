@@ -55,7 +55,7 @@ async function runAction(client: Client, action: ActionRow): Promise<string> {
           return res.ok
             ? `ok:${res.id}`
             : res.limitReached
-              ? `error: límite de ${giveaways.GIVEAWAY_FREE_LIMIT} sorteos activos en plan free (premium = ilimitado)`
+              ? `error: límite de ${giveaways.GIVEAWAY_FREE_LIMIT} sorteos activos (#1–#${giveaways.GIVEAWAY_FREE_LIMIT}) en plan free. Libera un cupo o compra premium: ${giveaways.GIVEAWAY_PREMIUM_URL}`
               : 'error: no se pudo crear el sorteo';
         }
         case 'giveaway_pause':

@@ -1,4 +1,4 @@
-﻿import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
+import { EmbedBuilder, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { startGiveaway } from '../services/giveaways';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
@@ -38,9 +38,9 @@ const giveaways = (): BotCommand => ({
 
     const result = await startGiveaway(message.guild, message.channel as never, prize, winners, minutes * 60_000, message.author);
     if (result.ok) {
-      await message.reply(`🎉 Sorteo creado para **${prize}**! Termina en **${minutes} min**.`);
+      await message.reply(`🎉 Sorteo #${result.slot} creado para **${prize}**! Termina en **${minutes} min**.`);
     } else {
-      await message.reply('❌ No se pudo crear el sorteo.');
+      await message.reply(`❌ ${result.message ?? 'No se pudo crear el sorteo.'}`);
     }
   },
 });

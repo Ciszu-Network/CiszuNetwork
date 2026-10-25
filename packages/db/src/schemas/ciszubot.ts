@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import {
   pgSchema,
   bigint,
@@ -106,6 +107,9 @@ export const guildConfigs = ciszubot.table(
     triviaRewards: jsonb('trivia_rewards').notNull().default([]),
     autopostsEnabled: boolean('autoposts_enabled').notNull().default(false),
     autoposts: jsonb('autoposts').notNull().default([]),
+    newsEnabled: boolean('news_enabled').notNull().default(false),
+    newsChannels: jsonb('news_channels').notNull().default({}),
+    newsSeen: jsonb('news_seen').notNull().default({}),
     nsfwEnabled: boolean('nsfw_enabled').notNull().default(false),
     nsfwChannelId: text('nsfw_channel_id'),
     nsfwAutopostEnabled: boolean('nsfw_autopost_enabled').notNull().default(false),
@@ -259,6 +263,7 @@ export const giveaways = ciszubot.table(
   {
     id: text('id').primaryKey(),
     guildId: text('guild_id').notNull(),
+    slot: integer('slot').notNull().default(0),
     channelId: text('channel_id').notNull(),
     messageId: text('message_id').notNull(),
     prize: text('prize').notNull(),
@@ -277,7 +282,13 @@ export const giveaways = ciszubot.table(
     cancelledAt: timestamp('cancelled_at', { withTimezone: true }),
     winnerIds: jsonb('winner_ids').notNull().default([]),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
-  }
+  },
+  (t) => [
+    uniqueIndex('giveaways_guild_slot_active_key')
+      .on(t.guildId, t.slot)
+      .where(sql`${t.status} IN ('running', 'paused') AND ${t.slot} > 0`),
+    index('idx_giveaways_guild_status').on(t.guildId, t.status),
+  ]
 );
 
 export const afk = ciszubot.table(

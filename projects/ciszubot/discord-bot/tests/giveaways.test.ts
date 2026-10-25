@@ -15,6 +15,7 @@ function giveawayRow(overrides: Record<string, unknown> = {}) {
   return {
     id: 'gw-1',
     guildId: 'g1',
+    slot: 1,
     channelId: 'c1',
     messageId: 'm1',
     prize: 'Nitro',
@@ -214,7 +215,7 @@ describe('scheduleGiveaway', () => {
 describe('startGiveaway', () => {
   it('envía el mensaje con botón e inserta en la BD', async () => {
     vi.useFakeTimers();
-    // selects: [0] isPremiumGuild (no premium) · [1] conteo de activos (0) ·
+    // selects: [0] isPremiumGuild (no premium) · [1] cupos activos (ninguno) ·
     // [2] getGiveaway al terminar el timer · [3] resto
     const { db } = createDb(null, null, [[], [], [giveawayRow()], [], []]);
     dbState.set(db);
@@ -226,6 +227,7 @@ describe('startGiveaway', () => {
     const result = await startGiveaway(guild, channel, 'Nitro', 1, 60_000, host);
 
     expect(result.ok).toBe(true);
+    expect(result.slot).toBe(1);
     expect(rawChannel.send).toHaveBeenCalledTimes(1);
     const sentPayload = rawChannel.send.mock.calls[0][0] as { embeds?: unknown[]; components?: unknown[] };
     expect(sentPayload.components).toBeDefined(); // botón de ingreso (ya no reacciones)
@@ -234,6 +236,8 @@ describe('startGiveaway', () => {
     expect(insertBuilder.values).toHaveBeenCalledWith(
       expect.objectContaining({
         guildId: 'g1',
+        slot: 1,
+        messageId: 'pending',
         channelId: 'c1',
         prize: 'Nitro',
         winners: 1,
@@ -246,5 +250,59 @@ describe('startGiveaway', () => {
     vi.advanceTimersByTime(61_000);
     await vi.runAllTimersAsync();
     expect(db.update).toHaveBeenCalled();
+  });
+
+  it('asigna el cupo libre más bajo y reutiliza huecos', async () => {
+    vi.useFakeTimers();
+    const { db } = createDb(null, null, [[], [{ slot: 1 }, { slot: 3 }], [giveawayRow({ slot: 2 })], [], []]);
+    dbState.set(db);
+    const rawChannel = makeChannel();
+    const channel = rawChannel as unknown as TextChannel;
+    const guild = makeGuild(channel);
+    const host = { id: 'u-owner', tag: 'Owner#1', displayAvatarURL: () => 'https://x/avatar.png' } as User;
+
+    const result = await startGiveaway(guild, channel, 'Nitro', 1, 60_000, host);
+
+    expect(result).toMatchObject({ ok: true, slot: 2 });
+    const insertBuilder = db.insert.mock.results[0].value;
+    expect(insertBuilder.values).toHaveBeenCalledWith(expect.objectContaining({ slot: 2 }));
+    vi.clearAllTimers();
+  });
+
+  it('bloquea la creación free con los 10 cupos ocupados', async () => {
+    vi.useFakeTimers();
+    const full = Array.from({ length: 10 }, (_, i) => ({ slot: i + 1 }));
+    const { db } = createDb(null, null, [[], full]);
+    dbState.set(db);
+    const rawChannel = makeChannel();
+    const channel = rawChannel as unknown as TextChannel;
+    const guild = makeGuild(channel);
+    const host = { id: 'u-owner', tag: 'Owner#1', displayAvatarURL: () => 'https://x/avatar.png' } as User;
+
+    const result = await startGiveaway(guild, channel, 'Nitro', 1, 60_000, host);
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain('Límite de 10 sorteos activos');
+    expect(result.message).toContain('https://ciszubot.vercel.app/premium');
+    expect(rawChannel.send).not.toHaveBeenCalled();
+    expect(db.insert).not.toHaveBeenCalled();
+  });
+
+  it('permite cupos ilimitados en servidores premium', async () => {
+    vi.useFakeTimers();
+    const full = Array.from({ length: 10 }, (_, i) => ({ slot: i + 1 }));
+    const { db } = createDb(null, null, [[{ status: 'active', expiresAt: null }], full, [giveawayRow({ slot: 11 })], [], []]);
+    dbState.set(db);
+    const rawChannel = makeChannel();
+    const channel = rawChannel as unknown as TextChannel;
+    const guild = makeGuild(channel);
+    const host = { id: 'u-owner', tag: 'Owner#1', displayAvatarURL: () => 'https://x/avatar.png' } as User;
+
+    const result = await startGiveaway(guild, channel, 'Nitro', 1, 60_000, host);
+
+    expect(result).toMatchObject({ ok: true, slot: 11 });
+    const insertBuilder = db.insert.mock.results[0].value;
+    expect(insertBuilder.values).toHaveBeenCalledWith(expect.objectContaining({ slot: 11 }));
+    vi.clearAllTimers();
   });
 });

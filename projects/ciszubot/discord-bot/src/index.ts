@@ -23,6 +23,7 @@ import { resolveFeatureForCommand, isPremiumCommand } from './config/features';
 import { getFeatureState, isPremiumBeta } from './services/featureFlags';
 import { runCustomCommand } from './services/customCommands';
 import { startAutopostLoop } from './services/autoposts';
+import { startNewsLoop } from './services/news';
 
 initErrorTracking();
 
@@ -77,6 +78,9 @@ client.once(Events.ClientReady, async (readyClient) => {
 
   // Autopublicaciones (anuncios, animales, anime; +18 en canales NSFW)
   startAutopostLoop(readyClient);
+
+  // Noticias verificadas (anime, videojuegos, Steam gratis, tecnología)
+  startNewsLoop(readyClient);
 
   // Registrar comandos de barra — CORREGIDO: applicationCommands con C mayúscula
   // Discord limita a 100 comandos de aplicación globales: se recorta con aviso

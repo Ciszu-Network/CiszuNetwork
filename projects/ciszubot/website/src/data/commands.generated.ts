@@ -1,7 +1,7 @@
 /**
  * GENERADO AUTOMÁTICAMENTE — NO EDITAR A MANO.
  * Fuente: projects/ciszubot/discord-bot/src/commands/*.ts (código real del bot).
- * Regenerar: node scripts/sync-bot-commands.mjs
+ * Se regenera solo en cada build de la web (prebuild).
  */
 
 export interface CommandInfo {
@@ -959,13 +959,13 @@ export const COMMANDS: CommandInfo[] = [
   },
   {
     name: 'nitro',
-    description: 'Reenvía mensajes con emojis Nitro/externos vía webhook (staff)',
+    description: 'Reenvía emojis Nitro/externos vía webhook (automático o manual)',
     aliases: ["nitroemoji"],
-    usage: 'cz!nitro [on|off|status]',
+    usage: 'cz!nitro [on|off|status|mode auto|manual] · cz!nitro <emoji>',
     category: 'Configuración',
     icon: 'settings',
     premium: false,
-    tags: ["configuración","nitro","reenvia","mensajes","emojis","externos","via","webhook"],
+    tags: ["configuración","nitro","reenvia","emojis","externos","via","webhook","automatico"],
   },
   {
     name: 'privatevc',

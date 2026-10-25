@@ -27,6 +27,7 @@ import { processAllianceMessage, sendAllianceError } from '../services/alliances
 import { handleTicketClaim, handleTicketClose } from '../services/tickets';
 import { scheduleActions } from '../services/actions';
 import { BOT_COLORS, BOT_FOOTER } from '../config/links';
+import { hasExternalEmoji, isNitroRoleExcluded, sendNitroWebhook } from '../services/nitro';
 
 /**
  * Listeners del bot: XP/niveles (mensaje custom + roles), snipe, AFK,
@@ -151,40 +152,13 @@ async function handleAutomod(message: Message, cfg: GuildConfig): Promise<boolea
 
 // ─── Emojis Nitro (reenvío por webhook) ───
 
-const EMOJI_RE = /<a?:(\w+):(\d+)>/g;
-
-async function handleNitroRepost(message: Message, cfg: GuildConfig): Promise<void> {
+async function handleNitroRepost(message: Message, cfg: GuildConfig, prefix: string): Promise<void> {
   if (!cfg.nitro_repost_enabled || !message.guild || !message.content) return;
-  // Modo manual: sin reenvío automático (solo por comando del staff).
   if (cfg.nitro_repost_mode === 'manual') return;
-  // Roles excluidos del reenvío.
-  if (cfg.nitro_excluded_role_ids.length > 0 && message.member && cfg.nitro_excluded_role_ids.some((r) => message.member!.roles.cache.has(r))) return;
-  const external: string[] = [];
-  for (const match of message.content.matchAll(EMOJI_RE)) {
-    const id = match[2];
-    if (!message.guild.emojis.cache.has(id)) external.push(id);
-  }
-  if (external.length === 0) return;
-
-  const channel = message.channel as TextChannel;
-  if (typeof channel.fetchWebhooks !== 'function') return;
-  const me = message.guild.members.me;
-  if (!me || !channel.permissionsFor(me)?.has(PermissionsBitField.Flags.ManageWebhooks)) return;
-
-  try {
-    const hooks = await channel.fetchWebhooks();
-    let hook = hooks.find((h) => h.owner?.id === message.client.user?.id);
-    if (!hook) hook = await channel.createWebhook({ name: 'CiszuBot Nitro' });
-    await hook.send({
-      content: message.content,
-      username: message.member?.displayName ?? message.author.username,
-      avatarURL: message.author.displayAvatarURL({ size: 128 }),
-      allowedMentions: { parse: [] },
-    });
-    await message.delete().catch(() => undefined);
-  } catch (error) {
-    logger.warn('nitro repost:', error);
-  }
+  if (isNitroRoleExcluded(message.member, cfg.nitro_excluded_role_ids)) return;
+  if (message.content.startsWith(prefix) || message.content.startsWith(`<@${message.client.user?.id}>`)) return;
+  if (!hasExternalEmoji(message.content, message.guild.emojis.cache)) return;
+  await sendNitroWebhook(message, message.content);
 }
 
 // ─── AFK ───
@@ -611,12 +585,11 @@ export function registerListeners(client: Client): void {
       bumpMemberMessages(message.guild!.id, message.author.id);
       lastActivity.set(`${message.guild!.id}:${message.author.id}`, Date.now());
       if (await handleAutomod(message, cfg)) return;
-      await handleNitroRepost(message, cfg);
-      void getPrefix(message.guild!.id).then((prefix) => {
-        if (!message.content.startsWith(prefix) && !message.content.startsWith(`<@${client.user?.id}>`)) {
-          void handleXp(message);
-        }
-      });
+      const prefix = await getPrefix(message.guild!.id);
+      await handleNitroRepost(message, cfg, prefix);
+      if (!message.content.startsWith(prefix) && !message.content.startsWith(`<@${client.user?.id}>`)) {
+        void handleXp(message);
+      }
       void handleAfk(message);
       void handleCounting(message, cfg);
       void handleTriviaMessage(client, message, cfg);

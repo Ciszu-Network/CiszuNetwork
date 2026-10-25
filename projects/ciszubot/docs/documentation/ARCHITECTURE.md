@@ -1,8 +1,8 @@
 ﻿# ARCHITECTURE — Arquitectura del Sistema (CiszuBot)
 
-Versión: 1.0.0
-Actualización: 2026-10-23
-Identificador: ARCHITECTURE_V1.0.0_2026_08_13_ciszunetwork
+Versión: 1.1.0
+Actualización: 2026-10-24
+Identificador: ARCHITECTURE_V1.1.0_2026_10_24_ciszunetwork
 
 > **Definición**: Documenta la arquitectura real y actual del proyecto CiszuBot: estructura del monorepo, componentes (website Next.js + bot Discord.js en TypeScript + base de datos Supabase), flujos de datos, despliegue y decisiones de diseño.
 
@@ -63,7 +63,8 @@ projects/ciszubot/
 │   │   ├── config/          # index.ts (token, intents) y links.ts
 │   │   ├── listeners/       # index.ts — XP, AFK, snipe, welcome, tickets, botones
 │   │   ├── services/        # botlists, cache, config, economy, giveaways,
-│   │   │                    # levels, logger, music, sentry, statsServer, supabase
+│   │   │                    # levels, logger, music, news, nitro, sentry,
+│   │   │                    # statsServer, supabase
 │   │   ├── types/           # Tipos compartidos
 │   │   ├── utils/           # commandRegistry.ts (registro de comandos)
 │   │   └── index.ts         # Punto de entrada principal
@@ -125,6 +126,20 @@ projects/ciszubot/
 | Niveles | XP y niveles | `rank`, `topxp` |
 | Social | Interacción entre usuarios | `hi`, `bye`, `afk`, `alliance`, `allies`, `closeprivate` |
 | Utilidad | Utilidades generales | `test`, `bump`, `promo`, `invite`, `vote`, `donate`, `giveaway`, `embed` |
+
+**Automatizaciones y extensiones:**
+
+- **Nitro manual** (`services/nitro.ts`, `commands/nitro.ts`): cualquier usuario reenvía un emoji externo con
+  `cz!nitro <emoji>` o respondiendo a un mensaje con `cz!nitro`. El bot valida que el emoji no pertenezca al
+  servidor, que el miembro no tenga un rol excluido y publica por webhook con la identidad del autor. El modo
+  `auto` (por defecto) reenvía además mensajes sueltos con emojis externos, omitiendo comandos y menciones al
+  bot. `on`, `off` y `mode` son staff-only; `status` es público.
+- **Noticias verificadas** (`services/news.ts`): publica cada novedad detectada, sin intervalo por noticia, en
+  el canal configurado por categoría (`anime`, `games`, `steam`, `tech`). Fuentes con allowlist de host: Anime
+  News Network (RSS), GameSpot (RSS), GamerPower (JSON de juegos gratis de Steam) y BBC Technology (RSS). La
+  primera sincronización siembra `news_seen` sin publicar historial; después deduplica por ID y limita a 5
+  publicaciones por categoría y ciclo. Los textos se traducen best-effort al español cuando el servidor usa
+  `es`, con fallback al original.
 
 ### 3.2 Website (`website/`)
 
@@ -203,13 +218,25 @@ El bot también publica `updateStats()` cada 30 s al statsServer interno (Expres
 
 El bot levanta un servidor Express en el puerto 5000 (`statsServer.ts`) que expone métricas en vivo del proceso (comandos totales, servidores, uptime). Esto permite monitorizar el contenedor Docker sin abrir la API de Discord.
 
+### 4.5 Noticias verificadas (bot → Discord)
+
+```
+startNewsLoop(readyClient)          # primera pasada a los 15 s; luego cada 120 s
+  → por cada guild con news_enabled y al menos un canal configurado
+  → fuente de la categoría (caché de 120 s)
+  → verificación de host, HTTPS, fecha y enlace
+  → dedupe contra guild_configs.news_seen (seed inicial sin publicar)
+  → embed con título enlazado y "Leer más" en el canal de la categoría
+  → update de news_seen
+```
+
 ## 5. Modelo de datos (schema `ciszubot`)
 
 Migración 14 aplicada → **13 tablas**. La tabla pública del sistema es `ciszubot.bot_status` (migración 13):
 
 | Tabla | Propósito |
 | --- | --- |
-| `guild_configs` | Configuración por servidor (prefijo, idioma, welcome/goodbye, autoroles, contadores, tickets, leveling, logs) |
+| `guild_configs` | Configuración por servidor (prefijo, idioma, welcome/goodbye, autoroles, contadores, tickets, leveling, logs, nitro, noticias) |
 | `wallets` | Saldo de monedas por usuario y servidor |
 | `transactions` | Historial de transacciones económicas |
 | `shop_items` | Ítems de la tienda del servidor |
@@ -217,7 +244,7 @@ Migración 14 aplicada → **13 tablas**. La tabla pública del sistema es `cisz
 | `levels` | XP y nivel por usuario y servidor |
 | `warns` | Avisos de moderación |
 | `tickets` | Tickets abiertos/cerrados |
-| `giveaways` | Sorteos activos |
+| `giveaways` | Sorteos con índice #N automático (slots 1–10 free reutilizables; premium ilimitado) |
 | `afk` | Estados AFK |
 | `alliances` | Alianzas entre servidores |
 | `discord_users` | Datos consolidados de usuarios de Discord |
@@ -290,6 +317,8 @@ Pendiente de definir. Recomendación: **Oracle Cloud Free Tier** (VPS siempre en
 | ADR-6 | `commands.json` canónico + generador | Slash commands y docs se regeneran desde una única fuente |
 | ADR-7 | Express interno en puerto 5000 | Monitorización del contenedor sin exponer la API de Discord |
 | ADR-8 | Registro de comandos slash en `ClientReady` | Aplicación inmediata sin pasos manuales por entorno |
+| ADR-9 | Nitro manual + auto con lista de roles excluidos | Evita abuso sin quitar la comodidad de reenviar emojis externos; el modo manual da control total |
+| ADR-10 | Noticias con allowlist de fuentes y dedupe en `news_seen` | Evita phishing/enlaces no verificados y republicaciones; el seed inicial impide llenar el canal con historial |
 
 ## 9. Limitaciones conocidas
 

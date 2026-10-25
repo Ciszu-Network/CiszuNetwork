@@ -96,6 +96,8 @@ interface GuildConfig {
   trivia_rewards?: { points: number; role_id: string }[];
   autoposts_enabled?: boolean;
   autoposts?: { id: string; type: 'custom' | 'animals' | 'anime'; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }[];
+  news_enabled?: boolean;
+  news_channels?: { anime: string | null; games: string | null; steam: string | null; tech: string | null };
   nsfw_enabled?: boolean;
   nsfw_channel_id?: string | null;
   nsfw_autopost_enabled?: boolean;
@@ -154,7 +156,7 @@ interface GuildConfig {
   premium?: boolean;
 }
 
-type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
+type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'news' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -191,7 +193,7 @@ const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPag
   ],
 };
 
-const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'news' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id'],
   messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
@@ -204,13 +206,14 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   polls: ['polls_enabled', 'polls_excluded_role_ids', 'polls_max_active', 'polls_cooldown_minutes'],
   trivia: ['trivia_enabled', 'trivia_excluded_role_ids', 'trivia_timed', 'trivia_time_seconds', 'trivia_difficulty', 'trivia_rewards'],
   autoposts: ['autoposts_enabled', 'autoposts'],
+  news: ['news_enabled', 'news_channels'],
   nsfw: ['nsfw_enabled', 'nsfw_channel_id', 'nsfw_autopost_enabled', 'nsfw_autopost_minutes', 'nsfw_commands_enabled'],
   confessions: ['confess_channel_id'],
   customcmd: [],
   history: ['history_enabled', 'history_channel_id'],
   economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
   starboard: ['starboard_channel_id', 'starboard_emoji', 'starboard_min'],
-  nitro: ['nitro_repost_enabled'],
+  nitro: ['nitro_repost_enabled', 'nitro_repost_mode', 'nitro_excluded_role_ids'],
   staff: ['staff_role_id'],
   automod: ['automod_enabled', 'automod_config', 'admin_role_ids', 'mod_role_ids', 'mute_role_id'],
   alliance: ['alliance_config'],
@@ -508,6 +511,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   // Manager de giveaways (panel del feat:giveaways).
   type GwRow = {
     id: string;
+    slot: number;
     prize: string;
     status: string;
     ended: boolean;
@@ -538,6 +542,10 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     reqMsg: number;
     bonus: { role_id: string; multiplier: number }[];
   }>({ prize: '', winners: 1, minutes: 60, channel: null, required: [], grant: [], maxPart: 0, reqMsg: 0, bonus: [] });
+  const [gwLimit, setGwLimit] = useState(false);
+  const gwActive = gwList.filter((g) => g.status === 'running' || g.status === 'paused');
+  const gwNextSlot = Array.from({ length: 10 }, (_, i) => i + 1).find((slot) => !gwActive.some((g) => g.slot === slot)) ?? null;
+  const gwSlotCount = Math.max(10, ...gwActive.map((g) => g.slot || 0));
   const [exportPreview, setExportPreview] = useState<{
     name: string;
     payload: JsonPreviewPayload;
@@ -568,6 +576,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'polls'
     | 'trivia'
     | 'autoposts'
+    | 'news'
     | 'nsfw'
     | 'confessions'
     | 'customcmd'
@@ -614,7 +623,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'polls', 'trivia', 'autoposts', 'nsfw', 'confessions', 'customcmd', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
+      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'polls', 'trivia', 'autoposts', 'news', 'nsfw', 'confessions', 'customcmd', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
       setView(saved);
@@ -695,6 +704,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     { key: 'polls', icon: 'chart-pie', label: 'subnavPolls', tag: 'free' },
     { key: 'trivia', icon: 'circle-question', label: 'subnavTrivia', tag: 'free' },
     { key: 'autoposts', icon: 'bullhorn', label: 'subnavAutoposts', tag: 'free' },
+    { key: 'news', icon: 'globe', label: 'subnavNews', tag: 'free' },
     { key: 'nsfw', icon: 'triangle-exclamation', label: 'subnavNsfw', tag: 'free' },
     { key: 'confessions', icon: 'heart', label: 'subnavConfessions', tag: 'free' },
     { key: 'customcmd', icon: 'terminal', label: 'subnavCustomCmd', tag: 'free' },
@@ -741,26 +751,23 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   }, []);
 
   // Manager de giveaways: carga + refresco en tiempo real (10s) mientras se ve.
+  const gwRefresh = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/dashboard/${guildId}/giveaways`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const json = (await res.json()) as { giveaways?: GwRow[] };
+      setGwList(json.giveaways ?? []);
+    } catch {
+      /* red */
+    }
+  }, [guildId]);
+
   useEffect(() => {
     if (view !== 'feat:giveaways') return;
-    let active = true;
-    const load = async () => {
-      try {
-        const res = await fetch(`/api/dashboard/${guildId}/giveaways`, { cache: 'no-store' });
-        if (!res.ok) return;
-        const json = (await res.json()) as { giveaways?: GwRow[] };
-        if (active) setGwList(json.giveaways ?? []);
-      } catch {
-        /* red */
-      }
-    };
-    void load();
-    const timer = setInterval(() => void load(), 10_000);
-    return () => {
-      active = false;
-      clearInterval(timer);
-    };
-  }, [view, guildId]);
+    void gwRefresh();
+    const timer = setInterval(() => void gwRefresh(), 10_000);
+    return () => clearInterval(timer);
+  }, [view, gwRefresh]);
 
   const gwAction = useCallback(
     async (action: string, giveawayId: string, userId?: string) => {
@@ -809,6 +816,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       return;
     }
     setGwBusy('create');
+    setGwLimit(false);
     try {
       const res = await fetch(`/api/dashboard/${guildId}/giveaways`, {
         method: 'POST',
@@ -826,19 +834,40 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           bonus_roles: gwForm.bonus,
         }),
       });
-      if (res.ok) {
-        toast(t.gwSent, 'success');
-        setGwForm({ prize: '', winners: 1, minutes: 60, channel: null, required: [], grant: [], maxPart: 0, reqMsg: 0, bonus: [] });
-        setGwCreateOpen(false);
-      } else {
-        toast(t.gwError, 'error');
+      const json = (await res.json()) as { ok?: boolean; id?: number; error?: string };
+      if (!res.ok || !json.ok || !json.id) {
+        toast(json.error ?? t.gwError, 'error');
+        return;
       }
+      // El bot procesa la cola cada 5s: se sondea el resultado de la acción.
+      for (let i = 0; i < 12; i++) {
+        await new Promise((r) => setTimeout(r, 2000));
+        const poll = await fetch(`/api/dashboard/${guildId}/giveaways?action=${json.id}`, { cache: 'no-store' });
+        if (!poll.ok) continue;
+        const data = (await poll.json()) as { action?: { processed: boolean; result: string | null } | null };
+        const action = data.action;
+        if (!action?.processed) continue;
+        const result = action.result ?? '';
+        if (result.startsWith('ok')) {
+          toast(t.gwSent, 'success');
+          setGwForm({ prize: '', winners: 1, minutes: 60, channel: null, required: [], grant: [], maxPart: 0, reqMsg: 0, bonus: [] });
+          setGwCreateOpen(false);
+          void gwRefresh();
+        } else if (result.includes('límite')) {
+          setGwLimit(true);
+          toast(t.gwLimitReached, 'error');
+        } else {
+          toast(t.gwError, 'error');
+        }
+        return;
+      }
+      toast(t.gwError, 'error');
     } catch {
       toast(t.gwError, 'error');
     } finally {
-      setTimeout(() => setGwBusy(null), 3000);
+      setGwBusy(null);
     }
-  }, [guildId, gwForm, toast, t.gwError, t.gwSent]);
+  }, [guildId, gwForm, toast, t.gwError, t.gwLimitReached, t.gwSent, gwRefresh]);
 
   /** Say/DirectSay: inserta la acción y sondea el resultado hasta 20s. */
   const sendMessage = useCallback(async () => {
@@ -957,6 +986,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         trivia_rewards: Array.isArray(cfg?.trivia_rewards) ? cfg.trivia_rewards : [],
         autoposts_enabled: cfg?.autoposts_enabled ?? false,
         autoposts: Array.isArray(cfg?.autoposts) ? cfg.autoposts : [],
+        news_enabled: cfg?.news_enabled ?? false,
+        news_channels: {
+          anime: cfg?.news_channels?.anime ?? null,
+          games: cfg?.news_channels?.games ?? null,
+          steam: cfg?.news_channels?.steam ?? null,
+          tech: cfg?.news_channels?.tech ?? null,
+        },
         nsfw_enabled: cfg?.nsfw_enabled ?? false,
         nsfw_channel_id: cfg?.nsfw_channel_id ?? null,
         nsfw_autopost_enabled: cfg?.nsfw_autopost_enabled ?? false,
@@ -1236,6 +1272,12 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   /** Defaults de bloques JSONB (coinciden con los del bot). */
   const dropsCfg = config?.drops ?? { list: [] as NonNullable<GuildConfig['drops']>['list'] };
   const automodCfg = config?.automod_config ?? { links: false, invites: false, caps: false, spam: false, flood: false, words: [] as string[] };
+  const newsChannels = config?.news_channels ?? {
+    anime: null as string | null,
+    games: null as string | null,
+    steam: null as string | null,
+    tech: null as string | null,
+  };
   const levelRoles = config?.level_roles ?? [];
   const allianceCfg = config?.alliance_config ?? {
     enabled: false,
@@ -2026,7 +2068,10 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                         </button>
                       </div>
                     </div>
-                    <div className="flex justify-end sm:col-span-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2 sm:col-span-2">
+                      <p className="text-[10px] text-white/40">
+                        {t.gwSlotAuto}: {gwNextSlot ? <strong className="text-neon-blue">#{gwNextSlot}</strong> : t.gwSlotsFull}
+                      </p>
                       <button
                         type="button"
                         onClick={() => void gwCreate()}
@@ -2036,6 +2081,53 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                         {t.gwSubmit}
                       </button>
                     </div>
+                  </div>
+                )}
+
+                {/* Registro de cupos: #1..#10 automáticos (se reutilizan al liberar). */}
+                <div className="rounded-xl border border-white/10 bg-black/20 p-3">
+                  <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-white/60">{t.gwSlotsTitle}</p>
+                    <p className="text-[10px] text-white/35">{t.gwSlotsHint}</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                    {Array.from({ length: gwSlotCount }, (_, i) => i + 1).map((slot) => {
+                      const gw = gwActive.find((g) => g.slot === slot);
+                      if (!gw) {
+                        return (
+                          <div key={slot} className="rounded-lg border border-dashed border-white/10 px-2.5 py-2">
+                            <p className="text-[10px] font-black text-white/30">#{slot}</p>
+                            <p className="truncate text-[10px] text-white/25">{t.gwSlotFree}</p>
+                          </div>
+                        );
+                      }
+                      return (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => void gwToggleParticipants(gw.id)}
+                          className="rounded-lg border border-neon-blue/30 bg-neon-blue/5 px-2.5 py-2 text-left transition hover:border-neon-blue/60"
+                        >
+                          <p className="flex items-center justify-between text-[10px] font-black text-neon-blue">
+                            <span>#{slot}</span>
+                            <span>{gw.status === 'paused' ? '⏸' : '▶'}</span>
+                          </p>
+                          <p className="truncate text-[10px] text-white/70">{gw.prize}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {gwLimit && (
+                  <div className="flex flex-wrap items-center gap-3 rounded-xl border border-red-400/30 bg-red-400/10 px-4 py-3">
+                    <p className="min-w-0 flex-1 text-xs text-red-200">{t.gwLimitReached}</p>
+                    <a
+                      href="/premium"
+                      className="rounded-lg border border-red-300/40 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-red-100 transition hover:border-red-200"
+                    >
+                      {t.gwPremiumCta}
+                    </a>
                   </div>
                 )}
 
@@ -2063,6 +2155,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                           <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-widest ${chip.cls}`}>
                             {chip.icon} {gw.status}
                           </span>
+                          {gw.slot > 0 && (
+                            <span className="rounded-md border border-neon-blue/40 bg-neon-blue/10 px-1.5 py-0.5 text-[9px] font-black text-neon-blue">
+                              #{gw.slot}
+                            </span>
+                          )}
                           <p className="min-w-0 flex-1 truncate text-xs font-bold text-white">{gw.prize}</p>
                           <span className="text-[10px] text-white/50">
                             {t.gwEndsIn}: {remaining}
@@ -2077,6 +2174,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                           <span>
                             {t.gwBy}: <code>{gw.hosted_by}</code> · {gw.source}
                           </span>
+                          <span>{t.gwId}: <code>{gw.id}</code></span>
                           <span>#{gw.channel_id}</span>
                           {gw.required_messages > 0 && <span>✉ {gw.required_messages}</span>}
                         </div>
@@ -3505,6 +3603,64 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               )}
             </div>
             <HelpZone title={SECTION_HELP.autoposts.title} commands={SECTION_HELP.autoposts.commands} note={SECTION_HELP.autoposts.note} />
+          </section>
+          )}
+
+          {view === 'news' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="globe" size={18} className="text-neon-blue" /> {t.newsTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.news.title} commands={SECTION_HELP.news.commands} note={SECTION_HELP.news.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('news')}
+                onImport={(file) => void importFile(file, 'news')}
+              />
+            </div>
+            <p className="mb-4 text-xs text-white/45">{t.newsHint}</p>
+            <div className="grid gap-5">
+              <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.newsToggle}</p>
+                  <p className="text-xs text-white/50">{t.newsToggleHint}</p>
+                </div>
+                <Toggle on={Boolean(config.news_enabled)} onChange={(v) => update({ news_enabled: v })} />
+              </div>
+              {config.news_enabled && (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {([
+                    { key: 'anime', label: t.newsAnime },
+                    { key: 'games', label: t.newsGames },
+                    { key: 'steam', label: t.newsSteam },
+                    { key: 'tech', label: t.newsTech },
+                  ] as const).map(({ key, label }) => (
+                    <Field key={key} label={label}>
+                      {hasGuildData ? (
+                        <NiceSelect
+                          value={newsChannels[key]}
+                          options={textChannelOptions}
+                          placeholder={t.pickChannel}
+                          onChange={(v) => update({ news_channels: { ...newsChannels, [key]: v ?? null } })}
+                        />
+                      ) : (
+                        <input
+                          className={inputCls}
+                          value={newsChannels[key] ?? ''}
+                          onChange={(e) => update({ news_channels: { ...newsChannels, [key]: e.target.value || null } })}
+                        />
+                      )}
+                    </Field>
+                  ))}
+                </div>
+              )}
+            </div>
+            <HelpZone title={SECTION_HELP.news.title} commands={SECTION_HELP.news.commands} note={SECTION_HELP.news.note} />
           </section>
           )}
 

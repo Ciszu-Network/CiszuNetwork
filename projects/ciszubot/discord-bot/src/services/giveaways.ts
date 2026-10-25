@@ -61,7 +61,7 @@ function buttonRow(giveawayId: string, disabled = false) {
   ];
 }
 
-function baseEmbed(prize: string, opts: CreateOptions, endsAt: Date, status = 'running') {
+function baseEmbed(prize: string, opts: CreateOptions, endsAt: Date, status = 'running', slot?: number) {
   const req = [
     opts.requiredRoleIds?.length ? `Roles requeridos: ${opts.requiredRoleIds.map((r) => `<@&${r}>`).join(', ')}` : null,
     opts.maxParticipants ? `Máximo de participantes: **${opts.maxParticipants}**` : null,
@@ -73,7 +73,7 @@ function baseEmbed(prize: string, opts: CreateOptions, endsAt: Date, status = 'r
   return new EmbedBuilder()
     .setTitle(`🎉 Giveaway: ${prize}`)
     .setDescription(
-      `Pulsa el botón **Participar** para entrar.\n\n**Ganadores:** ${opts.winners}\n**Termina:** <t:${Math.floor(endsAt.getTime() / 1000)}:R>` +
+      `Pulsa el botón **Participar** para entrar.\n\n**${slot ? `Índice: #${slot} · ` : ''}Ganadores:** ${opts.winners}\n**Termina:** <t:${Math.floor(endsAt.getTime() / 1000)}:R>` +
         (req ? `\n\n${req}` : ''),
     )
     .setColor(status === 'cancelled' ? '#ef4444' : status === 'paused' ? '#f59e0b' : '#ff33cc')
@@ -305,54 +305,111 @@ export async function endGiveaway(guild: Guild, data: { id: string }): Promise<v
 
 /** Límite de sorteos ACTIVOS simultáneos (free: 10 · premium: ilimitados). */
 export const GIVEAWAY_FREE_LIMIT = 10;
+export const GIVEAWAY_PREMIUM_URL = 'https://ciszubot.vercel.app/premium';
 
-/** Crea el sorteo (botón) y programa su fin. */
-export async function createGiveaway(guild: Guild, channel: TextChannel, opts: CreateOptions): Promise<{ ok: boolean; id?: string; limitReached?: boolean }> {
-  // Límite free: 10 sorteos activos (pausados cuentan; terminados/cancelados no).
+/** Cupo libre más bajo: 1..10 en free; desde 1 sin tope en premium. */
+function pickFreeSlot(used: number[], premium: boolean): number | null {
+  const taken = new Set(used.filter((slot) => slot > 0));
+  const max = premium ? Math.max(GIVEAWAY_FREE_LIMIT, ...taken) + 1 : GIVEAWAY_FREE_LIMIT;
+  for (let slot = 1; slot <= max; slot++) {
+    if (!taken.has(slot)) return slot;
+  }
+  return null;
+}
+
+async function activeSlots(guildId: string): Promise<number[]> {
+  const giveaways = ciszubotSchema.giveaways;
+  const rows = await db
+    .select({ slot: giveaways.slot })
+    .from(giveaways)
+    .where(and(eq(giveaways.guildId, guildId), inArray(giveaways.status, ['running', 'paused'])))
+    .limit(500);
+  return rows.map((row) => Number(row.slot) || 0);
+}
+
+/** Crea el sorteo con índice automático y programa su fin. */
+export async function createGiveaway(
+  guild: Guild,
+  channel: TextChannel,
+  opts: CreateOptions,
+): Promise<{ ok: boolean; id?: string; slot?: number; limitReached?: boolean; error?: 'db' | 'send' }> {
+  const giveaways = ciszubotSchema.giveaways;
+  let premium = false;
   try {
-    const giveaways = ciszubotSchema.giveaways;
-    const premium = await isPremiumGuild(guild.id);
-    if (!premium) {
-      const active = await db
-        .select({ id: giveaways.id })
-        .from(giveaways)
-        .where(and(eq(giveaways.guildId, guild.id), inArray(giveaways.status, ['running', 'paused'])));
-      if (active.length >= GIVEAWAY_FREE_LIMIT) {
-        return { ok: false, limitReached: true };
-      }
-    }
+    premium = await isPremiumGuild(guild.id);
   } catch (error) {
-    logger.warn('createGiveaway limit check:', error);
+    logger.warn('createGiveaway premium check:', error);
   }
 
   const endsAt = new Date(Date.now() + opts.durationMs);
   const id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-  const msg = await channel.send({ embeds: [baseEmbed(opts.prize, opts, endsAt)], components: buttonRow(id) as never });
+  let slot: number | null = null;
+  let inserted = false;
+
+  // El unique parcial (guild_id, slot) resuelve carreras entre creaciones:
+  // si otro sorteo tomó el cupo, se recalcula y se reintenta.
+  for (let attempt = 0; attempt < 3 && !inserted; attempt++) {
+    let used: number[];
+    try {
+      used = await activeSlots(guild.id);
+    } catch (error) {
+      logger.warn('createGiveaway slot check:', error);
+      return { ok: false, error: 'db' };
+    }
+    slot = pickFreeSlot(used, premium);
+    if (slot === null) return { ok: false, limitReached: true };
+    try {
+      await db.insert(giveaways).values({
+        id,
+        guildId: guild.id,
+        slot,
+        channelId: channel.id,
+        messageId: 'pending',
+        prize: opts.prize,
+        winners: opts.winners,
+        endsAt,
+        hostedBy: opts.host.id,
+        status: 'running',
+        requiredRoleIds: opts.requiredRoleIds ?? [],
+        grantRoleIds: opts.grantRoleIds ?? [],
+        maxParticipants: opts.maxParticipants ?? 0,
+        requiredMessages: opts.requiredMessages ?? 0,
+        bonusRoles: opts.bonusRoles ?? [],
+        createdSource: opts.source ?? 'command',
+      });
+      inserted = true;
+    } catch (error) {
+      logger.warn('createGiveaway insert (reintento):', error);
+    }
+  }
+  if (!inserted || slot === null) return { ok: false, error: 'db' };
 
   try {
-    const giveaways = ciszubotSchema.giveaways;
-    await db.insert(giveaways).values({
+    const msg = await channel.send({
+      embeds: [baseEmbed(opts.prize, opts, endsAt, 'running', slot)],
+      components: buttonRow(id) as never,
+    });
+    await db.update(giveaways).set({ messageId: msg.id }).where(eq(giveaways.id, id));
+    scheduleGiveaway(guild, {
       id,
-      guildId: guild.id,
-      channelId: channel.id,
-      messageId: msg.id,
+      guild_id: guild.id,
+      channel_id: channel.id,
+      message_id: msg.id,
       prize: opts.prize,
       winners: opts.winners,
-      endsAt,
-      hostedBy: opts.host.id,
-      status: 'running',
-      requiredRoleIds: opts.requiredRoleIds ?? [],
-      grantRoleIds: opts.grantRoleIds ?? [],
-      maxParticipants: opts.maxParticipants ?? 0,
-      requiredMessages: opts.requiredMessages ?? 0,
-      bonusRoles: opts.bonusRoles ?? [],
-      createdSource: opts.source ?? 'command',
+      ends_at: endsAt.toISOString(),
+      hosted_by: opts.host.id,
     });
+    return { ok: true, id, slot };
   } catch (error) {
-    logger.warn('createGiveaway insert:', error);
+    logger.warn('createGiveaway send:', error);
+    await db
+      .update(giveaways)
+      .set({ status: 'cancelled', ended: true, cancelledAt: new Date() })
+      .where(eq(giveaways.id, id))
+      .catch(() => undefined);
+    return { ok: false, error: 'send' };
   }
-  scheduleGiveaway(guild, { id, guild_id: guild.id, channel_id: channel.id, message_id: msg.id, prize: opts.prize, winners: opts.winners, ends_at: endsAt.toISOString(), hosted_by: opts.host.id });
-  return { ok: true, id };
 }
 
 /** Compatibilidad con el comando clásico (reacciones → ahora botón). */
@@ -363,13 +420,16 @@ export async function startGiveaway(
   winners: number,
   durationMs: number,
   host: { id: string; tag: string; displayAvatarURL(opts?: { size?: number }): string },
-): Promise<{ ok: boolean; message?: string }> {
+): Promise<{ ok: boolean; message?: string; slot?: number }> {
   const res = await createGiveaway(guild, channel, { prize, winners, durationMs, host });
   return {
     ok: res.ok,
+    slot: res.slot,
     message: res.limitReached
-      ? `Límite de ${GIVEAWAY_FREE_LIMIT} sorteos activos alcanzado (plan free). Los sorteos premium son ilimitados.`
-      : undefined,
+      ? `Límite de ${GIVEAWAY_FREE_LIMIT} sorteos activos (#1–#${GIVEAWAY_FREE_LIMIT}) alcanzado en el plan free. Libera un cupo o compra premium: ${GIVEAWAY_PREMIUM_URL}`
+      : res.ok
+        ? undefined
+        : `No se pudo crear el sorteo (${res.error ?? 'error'}). Inténtalo de nuevo.`,
   };
 }
 
@@ -507,6 +567,14 @@ export async function resumeActiveGiveaways(guild: Guild): Promise<void> {
       .where(and(eq(giveaways.guildId, guild.id), eq(giveaways.ended, false)));
     for (const gw of rows) {
       if (gw.status !== 'running') continue; // pausados/cancelados: sin timer
+      if (gw.messageId === 'pending') {
+        // Proceso interrumpido entre reservar el cupo y enviar el mensaje.
+        await db
+          .update(giveaways)
+          .set({ status: 'cancelled', ended: true, cancelledAt: new Date() })
+          .where(eq(giveaways.id, gw.id));
+        continue;
+      }
       const data: GiveawayData = {
         id: gw.id,
         guild_id: gw.guildId,

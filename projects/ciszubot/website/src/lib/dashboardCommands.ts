@@ -123,6 +123,11 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
     commands: [],
     note: 'Sin comandos: el bot publica automáticamente en los canales configurados según el intervalo de cada entrada.',
   },
+  news: {
+    title: 'Noticias verificadas',
+    commands: [],
+    note: 'Sin comandos: el bot consulta fuentes verificadas y publica cada noticia nueva en el canal de su categoría, sin intervalo por noticia.',
+  },
   confessions: {
     title: 'Comandos de confesiones',
     commands: byNames(['confess']),

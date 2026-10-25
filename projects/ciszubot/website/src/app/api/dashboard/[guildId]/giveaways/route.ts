@@ -107,8 +107,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ guil
 
   return NextResponse.json(
     {
+      free_limit: 10,
       giveaways: rows.map((r) => ({
         id: r.id,
+        slot: r.slot,
         prize: r.prize,
         status: r.status,
         ended: r.ended,
