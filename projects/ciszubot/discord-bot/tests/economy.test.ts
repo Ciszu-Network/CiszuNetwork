@@ -10,7 +10,6 @@ vi.mock('@ciszunetwork/db', async (importOriginal) => {
 import {
   addBank,
   addMoney,
-  formatMoney,
   getTopWallets,
   getWallet,
   setWallet,
@@ -104,13 +103,5 @@ describe('getTopWallets', () => {
   it('normaliza y devuelve los top', async () => {
     dbState.set(createDb([{ userId: 'a', balance: '10' }]).db);
     await expect(getTopWallets('g1')).resolves.toEqual([{ user_id: 'a', balance: 10 }]);
-  });
-});
-
-describe('formatMoney', () => {
-  it('formatea con la moneda', () => {
-    expect(formatMoney(0)).toBe('0 🪙');
-    // el separador de miles depende del ICU del runtime (small-icu → sin separador)
-    expect(formatMoney(1250)).toMatch(/^[\d.,]+ 🪙$/);
   });
 });

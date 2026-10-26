@@ -1,6 +1,6 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
-import { addMoney, getWallet, setWallet, randomBetween } from '../services/economy';
+import { getWallet } from '../services/economy';
 import { getGuildConfig, formatCoins } from '../services/configService';
 import { langOf, tr } from '../services/i18n';
 
@@ -24,9 +24,13 @@ const create = (): BotCommand => ({
       .setColor('#00d4ff')
       .setTitle(tr(L, `💰 Saldo de ${target.username}`, `💰 ${target.username}'s balance`))
       .setDescription(
-        tr(L, `**Monedas:** ${(w.balance)}\n**Banco:** ${(w.bank)}\n**Total:** ${(w.balance + w.bank)}`, `**Coins:** ${(w.balance)}\n**Bank:** ${(w.bank)}\n**Total:** ${(w.balance + w.bank)}`)
+        tr(
+          L,
+          `**Monedas:** ${formatCoins(cfg, w.balance)}\n**Banco:** ${formatCoins(cfg, w.bank)}\n**Total:** ${formatCoins(cfg, w.balance + w.bank)}`,
+          `**Coins:** ${formatCoins(cfg, w.balance)}\n**Bank:** ${formatCoins(cfg, w.bank)}\n**Total:** ${formatCoins(cfg, w.balance + w.bank)}`,
+        ),
       )
-      .setFooter({ text: tr(L, tr(L, `CiszuBot • Solicitado por ${message.author.tag}`, `CiszuBot • Requested by ${message.author.tag}`), `CiszuBot • Requested by ${message.author.tag}`), iconURL: message.author.displayAvatarURL() })
+      .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },

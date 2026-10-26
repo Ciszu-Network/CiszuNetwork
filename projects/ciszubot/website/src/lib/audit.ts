@@ -7,7 +7,16 @@ import { db, ciszubotSchema } from '@ciszunetwork/db';
  * Nunca lanza: un fallo de auditoría no debe romper el flujo del usuario.
  */
 export interface AuditEntry {
-  event: 'login' | 'login_failed' | 'logout' | 'config_update' | 'leaderboard_reset' | 'bot_action_say' | 'customcmd_create' | 'customcmd_delete';
+  event:
+    | 'login'
+    | 'login_failed'
+    | 'logout'
+    | 'config_update'
+    | 'leaderboard_reset'
+    | 'bot_action_say'
+    | 'bot_action_poll'
+    | 'customcmd_create'
+    | 'customcmd_delete';
   actorId?: string | null;
   actorName?: string | null;
   target?: string | null;

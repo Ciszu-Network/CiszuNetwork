@@ -29,7 +29,7 @@ const create = (): BotCommand => ({
     const L = await langOf(message);
     const cfg = await getGuildConfig(message.guild?.id ?? 'DM');
     if (!message.guild) {
-      await message.reply(tr(L, tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'), '❌ This command only works in a server.'));
+      await message.reply(tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'));
       return;
     }
     const name = args.join(' ').toLowerCase();
@@ -62,7 +62,7 @@ const create = (): BotCommand => ({
 
     const w = await getWallet(message.author.id, message.guild.id);
     if (w.balance < item.price) {
-      await message.reply(`❌ No tienes suficientes monedas (necesitas ${(item.price)}).`);
+      await message.reply(tr(L, `❌ No tienes suficientes monedas (necesitas ${formatCoins(cfg, item.price)}).`, `❌ You do not have enough coins (you need ${formatCoins(cfg, item.price)}).`));
       return;
     }
 
@@ -73,7 +73,7 @@ const create = (): BotCommand => ({
       const role = message.guild.roles.cache.get(item.role_id);
       if (role) {
         await message.member?.roles.add(role).catch(() => undefined);
-        roleNote = `\n📛 Rol **${role.name}** otorgado!`;
+        roleNote = tr(L, `\n📛 Rol **${role.name}** otorgado!`, `\n📛 Role **${role.name}** granted!`);
       }
     }
 
@@ -93,8 +93,14 @@ const create = (): BotCommand => ({
 
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
-      .setTitle(`✅ ¡Compraste ${item.emoji || '🎁'} ${item.name}!`)
-      .setDescription(`Pagaste **${(item.price)}**.${roleNote}\n**Saldo restante:** ${(w.balance - item.price)}`)
+      .setTitle(tr(L, `✅ ¡Compraste ${item.emoji || '🎁'} ${item.name}!`, `✅ You bought ${item.emoji || '🎁'} ${item.name}!`))
+      .setDescription(
+        tr(
+          L,
+          `Pagaste **${formatCoins(cfg, item.price)}**.${roleNote}\n**Saldo restante:** ${formatCoins(cfg, w.balance - item.price)}`,
+          `You paid **${formatCoins(cfg, item.price)}**.${roleNote}\n**Remaining balance:** ${formatCoins(cfg, w.balance - item.price)}`,
+        ),
+      )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });

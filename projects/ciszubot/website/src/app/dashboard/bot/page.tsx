@@ -59,7 +59,15 @@ export default function BotPreferencesPage() {
     mod_role_ids: string[];
     bot_role_ids: string[];
     mute_role_id: string | null;
-  }>({ owner_role_ids: [], admin_role_ids: [], mod_role_ids: [], bot_role_ids: [], mute_role_id: null });
+    nsfw_bot_preferences_enabled: boolean;
+  }>({
+    owner_role_ids: [],
+    admin_role_ids: [],
+    mod_role_ids: [],
+    bot_role_ids: [],
+    mute_role_id: null,
+    nsfw_bot_preferences_enabled: false,
+  });
   const [roleLoading, setRoleLoading] = useState(false);
   const [roleSaving, setRoleSaving] = useState(false);
 
@@ -125,6 +133,7 @@ export default function BotPreferencesPage() {
           mod_role_ids: Array.isArray(cfg.mod_role_ids) ? (cfg.mod_role_ids as string[]) : [],
           bot_role_ids: Array.isArray(cfg.bot_role_ids) ? (cfg.bot_role_ids as string[]) : [],
           mute_role_id: typeof cfg.mute_role_id === 'string' ? cfg.mute_role_id : null,
+          nsfw_bot_preferences_enabled: Boolean(cfg.nsfw_bot_preferences_enabled),
         });
       })
       .catch(() => {
@@ -409,6 +418,36 @@ export default function BotPreferencesPage() {
                 <Icon name="shield" size={13} /> {t.rolesSave}
               </button>
             </div>
+          </div>
+        )}
+        {roleGuildId && !roleLoading && (
+          <div className="mt-4 rounded-xl border border-red-400/25 bg-red-500/5 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="flex items-center gap-2 text-sm font-bold text-white">
+                  <Icon name="triangle-exclamation" size={14} className="text-red-400" />
+                  {t.nsfwBotGateTitle}
+                </p>
+                <p className="mt-1 text-[10px] text-white/45">{t.nsfwBotGateHint}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setRoleCfg({ ...roleCfg, nsfw_bot_preferences_enabled: !roleCfg.nsfw_bot_preferences_enabled })
+                }
+                className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 font-header text-[10px] font-black uppercase tracking-widest transition active:scale-95 ${
+                  roleCfg.nsfw_bot_preferences_enabled
+                    ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/15'
+                    : 'border-amber-400/40 bg-amber-400/10 text-amber-300 hover:bg-amber-400/15'
+                }`}
+              >
+                <Icon name={roleCfg.nsfw_bot_preferences_enabled ? 'check' : 'triangle-exclamation'} size={12} />
+                {roleCfg.nsfw_bot_preferences_enabled ? t.nsfwBotGateOn : t.nsfwBotGateOff}
+              </button>
+            </div>
+            {!roleCfg.nsfw_bot_preferences_enabled && (
+              <p className="mt-2 text-[10px] text-white/35">{t.nsfwBotGateWarning}</p>
+            )}
           </div>
         )}
       </section>

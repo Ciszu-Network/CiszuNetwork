@@ -15,6 +15,7 @@ export interface GuildChannel {
   type: number;
   parentId: string | null;
   position: number;
+  nsfw: boolean;
 }
 
 export interface GuildEmoji {
@@ -108,7 +109,7 @@ export async function fetchGuildInfo(guildId: string): Promise<GuildInfo | null>
       ? ((await rolesRes.json()) as { id: string; name: string; color: number; position: number; permissions?: string }[])
       : [];
     const channelsRaw = channelsRes?.ok
-      ? ((await channelsRes.json()) as { id: string; name: string; type: number; parent_id?: string | null; position: number }[])
+      ? ((await channelsRes.json()) as { id: string; name: string; type: number; parent_id?: string | null; position: number; nsfw?: boolean }[])
       : [];
     const emojisRaw = emojisRes?.ok
       ? ((await emojisRes.json()) as { id: string; name: string | null; animated?: boolean }[])
@@ -159,6 +160,7 @@ export async function fetchGuildInfo(guildId: string): Promise<GuildInfo | null>
           type: channel.type,
           parentId: channel.parent_id ?? null,
           position: channel.position,
+          nsfw: Boolean(channel.nsfw),
         })),
     };
     guildInfoCache.set(guildId, { data, at: Date.now() });

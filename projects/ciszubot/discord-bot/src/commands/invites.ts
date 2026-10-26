@@ -31,7 +31,7 @@ const command: BotCommand = {
   name: 'invites',
   description: 'Muestra tus invitaciones (y las de otros)',
   aliases: ['invitaciones', 'invitacionescontador'],
-  usage: 'cz!invites [@usuario | points N | reward N @rol | reset @usuario]',
+  usage: 'cz!invites [@usuario | points N | reward N @rol | channel #canal | message <texto> | reset @usuario]',
   category: 'Social',
   slashCommand: new SlashCommandBuilder()
     .setName('invites')
@@ -56,7 +56,42 @@ const command: BotCommand = {
         return;
       }
       await updateGuildConfig(guildId, { invite_points_per: points });
-      await message.reply(`✅ Cada invitación válida dará **${points} punto(s)** al invitador.`);
+      await message.reply(tr(L, `✅ Cada invitación válida dará **${points} punto(s)** al invitador.`, `✅ Each valid invite will give **${points} point(s)** to the inviter.`));
+      return;
+    }
+
+    if (sub === 'channel') {
+      if (!(await isStaff(message))) {
+        await message.reply(STAFF_ERROR);
+        return;
+      }
+      if ((args[1] ?? '').toLowerCase() === 'off') {
+        await updateGuildConfig(guildId, { invite_channel_id: null });
+        await message.reply(tr(L, '✅ Avisos de invitación desactivados.', '✅ Invite announcements disabled.'));
+        return;
+      }
+      const channel = message.mentions?.channels?.first();
+      if (!channel || (channel.type !== 0 && channel.type !== 5)) {
+        await message.reply(tr(L, '❌ Uso: `cz!invites channel #canal` (o `off`).', '❌ Usage: `cz!invites channel #channel` (or `off`).'));
+        return;
+      }
+      await updateGuildConfig(guildId, { invite_channel_id: channel.id });
+      await message.reply(tr(L, `✅ Los avisos de invitación se enviarán a <#${channel.id}>.`, `✅ Invite announcements will be sent to <#${channel.id}>.`));
+      return;
+    }
+
+    if (sub === 'message') {
+      if (!(await isStaff(message))) {
+        await message.reply(STAFF_ERROR);
+        return;
+      }
+      const text = args.slice(1).join(' ').trim();
+      if (!text) {
+        await message.reply(tr(L, '❌ Uso: `cz!invites message <texto>` con `{user}`, `{inviter}`, `{count}` y `{guild}`.', '❌ Usage: `cz!invites message <text>` with `{user}`, `{inviter}`, `{count}` and `{guild}`.'));
+        return;
+      }
+      await updateGuildConfig(guildId, { invite_message: text.slice(0, 2000) });
+      await message.reply(tr(L, '✅ Mensaje de invitación actualizado.', '✅ Invite message updated.'));
       return;
     }
 
@@ -73,7 +108,7 @@ const command: BotCommand = {
         }
         const rewards = cfg.invite_rewards.filter((r) => r.invites !== threshold);
         await updateGuildConfig(guildId, { invite_rewards: rewards });
-        await message.reply(`✅ Recompensa de **${threshold}** invitaciones eliminada.`);
+        await message.reply(tr(L, `✅ Recompensa de **${threshold}** invitaciones eliminada.`, `✅ Reward for **${threshold}** invites removed.`));
         return;
       }
       const threshold = parseInt(args[1] ?? '', 10);
@@ -84,7 +119,7 @@ const command: BotCommand = {
       }
       const rewards = [...cfg.invite_rewards.filter((r) => r.invites !== threshold), { invites: threshold, role_id: roleId }];
       await updateGuildConfig(guildId, { invite_rewards: rewards });
-      await message.reply(`✅ A las **${threshold}** invitaciones se dará el rol <@&${roleId}>.`);
+      await message.reply(tr(L, `✅ A las **${threshold}** invitaciones se dará el rol <@&${roleId}>.`, `✅ At **${threshold}** invites the role <@&${roleId}> will be granted.`));
       return;
     }
 
@@ -101,7 +136,7 @@ const command: BotCommand = {
       await db
         .delete(ciszubotSchema.invites)
         .where(and(eq(ciszubotSchema.invites.guildId, guildId), eq(ciszubotSchema.invites.inviterId, target.id)));
-      await message.reply(`✅ Invitaciones de **${target.tag ?? target.username}** reseteadas.`);
+      await message.reply(tr(L, `✅ Invitaciones de **${target.tag ?? target.username}** reseteadas.`, `✅ Invites for **${target.tag ?? target.username}** reset.`));
       return;
     }
 
@@ -113,8 +148,8 @@ const command: BotCommand = {
 
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
-      .setTitle(`📨 Invitaciones de ${tag}`)
-      .setDescription(`**${total}** punto(s) por invitaciones válidas.`)
+      .setTitle(tr(L, `📨 Invitaciones de ${tag}`, `📨 ${tag}'s invites`))
+      .setDescription(tr(L, `**${total}** punto(s) por invitaciones válidas.`, `**${total}** point(s) from valid invites.`))
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
 
@@ -122,7 +157,7 @@ const command: BotCommand = {
       embed.addFields({
         name: tr(L, '🏆 Top invitadores', '🏆 Top inviters'),
         value: top
-          .map((t, i) => `**${i + 1}.** <@${t.userId}> — ${t.total} punto(s)`)
+          .map((t, i) => `**${i + 1}.** <@${t.userId}> — ${t.total} ${tr(L, 'punto(s)', 'point(s)')}`)
           .join('\n')
           .slice(0, 1024),
         inline: false,
@@ -133,7 +168,7 @@ const command: BotCommand = {
         name: tr(L, '🎁 Recompensas', '🎁 Rewards'),
         value: cfg.invite_rewards
           .sort((a, b) => a.invites - b.invites)
-          .map((r) => `${r.invites} invitaciones → <@&${r.role_id}>`)
+          .map((r) => `${r.invites} ${tr(L, 'invitaciones', 'invites')} → <@&${r.role_id}>`)
           .join('\n'),
         inline: false,
       });

@@ -18,6 +18,7 @@ const create = (): BotCommand => ({
       await message.reply(tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'));
       return;
     }
+    const cfg = await getGuildConfig(message.guild.id);
     const shopItems = ciszubotSchema.shopItems;
     const rows = await db
       .select()
@@ -35,13 +36,13 @@ const create = (): BotCommand => ({
 
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
-      .setTitle(`🛒 Tienda de ${message.guild.name}`)
+      .setTitle(tr(L, `🛒 Tienda de ${message.guild.name}`, `🛒 ${message.guild.name} shop`))
       .setDescription(
         items.length > 0
           ? items
-              .map((it) => `${it.emoji || '🎁'} **${it.name}** — ${(it.price)} ${it.description ? `\n> ${it.description}` : ''}`)
+              .map((it) => `${it.emoji || '🎁'} **${it.name}** — ${formatCoins(cfg, it.price)} ${it.description ? `\n> ${it.description}` : ''}`)
               .join('\n')
-          : 'La tienda está vacía. Un admin puede añadir ítems con `cz!shopadd`.'
+          : tr(L, 'La tienda está vacía. Un admin puede añadir ítems con `cz!shopadd`.', 'The shop is empty. An admin can add items with `cz!shopadd`.')
       )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();

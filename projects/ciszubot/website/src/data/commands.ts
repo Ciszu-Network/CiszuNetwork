@@ -21,12 +21,14 @@ export const CATEGORY_ICONS: Record<string, string> = {
   'Música': 'music',
   'Niveles': 'star',
   'Social': 'people',
+  'Presentación': 'user',
   'Utilidad': 'settings',
   'Moderación': 'shield',
   'Configuración': 'settings',
   'Búsqueda': 'search',
   'Secreto': 'lock',
   'General': 'help',
+  '+18': 'triangle-exclamation',
 };
 
 /**
@@ -47,12 +49,14 @@ export const CATEGORY_COLORS: Record<string, string> = {
   'Música': '#a855f7',
   'Niveles': '#34d399',
   'Social': '#22d3ee',
+  'Presentación': '#f59e0b',
   'Utilidad': '#fb923c',
   'Moderación': '#ef4444',
   'Configuración': '#94a3b8',
   'Búsqueda': '#818cf8',
   'Secreto': '#6b7280',
   'General': '#94a3b8',
+  '+18': '#f43f5e',
 };
 
 /** Sigla de cada categoría para la referencia de catálogo. */
@@ -63,12 +67,14 @@ const CATEGORY_CODE: Record<string, string> = {
   'Música': 'MUS',
   'Niveles': 'LVL',
   'Social': 'SOC',
+  'Presentación': 'PRE',
   'Utilidad': 'UTL',
   'Moderación': 'MOD',
   'Configuración': 'CFG',
   'Búsqueda': 'BQS',
   'Secreto': 'SEC',
   'General': 'GEN',
+  '+18': 'NSF',
 };
 
 /**

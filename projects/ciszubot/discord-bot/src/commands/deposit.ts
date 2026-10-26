@@ -26,7 +26,7 @@ const create = (): BotCommand => ({
       return;
     }
     if (w.balance < amount) {
-      await message.reply(tr(L, `❌ No tienes suficientes monedas (tienes ${(w.balance)}).`, `❌ You do not have enough coins (you have ${(w.balance)}).`));
+      await message.reply(tr(L, `❌ No tienes suficientes monedas (tienes ${formatCoins(cfg, w.balance)}).`, `❌ You do not have enough coins (you have ${formatCoins(cfg, w.balance)}).`));
       return;
     }
 
@@ -34,7 +34,7 @@ const create = (): BotCommand => ({
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
       .setTitle(tr(L, '🏦 ¡Depósito exitoso!', '🏦 Deposit successful!'))
-      .setDescription(tr(L, `Guardaste **${(amount)}** en el banco.\n**Banco:** ${(w.bank + amount)}`, `You saved **${(amount)}** in the bank.\n**Bank:** ${(w.bank + amount)}`))
+      .setDescription(tr(L, `Guardaste **${formatCoins(cfg, amount)}** en el banco.\n**Banco:** ${formatCoins(cfg, w.bank + amount)}`, `You saved **${formatCoins(cfg, amount)}** in the bank.\n**Bank:** ${formatCoins(cfg, w.bank + amount)}`))
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });

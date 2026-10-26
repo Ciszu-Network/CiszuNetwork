@@ -249,9 +249,11 @@ export async function closePoll(
   client: Client,
   id: number,
   requester?: { id: string; staff: boolean },
+  guildId?: string,
 ): Promise<{ ok: boolean; reason?: string; winner?: string | null }> {
   const row = await getPoll(id);
   if (!row) return { ok: false, reason: 'Esa encuesta ya no existe.' };
+  if (guildId && row.guildId !== guildId) return { ok: false, reason: 'Esa encuesta no pertenece a este servidor.' };
   if (row.ended) return { ok: false, reason: 'Esa encuesta ya estaba cerrada.' };
   if (requester && requester.id !== row.authorId && !requester.staff) {
     return { ok: false, reason: 'Solo el autor o el staff pueden cerrar la encuesta.' };

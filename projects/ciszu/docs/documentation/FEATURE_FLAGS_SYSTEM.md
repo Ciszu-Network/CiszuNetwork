@@ -1,9 +1,9 @@
 # FEATURE_FLAGS_SYSTEM
 
-> **Versión**: 1.0
-> **Actualización**: 10 oct 2026
+> **Versión**: 1.1
+> **Actualización**: 25 oct 2026
 > **Identificador**: FEATURE_FLAGS_SYSTEM
-> **Definición**: Kill switches globales por función de CiszuBot (música, búsqueda, minijuegos, economía…), control de la beta Premium y el sistema de interceptación Premium (aviso en beta / bloqueo real), con control en tiempo real desde la devcon y override por deploy.
+> **Definición**: Kill switches globales por función de CiszuBot (música, búsqueda, minijuegos, economía, +18…), control de la beta Premium y el sistema de interceptación Premium (aviso en beta / bloqueo real), con control en tiempo real desde la devcon y override por deploy.
 
 ---
 
@@ -39,7 +39,8 @@ Migración `20261010000002_feature_flags.sql` (migración 58; aplicar con
 | `ciszubot.premium_guilds` | `guild_id` (PK) · `plan` · `status` (`active`/`past_due`/`canceled`) · `expires_at` · timestamps | **Deny-all** para anon/authenticated (facturación futura); solo `service_role`. Vacía durante la beta |
 
 Seeds iniciales (todas `enabled = true`): `music`, `search`, `minigames`, `economy`,
-`help`, `utility`, `moderation`, `setup`, `levels`, `social`, `premium_beta`.
+`help`, `utility`, `moderation`, `setup`, `levels`, `social`, `premium_beta`. El flag
+`nsfw` se añadió después con la migración `20261024000005_nsfw_feature_flag.sql`.
 
 Drizzle: `packages/db/src/schemas/ciszubot.ts` exporta `featureFlags` y `premiumGuilds`.
 
@@ -61,9 +62,59 @@ categorías:
 | `setup` | categoría `Configuración` (setprefix, setlang, setupwelcome…) | No |
 | `levels` | categoría `Niveles` (rank, topxp) | No |
 | `social` | categoría `Social` (afk, hi, bye, alliance…) | No |
+| `nsfw` | categoría `+18` y `nsfwpic` (catálogo adulto completo) | No |
 
 Comandos premium individuales adicionales: `embed` (`PREMIUM_COMMANDS`). La función
 "perfil del bot por servidor" se listará como beneficio premium cuando se implemente.
+
+### 3.1 Flag `nsfw` y subsistema +18
+
+El flag `nsfw` es el kill switch global del catálogo adulto. **No sustituye** la
+verificación por servidor: un comando `+18` solo se ejecuta si el flag está activo
+**y** el servidor cumple la triple verificación **y** el canal está marcado como NSFW
+en Discord.
+
+- **Candados por servidor** (todos en `ciszubot.guild_configs`):
+  1. `nsfw_bot_preferences_enabled` — consentimiento en `/dashboard/bot`
+     (Preferencias del bot).
+  2. `nsfw_general_enabled` — activación en la sección **General** del dashboard.
+  3. `nsfw_enabled` — apartado **+18** del dashboard.
+  `isNsfwUnlocked()` exige los tres; `updateGuildConfig()` y la API aplican la cascada
+  (apagar un candado apaga los siguientes y sus sub-opciones).
+- **Sub-opciones**: `nsfw_commands_enabled` (comandos), `nsfw_autopost_enabled` +
+  `nsfw_autopost_minutes` (autopics), `nsfw_channel_id` y
+  `nsfw_autopost_channel_id` (canal independiente opcional). Los canales deben existir
+  y estar marcados NSFW; la API lo valida antes de guardar.
+- **Preferencias de contenido** (`nsfw_content` JSONB): `default_gender`
+  (`women`/`men`/`mixed`), toggles LGBT (`gay`, `lesbian`, `trans`, `bisexual`,
+  `pansexual`, `nonbinary`) y fetiches (`femboy`, `tomboy`, `blonde`, `ebony`,
+  `latina`, `milf`, `feet`, `thighs`, `belly`). Los comandos y autopics filtran el
+  catálogo con estas preferencias.
+- **Catálogo**: 30 bases en `src/services/nsfw/catalog.ts` (actos, cuerpo, waifu,
+  LGBT y fetiches), estilos `anime`/`cartoon`/`real`, géneros `girl`/`boy`/`mixed` y
+  aliases generados (`base+estilo+género`, p. ej. `cz!boobsanimegirl`,
+  `cz!dickrealboy`). Los comandos LGBT y de fetiche son independientes y
+  desactivables por servidor.
+- **Proveedores**: Purrbot para anime/cartoon cuando hay tag; RedGifs para `real` y
+  fallback. Timeout de 8 s, token temporal de RedGifs cacheado 20 h, allowlist de
+  hosts HTTPS y bloqueo de tags de menores (`loli`, `shota`, `child`, `underage`,
+  `teen`, `schoolgirl`, etc.). El bot no almacena ni proxya el media.
+- **Runtime**: `src/utils/commandGate.ts` evalúa flag global → categoría `+18` →
+  triple candado → canal NSFW → `nsfw_commands_enabled`; `src/commands/nsfw.ts`
+  repite las comprobaciones para prefijo y slash. `cz!help` oculta la categoría y
+  desactiva el select si no está desbloqueada.
+- **Autopics**: `src/services/autoposts.ts` crea el timer `guild:nsfw` solo con triple
+  candado, canal configurado y `nsfw_autopost_enabled`; intervalo mínimo 15 min
+  (máximo 10080). Publica en `nsfw_autopost_channel_id` o, si es `null`, en
+  `nsfw_channel_id`; si el canal deja de ser NSFW, no publica.
+- **Operación**: `node scripts/features.mjs disable nsfw "motivo"` apaga el catálogo
+  global en ≤20 s (TTL de `featureFlags`). La verificación por servidor y el canal
+  NSFW siguen aplicando. Para reactivar: `enable nsfw`.
+- **Archivos**: `src/config/features.ts` · `src/services/nsfw/{catalog,providers}.ts` ·
+  `src/commands/nsfw.ts` · `src/services/autoposts.ts` · `src/services/configService.ts`
+  · `src/utils/commandGate.ts` · `src/commands/help.ts` · dashboard/API de ciszubot.
+  Migraciones: `20261019000011_autoposts_nsfw.sql`,
+  `20261024000003_nsfw_subsystem.sql`, `20261024000005_nsfw_feature_flag.sql`.
 
 ## 4. Lado bot
 
@@ -83,7 +134,9 @@ Comandos premium individuales adicionales: `embed` (`PREMIUM_COMMANDS`). La func
 - **Comando `cz!premium`** (`src/commands/premium.ts`): informa del programa premium,
   incluye el disclaimer de beta cuando aplica y enlaza a la página web.
 - **Help**: `cz!help` marca las categorías desactivadas (`⛔ desactivada`), y el detalle
-  de comando añade los campos `⛔ Desactivada` (con motivo) y `⭐ Premium`.
+  de comando añade los campos `⛔ Desactivada` (con motivo) y `⭐ Premium`. La categoría
+  `+18` solo se lista si el flag `nsfw`, la triple verificación y
+  `nsfw_commands_enabled` están activos; si no, se oculta del listado y el select.
 - **Per-deploy**: `FEATURES_OFF=music,search` en el `.env` del panel (ver §7).
 
 ## 5. Devcon
@@ -150,6 +203,10 @@ música puede no sobrevivir (transcodificación); para probar:
 - Bot: `src/config/features.ts` · `src/services/featureFlags.ts` ·
   `src/utils/commandGate.ts` · `src/commands/premium.ts` · `src/index.ts` (dispatch) ·
   `src/commands/help.ts`.
+- Subsistema +18: `src/services/nsfw/catalog.ts` · `src/services/nsfw/providers.ts` ·
+  `src/services/autoposts.ts` · `src/commands/nsfw.ts` · `src/services/configService.ts`
+  (triple candado y `nsfw_content`) · migraciones `20261024000003_nsfw_subsystem.sql` y
+  `20261024000005_nsfw_feature_flag.sql`.
 - Devcon: `test/website/debug/dev_console.ps1` (sección) ·
   `tools/consoles/console-guard.ps1` (`Test-ConsoleProjectAdmin`) ·
   `scripts/console-guard.mts` (`projectCargos`) · `scripts/features.mjs`.
@@ -172,8 +229,8 @@ música puede no sobrevivir (transcodificación); para probar:
 
 ## 10. Verificación
 
-- Migración aplicada y verificada con Management API (`feature_flags` con 11 filas,
-  `premium_guilds` vacía).
+- Migración aplicada y verificada con Management API (`feature_flags` con 12 filas,
+  incluida `nsfw`; `premium_guilds` vacía).
 - `scripts/features.mjs` probado (disable/enable con motivo).
 - Guard probado: `can --staff CZ-001 --project ciszubot` ⇒ `projectCargos: ["CEO"]`.
 - `pnpm --filter ciszubot exec tsc --noEmit` ✅ · `pnpm --filter ciszubot-website
@@ -183,7 +240,8 @@ música puede no sobrevivir (transcodificación); para probar:
 
 ---
 
-_Última revisión: 23 oct 2026._ Relacionado: `ACCESS_CONTROL_SYSTEM.md` (gate de
+_Última revisión: 25 oct 2026._ Relacionado: `ACCESS_CONTROL_SYSTEM.md` (gate de
 consolas), `CONSOLE_SECURITY_SYSTEM.md`, `DEV_CONSOLE_SYSTEM.md`, `DB_SYSTEM.md`,
-`SECURITY_PROTOCOLS.md`, `PAYMENTS_SYSTEM.md` (futuro checkout), `MONETIZATION_PROTOCOLS.md`,
+`SECURITY_PROTOCOLS.md`, `HEALTH_AND_SAFETY_PROTOCOLS.md` (contenido adulto y edad),
+`PAYMENTS_SYSTEM.md` (futuro checkout), `MONETIZATION_PROTOCOLS.md`,
 `VPS_PLAN.md` (despliegue del bot), `AGENTS.md`.

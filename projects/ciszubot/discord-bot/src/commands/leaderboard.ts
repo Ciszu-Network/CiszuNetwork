@@ -1,6 +1,7 @@
 ﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { getTopWallets } from '../services/economy';
+import { getGuildConfig, formatCoins } from '../services/configService';
 import { langOf, tr } from '../services/i18n';
 
 const create = (): BotCommand => ({
@@ -13,9 +14,10 @@ const create = (): BotCommand => ({
   async execute(message) {
     const L = await langOf(message);
     if (!message.guild) {
-      await message.reply(tr(L, tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'), '❌ This command only works in a server.'));
+      await message.reply(tr(L, '❌ Este comando solo funciona en un servidor.', '❌ This command only works in a server.'));
       return;
     }
+    const cfg = await getGuildConfig(message.guild.id);
     const top = await getTopWallets(message.guild.id, 10);
     const members = message.guild.members;
 
@@ -24,7 +26,7 @@ const create = (): BotCommand => ({
     for (const entry of top) {
       const member = await members.fetch(entry.user_id).catch(() => null);
       const name = member?.user.username ?? entry.user_id;
-      lines.push(`\`${i}.\` **${name}** — ${(entry.balance)}`);
+      lines.push(`\`${i}.\` **${name}** — ${formatCoins(cfg, entry.balance)}`);
       i++;
     }
 
@@ -32,7 +34,7 @@ const create = (): BotCommand => ({
       .setColor('#00d4ff')
       .setTitle(`🏆 Top 10 — ${message.guild.name}`)
       .setDescription(lines.length > 0 ? lines.join('\n') : tr(L, 'Aún no hay datos de monedas en este servidor.', 'There is no coin data in this server yet.'))
-      .setFooter({ text: tr(L, tr(L, `CiszuBot • Solicitado por ${message.author.tag}`, `CiszuBot • Requested by ${message.author.tag}`), `CiszuBot • Requested by ${message.author.tag}`), iconURL: message.author.displayAvatarURL() })
+      .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },

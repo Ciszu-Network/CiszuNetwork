@@ -327,7 +327,7 @@ export default function Navbar({ account }: NavbarProps) {
       updatePreferences({ lang: code });
     }
     toast(dict.nav.langChanged.replace('{lang}', getLangLabel(code)), 'info');
-    scheduleReload();
+    window.setTimeout(() => window.location.reload(), 350);
   };
 
   const handleSignOut = async () => {

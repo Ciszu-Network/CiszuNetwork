@@ -87,7 +87,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `DOMAINS_SYSTEM` · `MONITORING_SYSTEM` (UptimeRobot + ntfy) · `ANALYTICS_SYSTEM` ·
   `ERRORS_SYSTEM` (Sentry) · `EMAILS_SYSTEM` · `PAYMENTS_SYSTEM` · `REVIEWS_SYSTEM` ·
   `GOOGLE_SYSTEM` (negocio y reseñas de Google) · `GLOBAL_ADVISOR_SYSTEM` (mensajes globales del admin a las webs) ·
-  `FEATURE_FLAGS_SYSTEM` (kill switches del bot + beta premium) ·
+  `FEATURE_FLAGS_SYSTEM` (kill switches del bot + beta premium + subsistema +18) ·
   `CORS_SYSTEM` · `BUSINESS_SYSTEM` · `OPENCODE_SYSTEM` (voz + comandos) ·
   `MODELS_LLM_SYSTEM` (historial y facturación de modelos LLM) ·
   `MODELS_SKILLS_SYSTEM` (galería de skills del agente opencode: 34 instaladas en `.opencode/skills/`, MCP ausente) ·

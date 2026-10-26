@@ -370,13 +370,26 @@ async function handleInviteJoin(member: GuildMember): Promise<void> {
       points,
     });
 
+    const rows = await db
+      .select({ total: ciszubotSchema.invites.points })
+      .from(ciszubotSchema.invites)
+      .where(and(eq(ciszubotSchema.invites.guildId, guild.id), eq(ciszubotSchema.invites.inviterId, inviterId)));
+    const total = rows.reduce((sum, r) => sum + Number(r.total), 0);
+
+    if (cfg.invite_channel_id && cfg.invite_message.trim()) {
+      const channel = guild.channels.cache.get(cfg.invite_channel_id);
+      if (channel?.isTextBased()) {
+        const text = cfg.invite_message
+          .replaceAll('{user}', `<@${member.id}>`)
+          .replaceAll('{inviter}', `<@${inviterId}>`)
+          .replaceAll('{count}', String(total))
+          .replaceAll('{guild}', guild.name);
+        await channel.send({ content: text.slice(0, 2000) }).catch(() => undefined);
+      }
+    }
+
     // Recompensas por umbral
     if (cfg.invite_rewards.length > 0) {
-      const rows = await db
-        .select({ total: ciszubotSchema.invites.points })
-        .from(ciszubotSchema.invites)
-        .where(and(eq(ciszubotSchema.invites.guildId, guild.id), eq(ciszubotSchema.invites.inviterId, inviterId)));
-      const total = rows.reduce((sum, r) => sum + Number(r.total), 0);
       const inviter = await guild.members.fetch(inviterId).catch(() => null);
       if (inviter) {
         for (const reward of cfg.invite_rewards) {

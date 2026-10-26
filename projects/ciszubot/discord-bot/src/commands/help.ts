@@ -3,6 +3,7 @@ import type { BotCommand } from '../types/command';
 import { LINKS, BOT_ASSETS } from '../config/links';
 import { resolveFeatureForCommand, isPremiumCommand } from '../config/features';
 import { getFeatureState, isPremiumBeta } from '../services/featureFlags';
+import { getGuildConfig, isNsfwUnlocked } from '../services/configService';
 import { langOf, tr } from '../services/i18n';
 
 const emojiMap: Record<string, string> = {
@@ -23,9 +24,11 @@ const categoryEmoji: Record<string, string> = {
   'Configuración': '⚙️',
   'Niveles': '📈',
   'Social': '👥',
+  'Presentación': '👤',
   'Búsqueda': '🔎',
   'Secreto': '🕵️',
   'General': '📁',
+  '+18': '🔞',
 };
 const catEmoji = (cat: string): string => categoryEmoji[cat] ?? '📁';
 
@@ -50,6 +53,10 @@ const command: BotCommand = {
       aliases: Map<string, string>;
     };
     const allCommands = Array.from(commands.commands.values());
+    const cfg = message.guild ? await getGuildConfig(message.guild.id) : null;
+    const nsfwState = await getFeatureState('nsfw');
+    const nsfwAllowed = Boolean(nsfwState.enabled && cfg && isNsfwUnlocked(cfg) && cfg.nsfw_commands_enabled);
+    const listedCommands = allCommands.filter((c) => c.category !== '+18' || nsfwAllowed);
 
     // Comando específico
     if (args.length > 0) {
@@ -82,6 +89,13 @@ const command: BotCommand = {
       if (detailState && !detailState.enabled) {
         embed.addFields({ name: '⛔ Desactivada', value: detailState.reason ?? 'Sin motivo especificado', inline: false });
       }
+      if (found.category === '+18' && !nsfwAllowed) {
+        embed.addFields({
+          name: '🔞 +18 desactivado',
+          value: 'Actívalo en el dashboard → **General** → **+18**.',
+          inline: false,
+        });
+      }
       if (isPremiumCommand(found)) {
         const beta = await isPremiumBeta();
         embed.addFields({
@@ -104,7 +118,7 @@ const command: BotCommand = {
     const embed = new EmbedBuilder()
       .setColor('#4f46e5')
       .setTitle('🤖 CiszuBot - Ayuda y Comandos')
-      .setDescription(`¡Hola! Soy CiszuBot, el bot todo en uno. Tengo **${allCommands.length} comandos** disponibles y estoy sirviendo en **${totalServers} servidor(es)**.`)
+      .setDescription(`¡Hola! Soy CiszuBot, el bot todo en uno. Tengo **${listedCommands.length} comandos** disponibles y estoy sirviendo en **${totalServers} servidor(es)**.`)
       .setThumbnail(BOT_ASSETS.isotype)
       .setImage(BOT_ASSETS.wordmark)
       .setFooter({
@@ -114,10 +128,15 @@ const command: BotCommand = {
       .setTimestamp();
 
     const categories: Record<string, string[]> = {};
-    for (const cmd of allCommands) {
+    for (const cmd of listedCommands) {
       const cat = cmd.category || 'General';
       (categories[cat] ??= []).push(`\`cz!${cmd.name}\` - ${cmd.description || 'Sin descripción'}`);
     }
+    const categoryEntries = Object.entries(categories).sort(([a], [b]) => {
+      if (a === '+18') return 1;
+      if (b === '+18') return -1;
+      return 0;
+    });
 
     // Discord limita cada campo a 1024 caracteres, el embed a 25 campos y el
     // total del embed a 6000 caracteres: con ~100 comandos una categoría puede
@@ -144,7 +163,7 @@ const command: BotCommand = {
     let usedFields = 0;
     let usedChars = 0;
     let omittedCommands = 0;
-    for (const [cat, list] of Object.entries(categories)) {
+    for (const [cat, list] of categoryEntries) {
       const sample = allCommands.find((c) => (c.category || 'General') === cat);
       const catSlug = sample ? resolveFeatureForCommand(sample) : null;
       const catState = catSlug ? await getFeatureState(catSlug) : null;
@@ -172,6 +191,14 @@ const command: BotCommand = {
       });
     }
 
+    if (!nsfwAllowed) {
+      embed.addFields({
+        name: '🔞 +18 · ⛔ desactivada',
+        value: 'Activa los tres candados en el dashboard → **General** → **+18** para ver estos comandos.',
+        inline: false,
+      });
+    }
+
     embed.addFields(
       {
         name: '🔧 Información del Bot',
@@ -191,16 +218,20 @@ const command: BotCommand = {
     );
 
     // Menú de selección por categorías (máx. 25 opciones del API de Discord)
-    const catOptions = Array.from(new Set(allCommands.map((c) => c.category || 'General'))).sort();
+    const catOptions = Array.from(new Set(listedCommands.map((c) => c.category || 'General')))
+      .filter((cat) => cat !== '+18')
+      .sort();
+    catOptions.push('+18');
     const selectMenu = new StringSelectMenuBuilder()
       .setCustomId('help_select')
       .setPlaceholder('Selecciona una categoría de comandos')
       .addOptions(
         catOptions.slice(0, 25).map((cat) => ({
           label: cat,
-          description: `Comandos de la categoría ${cat}`,
+          description: cat === '+18' ? 'Contenido para adultos (solo canales NSFW)' : `Comandos de la categoría ${cat}`,
           value: `cat:${cat}`,
           emoji: catEmoji(cat),
+          disabled: cat === '+18' && !nsfwAllowed,
         })),
       );
 

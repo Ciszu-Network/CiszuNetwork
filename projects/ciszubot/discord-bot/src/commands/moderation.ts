@@ -168,26 +168,42 @@ const mute = (): BotCommand => ({
     // Mute INDEFINIDO: se asigna el rol de mute configurado (cz!mute).
     // Para silencios con duración está `cz!tempmute`.
     const cfg = await getGuildConfig(message.guild.id);
-    if (!cfg.mute_role_id) {
-      await message.reply(tr(L, '❌ No hay un **rol de mute** configurado. Configúralo en el dashboard (sección General → Roles del servidor) o usa `cz!tempmute @usuario 10m`.', '❌ There is no **mute role** configured. Set it in the dashboard (General → Server roles) or use `cz!tempmute @user 10m`.'));
-      return;
-    }
-    const role = message.guild.roles.cache.get(cfg.mute_role_id);
-    if (!role) {
-      await message.reply(tr(L, '❌ El rol de mute configurado ya no existe. Vuelve a configurarlo.', '❌ The configured mute role no longer exists. Set it again.'));
-      return;
-    }
+    const role = cfg.mute_role_id ? message.guild.roles.cache.get(cfg.mute_role_id) : null;
     const reason = args.slice(1).join(' ') || tr(L, 'Sin razón', 'No reason');
+
+    if (role) {
+      try {
+        await member.roles.add(role, reason);
+      } catch (error) {
+        await message.reply(hierarchyError('silenciar a ese miembro', error));
+        return;
+      }
+      const embed = new EmbedBuilder()
+        .setColor('#ff9900')
+        .setTitle(tr(L, '🔇 Miembro silenciado (indefinido)', '🔇 Member muted (indefinite)'))
+        .setDescription(tr(L, `**${target.tag}** recibió el rol de mute <@&${role.id}>.\n**Razón:** ${reason}`, `**${target.tag}** received the mute role <@&${role.id}>.\n**Reason:** ${reason}`))
+        .setFooter({ text: tr(L, `Por ${message.author.tag}`, `By ${message.author.tag}`), iconURL: message.author.displayAvatarURL() })
+        .setTimestamp();
+      await message.reply({ embeds: [embed] });
+      return;
+    }
+
     try {
-      await member.roles.add(role, reason);
+      await member.timeout(28 * 86_400_000, reason);
     } catch (error) {
       await message.reply(hierarchyError('silenciar a ese miembro', error));
       return;
     }
     const embed = new EmbedBuilder()
-      .setColor('#ff9900')
-      .setTitle(tr(L, '🔇 Miembro silenciado (indefinido)', '🔇 Member muted (indefinite)'))
-      .setDescription(tr(L, `**${target.tag}** recibió el rol de mute <@&${role.id}>.\n**Razón:** ${reason}`, `**${target.tag}** received the mute role <@&${role.id}>.\n**Reason:** ${reason}`))
+      .setColor('#facc15')
+      .setTitle(tr(L, '⚠️ Mute aplicado sin rol configurado', '⚠️ Mute applied without a configured role'))
+      .setDescription(
+        tr(
+          L,
+          `No hay un **rol de mute** configurado, así que **${target.tag}** fue silenciado con timeout de **28 días**.\nConfigura el rol en el dashboard (General → Roles del servidor) para silencios indefinidos.\n**Razón:** ${reason}`,
+          `No **mute role** is configured, so **${target.tag}** was muted with a **28-day** timeout.\nSet the role in the dashboard (General → Server roles) for indefinite mutes.\n**Reason:** ${reason}`,
+        ),
+      )
       .setFooter({ text: tr(L, `Por ${message.author.tag}`, `By ${message.author.tag}`), iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
@@ -282,7 +298,12 @@ const unmute = (): BotCommand => ({
     }
     const member = await message.guild.members.fetch(target.id).catch(() => null);
     if (!member) return;
-    await member.timeout(null);
+    const cfg = await getGuildConfig(message.guild.id);
+    const role = cfg.mute_role_id ? message.guild.roles.cache.get(cfg.mute_role_id) : null;
+    if (role && member.roles.cache.has(role.id)) {
+      await member.roles.remove(role, tr(L, `Desilenciado por ${message.author.tag}`, `Unmuted by ${message.author.tag}`)).catch(() => undefined);
+    }
+    await member.timeout(null).catch(() => undefined);
     await message.reply(tr(L, `✅ **${target.tag}** ya no está silenciado.`, `✅ **${target.tag}** is no longer muted.`));
   },
 });
@@ -313,16 +334,25 @@ const warn = (): BotCommand => ({
       return;
     }
     const reason = args.slice(1).join(' ') || tr(L, 'Sin razón', 'No reason');
-    await db.insert(ciszubotSchema.warns).values({
-      guildId: message.guild.id,
-      userId: target.id,
-      moderator: message.author.id,
-      reason,
-    });
+    const [created] = await db
+      .insert(ciszubotSchema.warns)
+      .values({
+        guildId: message.guild.id,
+        userId: target.id,
+        moderator: message.author.id,
+        reason,
+      })
+      .returning({ id: ciszubotSchema.warns.id });
     const embed = new EmbedBuilder()
       .setColor('#ff9900')
-      .setTitle('⚠️ Aviso a miembro')
-      .setDescription(tr(L, `**${target.tag}** fue avisado.\n**Razón:** ${reason}`, `**${target.tag}** was warned.\n**Reason:** ${reason}`))
+      .setTitle(tr(L, '⚠️ Aviso a miembro', '⚠️ Member warned'))
+      .setDescription(
+        tr(
+          L,
+          `**${target.tag}** fue avisado.\n**ID:** \`#${created?.id ?? '?'}\`\n**Razón:** ${reason}`,
+          `**${target.tag}** was warned.\n**ID:** \`#${created?.id ?? '?'}\`\n**Reason:** ${reason}`,
+        ),
+      )
       .setFooter({ text: tr(L, `Por ${message.author.tag}`, `By ${message.author.tag}`), iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
@@ -346,7 +376,7 @@ const warns = (): BotCommand => ({
     if (!message.guild) return;
     const target = message.mentions?.users?.first();
     if (!target) {
-      await message.reply('❌ Uso: `cz!warns @usuario`');
+      await message.reply(tr(L, '❌ Uso: `cz!warns @usuario`', '❌ Usage: `cz!warns @user`'));
       return;
     }
     const warns = ciszubotSchema.warns;
@@ -371,11 +401,48 @@ const warns = (): BotCommand => ({
               .map((w) => `\`#${w.id}\` — ${w.reason} (por <@${w.moderator}> • <t:${Math.floor(new Date(w.created_at).getTime() / 1000)}:R>)`)
               .join('\n')
               .slice(0, 4000) + (warnList.length > 40 ? tr(L, `\n…y ${warnList.length - 40} más.`, `\n…and ${warnList.length - 40} more.`) : '')
-          : 'Sin avisos. 🎉'
+          : tr(L, 'Sin avisos. 🎉', 'No warnings. 🎉')
       )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });
+  },
+});
+
+const unwarn = (): BotCommand => ({
+  name: 'unwarn',
+  description: 'Elimina un aviso por su ID',
+  aliases: ['delwarn', 'quitarwarn', 'borrarwarn'],
+  usage: 'cz!unwarn <id>',
+  category: 'Moderación',
+  permissions: [PermissionFlagsBits.ModerateMembers],
+  slashCommand: new SlashCommandBuilder()
+    .setName('unwarn')
+    .setDescription('Elimina un aviso por su ID')
+    .setDefaultMemberPermissions(PermissionFlagsBits.ModerateMembers)
+    .addIntegerOption((o) => o.setName('id').setDescription('ID del aviso (cz!warns)').setRequired(true)),
+  async execute(message, args) {
+    const L = await langOf(message);
+    if (!message.guild) return;
+    if (message.member && !message.member.permissions.has(PermissionFlagsBits.ModerateMembers)) {
+      await message.reply(tr(L, '❌ Necesitas permiso de **Gestionar Miembros**.', '❌ You need the **Moderate Members** permission.'));
+      return;
+    }
+    const id = Number.parseInt((args[0] ?? '').replace('#', ''), 10);
+    if (!Number.isInteger(id) || id <= 0) {
+      await message.reply(tr(L, '❌ Uso: `cz!unwarn <id>` (mira los IDs con `cz!warns @usuario`)', '❌ Usage: `cz!unwarn <id>` (see IDs with `cz!warns @user`)'));
+      return;
+    }
+    const warnsTable = ciszubotSchema.warns;
+    const [removed] = await db
+      .delete(warnsTable)
+      .where(and(eq(warnsTable.guildId, message.guild.id), eq(warnsTable.id, id)))
+      .returning({ id: warnsTable.id, userId: warnsTable.userId });
+    if (!removed) {
+      await message.reply(tr(L, `❌ No existe el aviso \`#${id}\` en este servidor.`, `❌ Warning \`#${id}\` does not exist in this server.`));
+      return;
+    }
+    await message.reply(tr(L, `✅ Aviso \`#${removed.id}\` de <@${removed.userId}> eliminado.`, `✅ Warning \`#${removed.id}\` for <@${removed.userId}> removed.`));
   },
 });
 
@@ -410,4 +477,4 @@ const purge = (): BotCommand => ({
   },
 });
 
-export default [kick, ban, unban, mute, tempmute, unmute, warn, warns, purge];
+export default [kick, ban, unban, mute, tempmute, unmute, warn, warns, unwarn, purge];

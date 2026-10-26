@@ -1,8 +1,8 @@
 ﻿# FULL_STACK_SYSTEM — Stack tecnológico de Ciszu Network
 
-Versión: 2.2.0
-Actualización: 2026-10-23
-Identificador: FULL_STACK_SYSTEM_V2.2.0_2026_09_05_ciszunetwork
+Versión: 2.3.0
+Actualización: 2026-10-25
+Identificador: FULL_STACK_SYSTEM_V2.3.0_2026_09_05_ciszunetwork
 
 > **Definición**: inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos,
 > herramientas y servicios del ecosistema completo. Fuente única del stack; detalles de
@@ -33,7 +33,10 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 
 - **Next.js 15** (App Router) + **Tailwind CSS 4** + PostCSS — las 4 webs. Fonts: Geist vía next/font.
 - **React 19** + TypeScript. Paquete UI propio `@ciszu/ui` (Icon, SmartImage, PwaRegister, InstallPdwaButton, CloudflareGuard, PostHogAnalytics).
-- **Discord.js ^14.22** + `@discordjs/voice` + play-dl (bot, 72 comandos, 9 categorías).
+- **Discord.js ^14.22** + `@discordjs/voice` + play-dl (bot, 162 comandos, 13 categorías).
+- **Subsistema +18 del bot** — 30 comandos base con aliases de estilo/género, proveedores
+  Purrbot/RedGifs, autopics y triple verificación por servidor. Detalle en
+  `FEATURE_FLAGS_SYSTEM.md` §3.1.
 - **NestJS + Fastify** — microservicio HTTP del bot (`statsServer` migrado en F2: `GET /api/stats`,
   `POST /api/update-stats`, `POST /api/votes`, `POST /api/votes/dbl`). Express eliminado.
   Ver `BACKEND_SYSTEM.md` §19.
@@ -267,7 +270,8 @@ global por defecto. Ver también `TOOLS_SYSTEM.md`.
 | Errores / analítica | Sentry, PostHog, Cloudflare Web Analytics |
 | Entrega | Vercel + GitHub Actions + Docker (bot) |
 
-_Última revisión: 23 oct 2026._ Relacionados: `BACKEND_SYSTEM.md` · `FRONTEND_SYSTEM.md` ·
+_Última revisión: 25 oct 2026._ Relacionados: `BACKEND_SYSTEM.md` · `FRONTEND_SYSTEM.md` ·
 `PACKAGES_SYSTEM.md` · `ORM_SYSTEM.md` · `VAULT_SYSTEM.md` · `TOOLS_SYSTEM.md` ·
-`ONLINE_SERVICES_SYSTEM.md` · `MODELS_LLM_SYSTEM.md` · `UI_COMPONENTS_SYSTEM.md`.
+`ONLINE_SERVICES_SYSTEM.md` · `MODELS_LLM_SYSTEM.md` · `UI_COMPONENTS_SYSTEM.md` ·
+`FEATURE_FLAGS_SYSTEM.md` (subsistema +18).
 

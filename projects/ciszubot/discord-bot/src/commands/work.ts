@@ -7,16 +7,16 @@ import { langOf, tr } from '../services/i18n';
 
 /** Trabajos aleatorios del `work` (sabor local, sin datos inventados de dinero). */
 const JOBS = [
-  'repartidor de pizza',
-  'editor de vídeo',
-  'moderador de chat',
-  'streamer de madrugada',
-  'técnico de soporte',
-  'diseñador de logos',
-  'probador de videojuegos',
-  'locutor de radio',
-  'barista del cibercafé',
-  'fotógrafo de eventos',
+  { es: 'repartidor de pizza', en: 'pizza delivery driver' },
+  { es: 'editor de vídeo', en: 'video editor' },
+  { es: 'moderador de chat', en: 'chat moderator' },
+  { es: 'streamer de madrugada', en: 'late-night streamer' },
+  { es: 'técnico de soporte', en: 'support technician' },
+  { es: 'diseñador de logos', en: 'logo designer' },
+  { es: 'probador de videojuegos', en: 'game tester' },
+  { es: 'locutor de radio', en: 'radio host' },
+  { es: 'barista del cibercafé', en: 'cybercafe barista' },
+  { es: 'fotógrafo de eventos', en: 'event photographer' },
 ];
 
 const COOLDOWN_MS = 60 * 60 * 1000; // 1 hora
@@ -33,6 +33,7 @@ const create = (): BotCommand => ({
     const L = await langOf(message);
     const guildId = message.guild?.id ?? 'DM';
     const userId = message.author.id;
+    const cfg = await getGuildConfig(guildId);
 
     const transactions = ciszubotSchema.transactions;
     const rows = await db
@@ -59,16 +60,23 @@ const create = (): BotCommand => ({
       return;
     }
 
-    const job = JOBS[Math.floor(Math.random() * JOBS.length)];
+    const jobDef = JOBS[Math.floor(Math.random() * JOBS.length)];
+    const job = tr(L, jobDef.es, jobDef.en);
     const amount = randomBetween(20, 80);
-    const bal = await addMoney(userId, guildId, amount, 'work', `Trabajó de ${job}`);
+    const bal = await addMoney(userId, guildId, amount, 'work', `Trabajó de ${jobDef.es}`);
 
     await message.reply({
       embeds: [
         new EmbedBuilder()
           .setColor('#00d4ff')
           .setTitle(tr(L, '💼 ¡Trabajo completado!', '💼 Work completed!'))
-          .setDescription(tr(L, `Trabajaste de **${job}** y ganaste **${(amount)}**.\nTu nuevo saldo es **${(bal ?? 0)}**.`, `You worked as **${job}** and earned **${(amount)}**.\nYour new balance is **${(bal ?? 0)}**.`))
+          .setDescription(
+            tr(
+              L,
+              `Trabajaste de **${job}** y ganaste **${formatCoins(cfg, amount)}**.\nTu nuevo saldo es **${formatCoins(cfg, bal ?? 0)}**.`,
+              `You worked as **${job}** and earned **${formatCoins(cfg, amount)}**.\nYour new balance is **${formatCoins(cfg, bal ?? 0)}**.`,
+            ),
+          )
           .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
           .setTimestamp(),
       ],

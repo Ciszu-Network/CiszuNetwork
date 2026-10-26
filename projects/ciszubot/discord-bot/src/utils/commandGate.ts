@@ -3,7 +3,7 @@ import type { BotCommand } from '../types/command';
 import { LINKS, BOT_COLORS, BOT_FOOTER, BOT_ASSETS } from '../config/links';
 import { resolveFeatureForCommand, isPremiumCommand, featureLabel } from '../config/features';
 import { getFeatureState, getGuildFeatureOverride, isPremiumBeta, isPremiumGuild } from '../services/featureFlags';
-import { getGuildConfig } from '../services/configService';
+import { getGuildConfig, isNsfwUnlocked } from '../services/configService';
 
 /**
  * Interceptor global previo a `command.execute` (prefijo y slash):
@@ -64,6 +64,22 @@ function betaEmbed(): EmbedBuilder {
     .setDescription('Todas las funciones premium son **gratis** durante la beta. Puedes usarla sin costo.');
 }
 
+function nsfwBlockedEmbed(
+  reason: string,
+  tag: string,
+  iconURL?: string | null,
+): EmbedBuilder {
+  return new EmbedBuilder()
+    .setColor(BOT_COLORS.danger)
+    .setTitle('🔞 Comandos +18 bloqueados')
+    .setDescription(
+      `${reason}\n\nActívalo en el panel: ${LINKS.website}/dashboard → **General** → **+18**.`,
+    )
+    .setThumbnail(BOT_ASSETS.isotype)
+    .setFooter(BOT_FOOTER(tag, iconURL))
+    .setTimestamp();
+}
+
 function premiumBlockedEmbed(tag: string, iconURL?: string | null): EmbedBuilder {
   return new EmbedBuilder()
     .setColor('#fbbf24')
@@ -81,6 +97,7 @@ export interface GateContext {
   guildId: string | null;
   tag: string;
   iconURL?: string | null;
+  channelNsfw?: boolean;
   /** Transporte del mensaje (reply de prefijo o followUp de slash). */
   send: (content: { embeds: EmbedBuilder[] }) => Promise<unknown>;
 }
@@ -102,6 +119,38 @@ export async function gateCommand(ctx: GateContext): Promise<boolean> {
         await send({ embeds: [disabledEmbed('Desactivada en este servidor', tag, iconURL, featureLabel(slug))] });
         return false;
       }
+    }
+  }
+
+  if (command.category === '+18') {
+    if (!guildId) {
+      await send({ embeds: [nsfwBlockedEmbed('Los comandos +18 solo funcionan dentro de un servidor.', tag, iconURL)] });
+      return false;
+    }
+    const cfg = await getGuildConfig(guildId);
+    if (!isNsfwUnlocked(cfg)) {
+      await send({
+        embeds: [
+          nsfwBlockedEmbed(
+            'Faltan candados por activar: **Preferencias del bot**, **General** y **+18**. Los tres deben estar activos.',
+            tag,
+            iconURL,
+          ),
+        ],
+      });
+      return false;
+    }
+    if (!ctx.channelNsfw) {
+      await send({
+        embeds: [nsfwBlockedEmbed('Este comando solo funciona en canales marcados como **NSFW**.', tag, iconURL)],
+      });
+      return false;
+    }
+    if (!cfg.nsfw_commands_enabled) {
+      await send({
+        embeds: [nsfwBlockedEmbed('Los **comandos +18** están desactivados en este servidor.', tag, iconURL)],
+      });
+      return false;
     }
   }
 

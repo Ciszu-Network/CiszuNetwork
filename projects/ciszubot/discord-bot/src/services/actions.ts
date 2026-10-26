@@ -5,8 +5,8 @@ import { logger } from './logger';
 /**
  * Cola de acciones del bot (ciszubot.bot_actions): el dashboard y la devcon
  * insertan filas y este poller las ejecuta cada 5s. Es la vía por la que la
- * web puede hacer que el bot envíe mensajes (say / directsay) y, de paso,
- * la prueba real de la cadena web → DB → bot → Discord.
+ * web puede hacer que el bot envíe mensajes, gestione sorteos y encuestas, y
+ * de paso la prueba real de la cadena web → DB → bot → Discord.
  */
 
 interface ActionRow {
@@ -77,6 +77,65 @@ async function runAction(client: Client, action: ActionRow): Promise<string> {
         default:
           return 'error: acción desconocida';
       }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return `error: ${message.slice(0, 200)}`;
+    }
+  }
+
+  // ─── Encuestas creadas desde el dashboard (payload JSON en content) ───
+  if (action.type === 'poll_create') {
+    try {
+      const payload = JSON.parse(action.content) as Record<string, unknown>;
+      const channel = (guild.channels.cache.get(action.channel_id) ??
+        (await guild.channels.fetch(action.channel_id).catch(() => null))) as TextChannel | null;
+      if (!channel || !channel.isTextBased()) return 'error: canal no válido';
+      const authorId = String(payload.author_id ?? '');
+      if (!authorId) return 'error: autor no válido';
+      const member = await guild.members.fetch(authorId).catch(() => null);
+      const user = member?.user ?? (await client.users.fetch(authorId).catch(() => null));
+      const author = {
+        id: authorId,
+        tag: user?.tag ?? 'Dashboard',
+        displayAvatarURL: () => user?.displayAvatarURL() ?? '',
+      };
+      const options = Array.isArray(payload.options) ? payload.options.map((o) => String(o)) : [];
+      const minutes = Math.max(0, Number(payload.duration_minutes) || 0);
+      const { getGuildConfig } = await import('./configService');
+      const polls = await import('./polls');
+      const cfg = await getGuildConfig(guild.id);
+      const res = await polls.createPoll(
+        client,
+        channel,
+        author,
+        String(payload.question ?? ''),
+        options,
+        Boolean(payload.anonymous),
+        minutes > 0 ? minutes * 60_000 : null,
+        cfg,
+        member ? [...member.roles.cache.keys()] : [],
+      );
+      return res.ok ? `ok:${res.id}` : `error: ${res.reason ?? 'no se pudo crear la encuesta'}`;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return `error: ${message.slice(0, 200)}`;
+    }
+  }
+
+  // ─── Encuestas cerradas desde el dashboard ───
+  if (action.type === 'poll_close') {
+    try {
+      const payload = JSON.parse(action.content) as Record<string, unknown>;
+      const pollId = Number(payload.poll_id);
+      if (!Number.isInteger(pollId) || pollId <= 0) return 'error: encuesta no válida';
+      const polls = await import('./polls');
+      const res = await polls.closePoll(
+        client,
+        pollId,
+        { id: String(payload.author_id ?? ''), staff: true },
+        action.guild_id,
+      );
+      return res.ok ? `ok:${res.winner ?? ''}` : `error: ${res.reason ?? 'no se pudo cerrar la encuesta'}`;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       return `error: ${message.slice(0, 200)}`;

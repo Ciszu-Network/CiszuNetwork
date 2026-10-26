@@ -43,7 +43,7 @@ const create = (): BotCommand => ({
       const embed = new EmbedBuilder()
         .setColor('#ff0000')
         .setTitle(tr(L, '❌ Fondos insuficientes', '❌ Insufficient funds'))
-        .setDescription(tr(L, `Necesitas **${(amount)}** y solo tienes **${(mine.balance)}**.`, `You need **${(amount)}** and you only have **${(mine.balance)}**.`))
+        .setDescription(tr(L, `Necesitas **${formatCoins(cfg, amount)}** y solo tienes **${formatCoins(cfg, mine.balance)}**.`, `You need **${formatCoins(cfg, amount)}** and you only have **${formatCoins(cfg, mine.balance)}**.`))
         .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() });
       await message.reply({ embeds: [embed] });
       return;
@@ -56,7 +56,7 @@ const create = (): BotCommand => ({
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
       .setTitle(tr(L, '💸 ¡Transferencia completada!', '💸 Transfer completed!'))
-      .setDescription(tr(L, `**${message.author.tag}** envió **${(amount)}** a **${target.tag}**.`, `**${message.author.tag}** sent **${(amount)}** to **${target.tag}**.`))
+      .setDescription(tr(L, `**${message.author.tag}** envió **${formatCoins(cfg, amount)}** a **${target.tag}**.`, `**${message.author.tag}** sent **${formatCoins(cfg, amount)}** to **${target.tag}**.`))
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });

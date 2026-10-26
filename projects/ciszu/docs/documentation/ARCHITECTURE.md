@@ -1,8 +1,8 @@
 ﻿# ARCHITECTURE — Arquitectura de Ciszu Network
 
-Versión: 2.0.0
-Actualización: 2026-10-23
-Identificador: ARCHITECTURE_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-10-25
+Identificador: ARCHITECTURE_V2.1.0_2026_08_13_ciszunetwork
 
 > **Definición**: visión estructural del monorepo: repositorio, proyectos, paquetes
 > compartidos, servicios y decisiones de diseño clave del ecosistema.
@@ -72,9 +72,29 @@ txt (source of truth) → md (markdown) → docx (Word) → pdf (distribución)
 | CiszuBot | `projects/ciszubot` | Bot + web landing |
 | CiszuGamens Community | `projects/ciszugamens` | Comunidad + Landing Next.js 15 |
 
+## Subsistema +18 de CiszuBot
+
+El contenido adulto es una capacidad **opt-in y aislada** del bot, no una categoría más:
+
+- **Triple verificación por servidor**: consentimiento en Preferencias del bot, activación
+  en General y apartado +18. Los tres candados viven en `ciszubot.guild_configs`; apagar
+  uno apaga en cascada los siguientes y sus sub-opciones.
+- **Canal NSFW obligatorio**: comandos y autopics solo se ejecutan/publican en canales
+  marcados como NSFW por Discord. La API valida el canal antes de guardar.
+- **Catálogo y proveedores**: 30 bases con estilos `anime`/`cartoon`/`real` y géneros
+  `girl`/`boy`/`mixed`; Purrbot y RedGifs con allowlist HTTPS, timeout y bloqueo de tags
+  de menores. El bot no almacena ni proxya el media.
+- **Kill switch**: flag `nsfw` en `ciszubot.feature_flags` (devcon/`FEATURES_OFF`) y
+  `nsfw_commands_enabled` / `nsfw_autopost_enabled` por servidor.
+- **Separación de datos**: preferencias en `nsfw_content` JSONB; autopics con canal
+  independiente opcional; nada se mezcla con economía, niveles o alianzas.
+
+Detalle operativo y de seguridad: `FEATURE_FLAGS_SYSTEM.md` §3.1.
+
 ## Documentación relacionada
 
 - `FULL_STACK_SYSTEM.md` — stack tecnológico completo
+- `FEATURE_FLAGS_SYSTEM.md` — kill switches, Premium y subsistema +18
 - `WORKFLOW_SYSTEM.md` — flujos de trabajo y comandos diarios
 - `DB_SYSTEM.md` — base de datos y consultas
 - `CDN_MIGRATIONS.md` — historial de migraciones del CDN
@@ -210,5 +230,5 @@ Bot: Docker (node:24-alpine) ──► Discord ──► Supabase
 - [ ] Seguridad → RLS, rate limit, CSP/IAST y secretos por env revisados.
 - [ ] Los assets se sirven por resolver/CDN, nunca por `public/` salvo docs/pwa/sw.
 
-_Última revisión: 23 oct 2026._
+_Última revisión: 25 oct 2026._
 

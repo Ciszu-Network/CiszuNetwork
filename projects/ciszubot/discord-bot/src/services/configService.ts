@@ -97,6 +97,107 @@ export interface NewsChannels {
   tech: string | null;
 }
 
+export const SOCIAL_PLATFORMS = [
+  'x',
+  'instagram',
+  'facebook',
+  'tiktok',
+  'youtube',
+  'twitch',
+  'linkedin',
+  'spotify',
+  'soundcloud',
+  'github',
+  'reddit',
+  'pinterest',
+  'other',
+] as const;
+
+export type SocialPlatform = (typeof SOCIAL_PLATFORMS)[number];
+
+export const SOCIAL_FEED_KINDS = ['profile', 'page', 'user', 'group', 'channel', 'subreddit', 'feed'] as const;
+
+export type SocialFeedKind = (typeof SOCIAL_FEED_KINDS)[number];
+
+export interface SocialFeed {
+  id: string;
+  platform: SocialPlatform;
+  kind: SocialFeedKind;
+  account: string;
+  channel_id: string;
+  ping_role_id: string | null;
+  message: string;
+  enabled: boolean;
+}
+
+function asSocialFeeds(value: unknown): SocialFeed[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .flatMap((raw, index): SocialFeed[] => {
+      if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return [];
+      const row = raw as Record<string, unknown>;
+      const platform = SOCIAL_PLATFORMS.includes(row.platform as SocialPlatform)
+        ? (row.platform as SocialPlatform)
+        : 'other';
+      const kind = SOCIAL_FEED_KINDS.includes(row.kind as SocialFeedKind)
+        ? (row.kind as SocialFeedKind)
+        : platform === 'other'
+          ? 'feed'
+          : 'profile';
+      const account = typeof row.account === 'string' ? row.account.trim().slice(0, 300) : '';
+      const channelId = typeof row.channel_id === 'string' ? row.channel_id.trim().slice(0, 32) : '';
+      const id = typeof row.id === 'string' && row.id.trim() ? row.id.trim().slice(0, 40) : `${platform}-${index}`;
+      const pingRoleId = typeof row.ping_role_id === 'string' && row.ping_role_id.trim()
+        ? row.ping_role_id.trim().slice(0, 32)
+        : null;
+      const message = typeof row.message === 'string' ? row.message.slice(0, 2000) : '';
+      return [{ id, platform, kind, account, channel_id: channelId, ping_role_id: pingRoleId, message, enabled: row.enabled !== false }];
+    })
+    .slice(0, 100);
+}
+
+export type NsfwGender = 'women' | 'men' | 'mixed';
+export type NsfwLgbt = 'gay' | 'lesbian' | 'trans' | 'bisexual' | 'pansexual' | 'nonbinary';
+export type NsfwFetish =
+  | 'femboy'
+  | 'tomboy'
+  | 'blonde'
+  | 'ebony'
+  | 'latina'
+  | 'milf'
+  | 'feet'
+  | 'thighs'
+  | 'belly';
+
+export interface NsfwContentPreferences {
+  default_gender: NsfwGender;
+  lgbt: Record<NsfwLgbt, boolean>;
+  fetishes: Record<NsfwFetish, boolean>;
+}
+
+export const DEFAULT_NSFW_CONTENT: NsfwContentPreferences = {
+  default_gender: 'women',
+  lgbt: {
+    gay: true,
+    lesbian: true,
+    trans: true,
+    bisexual: true,
+    pansexual: true,
+    nonbinary: true,
+  },
+  fetishes: {
+    femboy: true,
+    tomboy: true,
+    blonde: true,
+    ebony: true,
+    latina: true,
+    milf: true,
+    feet: true,
+    thighs: true,
+    belly: true,
+  },
+};
+
 export interface GuildConfig {
   guild_id: string;
   prefix: string;
@@ -132,6 +233,8 @@ export interface GuildConfig {
   starboard_min: number;
   invite_points_per: number;
   invite_rewards: InviteReward[];
+  invite_channel_id: string | null;
+  invite_message: string;
   private_vc_hub_id: string | null;
   secret_user_ids: string[];
   nitro_repost_enabled: boolean;
@@ -168,11 +271,17 @@ export interface GuildConfig {
   autoposts: Array<{ id: string; type: string; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }>;
   news_enabled: boolean;
   news_channels: NewsChannels;
+  social_enabled: boolean;
+  social_feeds: SocialFeed[];
+  nsfw_bot_preferences_enabled: boolean;
+  nsfw_general_enabled: boolean;
   nsfw_enabled: boolean;
   nsfw_channel_id: string | null;
+  nsfw_autopost_channel_id: string | null;
   nsfw_autopost_enabled: boolean;
   nsfw_autopost_minutes: number;
   nsfw_commands_enabled: boolean;
+  nsfw_content: NsfwContentPreferences;
   confess_channel_id: string | null;
   marriage_excluded_role_ids: string[];
   nitro_repost_mode: 'auto' | 'manual';
@@ -244,6 +353,8 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   starboard_min: 3,
   invite_points_per: 1,
   invite_rewards: [],
+  invite_channel_id: null,
+  invite_message: '🎉 {user} se unió invitado por {inviter}. Total: **{count}** invitaciones.',
   private_vc_hub_id: null,
   secret_user_ids: [],
   nitro_repost_enabled: false,
@@ -280,11 +391,17 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   autoposts: [],
   news_enabled: false,
   news_channels: { anime: null, games: null, steam: null, tech: null },
+  social_enabled: false,
+  social_feeds: [],
+  nsfw_bot_preferences_enabled: false,
+  nsfw_general_enabled: false,
   nsfw_enabled: false,
   nsfw_channel_id: null,
+  nsfw_autopost_channel_id: null,
   nsfw_autopost_enabled: false,
   nsfw_autopost_minutes: 60,
   nsfw_commands_enabled: false,
+  nsfw_content: DEFAULT_NSFW_CONTENT,
   confess_channel_id: null,
   marriage_excluded_role_ids: [],
   nitro_repost_mode: 'auto',
@@ -304,7 +421,7 @@ const cache = new Map<string, GuildConfig>();
  * proceso, así que sin caducidad el bot NO veía nunca los cambios (bug real:
  * cambiar la moneda en la web no se reflejaba en Discord hasta reiniciar).
  */
-const CACHE_TTL_MS = 30_000;
+const CACHE_TTL_MS = 5_000;
 const cacheAt = new Map<string, number>();
 
 function cacheFresh(guildId: string): GuildConfig | null {
@@ -329,6 +446,33 @@ function asArray<T>(value: unknown, fallback: T[]): T[] {
   return Array.isArray(value) ? (value as T[]) : fallback;
 }
 
+export function normalizeNsfwContent(value: unknown): NsfwContentPreferences {
+  const raw = value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : {};
+  const rawLgbt = raw.lgbt && typeof raw.lgbt === 'object' ? (raw.lgbt as Record<string, unknown>) : {};
+  const rawFetishes = raw.fetishes && typeof raw.fetishes === 'object' ? (raw.fetishes as Record<string, unknown>) : {};
+  const gender: NsfwGender =
+    raw.default_gender === 'men' || raw.default_gender === 'mixed' ? raw.default_gender : 'women';
+
+  const lgbt = {} as Record<NsfwLgbt, boolean>;
+  for (const key of Object.keys(DEFAULT_NSFW_CONTENT.lgbt) as NsfwLgbt[]) {
+    lgbt[key] = typeof rawLgbt[key] === 'boolean' ? (rawLgbt[key] as boolean) : DEFAULT_NSFW_CONTENT.lgbt[key];
+  }
+
+  const fetishes = {} as Record<NsfwFetish, boolean>;
+  for (const key of Object.keys(DEFAULT_NSFW_CONTENT.fetishes) as NsfwFetish[]) {
+    fetishes[key] =
+      typeof rawFetishes[key] === 'boolean' ? (rawFetishes[key] as boolean) : DEFAULT_NSFW_CONTENT.fetishes[key];
+  }
+
+  return { default_gender: gender, lgbt, fetishes };
+}
+
+export function isNsfwUnlocked(
+  cfg: Pick<GuildConfig, 'nsfw_bot_preferences_enabled' | 'nsfw_general_enabled' | 'nsfw_enabled'>,
+): boolean {
+  return cfg.nsfw_bot_preferences_enabled && cfg.nsfw_general_enabled && cfg.nsfw_enabled;
+}
+
 export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
   const cached = cacheFresh(guildId);
   if (cached) return cached;
@@ -338,6 +482,9 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
     const rows = await db.select().from(guildConfigs).where(eq(guildConfigs.guildId, guildId)).limit(1);
     const data = rows[0];
     if (data) {
+      const nsfwBotPreferencesEnabled = data.nsfwBotPreferencesEnabled ?? DEFAULTS.nsfw_bot_preferences_enabled;
+      const nsfwGeneralEnabled = nsfwBotPreferencesEnabled && (data.nsfwGeneralEnabled ?? DEFAULTS.nsfw_general_enabled);
+      const nsfwEnabled = nsfwGeneralEnabled && (data.nsfwEnabled ?? DEFAULTS.nsfw_enabled);
       const cfg: GuildConfig = {
         guild_id: guildId,
         prefix: data.prefix ?? DEFAULTS.prefix,
@@ -376,6 +523,8 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         starboard_min: data.starboardMin ?? DEFAULTS.starboard_min,
         invite_points_per: data.invitePointsPer ?? DEFAULTS.invite_points_per,
         invite_rewards: asArray(data.inviteRewards, DEFAULTS.invite_rewards),
+        invite_channel_id: data.inviteChannelId ?? DEFAULTS.invite_channel_id,
+        invite_message: data.inviteMessage ?? DEFAULTS.invite_message,
         private_vc_hub_id: data.privateVcHubId ?? DEFAULTS.private_vc_hub_id,
         secret_user_ids: asArray(data.secretUserIds, DEFAULTS.secret_user_ids),
         nitro_repost_enabled: data.nitroRepostEnabled ?? DEFAULTS.nitro_repost_enabled,
@@ -410,11 +559,17 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         autoposts: asArray(data.autoposts, DEFAULTS.autoposts) as typeof DEFAULTS.autoposts,
         news_enabled: data.newsEnabled ?? DEFAULTS.news_enabled,
         news_channels: asObject(data.newsChannels, DEFAULTS.news_channels) as NewsChannels,
-        nsfw_enabled: data.nsfwEnabled ?? DEFAULTS.nsfw_enabled,
+        social_enabled: data.socialEnabled ?? DEFAULTS.social_enabled,
+        social_feeds: asSocialFeeds(data.socialFeeds),
+        nsfw_bot_preferences_enabled: nsfwBotPreferencesEnabled,
+        nsfw_general_enabled: nsfwGeneralEnabled,
+        nsfw_enabled: nsfwEnabled,
         nsfw_channel_id: data.nsfwChannelId ?? DEFAULTS.nsfw_channel_id,
-        nsfw_autopost_enabled: data.nsfwAutopostEnabled ?? DEFAULTS.nsfw_autopost_enabled,
+        nsfw_autopost_channel_id: data.nsfwAutopostChannelId ?? DEFAULTS.nsfw_autopost_channel_id,
+        nsfw_autopost_enabled: nsfwEnabled && (data.nsfwAutopostEnabled ?? DEFAULTS.nsfw_autopost_enabled),
         nsfw_autopost_minutes: data.nsfwAutopostMinutes ?? DEFAULTS.nsfw_autopost_minutes,
-        nsfw_commands_enabled: data.nsfwCommandsEnabled ?? DEFAULTS.nsfw_commands_enabled,
+        nsfw_commands_enabled: nsfwEnabled && (data.nsfwCommandsEnabled ?? DEFAULTS.nsfw_commands_enabled),
+        nsfw_content: normalizeNsfwContent(data.nsfwContent),
         confess_channel_id: data.confessChannelId ?? DEFAULTS.confess_channel_id,
         marriage_excluded_role_ids: asArray(data.marriageExcludedRoleIds, DEFAULTS.marriage_excluded_role_ids),
         nitro_repost_mode: (data.nitroRepostMode as 'auto' | 'manual') ?? DEFAULTS.nitro_repost_mode,
@@ -445,6 +600,13 @@ export async function updateGuildConfig(
 ): Promise<GuildConfig> {
   const cfg = await getGuildConfig(guildId);
   const merged: GuildConfig = { ...cfg, ...patch };
+  if (!merged.nsfw_bot_preferences_enabled) merged.nsfw_general_enabled = false;
+  if (!merged.nsfw_general_enabled) merged.nsfw_enabled = false;
+  if (!merged.nsfw_enabled) {
+    merged.nsfw_commands_enabled = false;
+    merged.nsfw_autopost_enabled = false;
+  }
+  merged.nsfw_content = normalizeNsfwContent(merged.nsfw_content);
   cacheSet(guildId, merged);
   const values = {
     guildId,
@@ -481,6 +643,8 @@ export async function updateGuildConfig(
     starboardMin: merged.starboard_min,
     invitePointsPer: merged.invite_points_per,
     inviteRewards: merged.invite_rewards,
+    inviteChannelId: merged.invite_channel_id,
+    inviteMessage: merged.invite_message,
     privateVcHubId: merged.private_vc_hub_id,
     secretUserIds: merged.secret_user_ids,
     nitroRepostEnabled: merged.nitro_repost_enabled,
@@ -515,11 +679,17 @@ export async function updateGuildConfig(
     autoposts: merged.autoposts,
     newsEnabled: merged.news_enabled,
     newsChannels: merged.news_channels,
+    socialEnabled: merged.social_enabled,
+    socialFeeds: merged.social_feeds,
+    nsfwBotPreferencesEnabled: merged.nsfw_bot_preferences_enabled,
+    nsfwGeneralEnabled: merged.nsfw_general_enabled,
     nsfwEnabled: merged.nsfw_enabled,
     nsfwChannelId: merged.nsfw_channel_id,
+    nsfwAutopostChannelId: merged.nsfw_autopost_channel_id,
     nsfwAutopostEnabled: merged.nsfw_autopost_enabled,
     nsfwAutopostMinutes: merged.nsfw_autopost_minutes,
     nsfwCommandsEnabled: merged.nsfw_commands_enabled,
+    nsfwContent: merged.nsfw_content,
     confessChannelId: merged.confess_channel_id,
     marriageExcludedRoleIds: merged.marriage_excluded_role_ids,
     nitroRepostMode: merged.nitro_repost_mode,
@@ -561,5 +731,5 @@ export async function getPrefix(guildId: string | null | undefined): Promise<str
 
 /** Moneda formateada con el emoji/nombre configurado del servidor. */
 export function formatCoins(cfg: GuildConfig, amount: number): string {
-  return `${amount.toLocaleString('es-ES')} ${cfg.coin_emoji}`;
+  return `${amount.toLocaleString('es-ES')} ${cfg.coin_emoji} ${cfg.coin_name}`;
 }

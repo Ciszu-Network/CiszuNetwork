@@ -41,8 +41,11 @@ const command: BotCommand = {
         .setColor('#00d4ff')
         .setTitle(tr(L, `${cfg.coin_emoji} Moneda del servidor`, `${cfg.coin_emoji} Server currency`))
         .setDescription(
-          tr(L, `**Emoji:** ${cfg.coin_emoji}\n**Nombre:** ${cfg.coin_name}\n\n`, `**Emoji:** ${cfg.coin_emoji}\n**Name:** ${cfg.coin_name}\n\n`) +
-            `Ejemplo: **${formatCoins(cfg, 1500)}**\n\nCambiar: \`cz!coin emoji 🪙\` · \`cz!coin name monedas\` · \`cz!coin reset\``,
+          tr(
+            L,
+            `**Emoji:** ${cfg.coin_emoji}\n**Nombre:** ${cfg.coin_name}\n\nEjemplo: **${formatCoins(cfg, 1500)}**\n\nCambiar: \`cz!coin emoji 🪙\` · \`cz!coin name monedas\` · \`cz!coin reset\``,
+            `**Emoji:** ${cfg.coin_emoji}\n**Name:** ${cfg.coin_name}\n\nExample: **${formatCoins(cfg, 1500)}**\n\nChange: \`cz!coin emoji 🪙\` · \`cz!coin name coins\` · \`cz!coin reset\``,
+          ),
         )
         .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
         .setTimestamp();

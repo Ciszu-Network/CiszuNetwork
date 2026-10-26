@@ -25,7 +25,7 @@ const create = (): BotCommand => ({
     }
     const w = await getWallet(message.author.id, guildId);
     if (w.balance < amount) {
-      await message.reply(tr(L, `❌ No tienes suficientes monedas (necesitas ${(amount)}).`, `❌ You do not have enough coins (you need ${(amount)}).`));
+      await message.reply(tr(L, `❌ No tienes suficientes monedas (necesitas ${formatCoins(cfg, amount)}).`, `❌ You do not have enough coins (you need ${formatCoins(cfg, amount)}).`));
       return;
     }
 
@@ -36,9 +36,13 @@ const create = (): BotCommand => ({
 
     const embed = new EmbedBuilder()
       .setColor(won ? '#00ff88' : '#ff0000')
-      .setTitle(won ? tr(L, '🪙 ¡Ganaste la apuesta!', '🪙 You won the bet!') : '🪙 Perdiste la apuesta...')
+      .setTitle(won ? tr(L, '🪙 ¡Ganaste la apuesta!', '🪙 You won the bet!') : tr(L, '🪙 Perdiste la apuesta...', '🪙 You lost the bet...'))
       .setDescription(
-        `Apostaste **${(amount)}**.\n${won ? `¡Ganaste **${(winAmount)}**!` : `Perdiste **${(amount)}**...`}\n\n**Nuevo saldo:** ${(newBalance)}`
+        tr(
+          L,
+          `Apostaste **${formatCoins(cfg, amount)}**.\n${won ? `¡Ganaste **${formatCoins(cfg, winAmount)}**!` : `Perdiste **${formatCoins(cfg, amount)}**...`}\n\n**Nuevo saldo:** ${formatCoins(cfg, newBalance)}`,
+          `You bet **${formatCoins(cfg, amount)}**.\n${won ? `You won **${formatCoins(cfg, winAmount)}**!` : `You lost **${formatCoins(cfg, amount)}**...`}\n\n**New balance:** ${formatCoins(cfg, newBalance)}`,
+        ),
       )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();

@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, Guild, GuildMember, TextChannel } from 'discord.js';
 import { db, ciszubotSchema, eq, and, desc, sql } from './supabase';
 import { getGuildConfig, GuildConfig, AllianceConfig } from './configService';
-import { addMoney, formatMoney } from './economy';
+import { addMoney } from './economy';
 import { logger } from './logger';
 
 /**

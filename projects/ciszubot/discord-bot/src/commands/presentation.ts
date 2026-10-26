@@ -30,9 +30,9 @@ async function memberCard(message: Parameters<BotCommand['execute']>[0], userId:
 const whoareyou = (): BotCommand => ({
   name: 'whoareyou',
   description: '¿Quién es CiszuBot? Presentación del bot',
-  aliases: ['quieneres', 'quien-es', 'quienes'],
+  aliases: ['quieneres', 'quien-es', 'quienes', 'quien', 'who'],
   usage: 'cz!whoareyou',
-  category: 'Información',
+  category: 'Presentación',
   // Sin versión slash (Discord limita a 100 comandos globales): cz!whoareyou
   async execute(message) {
     const L = await langOf(message);
@@ -42,8 +42,11 @@ const whoareyou = (): BotCommand => ({
       .setTitle(tr(L, '🤖 ¿Quién soy?', '🤖 Who am I?'))
       .setThumbnail(BOT_ASSETS.isotype)
       .setDescription(
-        `Soy **CiszuBot**, el bot oficial de **Ciszu Network** — el ecosistema digital de **Ciszuko Antony**.\n\n` +
-          'Gestiono economía, niveles, sorteos, moderación, tickets, alianzas, embeds y mucho más, todo configurable desde mi dashboard.',
+        tr(
+          L,
+          'Soy **CiszuBot**, el bot oficial de **Ciszu Network** — el ecosistema digital de **Ciszuko Antony**.\n\nGestiono economía, niveles, sorteos, moderación, tickets, alianzas, embeds y mucho más, todo configurable desde mi dashboard.',
+          'I am **CiszuBot**, the official bot of **Ciszu Network** — the digital ecosystem by **Ciszuko Antony**.\n\nI manage economy, levels, giveaways, moderation, tickets, alliances, embeds and much more, all configurable from my dashboard.',
+        ),
       )
       .addFields(
         { name: tr(L, '👤 Creador', '👤 Creator'), value: 'Ciszuko Antony (Ciszu Network)', inline: true },
@@ -62,9 +65,9 @@ const whoareyou = (): BotCommand => ({
 const whoiam = (): BotCommand => ({
   name: 'whoiam',
   description: 'Tu tarjeta de perfil en este servidor',
-  aliases: ['quiensoy', 'quien-soy', 'perfil'],
+  aliases: ['quiensoy', 'quien-soy', 'perfil', 'whoami'],
   usage: 'cz!whoiam',
-  category: 'Social',
+  category: 'Presentación',
   // Sin versión slash (Discord limita a 100 comandos globales): cz!whoiam
   async execute(message) {
     const L = await langOf(message);
@@ -81,7 +84,7 @@ const whoiam = (): BotCommand => ({
       .setDescription(staff ? tr(L, '👑 Miembro del **staff**', '👑 **Staff** member') : tr(L, '🙋 Miembro de la comunidad', '🙋 Community member'))
       .addFields(
         { name: tr(L, '🏷️ Usuario', '🏷️ User'), value: `${member.user.tag}`, inline: true },
-        { name: tr(L, '⭐ Rol más alto', '⭐ Highest role'), value: top ? `<@&${top.id}>` : tr(L, tr(L, tr(L, 'Sin roles', 'No roles'), 'No roles'), 'No roles'), inline: true },
+        { name: tr(L, '⭐ Rol más alto', '⭐ Highest role'), value: top ? `<@&${top.id}>` : tr(L, 'Sin roles', 'No roles'), inline: true },
         { name: tr(L, '🧩 Roles', '🧩 Roles'), value: `${roles.size}`, inline: true },
         { name: tr(L, '📅 En el servidor desde', '📅 In the server since'), value: ts(member.joinedAt), inline: true },
         { name: tr(L, '🕒 Cuenta creada', '🕒 Account created'), value: ts(member.user.createdAt), inline: true },
@@ -96,9 +99,9 @@ const whoiam = (): BotCommand => ({
 const whoismyrol = (): BotCommand => ({
   name: 'whoismyrol',
   description: 'Tus roles y rango en este servidor',
-  aliases: ['misroles', 'mirango'],
+  aliases: ['misroles', 'mirango', 'rol', 'roles'],
   usage: 'cz!whoismyrol',
-  category: 'Social',
+  category: 'Presentación',
   // Sin versión slash (Discord limita a 100 comandos globales): cz!whoismyrol
   async execute(message) {
     const L = await langOf(message);
@@ -108,13 +111,13 @@ const whoismyrol = (): BotCommand => ({
       return;
     }
     const { member, roles, top, staff } = card;
-    const list = roles.map((r) => `<@&${r.id}>`).slice(0, 40).join(' · ') || tr(L, tr(L, 'Sin roles', 'No roles'), 'No roles');
+    const list = roles.map((r) => `<@&${r.id}>`).slice(0, 40).join(' · ') || tr(L, 'Sin roles', 'No roles');
     const embed = new EmbedBuilder()
       .setColor(staff ? BOT_COLORS.secondary : BOT_COLORS.primary)
       .setTitle(`🎭 Roles de ${member.displayName}`)
       .setDescription(list.slice(0, 4000))
       .addFields(
-        { name: tr(L, '⭐ Rol más alto', '⭐ Highest role'), value: top ? `<@&${top.id}>` : tr(L, tr(L, tr(L, 'Sin roles', 'No roles'), 'No roles'), 'No roles'), inline: true },
+        { name: tr(L, '⭐ Rol más alto', '⭐ Highest role'), value: top ? `<@&${top.id}>` : tr(L, 'Sin roles', 'No roles'), inline: true },
         { name: tr(L, '🧩 Total', '🧩 Total'), value: `${roles.size} ` + tr(L, 'rol(es)', 'role(s)'), inline: true },
         { name: tr(L, '🛡️ Rango', '🛡️ Rank'), value: staff ? tr(L, 'Staff (con permisos de gestión)', 'Staff (with management permissions)') : tr(L, 'Miembro', 'Member'), inline: true },
       )
@@ -127,9 +130,9 @@ const whoismyrol = (): BotCommand => ({
 const present = (): BotCommand => ({
   name: 'present',
   description: 'Presenta a un usuario (tarjeta pública)',
-  aliases: ['presentar', 'presentacion'],
+  aliases: ['presentar', 'presentacion', 'presentate'],
   usage: 'cz!present @usuario',
-  category: 'Social',
+  category: 'Presentación',
   slashCommand: new SlashCommandBuilder()
     .setName('present')
     .setDescription('Presenta a un usuario')
@@ -188,7 +191,7 @@ const present = (): BotCommand => ({
       .setDescription(
         `Todos den la bienvenida a <@${member.id}>.\n\n` +
           `**Usuario:** ${member.user.tag}\n` +
-          `**Rol más alto:** ${top ? `<@&${top.id}>` : tr(L, tr(L, 'Sin roles', 'No roles'), 'No roles')}\n` +
+          `**Rol más alto:** ${top ? `<@&${top.id}>` : tr(L, 'Sin roles', 'No roles')}\n` +
           `**En el servidor desde:** ${ts(member.joinedAt)}\n` +
           `**Roles:** ${roles.size}`,
       )

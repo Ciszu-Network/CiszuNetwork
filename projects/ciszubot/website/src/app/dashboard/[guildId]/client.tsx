@@ -10,6 +10,7 @@ import InviteLink from '@/components/dashboard/InviteLink';
 import type { GuildInfo } from '@/lib/discordGuild';
 import { SaveDock, type SaveStatus } from '@/components/dashboard/SaveDock';
 import DiscordMarkdownField from '@/components/dashboard/DiscordMarkdownField';
+import SocialFeedsEditor, { type SocialFeed } from '@/components/dashboard/SocialFeedsEditor';
 import { QuickHelp, HelpZone } from '@/components/dashboard/QuickHelp';
 import { NiceSelect, RichInput, MultiSelect } from '@/components/dashboard/fields';
 import { SECTION_HELP } from '@/lib/dashboardCommands';
@@ -65,6 +66,8 @@ interface GuildConfig {
   starboard_min?: number;
   invite_points_per?: number;
   invite_rewards?: { invites: number; role_id: string }[];
+  invite_channel_id?: string | null;
+  invite_message?: string;
   history_enabled?: boolean;
   history_channel_id?: string | null;
   afk_role_id?: string | null;
@@ -98,11 +101,21 @@ interface GuildConfig {
   autoposts?: { id: string; type: 'custom' | 'animals' | 'anime'; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }[];
   news_enabled?: boolean;
   news_channels?: { anime: string | null; games: string | null; steam: string | null; tech: string | null };
+  social_enabled?: boolean;
+  social_feeds?: SocialFeed[];
+  nsfw_bot_preferences_enabled?: boolean;
+  nsfw_general_enabled?: boolean;
   nsfw_enabled?: boolean;
   nsfw_channel_id?: string | null;
+  nsfw_autopost_channel_id?: string | null;
   nsfw_autopost_enabled?: boolean;
   nsfw_autopost_minutes?: number;
   nsfw_commands_enabled?: boolean;
+  nsfw_content?: {
+    default_gender: 'women' | 'men' | 'mixed';
+    lgbt: Record<string, boolean>;
+    fetishes: Record<string, boolean>;
+  };
   confess_channel_id?: string | null;
   marriage_excluded_role_ids?: string[];
   nitro_repost_mode?: 'auto' | 'manual';
@@ -156,7 +169,7 @@ interface GuildConfig {
   premium?: boolean;
 }
 
-type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'news' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
+type SectionKey = 'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'news' | 'socialfeeds' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | `feat:${string}`;
 type PartialConfig = Partial<GuildConfig>;
 
 /** Payload de un export JSON (vista previa + descarga). */
@@ -164,6 +177,14 @@ interface JsonPreviewPayload {
   meta: Record<string, unknown>;
   config: Record<string, unknown>;
 }
+
+const NSFW_LGBT_KEYS = ['gay', 'lesbian', 'trans', 'bisexual', 'pansexual', 'nonbinary'] as const;
+const NSFW_FETISH_KEYS = ['femboy', 'tomboy', 'blonde', 'ebony', 'latina', 'milf', 'feet', 'thighs', 'belly'] as const;
+const DEFAULT_NSFW_CONTENT: NonNullable<GuildConfig['nsfw_content']> = {
+  default_gender: 'women',
+  lgbt: Object.fromEntries(NSFW_LGBT_KEYS.map((key) => [key, true])),
+  fetishes: Object.fromEntries(NSFW_FETISH_KEYS.map((key) => [key, true])),
+};
 
 /** Sub-opciones (toggles individuales) dentro de una opción de config. */
 const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPage']; descKey: keyof Dict['guildPage'] }[]> = {
@@ -193,13 +214,13 @@ const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPag
   ],
 };
 
-const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'news' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
-  general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id'],
+const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'news' | 'socialfeeds' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
+  general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id', 'nsfw_general_enabled'],
   messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
   welcome: ['welcome_channel_id', 'welcome_message', 'autorole_ids'],
   goodbye: ['goodbye_channel_id', 'goodbye_message'],
-  invites: ['invite_points_per', 'invite_rewards'],
+  invites: ['invite_points_per', 'invite_rewards', 'invite_channel_id', 'invite_message'],
   vcs: ['private_channels', 'private_category_id', 'private_vc_hub_id'],
   counting: ['counting_enabled', 'counting_channel_id', 'counting_start', 'counting_style', 'counting_allow_repeat', 'counting_authenticity'],
   suggestions: ['suggestions_enabled', 'suggestions_channel_id', 'suggestions_excluded_role_ids', 'suggestions_max_active', 'suggestions_cooldown_minutes'],
@@ -207,7 +228,8 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   trivia: ['trivia_enabled', 'trivia_excluded_role_ids', 'trivia_timed', 'trivia_time_seconds', 'trivia_difficulty', 'trivia_rewards'],
   autoposts: ['autoposts_enabled', 'autoposts'],
   news: ['news_enabled', 'news_channels'],
-  nsfw: ['nsfw_enabled', 'nsfw_channel_id', 'nsfw_autopost_enabled', 'nsfw_autopost_minutes', 'nsfw_commands_enabled'],
+  socialfeeds: ['social_enabled', 'social_feeds'],
+  nsfw: ['nsfw_bot_preferences_enabled', 'nsfw_general_enabled', 'nsfw_enabled', 'nsfw_channel_id', 'nsfw_autopost_channel_id', 'nsfw_autopost_enabled', 'nsfw_autopost_minutes', 'nsfw_commands_enabled', 'nsfw_content'],
   confessions: ['confess_channel_id'],
   customcmd: [],
   history: ['history_enabled', 'history_channel_id'],
@@ -321,9 +343,23 @@ const inputCls =
 const toggleCls = (on: boolean) =>
   `relative h-6 w-11 shrink-0 rounded-full transition ${on ? 'bg-gradient-to-r from-neon-blue to-neon-pink' : 'bg-white/15'}`;
 
-function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
+function Toggle({
+  on,
+  onChange,
+  disabled = false,
+}: {
+  on: boolean;
+  onChange: (v: boolean) => void;
+  disabled?: boolean;
+}) {
   return (
-    <button type="button" onClick={() => onChange(!on)} className={toggleCls(on)} aria-pressed={on}>
+    <button
+      type="button"
+      onClick={() => onChange(!on)}
+      disabled={disabled}
+      className={`${toggleCls(on)} ${disabled ? 'cursor-not-allowed opacity-40' : ''}`}
+      aria-pressed={on}
+    >
       <span
         className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${on ? 'left-[22px]' : 'left-0.5'}`}
       />
@@ -499,6 +535,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   >(null);
   const [resetAsk, setResetAsk] = useState(false);
   const [resetBusy, setResetBusy] = useState(false);
+  const [nsfwNoticeOpen, setNsfwNoticeOpen] = useState(false);
   const [subnavQuery, setSubnavQuery] = useState('');
   const [subnavFilter, setSubnavFilter] = useState<'all' | 'free' | 'premium'>('all');
   const [subnavSort, setSubnavSort] = useState<'asc' | 'desc'>('asc');
@@ -543,6 +580,32 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     bonus: { role_id: string; multiplier: number }[];
   }>({ prize: '', winners: 1, minutes: 60, channel: null, required: [], grant: [], maxPart: 0, reqMsg: 0, bonus: [] });
   const [gwLimit, setGwLimit] = useState(false);
+  // Creación de encuestas desde el dashboard (cola de acciones del bot).
+  const [pollForm, setPollForm] = useState<{
+    question: string;
+    options: string;
+    anonymous: boolean;
+    minutes: number;
+    channel: string | null;
+  }>({ question: '', options: '', anonymous: false, minutes: 0, channel: null });
+  const [pollBusy, setPollBusy] = useState(false);
+  type PollRow = {
+    id: number;
+    question: string;
+    options: string[];
+    counts: number[];
+    total_votes: number;
+    anonymous: boolean;
+    ended: boolean;
+    winner_index: number | null;
+    channel_id: string;
+    author_id: string;
+    message_id: string | null;
+    created_at: string;
+    ends_at: string | null;
+  };
+  const [pollList, setPollList] = useState<PollRow[]>([]);
+  const [pollCloseBusy, setPollCloseBusy] = useState<number | null>(null);
   const gwActive = gwList.filter((g) => g.status === 'running' || g.status === 'paused');
   const gwNextSlot = Array.from({ length: 10 }, (_, i) => i + 1).find((slot) => !gwActive.some((g) => g.slot === slot)) ?? null;
   const gwSlotCount = Math.max(10, ...gwActive.map((g) => g.slot || 0));
@@ -577,6 +640,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     | 'trivia'
     | 'autoposts'
     | 'news'
+    | 'socialfeeds'
     | 'nsfw'
     | 'confessions'
     | 'customcmd'
@@ -623,10 +687,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     const saved = localStorage.getItem('cz-dash-view') as GuildView | null;
     if (
       saved &&
-      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'polls', 'trivia', 'autoposts', 'news', 'nsfw', 'confessions', 'customcmd', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
+      (['general', 'messages', 'levels', 'welcome', 'goodbye', 'economy', 'starboard', 'nitro', 'staff', 'invites', 'vcs', 'counting', 'suggestions', 'polls', 'trivia', 'autoposts', 'news', 'socialfeeds', 'nsfw', 'confessions', 'customcmd', 'automod', 'alliance', 'tickets', 'stats', 'history'].includes(saved) ||
         saved.startsWith('feat:'))
     ) {
-      setView(saved);
+      if (saved === 'nsfw') setNsfwNoticeOpen(true);
+      else setView(saved);
     }
   }, []);
   const dirtyRef = useRef(false);
@@ -637,9 +702,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   }, []);
   const changeView = useCallback(
     (next: GuildView) => {
+      if (next === view) return;
       if (dirtyRef.current) {
         shakeDock();
         setLeavePrompt({ kind: 'view', target: next });
+        return;
+      }
+      if (next === 'nsfw') {
+        setNsfwNoticeOpen(true);
         return;
       }
       setView(next);
@@ -649,7 +719,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         /* sin storage */
       }
     },
-    [shakeDock]
+    [shakeDock, view]
   );
 
   // Deep-links del resumen global: #summary (primera info) y #config (config real).
@@ -677,7 +747,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     }, 200);
     return () => clearTimeout(id);
   }, []);
-  const SUBNAV: ReadonlyArray<{ key: GuildView; icon: string; label: keyof Dict['guildPage']; tag: 'free' | 'premium' | 'mixed' }> = [
+  const SUBNAV: ReadonlyArray<{ key: GuildView; icon: string; label: keyof Dict['guildPage']; tag: 'free' | 'premium' | 'mixed' | 'nsfw' }> = [
     { key: 'general', icon: 'settings', label: 'subnavGeneral', tag: 'free' },
     { key: 'messages', icon: 'message', label: 'subnavMessages', tag: 'free' },
     ...FEATURE_ROWS.map((f) => ({
@@ -705,7 +775,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     { key: 'trivia', icon: 'circle-question', label: 'subnavTrivia', tag: 'free' },
     { key: 'autoposts', icon: 'bullhorn', label: 'subnavAutoposts', tag: 'free' },
     { key: 'news', icon: 'globe', label: 'subnavNews', tag: 'free' },
-    { key: 'nsfw', icon: 'triangle-exclamation', label: 'subnavNsfw', tag: 'free' },
+    { key: 'socialfeeds', icon: 'share', label: 'subnavSocialFeeds', tag: 'mixed' },
+    { key: 'nsfw', icon: 'triangle-exclamation', label: 'subnavNsfw', tag: 'nsfw' },
     { key: 'confessions', icon: 'heart', label: 'subnavConfessions', tag: 'free' },
     { key: 'customcmd', icon: 'terminal', label: 'subnavCustomCmd', tag: 'free' },
     { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
@@ -719,7 +790,12 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const visibleSubnav = SUBNAV.filter((item) => {
     const q = subnavQuery.trim().toLowerCase();
     const matchQ = !q || t[item.label].toLowerCase().includes(q);
-    const matchF = subnavFilter === 'all' ? true : subnavFilter === 'free' ? item.tag === 'free' : item.tag !== 'free';
+    const matchF =
+      subnavFilter === 'all'
+        ? true
+        : subnavFilter === 'free'
+          ? item.tag === 'free'
+          : item.tag === 'premium' || item.tag === 'mixed';
     return matchQ && matchF;
   }).sort((a, b) => {
     // General SIEMPRE fija arriba, independiente de filtros u ordenamiento.
@@ -911,6 +987,118 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     }
   }, [guildId, msgBusy, msgChannel, msgContent, msgType, t.msgPending, t.msgSentError, t.msgSentOk, t.msgSending]);
 
+  // Encuestas: historial + refresco mientras se ve la sección.
+  const pollRefresh = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/dashboard/${guildId}/polls`, { cache: 'no-store' });
+      if (!res.ok) return;
+      const json = (await res.json()) as { polls?: PollRow[] };
+      setPollList(json.polls ?? []);
+    } catch {
+      /* red */
+    }
+  }, [guildId]);
+
+  useEffect(() => {
+    if (view !== 'polls') return;
+    void pollRefresh();
+    const timer = setInterval(() => void pollRefresh(), 15_000);
+    return () => clearInterval(timer);
+  }, [view, pollRefresh]);
+
+  /** Encuestas: inserta `poll_create` y sondea el resultado de la acción. */
+  const createDashboardPoll = useCallback(async () => {
+    const question = pollForm.question.trim();
+    const options = pollForm.options
+      .split('\n')
+      .map((o) => o.trim())
+      .filter(Boolean);
+    if (!question || !pollForm.channel || options.length < 2) {
+      toast(t.pollFormError, 'error');
+      return;
+    }
+    setPollBusy(true);
+    try {
+      const res = await fetch(`/api/dashboard/${guildId}/polls`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'create',
+          question,
+          options,
+          anonymous: pollForm.anonymous,
+          duration_minutes: pollForm.minutes,
+          channel_id: pollForm.channel,
+        }),
+      });
+      const json = (await res.json()) as { ok?: boolean; id?: number; error?: string };
+      if (!res.ok || !json.ok || !json.id) {
+        toast(json.error ?? t.pollError, 'error');
+        return;
+      }
+      for (let i = 0; i < 12; i++) {
+        await new Promise((r) => setTimeout(r, 2000));
+        const poll = await fetch(`/api/dashboard/${guildId}/polls?action=${json.id}`, { cache: 'no-store' });
+        if (!poll.ok) continue;
+        const data = (await poll.json()) as { action?: { processed: boolean; result: string | null } | null };
+        const action = data.action;
+        if (!action?.processed) continue;
+        const result = action.result ?? '';
+        if (result.startsWith('ok')) {
+          toast(t.pollCreated, 'success');
+          setPollForm({ question: '', options: '', anonymous: false, minutes: 0, channel: null });
+          void pollRefresh();
+        } else {
+          toast(result.replace(/^error:\s*/, '') || t.pollError, 'error');
+        }
+        return;
+      }
+      toast(t.pollPending, 'info');
+    } catch {
+      toast(t.pollError, 'error');
+    } finally {
+      setPollBusy(false);
+    }
+  }, [guildId, pollForm, pollRefresh, t.pollCreated, t.pollError, t.pollFormError, t.pollPending, toast]);
+
+  /** Encuestas: encola `poll_close` y sondea el resultado de la acción. */
+  const closeDashboardPoll = useCallback(async (pollId: number) => {
+    setPollCloseBusy(pollId);
+    try {
+      const res = await fetch(`/api/dashboard/${guildId}/polls`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'close', poll_id: pollId }),
+      });
+      const json = (await res.json()) as { ok?: boolean; id?: number; error?: string };
+      if (!res.ok || !json.ok || !json.id) {
+        toast(json.error ?? t.pollError, 'error');
+        return;
+      }
+      for (let i = 0; i < 12; i++) {
+        await new Promise((r) => setTimeout(r, 2000));
+        const poll = await fetch(`/api/dashboard/${guildId}/polls?action=${json.id}`, { cache: 'no-store' });
+        if (!poll.ok) continue;
+        const data = (await poll.json()) as { action?: { processed: boolean; result: string | null } | null };
+        const action = data.action;
+        if (!action?.processed) continue;
+        const result = action.result ?? '';
+        if (result.startsWith('ok')) {
+          toast(t.pollClosed, 'success');
+          void pollRefresh();
+        } else {
+          toast(result.replace(/^error:\s*/, '') || t.pollError, 'error');
+        }
+        return;
+      }
+      toast(t.pollPending, 'info');
+    } catch {
+      toast(t.pollError, 'error');
+    } finally {
+      setPollCloseBusy(null);
+    }
+  }, [guildId, pollRefresh, t.pollClosed, t.pollError, t.pollPending, toast]);
+
   const { data: serverConfig, isPending } = useQuery({
     queryKey: ['guild-config', guildId],
     queryFn: async () => {
@@ -955,6 +1143,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         starboard_min: cfg?.starboard_min ?? 3,
         invite_points_per: cfg?.invite_points_per ?? 1,
         invite_rewards: Array.isArray(cfg?.invite_rewards) ? cfg.invite_rewards : [],
+        invite_channel_id: cfg?.invite_channel_id ?? null,
+        invite_message:
+          cfg?.invite_message ?? '🎉 {user} se unió invitado por {inviter}. Total: **{count}** invitaciones.',
         history_enabled: cfg?.history_enabled ?? true,
         history_channel_id: cfg?.history_channel_id ?? null,
         afk_role_id: cfg?.afk_role_id ?? null,
@@ -993,11 +1184,22 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           steam: cfg?.news_channels?.steam ?? null,
           tech: cfg?.news_channels?.tech ?? null,
         },
+        social_enabled: cfg?.social_enabled ?? false,
+        social_feeds: Array.isArray(cfg?.social_feeds) ? cfg.social_feeds : [],
+        nsfw_bot_preferences_enabled: cfg?.nsfw_bot_preferences_enabled ?? false,
+        nsfw_general_enabled: cfg?.nsfw_general_enabled ?? false,
         nsfw_enabled: cfg?.nsfw_enabled ?? false,
         nsfw_channel_id: cfg?.nsfw_channel_id ?? null,
+        nsfw_autopost_channel_id: cfg?.nsfw_autopost_channel_id ?? null,
         nsfw_autopost_enabled: cfg?.nsfw_autopost_enabled ?? false,
         nsfw_autopost_minutes: cfg?.nsfw_autopost_minutes ?? 60,
         nsfw_commands_enabled: cfg?.nsfw_commands_enabled ?? false,
+        nsfw_content: {
+          ...DEFAULT_NSFW_CONTENT,
+          ...(cfg?.nsfw_content ?? {}),
+          lgbt: { ...DEFAULT_NSFW_CONTENT.lgbt, ...(cfg?.nsfw_content?.lgbt ?? {}) },
+          fetishes: { ...DEFAULT_NSFW_CONTENT.fetishes, ...(cfg?.nsfw_content?.fetishes ?? {}) },
+        },
         confess_channel_id: cfg?.confess_channel_id ?? null,
         marriage_excluded_role_ids: Array.isArray(cfg?.marriage_excluded_role_ids) ? cfg.marriage_excluded_role_ids : [],
         nitro_repost_mode: cfg?.nitro_repost_mode ?? 'auto',
@@ -1145,7 +1347,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string };
-        throw new Error(body.error === 'slug_taken' ? 'slug_taken' : 'save_failed');
+        const code =
+          body.error === 'slug_taken' ||
+          body.error === 'social_limit_networks' ||
+          body.error === 'social_limit_platform'
+            ? body.error
+            : 'save_failed';
+        throw new Error(code);
       }
       return res.json();
     },
@@ -1188,7 +1396,16 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     },
     onError: (err: unknown) => {
       setStatus('error');
-      setError(err instanceof Error && err.message === 'slug_taken' ? t.slugTaken : t.saveError);
+      const message = err instanceof Error ? err.message : '';
+      setError(
+        message === 'slug_taken'
+          ? t.slugTaken
+          : message === 'social_limit_networks'
+            ? t.socialLimitNetworks
+            : message === 'social_limit_platform'
+              ? t.socialLimitPlatform
+              : t.saveError,
+      );
     },
   });
 
@@ -1229,11 +1446,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
       if (prompt.kind === 'view') {
         if (action === 'save') toast(t.leaveSaved, 'success');
         else toast(t.leaveDiscarded, 'info');
-        setView(prompt.target);
-        try {
-          localStorage.setItem('cz-dash-view', prompt.target);
-        } catch {
-          /* sin storage */
+        if (prompt.target === 'nsfw') {
+          setNsfwNoticeOpen(true);
+        } else {
+          setView(prompt.target);
+          try {
+            localStorage.setItem('cz-dash-view', prompt.target);
+          } catch {
+            /* sin storage */
+          }
         }
       } else {
         toast(action === 'save' ? t.leaveSaved : t.leaveDiscarded, action === 'save' ? 'success' : 'info');
@@ -1260,6 +1481,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const textChannelOptions = channels
     .filter((c) => c.type === 0 || c.type === 5)
     .map((c) => ({ id: c.id, label: `#${c.name}` }));
+  const nsfwChannelOptions = channels
+    .filter((c) => (c.type === 0 || c.type === 5) && c.nsfw)
+    .map((c) => ({ id: c.id, label: `🔞 #${c.name}` }));
   const voiceChannelOptions = channels
     .filter((c) => c.type === 2 || c.type === 13)
     .map((c) => ({ id: c.id, label: `🔊 ${c.name}` }));
@@ -1277,6 +1501,13 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     games: null as string | null,
     steam: null as string | null,
     tech: null as string | null,
+  };
+  const socialFeeds = config?.social_feeds ?? [];
+  const nsfwContent: NonNullable<GuildConfig['nsfw_content']> = {
+    ...DEFAULT_NSFW_CONTENT,
+    ...(config?.nsfw_content ?? {}),
+    lgbt: { ...DEFAULT_NSFW_CONTENT.lgbt, ...(config?.nsfw_content?.lgbt ?? {}) },
+    fetishes: { ...DEFAULT_NSFW_CONTENT.fetishes, ...(config?.nsfw_content?.fetishes ?? {}) },
   };
   const levelRoles = config?.level_roles ?? [];
   const allianceCfg = config?.alliance_config ?? {
@@ -1702,11 +1933,21 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                       ? 'border-amber-400/40 bg-amber-400/10 text-amber-400'
                       : item.tag === 'mixed'
                         ? 'border-neon-pink/40 bg-neon-pink/10 text-neon-pink'
-                        : 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400'
+                        : item.tag === 'nsfw'
+                          ? 'border-red-400/40 bg-red-400/10 text-red-300'
+                          : 'border-emerald-400/40 bg-emerald-400/10 text-emerald-400'
                   }`}
                 >
                   <Icon
-                    name={item.tag === 'premium' ? 'crown' : item.tag === 'mixed' ? 'favorite' : 'gift'}
+                    name={
+                      item.tag === 'premium'
+                        ? 'crown'
+                        : item.tag === 'mixed'
+                          ? 'favorite'
+                          : item.tag === 'nsfw'
+                            ? 'triangle-exclamation'
+                            : 'gift'
+                    }
                     size={7}
                     className="shrink-0"
                   />
@@ -1718,6 +1959,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     </>
                   ) : item.tag === 'mixed' ? (
                     t.tagMixed
+                  ) : item.tag === 'nsfw' ? (
+                    t.tagNsfw
                   ) : (
                     t.tagFree
                   )}
@@ -1805,6 +2048,37 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   }
                 />
               </Field>
+
+              <div className="rounded-xl border border-red-400/25 bg-red-500/5 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="flex items-center gap-2 text-sm font-bold text-white">
+                      <Icon name="triangle-exclamation" size={14} className="text-red-400" />
+                      {t.nsfwGeneralGateTitle}
+                    </p>
+                    <p className="mt-1 text-[10px] text-white/45">{t.nsfwGeneralGateHint}</p>
+                  </div>
+                  <Toggle
+                    on={Boolean(config.nsfw_general_enabled)}
+                    disabled={!config.nsfw_bot_preferences_enabled}
+                    onChange={(v) =>
+                      update(
+                        v
+                          ? { nsfw_general_enabled: true }
+                          : {
+                              nsfw_general_enabled: false,
+                              nsfw_enabled: false,
+                              nsfw_commands_enabled: false,
+                              nsfw_autopost_enabled: false,
+                            },
+                      )
+                    }
+                  />
+                </div>
+                {!config.nsfw_bot_preferences_enabled && (
+                  <p className="mt-2 text-[10px] font-semibold text-amber-300">{t.nsfwGateLockedBot}</p>
+                )}
+              </div>
 
               {/* Roles del servidor (owner/admin/mod/bots) — alimentan los
                   permisos de los comandos de gestión y la moderación. */}
@@ -3285,16 +3559,149 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               />
             </div>
             <p className="mb-4 text-xs text-white/45">{t.pollsHint}</p>
+            {config.polls_enabled !== false && (
+            <div className="mb-5 rounded-xl border border-white/10 bg-black/20 p-4">
+              <p className="text-sm font-semibold text-white/90">{t.pollCreateTitle}</p>
+              <p className="mb-3 text-xs text-white/45">{t.pollCreateHint}</p>
+              <div className="grid gap-3">
+                <Field label={t.pollQuestionLabel}>
+                  <input
+                    className={inputCls}
+                    maxLength={250}
+                    value={pollForm.question}
+                    placeholder={t.pollQuestionPlaceholder}
+                    onChange={(e) => setPollForm({ ...pollForm, question: e.target.value })}
+                  />
+                </Field>
+                <Field label={t.pollOptionsLabel} hint={t.pollOptionsHint}>
+                  <textarea
+                    className={`${inputCls} min-h-24`}
+                    value={pollForm.options}
+                    placeholder={t.pollOptionsPlaceholder}
+                    onChange={(e) => setPollForm({ ...pollForm, options: e.target.value })}
+                  />
+                </Field>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {hasGuildData ? (
+                    <SelectField
+                      label={t.pollChannelLabel}
+                      value={pollForm.channel}
+                      placeholder={t.pickChannel}
+                      options={textChannelOptions}
+                      onChange={(v) => setPollForm({ ...pollForm, channel: v })}
+                    />
+                  ) : (
+                    <Field label={t.pollChannelLabel} hint={t.manualIdHint}>
+                      <input
+                        className={inputCls}
+                        value={pollForm.channel ?? ''}
+                        onChange={(e) => setPollForm({ ...pollForm, channel: e.target.value || null })}
+                      />
+                    </Field>
+                  )}
+                  <Field label={t.pollDurationLabel} hint={t.pollDurationHint}>
+                    <input
+                      type="number"
+                      min={0}
+                      max={10080}
+                      className={inputCls}
+                      value={pollForm.minutes}
+                      onChange={(e) => setPollForm({ ...pollForm, minutes: Math.max(0, Number(e.target.value) || 0) })}
+                    />
+                  </Field>
+                </div>
+                <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-semibold text-white/90">{t.pollAnonymousLabel}</p>
+                    <p className="text-xs text-white/50">{t.pollAnonymousHint}</p>
+                  </div>
+                  <Toggle on={pollForm.anonymous} onChange={(v) => setPollForm({ ...pollForm, anonymous: v })} />
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => void createDashboardPoll()}
+                    disabled={pollBusy}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue to-neon-pink px-5 py-2.5 text-xs font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                  >
+                    {pollBusy ? t.pollCreating : t.pollCreateButton}
+                  </button>
+                </div>
+              </div>
+            </div>
+            )}
+            <div className="mb-5 rounded-xl border border-white/10 bg-black/20 p-4">
+              <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <p className="text-sm font-semibold text-white/90">{t.pollHistoryTitle}</p>
+                  <p className="text-xs text-white/45">{t.pollHistoryHint}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => void pollRefresh()}
+                  className="rounded-lg border border-white/15 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/50 hover:text-neon-blue"
+                >
+                  {t.pollRefresh}
+                </button>
+              </div>
+              {pollList.length === 0 ? (
+                <p className="text-xs text-white/45">{t.pollHistoryEmpty}</p>
+              ) : (
+                <div className="grid gap-2">
+                  {pollList.map((poll) => (
+                    <div key={poll.id} className="rounded-lg border border-white/10 bg-white/5 p-3">
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-semibold text-white/90">#{poll.id} · {poll.question}</p>
+                          <p className="text-xs text-white/45">
+                            {poll.ended ? t.pollStatusEnded : t.pollStatusActive} · {poll.total_votes} {t.pollVotesLabel}
+                            {poll.ends_at ? ` · ${new Date(poll.ends_at).toLocaleString()}` : ''}
+                          </p>
+                        </div>
+                        {!poll.ended && (
+                          <button
+                            type="button"
+                            onClick={() => void closeDashboardPoll(poll.id)}
+                            disabled={pollCloseBusy === poll.id}
+                            className="rounded-lg border border-rose-400/40 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-rose-300 transition hover:bg-rose-400/10 disabled:opacity-50"
+                          >
+                            {pollCloseBusy === poll.id ? t.pollClosing : t.pollCloseButton}
+                          </button>
+                        )}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {poll.options.map((option, index) => (
+                          <span
+                            key={`${poll.id}-${index}`}
+                            className={`rounded-md border px-2 py-1 text-xs ${
+                              poll.ended && poll.winner_index === index
+                                ? 'border-neon-blue/50 bg-neon-blue/10 text-neon-blue'
+                                : 'border-white/10 text-white/60'
+                            }`}
+                          >
+                            {option}: {poll.counts[index] ?? 0}
+                          </span>
+                        ))}
+                      </div>
+                      {poll.ended && poll.winner_index !== null && poll.options[poll.winner_index] && (
+                        <p className="mt-2 text-xs text-neon-blue">
+                          {t.pollWinnerLabel}: {poll.options[poll.winner_index]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="grid gap-5">
               <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
                 <div>
                   <p className="text-sm font-semibold text-white/90">{t.pollsToggle}</p>
                   <p className="text-xs text-white/50">{t.pollsToggleHint}</p>
                 </div>
-                <Toggle on={config.polls_enabled !== false} onChange={(v) => update({ polls_enabled: v })} />
+                <Toggle on={config.polls_enabled ?? true} onChange={(v) => update({ polls_enabled: v })} />
               </div>
-              {config.polls_enabled !== false && (
-                <div className="grid gap-4">
+              <div className="grid gap-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <Field label={t.pollsMaxActiveLabel} hint={t.pollsMaxActiveHint}>
                       <input
@@ -3326,7 +3733,6 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     />
                   </Field>
                 </div>
-              )}
             </div>
             <HelpZone title={SECTION_HELP.polls.title} commands={SECTION_HELP.polls.commands} note={SECTION_HELP.polls.note} />
           </section>
@@ -3664,14 +4070,48 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           </section>
           )}
 
+          {view === 'socialfeeds' && (
+          <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <h2 className="flex items-center gap-2 font-bold text-white">
+                <Icon name="share" size={18} className="text-neon-blue" /> {t.socialFeedsTitle}
+              </h2>
+              <QuickHelp title={SECTION_HELP.socialfeeds.title} commands={SECTION_HELP.socialfeeds.commands} note={SECTION_HELP.socialfeeds.note} />
+              <Badge kind="free" dict={dict} />
+              <SectionJson
+                disabled={dirty || busy}
+                disabledHint={t.jsonNeedSave}
+                exportLabel={t.jsonExport}
+                importLabel={t.jsonImport}
+                onExport={() => exportScope('socialfeeds')}
+                onImport={(file) => void importFile(file, 'socialfeeds')}
+              />
+            </div>
+            <SocialFeedsEditor
+              enabled={Boolean(config.social_enabled)}
+              feeds={socialFeeds}
+              premium={Boolean(config.premium)}
+              channels={textChannelOptions}
+              roles={roleOptions}
+              emojis={emojis}
+              t={t}
+              onEnabledChange={(value) => update({ social_enabled: value })}
+              onFeedsChange={(feeds) => update({ social_feeds: feeds })}
+            />
+            <HelpZone title={SECTION_HELP.socialfeeds.title} commands={SECTION_HELP.socialfeeds.commands} note={SECTION_HELP.socialfeeds.note} />
+          </section>
+          )}
+
           {view === 'nsfw' && (
           <section className="rounded-2xl border border-red-400/20 bg-white/5 p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
                 <Icon name="triangle-exclamation" size={18} className="text-red-400" /> {t.nsfwTitle}
               </h2>
+              <span className="inline-flex items-center gap-1 rounded-full border border-red-400/40 bg-red-400/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-red-300">
+                <Icon name="triangle-exclamation" size={9} /> {t.tagNsfw}
+              </span>
               <QuickHelp title={SECTION_HELP.nsfw.title} commands={SECTION_HELP.nsfw.commands} note={SECTION_HELP.nsfw.note} />
-              <Badge kind="free" dict={dict} />
               <SectionJson
                 disabled={dirty || busy}
                 disabledHint={t.jsonNeedSave}
@@ -3685,24 +4125,77 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               {t.nsfwWarning}
             </div>
             <p className="mb-4 text-xs text-white/45">{t.nsfwHint}</p>
+
+            <div className="mb-5 grid gap-2 sm:grid-cols-3">
+              <div className={`rounded-xl border px-3 py-3 ${config.nsfw_bot_preferences_enabled ? 'border-emerald-400/30 bg-emerald-400/5' : 'border-amber-400/30 bg-amber-400/5'}`}>
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/50">1 · {t.nsfwGate1Title}</p>
+                <p className="mt-1 text-[10px] text-white/45">{t.nsfwGate1Hint}</p>
+                {config.nsfw_bot_preferences_enabled ? (
+                  <p className="mt-2 text-[10px] font-bold text-emerald-300">✓ {t.nsfwGateDone}</p>
+                ) : (
+                  <Link href="/dashboard/bot" className="mt-2 inline-block text-[10px] font-bold text-amber-300 underline">
+                    {t.nsfwGateGo}
+                  </Link>
+                )}
+              </div>
+              <div className={`rounded-xl border px-3 py-3 ${config.nsfw_general_enabled ? 'border-emerald-400/30 bg-emerald-400/5' : 'border-amber-400/30 bg-amber-400/5'}`}>
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/50">2 · {t.nsfwGate2Title}</p>
+                <p className="mt-1 text-[10px] text-white/45">{t.nsfwGate2Hint}</p>
+                {config.nsfw_general_enabled ? (
+                  <p className="mt-2 text-[10px] font-bold text-emerald-300">✓ {t.nsfwGateDone}</p>
+                ) : (
+                  <button type="button" onClick={() => changeView('general')} className="mt-2 inline-block text-[10px] font-bold text-amber-300 underline">
+                    {t.nsfwGateGo}
+                  </button>
+                )}
+              </div>
+              <div className={`rounded-xl border px-3 py-3 ${config.nsfw_enabled ? 'border-emerald-400/30 bg-emerald-400/5' : 'border-amber-400/30 bg-amber-400/5'}`}>
+                <p className="text-[10px] font-black uppercase tracking-widest text-white/50">3 · {t.nsfwGate3Title}</p>
+                <p className="mt-1 text-[10px] text-white/45">{t.nsfwGate3Hint}</p>
+                {config.nsfw_enabled ? (
+                  <p className="mt-2 text-[10px] font-bold text-emerald-300">✓ {t.nsfwGateDone}</p>
+                ) : (
+                  <p className="mt-2 text-[10px] font-bold text-amber-300">{t.nsfwGatePending}</p>
+                )}
+              </div>
+            </div>
+
             <div className="grid gap-5">
               <div className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-3">
                 <div>
                   <p className="text-sm font-semibold text-white/90">{t.nsfwToggle}</p>
                   <p className="text-xs text-white/50">{t.nsfwToggleHint}</p>
                 </div>
-                <Toggle on={Boolean(config.nsfw_enabled)} onChange={(v) => update({ nsfw_enabled: v })} />
+                <Toggle
+                  on={Boolean(config.nsfw_enabled)}
+                  disabled={!config.nsfw_bot_preferences_enabled || !config.nsfw_general_enabled}
+                  onChange={(v) =>
+                    update(
+                      v
+                        ? { nsfw_enabled: true }
+                        : { nsfw_enabled: false, nsfw_commands_enabled: false, nsfw_autopost_enabled: false },
+                    )
+                  }
+                />
               </div>
+              {(!config.nsfw_bot_preferences_enabled || !config.nsfw_general_enabled) && (
+                <p className="text-[10px] font-semibold text-amber-300">{t.nsfwGateLocked}</p>
+              )}
+
               {config.nsfw_enabled && (
                 <div className="ml-2 grid gap-4 border-l-2 border-red-400/30 pl-4">
-                  {hasGuildData ? (
+                  {nsfwChannelOptions.length > 0 ? (
                     <SelectField
                       label={t.nsfwChannelLabel}
                       value={config.nsfw_channel_id ?? null}
                       placeholder={t.pickChannel}
-                      options={textChannelOptions}
+                      options={nsfwChannelOptions}
                       onChange={(v) => update({ nsfw_channel_id: v })}
                     />
+                  ) : hasGuildData ? (
+                    <div className="rounded-xl border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-xs font-semibold text-amber-200">
+                      {t.nsfwNoChannel}
+                    </div>
                   ) : (
                     <Field label={t.nsfwChannelLabel} hint={t.manualIdHint}>
                       <input
@@ -3713,12 +4206,43 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     </Field>
                   )}
                   <p className="text-[10px] text-white/35">{t.nsfwChannelHint}</p>
+
+                  <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-white/80">{t.nsfwAutopostChannelToggle}</p>
+                      <p className="text-[10px] text-white/40">{t.nsfwAutopostChannelHint}</p>
+                    </div>
+                    <Toggle
+                      on={Boolean(config.nsfw_autopost_channel_id)}
+                      onChange={(v) =>
+                        update({
+                          nsfw_autopost_channel_id: v
+                            ? config.nsfw_channel_id ?? nsfwChannelOptions[0]?.id ?? null
+                            : null,
+                        })
+                      }
+                    />
+                  </div>
+                  {config.nsfw_autopost_channel_id && nsfwChannelOptions.length > 0 && (
+                    <SelectField
+                      label={t.nsfwAutopostChannelLabel}
+                      value={config.nsfw_autopost_channel_id}
+                      placeholder={t.pickChannel}
+                      options={nsfwChannelOptions}
+                      onChange={(v) => update({ nsfw_autopost_channel_id: v })}
+                    />
+                  )}
+
                   <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
                     <div className="min-w-0">
                       <p className="text-xs font-semibold text-white/80">{t.nsfwAutopostToggle}</p>
                       <p className="text-[10px] text-white/40">{t.nsfwAutopostToggleHint}</p>
                     </div>
-                    <Toggle on={Boolean(config.nsfw_autopost_enabled)} onChange={(v) => update({ nsfw_autopost_enabled: v })} />
+                    <Toggle
+                      on={Boolean(config.nsfw_autopost_enabled)}
+                      disabled={!config.nsfw_channel_id && !config.nsfw_autopost_channel_id}
+                      onChange={(v) => update({ nsfw_autopost_enabled: v })}
+                    />
                   </div>
                   {config.nsfw_autopost_enabled && (
                     <Field label={t.nsfwIntervalLabel}>
@@ -3732,12 +4256,72 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                       />
                     </Field>
                   )}
+
                   <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-2.5">
                     <div className="min-w-0">
                       <p className="text-xs font-semibold text-white/80">{t.nsfwCommandsToggle}</p>
                       <p className="text-[10px] text-white/40">{t.nsfwCommandsToggleHint}</p>
                     </div>
                     <Toggle on={Boolean(config.nsfw_commands_enabled)} onChange={(v) => update({ nsfw_commands_enabled: v })} />
+                  </div>
+
+                  <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                    <p className="text-sm font-semibold text-white/85">{t.nsfwContentTitle}</p>
+                    <p className="mb-3 mt-1 text-[10px] text-white/40">{t.nsfwContentHint}</p>
+                    <Field label={t.nsfwGenderLabel}>
+                      <NiceSelect
+                        value={nsfwContent.default_gender}
+                        options={[
+                          { id: 'women', label: t.nsfwGenderWomen },
+                          { id: 'men', label: t.nsfwGenderMen },
+                          { id: 'mixed', label: t.nsfwGenderMixed },
+                        ]}
+                        onChange={(v) =>
+                          update({
+                            nsfw_content: {
+                              ...nsfwContent,
+                              default_gender: v as 'women' | 'men' | 'mixed',
+                            },
+                          })
+                        }
+                      />
+                    </Field>
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">{t.nsfwLgbtTitle}</p>
+                        <div className="grid gap-1.5">
+                          {NSFW_LGBT_KEYS.map((key) => (
+                            <div key={key} className="flex items-center justify-between gap-2 rounded-lg bg-black/20 px-3 py-1.5">
+                              <span className="text-[11px] text-white/70">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                              <Toggle
+                                on={Boolean(nsfwContent.lgbt[key])}
+                                onChange={(v) =>
+                                  update({ nsfw_content: { ...nsfwContent, lgbt: { ...nsfwContent.lgbt, [key]: v } } })
+                                }
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">{t.nsfwFetishTitle}</p>
+                        <div className="grid gap-1.5">
+                          {NSFW_FETISH_KEYS.map((key) => (
+                            <div key={key} className="flex items-center justify-between gap-2 rounded-lg bg-black/20 px-3 py-1.5">
+                              <span className="text-[11px] text-white/70">
+                                {key === 'milf' ? 'MILF' : key.charAt(0).toUpperCase() + key.slice(1)}
+                              </span>
+                              <Toggle
+                                on={Boolean(nsfwContent.fetishes[key])}
+                                onChange={(v) =>
+                                  update({ nsfw_content: { ...nsfwContent, fetishes: { ...nsfwContent.fetishes, [key]: v } } })
+                                }
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -3854,6 +4438,33 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   onChange={(e) => update({ invite_points_per: Math.max(1, Number(e.target.value) || 1) })}
                 />
               </Field>
+              <Field label={t.inviteChannelLabel} hint={t.inviteChannelHint}>
+                <NiceSelect
+                  value={config.invite_channel_id ?? ''}
+                  options={[{ id: '', label: t.inviteChannelNone }, ...textChannelOptions]}
+                  onChange={(v) => update({ invite_channel_id: v || null })}
+                />
+              </Field>
+              <DiscordMarkdownField
+                label={t.inviteMessageLabel}
+                hint={t.inviteMessageHint}
+                value={config.invite_message ?? ''}
+                onChange={(v) => update({ invite_message: v })}
+                variables={['{user}', '{inviter}', '{count}', '{guild}']}
+                emojis={emojis}
+                roles={roleOptions}
+                channels={textChannelOptions}
+                labels={{
+                  bold: t.mdBold,
+                  italic: t.mdItalic,
+                  underline: t.mdUnderline,
+                  spoiler: t.mdSpoiler,
+                  code: t.mdCode,
+                  preview: t.mdPreview,
+                  edit: t.mdEdit,
+                  vars: t.mdVars,
+                }}
+              />
               <div>
                 <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">{t.invitesRewardsLabel}</p>
                 <p className="mb-3 text-[10px] text-white/35">{t.invitesRewardsHint}</p>
@@ -4811,6 +5422,51 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           </div>
         </div>
       )}
+
+      <Modal
+        open={nsfwNoticeOpen}
+        onOpenChange={setNsfwNoticeOpen}
+        title={t.nsfwNoticeTitle}
+        description={t.nsfwNoticeDesc}
+        size="md"
+      >
+        <div className="space-y-4">
+          <div className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-xs font-semibold leading-relaxed text-red-200">
+            {t.nsfwWarning}
+          </div>
+          <div className="flex justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                setNsfwNoticeOpen(false);
+                try {
+                  localStorage.setItem('cz-dash-view', view);
+                } catch {
+                  /* sin storage */
+                }
+              }}
+              className="rounded-xl border border-white/15 px-4 py-2 font-header text-[10px] font-black uppercase tracking-widest text-white/70 transition hover:border-white/40 hover:text-white"
+            >
+              {t.nsfwNoticeCancel}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setNsfwNoticeOpen(false);
+                setView('nsfw');
+                try {
+                  localStorage.setItem('cz-dash-view', 'nsfw');
+                } catch {
+                  /* sin storage */
+                }
+              }}
+              className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 px-4 py-2 font-header text-[10px] font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95"
+            >
+              <Icon name="triangle-exclamation" size={12} /> {t.nsfwNoticeConfirm}
+            </button>
+          </div>
+        </div>
+      </Modal>
 
       <Modal
         open={exportPreview !== null}

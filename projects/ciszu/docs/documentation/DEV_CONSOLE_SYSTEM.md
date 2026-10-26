@@ -57,7 +57,7 @@ test/website/debug/
 | Componente | Responsabilidad |
 | --- | --- |
 | `$WEBS` | Catálogo de webs: `key`, `name`, `filter` (pnpm), `port`, `dir` |
-| `Show-Menu` | Navegación TUI (flechas ↑/↓, Enter, Q/Esc) |
+| `Show-Menu` | Navegación TUI compartida (`tui.ps1`): flechas, GRUB multi-dígito, búsqueda Ctrl+S/`\`, ratón, paginación, Enter, Q/Esc |
 | `Start-WebByKey` | Lanza `pnpm --filter <filter> dev -p <port>` en fondo con logs redirigidos |
 | `Stop-WebByKey` | Detiene el proceso que escucha en el puerto de la web |
 | `Show-Log` | Abre el log en vivo en una ventana PowerShell separada |
@@ -157,15 +157,28 @@ la consola espera (spinner + `Wait-WebReady`) a que cada web responda en su puer
 
 ### 4.4 Teclas
 
+> **Motor TUI compartido (16 oct 2026)**: los menús de devcon, staffcon y customerscon
+> usan `tools/consoles/tui.ps1` (mismo motor para menús, submenús y casillas):
+> teclas GRUB multi-dígito, búsqueda en vivo, ratón y paginación.
+
 | Tecla | Efecto |
 | --- | --- |
 | `↑` / `↓` | Moverse entre opciones |
+| `Home` / `End` | Primera / última opción |
+| `PgUp` / `PgDn` | Saltar una página |
+| `1`…`99` | **GRUB**: escribir los dígitos salta a esa opción (p. ej. `12`). El buffer se ve como `[Ir a: 12]` y se resetea a 1.2s |
+| `Backspace` | Borra el último dígito del buffer GRUB |
+| `Ctrl+S` (o `\`) | **Buscar**: filtro en vivo (sin tildes, case-insensitive). `Esc` sale del filtro |
 | `Espacio` | Marcar / desmarcar la web resaltada |
 | `A` | Marcar todas las webs |
-| `1`…`9` / `0` | Saltar al índice de la opción (0 = 10.ª) |
 | `Enter` | Proceder (ejecutar en las webs marcadas) |
 | `N` | No proceder (cancelar) |
 | `Q` / `Esc` | Abortar (cerrar consola; las webs siguen activas) |
+| **Ratón** | Clic = seleccionar (o marcar en casillas) · doble clic = elegir · rueda = scroll. Si el terminal no lo permite, se degrada a teclado |
+
+Con listas largas, el motor pagina automáticamente (`N-M de T`) manteniendo el
+cursor a la vista. La confirmación de acciones peligrosas (p. ej. forzar el estado
+del bot) usa `Show-TuiConfirm` (botones SI/No, foco inicial en "No").
 
 ### 4.5 Debug local de anuncios (opción "Anuncios: envio de anuncio tipo advisors")
 

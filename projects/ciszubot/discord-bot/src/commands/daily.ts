@@ -1,4 +1,4 @@
-﻿import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { addMoney, randomBetween } from '../services/economy';
 import { db, ciszubotSchema, eq, and, desc } from '../services/supabase';
@@ -16,6 +16,7 @@ const create = (): BotCommand => ({
     const L = await langOf(message);
     const guildId = message.guild?.id ?? 'DM';
     const userId = message.author.id;
+    const cfg = await getGuildConfig(guildId);
 
     const transactions = ciszubotSchema.transactions;
     const rows = await db
@@ -46,7 +47,13 @@ const create = (): BotCommand => ({
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
       .setTitle(tr(L, '☀️ ¡Recompensa diaria reclamada!', '☀️ Daily reward claimed!'))
-      .setDescription(tr(L, `Recibiste **${(amount)}**.\nTu nuevo saldo es **${(bal ?? 0)}**.`, `You received **${(amount)}**.\nYour new balance is **${(bal ?? 0)}**.`))
+      .setDescription(
+        tr(
+          L,
+          `Recibiste **${formatCoins(cfg, amount)}**.\nTu nuevo saldo es **${formatCoins(cfg, bal ?? 0)}**.`,
+          `You received **${formatCoins(cfg, amount)}**.\nYour new balance is **${formatCoins(cfg, bal ?? 0)}**.`,
+        ),
+      )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });

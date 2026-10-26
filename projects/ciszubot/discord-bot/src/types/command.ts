@@ -19,7 +19,7 @@ export interface BotCommand {
   slashCommand?: {
     toJSON(): unknown;
   };
-  execute(message: SimulatedMessage, args: string[]): Promise<unknown>;
+  execute(message: SimulatedMessage, args: string[], invokedName?: string): Promise<unknown>;
 }
 
 /** Canal con capacidad de envío (evita la unión problemática de tipos) */

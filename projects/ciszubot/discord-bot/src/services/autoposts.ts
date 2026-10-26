@@ -1,7 +1,11 @@
 import { Client, EmbedBuilder, TextChannel } from 'discord.js';
-import { getGuildConfig } from './configService';
+import { DEFAULT_NSFW_CONTENT, getGuildConfig, isNsfwUnlocked } from './configService';
+import type { NsfwContentPreferences } from './configService';
 import { logger } from './logger';
 import { BOT_COLORS, BOT_FOOTER } from '../config/links';
+import { NSFW_BASES, effectiveGender, isNsfwSelectionEnabled } from './nsfw/catalog';
+import type { NsfwSelection } from './nsfw/catalog';
+import { fetchNsfwMedia } from './nsfw/providers';
 
 /**
  * Autopublicaciones: el bot publica periódicamente en canales configurados.
@@ -18,9 +22,10 @@ export interface AutopostConfig {
   text?: string;
   url?: string;
   nsfw?: boolean;
+  nsfwPrefs?: NsfwContentPreferences;
 }
 
-const timers = new Map<string, NodeJS.Timeout>();
+const timers = new Map<string, { timer: NodeJS.Timeout; signature: string }>();
 
 async function fetchAnimalImage(): Promise<string | null> {
   try {
@@ -44,9 +49,9 @@ async function fetchAnimalImage(): Promise<string | null> {
   return null;
 }
 
-async function fetchAnimeImage(nsfw: boolean): Promise<string | null> {
+async function fetchAnimeImage(): Promise<string | null> {
   try {
-    const r = await fetch(`https://api.waifu.pics/${nsfw ? 'nsfw' : 'sfw'}/waifu`);
+    const r = await fetch('https://api.waifu.pics/sfw/waifu');
     if (r.ok) {
       const j = (await r.json()) as { url?: string };
       if (typeof j?.url === 'string') return j.url;
@@ -55,6 +60,21 @@ async function fetchAnimeImage(nsfw: boolean): Promise<string | null> {
     logger.warn('autopost anime api:', error);
   }
   return null;
+}
+
+function randomNsfwSelection(prefs: NsfwContentPreferences): NsfwSelection | null {
+  const candidates = NSFW_BASES.map((def) => ({
+    def,
+    style: def.defaultStyle,
+    gender: def.defaultGender,
+    variant: def.purrbotVariants
+      ? 'ffm' in def.purrbotVariants
+        ? 'ffm'
+        : Object.keys(def.purrbotVariants)[0]
+      : undefined,
+  })).filter((selection) => isNsfwSelectionEnabled(selection, prefs));
+  if (candidates.length === 0) return null;
+  return candidates[Math.floor(Math.random() * candidates.length)] ?? null;
 }
 
 async function postOnce(client: Client, guildId: string, post: AutopostConfig): Promise<void> {
@@ -78,12 +98,24 @@ async function postOnce(client: Client, guildId: string, post: AutopostConfig): 
       embed.setImage(url);
       hasContent = true;
     }
-  } else if (post.type === 'anime') {
-    const url = await fetchAnimeImage(Boolean(post.nsfw));
-    if (url) {
-      embed.setTitle(post.nsfw ? '🔞 Anime' : '✨ Anime');
-      embed.setImage(url);
-      hasContent = true;
+  } else if (post.type === 'anime' || post.type === 'nsfw') {
+    if (post.nsfw) {
+      const prefs = post.nsfwPrefs ?? DEFAULT_NSFW_CONTENT;
+      const selection = randomNsfwSelection(prefs);
+      const media = selection ? await fetchNsfwMedia(selection, effectiveGender(selection, prefs)) : null;
+      if (media) {
+        embed.setTitle(`🔞 ${media.title}`);
+        embed.setImage(media.url);
+        if (media.link) embed.setDescription(`[Ver el vídeo completo](${media.link})`);
+        hasContent = true;
+      }
+    } else {
+      const url = await fetchAnimeImage();
+      if (url) {
+        embed.setTitle('✨ Anime');
+        embed.setImage(url);
+        hasContent = true;
+      }
     }
   }
 
@@ -113,32 +145,36 @@ export function syncAutoposts(client: Client): void {
           if (p?.id && p.channel_id && p.interval_minutes >= 5) wanted.set(`${guild.id}:${p.id}`, p);
         }
       }
-      if (cfg.nsfw_enabled && cfg.nsfw_autopost_enabled && cfg.nsfw_channel_id) {
+      const nsfwChannelId = cfg.nsfw_autopost_channel_id ?? cfg.nsfw_channel_id;
+      if (isNsfwUnlocked(cfg) && cfg.nsfw_autopost_enabled && nsfwChannelId) {
         const mins = Math.max(15, cfg.nsfw_autopost_minutes);
         wanted.set(`${guild.id}:nsfw`, {
           id: 'nsfw',
-          type: 'anime',
-          channel_id: cfg.nsfw_channel_id,
+          type: 'nsfw',
+          channel_id: nsfwChannelId,
           interval_minutes: mins,
           nsfw: true,
+          nsfwPrefs: cfg.nsfw_content,
         });
       }
 
       // Detener los que ya no están configurados.
       for (const key of [...timers.keys()]) {
         if (key.startsWith(`${guild.id}:`) && !wanted.has(key)) {
-          const t = timers.get(key);
-          if (t) clearTimeout(t);
+          const entry = timers.get(key);
+          if (entry) clearInterval(entry.timer);
           timers.delete(key);
         }
       }
-      // Arrancar los nuevos.
+      // Arrancar los nuevos o reemplazar los que cambiaron (intervalo/prefs).
       for (const [key, post] of wanted) {
-        if (!timers.has(key)) {
-          const t = setInterval(() => void postOnce(client, guild.id, post), post.interval_minutes * 60_000);
-          timers.set(key, t);
-          logger.info(`Autopublicación activa: ${key} (${post.type}, cada ${post.interval_minutes} min)`);
-        }
+        const signature = JSON.stringify(post);
+        const existing = timers.get(key);
+        if (existing?.signature === signature) continue;
+        if (existing) clearInterval(existing.timer);
+        const timer = setInterval(() => void postOnce(client, guild.id, post), post.interval_minutes * 60_000);
+        timers.set(key, { timer, signature });
+        logger.info(`Autopublicación activa: ${key} (${post.type}, cada ${post.interval_minutes} min)`);
       }
     })();
   }
@@ -148,22 +184,4 @@ export function syncAutoposts(client: Client): void {
 export function startAutopostLoop(client: Client): void {
   syncAutoposts(client);
   setInterval(() => syncAutoposts(client), 60_000);
-}
-
-/** Publica una imagen +18 aleatoria (comando cz!nsfwpic; canal NSFW obligatorio). */
-export async function postNsfwRandom(client: Client, channel: TextChannel): Promise<boolean> {
-  const url = await fetchAnimeImage(true);
-  if (!url) return false;
-  await channel
-    .send({
-      embeds: [
-        new EmbedBuilder()
-          .setColor(BOT_COLORS.danger)
-          .setTitle('🔞')
-          .setImage(url)
-          .setFooter(BOT_FOOTER('+18', client.user?.displayAvatarURL())),
-      ],
-    })
-    .catch(() => undefined);
-  return true;
 }

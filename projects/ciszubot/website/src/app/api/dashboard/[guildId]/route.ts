@@ -5,9 +5,39 @@ import { getSessionUserId, isGuildAdmin, getGuildsForUser } from '@/lib/auth';
 import { db, ciszubotSchema, eq } from '@/lib/db';
 import { sql } from '@ciszunetwork/db';
 import { logAudit } from '@/lib/audit';
+import { fetchGuildInfo } from '@/lib/discordGuild';
 import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
 
 export const runtime = 'nodejs';
+
+const SOCIAL_PLATFORMS = [
+  'x',
+  'instagram',
+  'facebook',
+  'tiktok',
+  'youtube',
+  'twitch',
+  'linkedin',
+  'spotify',
+  'soundcloud',
+  'github',
+  'reddit',
+  'pinterest',
+  'other',
+] as const;
+
+const SOCIAL_FEED_KINDS = ['profile', 'page', 'user', 'group', 'channel', 'subreddit', 'feed'] as const;
+
+const socialFeedSchema = z.object({
+  id: z.string().min(1).max(40),
+  platform: z.enum(SOCIAL_PLATFORMS),
+  kind: z.enum(SOCIAL_FEED_KINDS),
+  account: z.string().max(300),
+  channel_id: z.string().max(32),
+  ping_role_id: z.string().max(32).nullable(),
+  message: z.string().max(2000),
+  enabled: z.boolean(),
+});
 
 const guildConfigPatchSchema = z.object({
   prefix: z.string().min(1).max(10).optional(),
@@ -126,6 +156,17 @@ const guildConfigPatchSchema = z.object({
   starboard_emoji: z.string().min(1).max(64).optional(),
   starboard_min: z.number().int().min(1).max(100).optional(),
   invite_points_per: z.number().int().min(1).max(100).optional(),
+  invite_rewards: z
+    .array(
+      z.object({
+        invites: z.number().int().min(1).max(10000),
+        role_id: z.string().min(1).max(32),
+      }),
+    )
+    .max(20)
+    .optional(),
+  invite_channel_id: z.string().min(1).max(32).nullable().optional(),
+  invite_message: z.string().max(2000).optional(),
   nitro_repost_enabled: z.boolean().optional(),
   private_vc_hub_id: z.string().min(1).nullable().optional(),
   history_enabled: z.boolean().optional(),
@@ -165,11 +206,23 @@ const guildConfigPatchSchema = z.object({
       tech: z.string().max(32).nullable().optional(),
     })
     .optional(),
+  social_enabled: z.boolean().optional(),
+  social_feeds: z.array(socialFeedSchema).max(100).optional(),
+  nsfw_bot_preferences_enabled: z.boolean().optional(),
+  nsfw_general_enabled: z.boolean().optional(),
   nsfw_enabled: z.boolean().optional(),
   nsfw_channel_id: z.string().max(32).nullable().optional(),
+  nsfw_autopost_channel_id: z.string().max(32).nullable().optional(),
   nsfw_autopost_enabled: z.boolean().optional(),
   nsfw_autopost_minutes: z.number().int().min(15).max(10080).optional(),
   nsfw_commands_enabled: z.boolean().optional(),
+  nsfw_content: z
+    .object({
+      default_gender: z.enum(['women', 'men', 'mixed']).optional(),
+      lgbt: z.record(z.string(), z.boolean()).optional(),
+      fetishes: z.record(z.string(), z.boolean()).optional(),
+    })
+    .optional(),
   confess_channel_id: z.string().max(32).nullable().optional(),
   marriage_enabled: z.boolean().optional(),
   marriage_allow_admin_pairs: z.boolean().optional(),
@@ -217,6 +270,14 @@ const FEATURE_SLUGS = [
 ] as const;
 
 const postLimiter = createRateLimiter({ windowMs: 60_000, max: 10 });
+
+const NSFW_LGBT_KEYS = ['gay', 'lesbian', 'trans', 'bisexual', 'pansexual', 'nonbinary'] as const;
+const NSFW_FETISH_KEYS = ['femboy', 'tomboy', 'blonde', 'ebony', 'latina', 'milf', 'feet', 'thighs', 'belly'] as const;
+const DEFAULT_NSFW_CONTENT = {
+  default_gender: 'women' as const,
+  lgbt: Object.fromEntries(NSFW_LGBT_KEYS.map((key) => [key, true])),
+  fetishes: Object.fromEntries(NSFW_FETISH_KEYS.map((key) => [key, true])),
+};
 
 interface GuildConfig {
   prefix: string;
@@ -266,6 +327,9 @@ interface GuildConfig {
   starboard_emoji?: string;
   starboard_min?: number;
   invite_points_per?: number;
+  invite_rewards?: { invites: number; role_id: string }[];
+  invite_channel_id?: string | null;
+  invite_message?: string;
   nitro_repost_enabled?: boolean;
   private_vc_hub_id?: string | null;
   history_enabled?: boolean;
@@ -298,11 +362,30 @@ interface GuildConfig {
   autoposts?: { id: string; type: 'custom' | 'animals' | 'anime'; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }[];
   news_enabled?: boolean;
   news_channels?: { anime?: string | null; games?: string | null; steam?: string | null; tech?: string | null };
+  social_enabled?: boolean;
+  social_feeds?: {
+    id: string;
+    platform: (typeof SOCIAL_PLATFORMS)[number];
+    kind: (typeof SOCIAL_FEED_KINDS)[number];
+    account: string;
+    channel_id: string;
+    ping_role_id: string | null;
+    message: string;
+    enabled: boolean;
+  }[];
+  nsfw_bot_preferences_enabled?: boolean;
+  nsfw_general_enabled?: boolean;
   nsfw_enabled?: boolean;
   nsfw_channel_id?: string | null;
+  nsfw_autopost_channel_id?: string | null;
   nsfw_autopost_enabled?: boolean;
   nsfw_autopost_minutes?: number;
   nsfw_commands_enabled?: boolean;
+  nsfw_content?: {
+    default_gender?: 'women' | 'men' | 'mixed';
+    lgbt?: Record<string, boolean>;
+    fetishes?: Record<string, boolean>;
+  };
   confess_channel_id?: string | null;
   marriage_enabled?: boolean;
   marriage_allow_admin_pairs?: boolean;
@@ -316,6 +399,14 @@ interface GuildConfig {
   bot_role_ids?: string[];
   alliance_config?: Record<string, unknown>;
   ticket_config?: Record<string, unknown>;
+}
+
+function camelToSnake(key: string): string {
+  return key.replace(/[A-Z]/g, (char) => `_${char.toLowerCase()}`);
+}
+
+function rowToSnake(row: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(row).map(([key, value]) => [camelToSnake(key), value]));
 }
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ guildId: string }> }) {
@@ -351,7 +442,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ gui
   );
   return NextResponse.json({
     guild: { id: guild.id, name: guild.name, icon: guild.icon },
-    config: rows[0] ?? null,
+    config: rows[0] ? rowToSnake(rows[0]) : null,
     /** Estado real del servidor: sin fila = invitado pero sin configurar. */
     configured: Boolean(rows[0]),
     features,
@@ -391,16 +482,133 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     );
   }
   const body = parsed.data as Partial<GuildConfig>;
+  const guildConfigs = ciszubotSchema.guildConfigs;
+  const currentRows = await db
+    .select({
+      nsfwBotPreferencesEnabled: guildConfigs.nsfwBotPreferencesEnabled,
+      nsfwGeneralEnabled: guildConfigs.nsfwGeneralEnabled,
+      nsfwEnabled: guildConfigs.nsfwEnabled,
+      nsfwChannelId: guildConfigs.nsfwChannelId,
+      nsfwAutopostChannelId: guildConfigs.nsfwAutopostChannelId,
+      nsfwAutopostEnabled: guildConfigs.nsfwAutopostEnabled,
+      nsfwCommandsEnabled: guildConfigs.nsfwCommandsEnabled,
+      nsfwContent: guildConfigs.nsfwContent,
+    })
+    .from(guildConfigs)
+    .where(eq(guildConfigs.guildId, guildId))
+    .limit(1);
+  const current = currentRows[0];
+  const premiumRows = await db
+    .select({ status: ciszubotSchema.premiumGuilds.status, expiresAt: ciszubotSchema.premiumGuilds.expiresAt })
+    .from(ciszubotSchema.premiumGuilds)
+    .where(eq(ciszubotSchema.premiumGuilds.guildId, guildId))
+    .limit(1);
+  const premiumRow = premiumRows[0];
+  const isPremium = Boolean(
+    premiumRow && premiumRow.status === 'active' && (!premiumRow.expiresAt || premiumRow.expiresAt.getTime() > Date.now())
+  );
+
+  const effectiveGate1 = body.nsfw_bot_preferences_enabled ?? current?.nsfwBotPreferencesEnabled ?? false;
+  const effectiveGate2 = body.nsfw_general_enabled ?? current?.nsfwGeneralEnabled ?? false;
+  const effectiveGate3 = body.nsfw_enabled ?? current?.nsfwEnabled ?? false;
+  const effectiveAutopost = effectiveGate3 && (body.nsfw_autopost_enabled ?? current?.nsfwAutopostEnabled ?? false);
+
+  if (body.nsfw_general_enabled === true && !effectiveGate1) {
+    return NextResponse.json(
+      { error: 'invalid_body', issue: 'Activa primero las preferencias del bot antes que General.' },
+      { status: 400 },
+    );
+  }
+  if (body.nsfw_enabled === true && (!effectiveGate1 || !effectiveGate2)) {
+    return NextResponse.json(
+      { error: 'invalid_body', issue: 'Activa primero las preferencias del bot y General antes que +18.' },
+      { status: 400 },
+    );
+  }
+  if (
+    body.nsfw_enabled !== false &&
+    (body.nsfw_commands_enabled === true || body.nsfw_autopost_enabled === true) &&
+    !effectiveGate3
+  ) {
+    return NextResponse.json(
+      { error: 'invalid_body', issue: 'Los comandos y autopics +18 requieren el apartado +18 activo.' },
+      { status: 400 },
+    );
+  }
+
   const allowed: Record<string, unknown> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id', 'confess_channel_id'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed', 'autoposts_enabled', 'news_enabled', 'nsfw_enabled', 'nsfw_autopost_enabled', 'nsfw_commands_enabled'];
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id', 'nsfw_autopost_channel_id', 'confess_channel_id'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed', 'autoposts_enabled', 'news_enabled', 'social_enabled', 'nsfw_bot_preferences_enabled', 'nsfw_general_enabled', 'nsfw_enabled', 'nsfw_autopost_enabled', 'nsfw_commands_enabled'];
 
   for (const key of stringFields) {
-    if (body[key] !== undefined) allowed[key] = String(body[key]);
+    if (body[key] !== undefined) allowed[key] = body[key] === null ? null : String(body[key]);
   }
   for (const key of boolFields) {
     if (body[key] !== undefined) allowed[key] = Boolean(body[key]);
   }
+
+  if (body.nsfw_content !== undefined) {
+    const incoming = body.nsfw_content ?? {};
+    const base = (current?.nsfwContent as GuildConfig['nsfw_content']) ?? DEFAULT_NSFW_CONTENT;
+    const content = {
+      default_gender: incoming.default_gender ?? base.default_gender ?? 'women',
+      lgbt: { ...DEFAULT_NSFW_CONTENT.lgbt, ...(base.lgbt ?? {}) },
+      fetishes: { ...DEFAULT_NSFW_CONTENT.fetishes, ...(base.fetishes ?? {}) },
+    };
+    for (const key of NSFW_LGBT_KEYS) {
+      if (incoming.lgbt?.[key] !== undefined) content.lgbt[key] = Boolean(incoming.lgbt[key]);
+    }
+    for (const key of NSFW_FETISH_KEYS) {
+      if (incoming.fetishes?.[key] !== undefined) content.fetishes[key] = Boolean(incoming.fetishes[key]);
+    }
+    allowed.nsfw_content = content;
+  }
+
+  if (!effectiveGate1) {
+    allowed.nsfw_general_enabled = false;
+    allowed.nsfw_enabled = false;
+  }
+  if (!effectiveGate2) allowed.nsfw_enabled = false;
+  if (!effectiveGate3) {
+    allowed.nsfw_commands_enabled = false;
+    allowed.nsfw_autopost_enabled = false;
+  }
+
+  const effectiveNsfwChannel =
+    body.nsfw_channel_id !== undefined ? body.nsfw_channel_id : current?.nsfwChannelId ?? null;
+  const effectiveAutopostChannel =
+    body.nsfw_autopost_channel_id !== undefined
+      ? body.nsfw_autopost_channel_id
+      : current?.nsfwAutopostChannelId ?? null;
+
+  if (effectiveAutopost && !effectiveNsfwChannel && !effectiveAutopostChannel) {
+    return NextResponse.json(
+      { error: 'invalid_body', issue: 'Selecciona un canal NSFW para los autopics +18.' },
+      { status: 400 },
+    );
+  }
+
+  const needsChannelValidation =
+    body.nsfw_channel_id !== undefined ||
+    body.nsfw_autopost_channel_id !== undefined ||
+    effectiveAutopost;
+  if (needsChannelValidation) {
+    const info = await fetchGuildInfo(guildId);
+    if (info) {
+      const invalid = [effectiveNsfwChannel, effectiveAutopostChannel].find((channelId) => {
+        if (!channelId) return false;
+        const channel = info.channels.find((entry) => entry.id === channelId);
+        return !channel || !channel.nsfw;
+      });
+      if (invalid) {
+        return NextResponse.json(
+          { error: 'invalid_body', issue: 'El canal +18 debe existir y estar marcado como NSFW en Discord.' },
+          { status: 400 },
+        );
+      }
+    }
+  }
+
   if (body.xp_rate !== undefined) {
     const rate = Number(body.xp_rate);
     if (rate >= 0.1 && rate <= 10) allowed.xp_rate = rate;
@@ -417,6 +625,39 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
       steam: clean(channels.steam),
       tech: clean(channels.tech),
     };
+  }
+  if (body.social_feeds !== undefined) {
+    const feeds = (body.social_feeds ?? []).map((feed) => ({
+      id: String(feed.id).trim().slice(0, 40),
+      platform: feed.platform,
+      kind: feed.kind,
+      account: String(feed.account).trim().slice(0, 300),
+      channel_id: String(feed.channel_id).trim().slice(0, 32),
+      ping_role_id: feed.ping_role_id ? String(feed.ping_role_id).trim().slice(0, 32) : null,
+      message: String(feed.message).slice(0, 2000),
+      enabled: Boolean(feed.enabled),
+    })).slice(0, 100);
+
+    if (!isPremium) {
+      if (feeds.length > 5) {
+        return NextResponse.json(
+          { error: 'social_limit_networks', issue: 'El plan gratuito permite hasta 5 redes sociales.' },
+          { status: 400 },
+        );
+      }
+      const platforms = new Set<string>();
+      for (const feed of feeds) {
+        if (platforms.has(feed.platform)) {
+          return NextResponse.json(
+            { error: 'social_limit_platform', issue: 'El plan gratuito permite una cuenta por red social.' },
+            { status: 400 },
+          );
+        }
+        platforms.add(feed.platform);
+      }
+    }
+
+    allowed.social_feeds = feeds;
   }
   if (body.nsfw_autopost_minutes !== undefined) {
     const value = Number(body.nsfw_autopost_minutes);
@@ -460,6 +701,20 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   if (body.invite_points_per !== undefined) {
     const value = Number(body.invite_points_per);
     if (value >= 1 && value <= 100) allowed.invite_points_per = value;
+  }
+  if (body.invite_rewards !== undefined) {
+    allowed.invite_rewards = Array.isArray(body.invite_rewards)
+      ? body.invite_rewards
+          .filter((row) => row && typeof row.role_id === 'string' && row.role_id.length > 0)
+          .map((row) => ({ invites: Math.max(1, Math.round(Number(row.invites) || 1)), role_id: row.role_id }))
+          .slice(0, 20)
+      : [];
+  }
+  if (body.invite_channel_id !== undefined) {
+    allowed.invite_channel_id = body.invite_channel_id === null ? null : String(body.invite_channel_id).slice(0, 32);
+  }
+  if (body.invite_message !== undefined) {
+    allowed.invite_message = String(body.invite_message).slice(0, 2000);
   }
   for (const roleKey of ['owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'marriage_excluded_role_ids', 'nitro_excluded_role_ids', 'suggestions_excluded_role_ids', 'polls_excluded_role_ids', 'trivia_excluded_role_ids'] as const) {
     if (body[roleKey] !== undefined) {
@@ -578,6 +833,9 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     starboard_emoji: 'starboardEmoji',
     starboard_min: 'starboardMin',
     invite_points_per: 'invitePointsPer',
+    invite_rewards: 'inviteRewards',
+    invite_channel_id: 'inviteChannelId',
+    invite_message: 'inviteMessage',
     nitro_repost_enabled: 'nitroRepostEnabled',
     private_vc_hub_id: 'privateVcHubId',
     history_enabled: 'historyEnabled',
@@ -613,11 +871,17 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     autoposts: 'autoposts',
     news_enabled: 'newsEnabled',
     news_channels: 'newsChannels',
+    social_enabled: 'socialEnabled',
+    social_feeds: 'socialFeeds',
+    nsfw_bot_preferences_enabled: 'nsfwBotPreferencesEnabled',
+    nsfw_general_enabled: 'nsfwGeneralEnabled',
     nsfw_enabled: 'nsfwEnabled',
     nsfw_channel_id: 'nsfwChannelId',
+    nsfw_autopost_channel_id: 'nsfwAutopostChannelId',
     nsfw_autopost_enabled: 'nsfwAutopostEnabled',
     nsfw_autopost_minutes: 'nsfwAutopostMinutes',
     nsfw_commands_enabled: 'nsfwCommandsEnabled',
+    nsfw_content: 'nsfwContent',
     confess_channel_id: 'confessChannelId',
     marriage_excluded_role_ids: 'marriageExcludedRoleIds',
     nitro_repost_mode: 'nitroRepostMode',
@@ -636,7 +900,6 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   }
   values.updatedAt = new Date();
 
-  const guildConfigs = ciszubotSchema.guildConfigs;
   try {
     await db
       .insert(guildConfigs)

@@ -34,7 +34,7 @@ export const FEATURE_DEFS: FeatureDef[] = [
   { slug: 'trivia', label: 'Trivia', commands: ['trivia'] },
   { slug: 'customcmd', label: 'Comandos personalizados', commands: ['customcmd'] },
   { slug: 'autoposts', label: 'Autopublicaciones', categories: [] },
-  { slug: 'nsfw', label: '+18', commands: ['nsfwpic'] },
+  { slug: 'nsfw', label: '+18', commands: ['nsfwpic'], categories: ['+18'] },
   { slug: 'embeds', label: 'Embeds personalizados', commands: ['embed'] },
   // Social: solo perfiles/AFK/casamiento (alianzas e invitaciones van aparte).
   { slug: 'social_afk', label: 'AFK', commands: ['afk'] },
@@ -47,7 +47,7 @@ export const FEATURE_DEFS: FeatureDef[] = [
   { slug: 'util_serverinfo', label: 'Info del servidor', commands: ['serverinfo'] },
   { slug: 'util_snipe', label: 'Snipe', commands: ['snipe'] },
   { slug: 'util_text', label: 'Texto', commands: ['text'] },
-  { slug: 'utility', label: 'Utilidad', categories: ['Utilidad'] },
+  { slug: 'utility', label: 'Utilidad', categories: ['Utilidad', 'Presentación'] },
   // Misceláneo: sub-opciones (say/directsay ya son la sección Decir).
   { slug: 'misc_confess', label: 'Confesiones', commands: ['confess'] },
   { slug: 'misc_hi', label: 'Saludos (hi)', commands: ['hi'] },

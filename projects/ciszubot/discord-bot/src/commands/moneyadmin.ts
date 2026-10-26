@@ -72,8 +72,11 @@ const create = (mode: 'add' | 'remove'): BotCommand => ({
       .setColor(mode === 'add' ? '#22c55e' : '#ff9900')
       .setTitle(mode === 'add' ? tr(L, '💰 Dinero añadido', '💰 Money added') : tr(L, '💸 Dinero quitado', '💸 Money removed'))
       .setDescription(
-        `${mode === 'add' ? 'Se añadieron' : 'Se quitaron'} **${formatCoins(cfg, amount)}** a **${target.tag}** (${where === 'bank' ? 'banco' : 'balance'}).\n` +
-          `Saldo actual: **${formatCoins(cfg, wallet.balance)}** · Banco: **${formatCoins(cfg, wallet.bank)}**`,
+        tr(
+          L,
+          `${mode === 'add' ? 'Se añadieron' : 'Se quitaron'} **${formatCoins(cfg, amount)}** a **${target.tag}** (${where === 'bank' ? 'banco' : 'balance'}).\nSaldo actual: **${formatCoins(cfg, wallet.balance)}** · Banco: **${formatCoins(cfg, wallet.bank)}**`,
+          `${mode === 'add' ? 'Added' : 'Removed'} **${formatCoins(cfg, amount)}** ${mode === 'add' ? 'to' : 'from'} **${target.tag}** (${where === 'bank' ? 'bank' : 'balance'}).\nCurrent balance: **${formatCoins(cfg, wallet.balance)}** · Bank: **${formatCoins(cfg, wallet.bank)}**`,
+        ),
       )
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();

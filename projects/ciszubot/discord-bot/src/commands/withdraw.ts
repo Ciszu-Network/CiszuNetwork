@@ -26,7 +26,7 @@ const create = (): BotCommand => ({
       return;
     }
     if (w.bank < amount) {
-      await message.reply(tr(L, `❌ No tienes suficientes monedas en el banco (tienes ${(w.bank)}).`, `❌ You do not have enough coins in the bank (you have ${(w.bank)}).`));
+      await message.reply(tr(L, `❌ No tienes suficientes monedas en el banco (tienes ${formatCoins(cfg, w.bank)}).`, `❌ You do not have enough coins in the bank (you have ${formatCoins(cfg, w.bank)}).`));
       return;
     }
 
@@ -34,7 +34,7 @@ const create = (): BotCommand => ({
     const embed = new EmbedBuilder()
       .setColor('#00d4ff')
       .setTitle(tr(L, '🏦 ¡Retiro exitoso!', '🏦 Withdrawal successful!'))
-      .setDescription(tr(L, `Retiraste **${(amount)}** del banco.\n**Monedas:** ${(w.balance + amount)}`, `You withdrew **${(amount)}** from the bank.\n**Coins:** ${(w.balance + amount)}`))
+      .setDescription(tr(L, `Retiraste **${formatCoins(cfg, amount)}** del banco.\n**Monedas:** ${formatCoins(cfg, w.balance + amount)}`, `You withdrew **${formatCoins(cfg, amount)}** from the bank.\n**Coins:** ${formatCoins(cfg, w.balance + amount)}`))
       .setFooter({ text: `CiszuBot • ${message.author.tag}`, iconURL: message.author.displayAvatarURL() })
       .setTimestamp();
     await message.reply({ embeds: [embed] });

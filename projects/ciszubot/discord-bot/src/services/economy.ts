@@ -77,9 +77,6 @@ export async function getTopWallets(guildId: string, limit = 10): Promise<Array<
   }
 }
 
-export function formatMoney(amount: number): string {
-  return `${amount.toLocaleString('es-ES')} 🪙`;
-}
 
 export function randomBetween(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;

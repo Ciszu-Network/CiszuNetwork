@@ -5,8 +5,8 @@ import { getGuildConfig } from '../services/configService';
 import { langOf, tr } from '../services/i18n';
 
 /**
- * Promoción del ecosistema: `cz!promo` (resumen) y `cz!promo largo`
- * (mensaje largo en el idioma configurado del servidor: es/en).
+ * Promoción del ecosistema: `cz!promo` (mensaje largo en el idioma del
+ * servidor) y `cz!ciszupromo` (resumen corto).
  */
 
 const LONG_PROMO: Record<'es' | 'en', { title: string; intro: string; sections: Array<{ name: string; value: string }>; cta: string }> = {
@@ -94,57 +94,58 @@ const LONG_PROMO: Record<'es' | 'en', { title: string; intro: string; sections: 
 
 const command: BotCommand = {
   name: 'promo',
-  description: 'Promociona las webs del ecosistema Ciszu Network',
-  aliases: ['promocionar', 'webs', 'sitio', 'web', 'promote'],
-  usage: 'cz!promo [largo]',
+  description: 'Mensaje de promoción completo del ecosistema Ciszu Network',
+  aliases: ['promocionar', 'promote'],
+  usage: 'cz!promo',
   category: 'Utilidad',
 
   slashCommand: new SlashCommandBuilder()
     .setName('promo')
-    .setDescription('Promociona las webs del ecosistema Ciszu Network')
-    .addStringOption((o) =>
-      o
-        .setName('modo')
-        .setDescription('Formato del mensaje')
-        .setRequired(false)
-        .addChoices({ name: 'Resumen', value: 'corto' }, { name: 'Mensaje largo (idioma del servidor)', value: 'largo' }),
-    ),
+    .setDescription('Mensaje de promoción completo del ecosistema Ciszu Network'),
 
-  async execute(message, args) {
+  async execute(message) {
+    const cfg = await getGuildConfig(message.guild?.id ?? 'DM').catch(() => null);
+    const lang: 'es' | 'en' = cfg?.lang === 'en' ? 'en' : 'es';
+    const content = LONG_PROMO[lang];
+
+    const embed = new EmbedBuilder()
+      .setColor(BOT_COLORS.primary)
+      .setTitle(content.title)
+      .setThumbnail(BOT_ASSETS.isotype)
+      .setDescription(content.intro)
+      .addFields(content.sections.map((s) => ({ name: s.name, value: s.value, inline: false })))
+      .setFooter(
+        BOT_FOOTER(
+          tr(lang, `Solicitado por ${message.author.tag}`, `Requested by ${message.author.tag}`),
+          message.client.user?.displayAvatarURL(),
+        ),
+      )
+      .setTimestamp();
+
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel(tr(lang, 'Invitar a CiszuBot', 'Invite CiszuBot')).setURL(LINKS.invite),
+      new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('Dashboard').setURL(`${LINKS.website}/dashboard`),
+      new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('Ciszu Network').setURL(LINKS.network),
+    );
+
+    await message.reply({ content: content.cta, embeds: [embed], components: [row] });
+  },
+};
+
+const ciszupromo: BotCommand = {
+  name: 'ciszupromo',
+  description: 'Resumen corto del ecosistema Ciszu Network',
+  aliases: ['promocorto', 'shortpromo'],
+  usage: 'cz!ciszupromo',
+  category: 'Utilidad',
+  async execute(message) {
     const L = await langOf(message);
-    const wantsLong = ['largo', 'long', 'extendido'].includes((args[0] ?? '').toLowerCase());
-
-    if (wantsLong) {
-      // Mensaje largo en el idioma configurado del servidor (es/en).
-      const cfg = await getGuildConfig(message.guild?.id ?? 'DM').catch(() => null);
-      const lang: 'es' | 'en' = cfg?.lang === 'en' ? 'en' : 'es';
-      const content = LONG_PROMO[lang];
-
-      const embed = new EmbedBuilder()
-        .setColor(BOT_COLORS.primary)
-        .setTitle(content.title)
-        .setThumbnail(BOT_ASSETS.isotype)
-        .setDescription(content.intro)
-        .addFields(content.sections.map((s) => ({ name: s.name, value: s.value, inline: false })))
-        .setFooter(BOT_FOOTER(`Solicitado por ${message.author.tag}`, message.client.user?.displayAvatarURL()))
-        .setTimestamp();
-
-      const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-        new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('Invitar a CiszuBot').setURL(LINKS.invite),
-        new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('Dashboard').setURL(`${LINKS.website}/dashboard`),
-        new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('Ciszu Network').setURL(LINKS.network),
-      );
-
-      await message.reply({ content: content.cta, embeds: [embed], components: [row] });
-      return;
-    }
-
     const embed = new EmbedBuilder()
       .setColor(BOT_COLORS.primary)
       .setTitle(tr(L, '🌐 Ecosistema Ciszu Network', '🌐 Ciszu Network ecosystem'))
       .setDescription(
         tr(L, 'Descubre todo lo que hay detrás del bot: la organización, la web del bot y el portfolio de CiszukoAntony.\n\n', 'Discover everything behind the bot: the organization, the bot website and the CiszukoAntony portfolio.\n\n') +
-          '💡 Usa `cz!promo largo` para el mensaje completo (en el idioma del servidor).',
+          tr(L, '💡 Usa `cz!promo` para el mensaje completo (en el idioma del servidor).', '💡 Use `cz!promo` for the full message (in the server language).'),
       )
       .addFields(
         {
@@ -163,7 +164,12 @@ const command: BotCommand = {
           inline: false,
         },
       )
-      .setFooter(BOT_FOOTER(`Solicitado por ${message.author.tag}`, message.client.user?.displayAvatarURL()))
+      .setFooter(
+        BOT_FOOTER(
+          tr(L, `Solicitado por ${message.author.tag}`, `Requested by ${message.author.tag}`),
+          message.client.user?.displayAvatarURL(),
+        ),
+      )
       .setTimestamp();
 
     const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
@@ -176,4 +182,4 @@ const command: BotCommand = {
   },
 };
 
-export default command;
+export default [command, ciszupromo];

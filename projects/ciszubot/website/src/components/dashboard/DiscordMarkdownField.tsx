@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import type { GuildEmoji } from '@/lib/discordGuild';
 
 export interface DiscordMarkdownLabels {
   bold: string;
@@ -19,6 +20,10 @@ interface Props {
   value: string;
   onChange: (value: string) => void;
   labels: DiscordMarkdownLabels;
+  variables?: string[];
+  emojis?: GuildEmoji[];
+  roles?: { id: string; label: string }[];
+  channels?: { id: string; label: string }[];
 }
 
 /** Escapa HTML antes de aplicar el mini-render de Markdown de Discord. */
@@ -59,7 +64,17 @@ const inputCls =
  * Campo de mensaje con formato Markdown de Discord: barra de estilos,
  * variables del bot ({user} {guild} {members}) y vista previa en vivo.
  */
-export default function DiscordMarkdownField({ label, hint, value, onChange, labels }: Props) {
+export default function DiscordMarkdownField({
+  label,
+  hint,
+  value,
+  onChange,
+  labels,
+  variables = ['{user}', '{guild}', '{members}'],
+  emojis = [],
+  roles = [],
+  channels = [],
+}: Props) {
   const [preview, setPreview] = useState(false);
   const ref = useRef<HTMLTextAreaElement | null>(null);
 
@@ -122,7 +137,7 @@ export default function DiscordMarkdownField({ label, hint, value, onChange, lab
       )}
       <div className="mt-1 flex flex-wrap items-center gap-1.5">
         {hint && <span className="text-xs text-white/45">{hint}</span>}
-        {['{user}', '{guild}', '{members}'].map((v) => (
+        {variables.map((v) => (
           <button
             key={v}
             type="button"
@@ -134,6 +149,58 @@ export default function DiscordMarkdownField({ label, hint, value, onChange, lab
         ))}
         <span className="text-[10px] text-white/35">{labels.vars}</span>
       </div>
+      {(emojis.length > 0 || roles.length > 0 || channels.length > 0) && (
+        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+          {emojis.length > 0 && (
+            <select
+              value=""
+              onChange={(e) => {
+                if (e.target.value) wrap(e.target.value, '');
+              }}
+              className="max-w-40 rounded-lg border border-white/15 bg-black/30 px-2 py-1 text-[10px] text-white/70"
+            >
+              <option value="">Emoji del servidor</option>
+              {emojis.map((e) => (
+                <option key={e.id} value={`<${e.animated ? 'a' : ''}:${e.name}:${e.id}>`}>
+                  :{e.name}:
+                </option>
+              ))}
+            </select>
+          )}
+          {roles.length > 0 && (
+            <select
+              value=""
+              onChange={(e) => {
+                if (e.target.value) wrap(`<@&${e.target.value}>`, '');
+              }}
+              className="max-w-40 rounded-lg border border-white/15 bg-black/30 px-2 py-1 text-[10px] text-white/70"
+            >
+              <option value="">Rol</option>
+              {roles.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.label}
+                </option>
+              ))}
+            </select>
+          )}
+          {channels.length > 0 && (
+            <select
+              value=""
+              onChange={(e) => {
+                if (e.target.value) wrap(`<#${e.target.value}>`, '');
+              }}
+              className="max-w-40 rounded-lg border border-white/15 bg-black/30 px-2 py-1 text-[10px] text-white/70"
+            >
+              <option value="">Canal</option>
+              {channels.map((c) => (
+                <option key={c.id} value={c.id}>
+                  #{c.label}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
+      )}
     </div>
   );
 }

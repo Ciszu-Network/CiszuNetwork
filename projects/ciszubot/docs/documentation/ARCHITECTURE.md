@@ -1,8 +1,8 @@
 ﻿# ARCHITECTURE — Arquitectura del Sistema (CiszuBot)
 
-Versión: 1.1.0
-Actualización: 2026-10-24
-Identificador: ARCHITECTURE_V1.1.0_2026_10_24_ciszunetwork
+Versión: 1.3.0
+Actualización: 2026-10-26
+Identificador: ARCHITECTURE_V1.3.0_2026_10_26_ciszunetwork
 
 > **Definición**: Documenta la arquitectura real y actual del proyecto CiszuBot: estructura del monorepo, componentes (website Next.js + bot Discord.js en TypeScript + base de datos Supabase), flujos de datos, despliegue y decisiones de diseño.
 
@@ -25,11 +25,11 @@ Identificador: ARCHITECTURE_V1.1.0_2026_10_24_ciszunetwork
 
 CiszuBot es un bot de Discord en español perteneciente al ecosistema **Ciszu Network**. El proyecto está compuesto por tres piezas principales que conviven en el monorepo:
 
-- **Bot de Discord** (`projects/ciszubot/discord-bot/`): implementado en **TypeScript** con **Discord.js v14**, versión **v3.2.0**, con **72 comandos** (slash + prefijo `cz!`) repartidos en **9 categorías**.
+- **Bot de Discord** (`projects/ciszubot/discord-bot/`): implementado en **TypeScript** con **Discord.js v14**, versión **v3.4.0**, con **162 comandos** (slash + prefijo `cz!`) repartidos en **13 categorías**, incluido el subsistema +18 opt-in.
 - **Website** (`projects/ciszubot/website/`): landing page Next.js 15 con **dashboard de administración por OAuth de Discord** y **estado del bot en vivo**.
 - **Base de datos** (Supabase): schema dedicado **`ciszubot`** con **13 tablas** (economía, niveles, tickets, warns, snipes, etc.) y la tabla pública **`ciszubot.bot_status`** para el heartbeat de estado.
 
-El bot ya está **completamente implementado y funcional**. Este documento describe el estado actual (v3.2.0), no el estado "pendiente de crear" de versiones anteriores de la documentación.
+El bot ya está **completamente implementado y funcional**. Este documento describe el estado actual (v3.4.0), no el estado "pendiente de crear" de versiones anteriores de la documentación.
 
 ## 2. Estructura del proyecto
 
@@ -51,7 +51,7 @@ projects/ciszubot/
 │       │   └── terminos/    # Términos de uso
 │       ├── components/      # Componentes compartidos
 │       ├── config/          # Configuración de la web
-│       ├── data/            # commands.ts (catálogo de 72 comandos)
+│       ├── data/            # commands.ts (catálogo de 162 comandos)
 │       ├── lib/             # Utilidades server/client
 │       ├── middleware.ts    # Cabeceras de seguridad + CSP
 │       ├── instrumentation.ts / instrumentation-client.ts  # Sentry
@@ -59,21 +59,21 @@ projects/ciszubot/
 │       └── robots.ts        # robots.txt (allow /, disallow /api/)
 ├── discord-bot/             # Bot Discord.js (TypeScript)
 │   ├── src/
-│   │   ├── commands/        # 44 archivos de comandos (9 categorías)
+│   │   ├── commands/        # archivos de comandos (13 categorías)
 │   │   ├── config/          # index.ts (token, intents) y links.ts
 │   │   ├── listeners/       # index.ts — XP, AFK, snipe, welcome, tickets, botones
 │   │   ├── services/        # botlists, cache, config, economy, giveaways,
 │   │   │                    # levels, logger, music, news, nitro, sentry,
-│   │   │                    # statsServer, supabase
+│   │   │                    # socialFeeds, statsServer, supabase
 │   │   ├── types/           # Tipos compartidos
 │   │   ├── utils/           # commandRegistry.ts (registro de comandos)
 │   │   └── index.ts         # Punto de entrada principal
 │   ├── tests/               # Pruebas
-│   ├── commands.json        # Slash commands JSON (canónico, 72)
+│   ├── commands.json        # Slash commands JSON (canónico, 162)
 │   ├── bot-config.json      # Prefijo cz!, colores, actividad
 │   ├── Dockerfile           # Multi-stage node:24-alpine
 │   ├── tsconfig.json
-│   └── package.json         # ciszubot v3.2.0
+│   └── package.json         # ciszubot v3.4.0
 ├── docs/                    # Documentación del proyecto
 │   ├── txt/                 # Texto plano (fuente de verdad de docs)
 │   ├── md/                  # Markdown (generado)
@@ -113,7 +113,7 @@ projects/ciszubot/
 | `MessageContent` | Leer contenido de mensajes (XP, AFK, snipe) |
 | `GuildMembers` | Bienvenidas, autoroles, contadores |
 
-**Categorías de comandos (72 comandos, 9 categorías):**
+**Categorías de comandos (162 comandos, 13 categorías):**
 
 | Categoría | Descripción | Ejemplos |
 | --- | --- | --- |
@@ -126,6 +126,10 @@ projects/ciszubot/
 | Niveles | XP y niveles | `rank`, `topxp` |
 | Social | Interacción entre usuarios | `hi`, `bye`, `afk`, `alliance`, `allies`, `closeprivate` |
 | Utilidad | Utilidades generales | `test`, `bump`, `promo`, `invite`, `vote`, `donate`, `giveaway`, `embed` |
+| Presentación | Presentación personal y ecosistema | `presentation`, `links`, `socials`, `portfolio`, `curriculum` |
+| General | Información general y enlaces del ecosistema | `ciszu`, `curriculum`, `faq`, `github`, `info` |
+| Secreto | Comandos internos de staff/dev | `secret` |
+| +18 | Contenido adulto opt-in (solo canales NSFW) | `nsfwpic`, `boobs`, `waifu`, `gay`, `femboy` |
 
 **Automatizaciones y extensiones:**
 
@@ -140,6 +144,18 @@ projects/ciszubot/
   primera sincronización siembra `news_seen` sin publicar historial; después deduplica por ID y limita a 5
   publicaciones por categoría y ciclo. Los textos se traducen best-effort al español cuando el servidor usa
   `es`, con fallback al original.
+- **Social feeds** (`services/socialFeeds.ts`): publica novedades de cuentas de redes sociales configuradas
+  por servidor. Resuelve YouTube (`UC...`, `@handle`, `/channel/`, `/user/`, `/c/`), Reddit (`r/subreddit`,
+  `u/usuario`), SoundCloud (ID o perfil) y GitHub (usuario o `owner/repo`); el resto de redes requiere una
+  URL RSS/Atom externa. La primera pasada siembra `social_seen` sin publicar historial; después deduplica por
+  ID, limita a 5 publicaciones por cuenta y ciclo, cachea feeds 120 s y sincroniza cada 180 s. Cada cuenta
+  tiene canal, rol de ping opcional y texto personalizable con variables. Límites: free 1 cuenta por red y 5
+  redes; premium hasta 100 cuentas.
+- **Subsistema +18** (`services/nsfw/{catalog,providers}.ts`, `commands/nsfw.ts`, `services/autoposts.ts`):
+  catálogo opt-in de 30 bases con estilos/géneros y aliases, triple candado por servidor, canal NSFW
+  obligatorio, preferencias LGBT/fetiches y autopics con canal independiente opcional. Proveedores externos
+  (Purrbot/RedGifs) con allowlist HTTPS, timeout y bloqueo de tags de menores; el bot no almacena el media.
+  Detalle: `FEATURE_FLAGS_SYSTEM.md` §3.1 (ciszu).
 
 ### 3.2 Website (`website/`)
 
@@ -160,15 +176,21 @@ Rutas principales:
 | Ruta | Propósito |
 | --- | --- |
 | `/` | Landing con información del bot |
-| `/comandos` | Catálogo de los 72 comandos por categoría |
+| `/comandos` | Catálogo de los 162 comandos por categoría |
 | `/estado` | Estado en vivo del bot (lee `bot_status`) |
 | `/dashboard` | Login OAuth Discord → selección de servidores |
-| `/dashboard/[guildId]` | Configuración del bot en un servidor |
+| `/dashboard/[guildId]` | Configuración del bot, encuestas y social feeds (redes sociales) en un servidor |
 | `/descargas` | Descarga de documentación |
 | `/feedback`, `/soporte`, `/privacidad`, `/terminos` | Páginas legales y de soporte |
 | `/api/auth/discord/callback` | Callback de OAuth |
 | `/api/dashboard/[guildId]` | API del dashboard |
+| `/api/dashboard/[guildId]/polls` | Encola `poll_create`/`poll_close`, lista el historial y consulta el resultado de la acción |
 | `/api/verify-turnstile` | Verificación Cloudflare Turnstile |
+
+El dashboard usa la cola `ciszubot.bot_actions` para ejecutar acciones en Discord:
+`say`/`directsay`, el manager de giveaways, `poll_create` y `poll_close` (encuestas). La
+web inserta la acción y el bot la procesa cada 5 s; la UI consulta el resultado por GET y
+lista el historial de encuestas del servidor.
 
 ### 3.3 Base de datos (Supabase)
 
@@ -230,13 +252,26 @@ startNewsLoop(readyClient)          # primera pasada a los 15 s; luego cada 120 
   → update de news_seen
 ```
 
+### 4.6 Social feeds (bot → Discord)
+
+```
+startSocialFeedsLoop(readyClient)   # primera pasada a los 30 s; luego cada 180 s
+  → por cada guild con social_enabled y al menos un feed activo
+  → resolución de cuenta/URL (YouTube, Reddit, SoundCloud, GitHub o RSS/Atom externo)
+  → fetch HTTPS con allowlist de esquema, bloqueo de hosts privados, timeout y límite de 2 MB
+  → parser RSS/Atom compartido con noticias (incluye media:title/media:description)
+  → dedupe contra guild_configs.social_seen (seed inicial sin publicar)
+  → embed con color/icono de la red, canal por cuenta y ping de rol opcional
+  → update de social_seen
+```
+
 ## 5. Modelo de datos (schema `ciszubot`)
 
 Migración 14 aplicada → **13 tablas**. La tabla pública del sistema es `ciszubot.bot_status` (migración 13):
 
 | Tabla | Propósito |
 | --- | --- |
-| `guild_configs` | Configuración por servidor (prefijo, idioma, welcome/goodbye, autoroles, contadores, tickets, leveling, logs, nitro, noticias) |
+| `guild_configs` | Configuración por servidor (prefijo, idioma, welcome/goodbye, autoroles, contadores, tickets, leveling, logs, nitro, noticias, social feeds) |
 | `wallets` | Saldo de monedas por usuario y servidor |
 | `transactions` | Historial de transacciones económicas |
 | `shop_items` | Ítems de la tienda del servidor |
@@ -319,6 +354,7 @@ Pendiente de definir. Recomendación: **Oracle Cloud Free Tier** (VPS siempre en
 | ADR-8 | Registro de comandos slash en `ClientReady` | Aplicación inmediata sin pasos manuales por entorno |
 | ADR-9 | Nitro manual + auto con lista de roles excluidos | Evita abuso sin quitar la comodidad de reenviar emojis externos; el modo manual da control total |
 | ADR-10 | Noticias con allowlist de fuentes y dedupe en `news_seen` | Evita phishing/enlaces no verificados y republicaciones; el seed inicial impide llenar el canal con historial |
+| ADR-11 | Social feeds con resolución nativa limitada y RSS/Atom externo | Las APIs de X/Instagram/Facebook/TikTok/Twitch/LinkedIn/Spotify/Pinterest exigen credenciales o no ofrecen feed público; el RSS/Atom permite cubrirlas sin depender de scraping |
 
 ## 9. Limitaciones conocidas
 
@@ -326,6 +362,11 @@ Pendiente de definir. Recomendación: **Oracle Cloud Free Tier** (VPS siempre en
 - **Música requiere ffmpeg**: el contenedor lo incluye; en desarrollo local hay que instalarlo manualmente.
 - **Bot lists pendientes**: el código (`botlists.ts`) y el webhook `POST /api/votes` (recompensa 500 monedas) están listos, pero subir a top.gg/DiscordBotList requiere los tokens del usuario (`TOP_GG_TOKEN`, `DISCORDBOTLIST_TOKEN`).
 - **Hosting 24/7 pendiente**: el bot no tiene VPS asignado aún.
+- **Social feeds dependen de RSS/Atom**: YouTube, Reddit, SoundCloud y GitHub se resuelven de forma nativa;
+  X, Instagram, Facebook, TikTok, Twitch, LinkedIn, Spotify, Pinterest y otras redes requieren una URL
+  RSS/Atom externa (RSSHub, feed oficial o puente equivalente). Sin ella, el feed no se publica.
+- **Bloqueo DNS de social feeds**: `assertSafeUrl` bloquea hosts privados literales y credenciales, pero no
+  resuelve DNS; un dominio público que resuelva a una IP privada podría eludir el filtro (riesgo residual).
 
 ## 10. Roadmap de arquitectura
 
@@ -334,10 +375,11 @@ Pendiente de definir. Recomendación: **Oracle Cloud Free Tier** (VPS siempre en
 3. Desplegar el bot en VPS (Oracle Free Tier) con Docker Compose + restart policy.
 4. Ampliar el dashboard web a más sistemas (economía, niveles, tickets) vía API.
 5. Migrar el statsServer a métricas más ricas (Prometheus) si el proyecto escala.
+6. Evaluar APIs oficiales para redes sin feed público y sustituir los puentes RSS cuando estén disponibles.
 
 ## 11. FAQ
 
-**¿El bot está implementado?** Sí. v3.2.0 en TypeScript con Discord.js v14, 72 comandos en 9 categorías, con persistencia en Supabase.
+**¿El bot está implementado?** Sí. v3.4.0 en TypeScript con Discord.js v14, 162 comandos en 13 categorías, con persistencia en Supabase y subsistema +18 opt-in.
 
 **¿Qué diferencia hay entre prefijo y slash?** El prefijo `cz!` se procesa por `messageCreate`; los slash (`/comando`) por `InteractionCreate`. Ambos reutilizan la misma lógica vía `SimulatedMessage`.
 
@@ -353,8 +395,13 @@ Pendiente de definir. Recomendación: **Oracle Cloud Free Tier** (VPS siempre en
 - [ ] Las 13 tablas del schema `ciszubot` están reflejadas.
 - [ ] `bot_status` documentada con su RLS/policies.
 - [ ] Flujos prefix, slash, heartbeat y stats descritos con las rutas de código.
+- [ ] Subsistema +18 descrito (triple candado, canal NSFW, catálogo y autopics).
+- [ ] Cola `bot_actions` documentada (say, giveaways, creación y cierre de encuestas).
+- [ ] Social feeds documentados (resolución, límites, dedupe y limitación RSS/Atom).
 - [ ] Limitaciones y roadmap actualizados con la realidad del proyecto.
 - [ ] Referencias cruzadas a `STACK_SYSTEM.md`, `WORKFLOW_SYSTEM.md`, `DISCORD_SECURITY_PROTOCOLS.md`, `SECURITY_PROTOCOLS.md` (ciszu) y `VPS_PLAN.md` (ciszu).
 - [ ] Sin datos falsos ni estado "pendiente de crear" que contradiga `PROJECT_STATE.md`.
+
+_Última revisión: 26 oct 2026. Relacionados: STACK_SYSTEM.md, WORKFLOW_SYSTEM.md, DISCORD_SECURITY_PROTOCOLS.md, SECURITY_PROTOCOLS.md (ciszu), VPS_PLAN.md (ciszu)._
 
 

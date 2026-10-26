@@ -6,7 +6,7 @@ import { langOf, tr } from '../services/i18n';
 const command: BotCommand = {
   name: 'links',
   description: 'Muestra todos los enlaces oficiales del ecosistema',
-  aliases: ['enlaces', 'link', 'links', 'social', 'sociales', 'redes'],
+  aliases: ['enlaces', 'link'],
   usage: 'cz!links',
   category: 'Información',
 
@@ -28,6 +28,11 @@ const command: BotCommand = {
         { name: tr(L, '📣 Listas de servidores', '📣 Server lists'), value: `• Top.gg: ${LINKS.topggServer}\n• Discord Bot List: ${LINKS.discordBotListServer}\n• Disboard: ${LINKS.disboardServer}`, inline: false },
         { name: tr(L, '💜 Donaciones', '💜 Donations'), value: `• Patreon: ${LINKS.patreon}\n• Ko-fi: ${LINKS.koFi}\n• Buy Me a Coffee: ${LINKS.buyMeACoffee}`, inline: false },
         { name: '🐙 GitHub & YouTube', value: `• GitHub: ${LINKS.github}\n• YouTube: ${LINKS.youtube}`, inline: false },
+        {
+          name: '📱 Redes sociales',
+          value: `• X: ${LINKS.x}\n• Instagram: ${LINKS.instagram}\n• Facebook: ${LINKS.facebook}\n• TikTok: ${LINKS.tiktok}`,
+          inline: false,
+        },
       )
       .setThumbnail(BOT_ASSETS.isotype)
       .setImage(BOT_ASSETS.wordmark)
@@ -44,4 +49,55 @@ const command: BotCommand = {
   },
 };
 
-export default command;
+const socials: BotCommand = {
+  name: 'socials',
+  description: 'Redes sociales oficiales de Ciszu Network',
+  aliases: ['social', 'sociales', 'redes'],
+  usage: 'cz!socials',
+  category: 'Información',
+
+  slashCommand: new SlashCommandBuilder()
+    .setName('socials')
+    .setDescription('Redes sociales oficiales de Ciszu Network'),
+
+  async execute(message) {
+    const L = await langOf(message);
+    const embed = new EmbedBuilder()
+      .setColor(BOT_COLORS.primary)
+      .setTitle(tr(L, '📱 Redes sociales de Ciszu Network', '📱 Ciszu Network social media'))
+      .setDescription(
+        tr(
+          L,
+          'Sigue las cuentas oficiales para ver anuncios, clips, música y novedades del ecosistema.',
+          'Follow the official accounts for announcements, clips, music and ecosystem news.',
+        ),
+      )
+      .addFields(
+        { name: 'X', value: LINKS.x, inline: true },
+        { name: 'Instagram', value: LINKS.instagram, inline: true },
+        { name: 'Facebook', value: LINKS.facebook, inline: true },
+        { name: 'TikTok', value: LINKS.tiktok, inline: true },
+        { name: 'YouTube', value: LINKS.youtube, inline: true },
+        { name: 'GitHub', value: LINKS.github, inline: true },
+        { name: 'Twitch', value: LINKS.twitch, inline: true },
+        { name: 'LinkedIn', value: LINKS.linkedin, inline: true },
+        { name: 'Spotify', value: LINKS.spotify, inline: true },
+        { name: 'SoundCloud', value: LINKS.soundcloud, inline: true },
+      )
+      .setThumbnail(BOT_ASSETS.isotype)
+      .setFooter(BOT_FOOTER(`Solicitado por ${message.author.tag}`, message.client.user?.displayAvatarURL()))
+      .setTimestamp();
+
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('X').setURL(LINKS.x),
+      new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('Instagram').setURL(LINKS.instagram),
+      new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('YouTube').setURL(LINKS.youtube),
+      new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('GitHub').setURL(LINKS.github),
+      new ButtonBuilder().setStyle(ButtonStyle.Link).setLabel('Discord').setURL(LINKS.discordServer),
+    );
+
+    return message.reply({ embeds: [embed], components: [row] });
+  },
+};
+
+export default [command, socials];

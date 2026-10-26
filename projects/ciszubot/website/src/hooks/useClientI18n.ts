@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getDict, parseLang, readCookieLang, type Dict, type Lang } from '@/lib/i18n';
+import { getDict, hasCookieLang, readCookieLang, parseLang, type Dict, type Lang } from '@/lib/i18n';
 import { loadPreferences } from '@/lib/preferences';
 
 /**
@@ -15,8 +15,7 @@ export function useClientI18n(): { lang: Lang; dict: Dict } {
   const [lang, setLang] = useState<Lang>('es-latam');
 
   useEffect(() => {
-    const fromCookie = readCookieLang();
-    setLang(fromCookie !== 'es-latam' ? fromCookie : parseLang(loadPreferences().lang));
+    setLang(hasCookieLang() ? readCookieLang() : parseLang(loadPreferences().lang));
   }, []);
 
   useEffect(() => {

@@ -1,8 +1,8 @@
 # STACK_SYSTEM — Pila Tecnológica (CiszuBot)
 
-Versión: 1.1.0
-Actualización: 2026-10-24
-Identificador: STACK_SYSTEM_V1.1.0_2026_10_24_ciszunetwork
+Versión: 1.3.0
+Actualización: 2026-10-26
+Identificador: STACK_SYSTEM_V1.3.0_2026_10_26_ciszunetwork
 
 > **Definición**: Documenta la pila tecnológica completa y actual del proyecto CiszuBot por capas (website, bot, base de datos, despliegue y herramientas), con versiones exactas tomadas de los manifiestos del repositorio.
 
@@ -98,6 +98,8 @@ Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/u
 | `dotenv` | ^16.6.1 | Variables de entorno |
 | `@top-gg/sdk` | ^3.1.6 | Estadísticas y votos en top.gg |
 | `discordbotlist` | ^1.1.1 | Estadísticas en DiscordBotList |
+| `api.purrbot.site` | API externa | Media +18 anime/cartoon (sin SDK; `fetch` nativo) |
+| `api.redgifs.com` | API externa | Búsqueda de media +18 real y fallback (token temporal) |
 
 ### 4.3 DevDependencies del bot
 
@@ -118,9 +120,15 @@ Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/u
 | `src/services/levels.ts` | XP y niveles |
 | `src/services/music.ts` | Cola y reproducción de audio |
 | `src/services/giveaways.ts` | Sorteos (índice #N automático, cupos 1–10 free reutilizables; premium ilimitado) |
+| `src/services/actions.ts` | Cola `bot_actions`: say/directsay, giveaways, `poll_create` y `poll_close` desde el dashboard |
+| `src/services/polls.ts` | Encuestas: votos anónimos/públicos, barras, cierre manual/temporizado y ganador |
 | `src/services/nitro.ts` | Detección de emojis externos, exclusión por rol y reenvío por webhook |
 | `src/services/news.ts` | Noticias verificadas: parser RSS/JSON propio, allowlist, dedupe, traducción best-effort y loop de 120 s |
-| `src/services/configService.ts` | Config por servidor (caché en memoria) |
+| `src/services/socialFeeds.ts` | Social feeds: resolución YouTube/Reddit/SoundCloud/GitHub, RSS/Atom externo, safe fetch, dedupe y loop de 180 s |
+| `src/services/nsfw/catalog.ts` | Catálogo +18: 30 bases, estilos, géneros, aliases y filtros LGBT/fetiches |
+| `src/services/nsfw/providers.ts` | Proveedores +18 (Purrbot/RedGifs), allowlist HTTPS, timeout y tags denegados |
+| `src/services/autoposts.ts` | Autoposts y timer `guild:nsfw` (solo con triple candado y canal NSFW) |
+| `src/services/configService.ts` | Config por servidor (caché en memoria; social feeds; triple candado +18 y `nsfw_content`) |
 | `src/services/botlists.ts` | Posting de stats a bot lists |
 | `src/services/statsServer.ts` | Express interno de métricas |
 | `src/services/supabase.ts` | Cliente Supabase (service_role) |
@@ -140,6 +148,18 @@ Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/u
 Tablas (13): `guild_configs`, `wallets`, `transactions`, `shop_items`, `inventory`, `levels`, `warns`, `tickets`, `giveaways`, `afk`, `alliances`, `discord_users`, `snipes` + `bot_status` (heartbeat).
 
 `guild_configs` incluye `news_enabled` (boolean), `news_channels` (jsonb con un canal por categoría) y `news_seen` (jsonb interno de dedupe, no expuesto en el dashboard). El sistema de noticias no añade dependencias: usa `fetch` nativo y un parser RSS/Atom mínimo.
+
+Social feeds añade a `guild_configs`: `social_enabled` (boolean, default `false`), `social_feeds` (jsonb con
+hasta 100 cuentas; cada una guarda `id`, `platform`, `kind`, `account`, `channel_id`, `ping_role_id`,
+`message` y `enabled`) y `social_seen` (jsonb interno de dedupe). No crea tablas nuevas ni añade
+dependencias: reutiliza `fetch` y el parser RSS/Atom de noticias. Migración:
+`20261025000003_social_feeds.sql`.
+
+El subsistema +18 añade a `guild_configs`: `nsfw_bot_preferences_enabled`, `nsfw_general_enabled`,
+`nsfw_enabled`, `nsfw_channel_id`, `nsfw_autopost_channel_id`, `nsfw_autopost_enabled`,
+`nsfw_autopost_minutes`, `nsfw_commands_enabled` y `nsfw_content` (jsonb con género por defecto,
+toggles LGBT y fetiches). La triple verificación se aplica en `configService.ts` y en la API del
+dashboard; el detalle funcional vive en `FEATURE_FLAGS_SYSTEM.md` §3.1 (ciszu).
 
 ## 6. Capa de despliegue
 
@@ -249,7 +269,7 @@ Dependencias de producción: `@ciszunetwork/utils` (workspace), `@discordjs/voic
 
 **¿Por qué el bot exige Node ≥ 22 si el resto del repo usa ≥ 20?** Por las APIs de Node usadas por Discord.js v14 y `play-dl`; además Docker usa Node 24 en producción.
 
-**¿El bot usa JavaScript vanilla?** No. Está en **TypeScript** (v3.2.0). Los docs antiguos que decían "vanilla JS" están obsoletos.
+**¿El bot usa JavaScript vanilla?** No. Está en **TypeScript** (v3.4.0). Los docs antiguos que decían "vanilla JS" están obsoletos.
 
 **¿Qué es `@ciszunetwork/cdn`?** El paquete que resuelve assets del CDN de Supabase Storage (usado por la web).
 
@@ -265,4 +285,8 @@ Dependencias de producción: `@ciszunetwork/utils` (workspace), `@discordjs/voic
 - [ ] Variables de entorno del bot y de la web listadas (sin valores reales).
 - [ ] Herramientas (dbvr, Bruno, pnpm) referenciadas correctamente.
 - [ ] Referencias a `VPS_PLAN.md`, `SECURITY_PROTOCOLS.md` y `MONITORING_SYSTEM.md` (ciszu).
+- [ ] Subsistema +18 documentado (triple candado, canal NSFW, proveedores y autopics).
+- [ ] Social feeds documentados (columnas, migración, resolución y límites free/premium).
 - [ ] Sin secretos ni valores inventados.
+
+_Última revisión: 26 oct 2026. Relacionados: ARCHITECTURE.md, WORKFLOW_SYSTEM.md, SECURITY_PROTOCOLS.md (ciszu), MONITORING_SYSTEM.md (ciszu), VPS_PLAN.md (ciszu)._

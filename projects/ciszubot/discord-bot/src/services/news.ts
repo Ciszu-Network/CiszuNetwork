@@ -145,12 +145,17 @@ export function parseRssFeed(xml: string): NewsItem[] {
   for (const match of xml.matchAll(/<(item|entry)\b[\s\S]*?<\/\1>/gi)) {
     if (items.length >= 40) break;
     const block = match[0];
-    const title = cleanText(tagText(block, 'title'));
+    const title = cleanText(tagText(block, 'title') || tagText(block, 'media:title'));
     const link =
       tagText(block, 'link') ||
       block.match(/<link[^>]*\bhref=["']([^"']+)["']/i)?.[1] ||
       '';
-    const descriptionRaw = tagText(block, 'description') || tagText(block, 'summary') || tagText(block, 'content:encoded') || tagText(block, 'content');
+    const descriptionRaw =
+      tagText(block, 'description') ||
+      tagText(block, 'summary') ||
+      tagText(block, 'content:encoded') ||
+      tagText(block, 'content') ||
+      tagText(block, 'media:description');
     const dateRaw =
       tagText(block, 'pubDate') || tagText(block, 'dc:date') || tagText(block, 'published') || tagText(block, 'updated') || '';
     const guid = tagText(block, 'guid') || tagText(block, 'id');
