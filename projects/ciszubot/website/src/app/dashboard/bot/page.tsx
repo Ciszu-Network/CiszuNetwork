@@ -364,6 +364,60 @@ export default function BotPreferencesPage() {
         </button>
       </section>
 
+      {/* Preferencias del bot (por servidor) */}
+      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <h2 className="flex items-center gap-2 font-bold text-white">
+            <Icon name="settings" size={18} className="text-neon-blue" /> {t.botPrefsTitle}
+          </h2>
+        </div>
+        <p className="mb-4 text-xs text-white/45">{t.botPrefsHint}</p>
+        <NiceSelect
+          value={roleGuildId}
+          options={roleGuilds.map((g) => ({ id: g.id, label: g.name }))}
+          placeholder={t.rolesGuildPick}
+          onChange={(v) => setRoleGuildId(v)}
+        />
+        {roleGuildId && !roleLoading && (
+          <div className="mt-4 rounded-xl border border-red-400/25 bg-red-500/5 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="flex items-center gap-2 text-sm font-bold text-white">
+                  <Icon name="triangle-exclamation" size={14} className="text-red-400" />
+                  {t.nsfwBotGateTitle}
+                </p>
+                <p className="mt-1 text-[10px] text-white/45">{t.nsfwBotGateHint}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  setRoleCfg({ ...roleCfg, nsfw_bot_preferences_enabled: !roleCfg.nsfw_bot_preferences_enabled })
+                }
+                className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 font-header text-[10px] font-black uppercase tracking-widest transition active:scale-95 ${
+                  roleCfg.nsfw_bot_preferences_enabled
+                    ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/15'
+                    : 'border-amber-400/40 bg-amber-400/10 text-amber-300 hover:bg-amber-400/15'
+                }`}
+              >
+                <Icon name={roleCfg.nsfw_bot_preferences_enabled ? 'check' : 'triangle-exclamation'} size={12} />
+                {roleCfg.nsfw_bot_preferences_enabled ? t.nsfwBotGateOn : t.nsfwBotGateOff}
+              </button>
+            </div>
+            {!roleCfg.nsfw_bot_preferences_enabled && (
+              <p className="mt-2 text-[10px] text-white/35">{t.nsfwBotGateWarning}</p>
+            )}
+            <button
+              type="button"
+              onClick={() => void saveRoles()}
+              disabled={roleSaving}
+              className="mt-3 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-neon-blue to-neon-pink px-4 py-2 text-xs font-black uppercase tracking-widest text-white transition hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+            >
+              <Icon name="check" size={13} /> {t.rolesSave}
+            </button>
+          </div>
+        )}
+      </section>
+
       {/* Roles por servidor (owner/admin/mod/bots/mute) */}
       <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -418,36 +472,6 @@ export default function BotPreferencesPage() {
                 <Icon name="shield" size={13} /> {t.rolesSave}
               </button>
             </div>
-          </div>
-        )}
-        {roleGuildId && !roleLoading && (
-          <div className="mt-4 rounded-xl border border-red-400/25 bg-red-500/5 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="flex items-center gap-2 text-sm font-bold text-white">
-                  <Icon name="triangle-exclamation" size={14} className="text-red-400" />
-                  {t.nsfwBotGateTitle}
-                </p>
-                <p className="mt-1 text-[10px] text-white/45">{t.nsfwBotGateHint}</p>
-              </div>
-              <button
-                type="button"
-                onClick={() =>
-                  setRoleCfg({ ...roleCfg, nsfw_bot_preferences_enabled: !roleCfg.nsfw_bot_preferences_enabled })
-                }
-                className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 font-header text-[10px] font-black uppercase tracking-widest transition active:scale-95 ${
-                  roleCfg.nsfw_bot_preferences_enabled
-                    ? 'border-emerald-400/40 bg-emerald-400/10 text-emerald-300 hover:bg-emerald-400/15'
-                    : 'border-amber-400/40 bg-amber-400/10 text-amber-300 hover:bg-amber-400/15'
-                }`}
-              >
-                <Icon name={roleCfg.nsfw_bot_preferences_enabled ? 'check' : 'triangle-exclamation'} size={12} />
-                {roleCfg.nsfw_bot_preferences_enabled ? t.nsfwBotGateOn : t.nsfwBotGateOff}
-              </button>
-            </div>
-            {!roleCfg.nsfw_bot_preferences_enabled && (
-              <p className="mt-2 text-[10px] text-white/35">{t.nsfwBotGateWarning}</p>
-            )}
           </div>
         )}
       </section>

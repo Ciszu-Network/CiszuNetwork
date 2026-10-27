@@ -72,3 +72,7 @@
 - [ ] Premium: definir si Muzicmania tendrá página Premium propia o solo billing enlazado a CiszuBot.
 - [ ] Premium: sustituir el bloque legacy de cz!premium activate/deactivate por completo y limpiar imports/código muerto.
 - [ ] Premium: logos/claims legales reales de pasarelas y bancos en la sección de confianza, con enlaces a sus políticas.
+
+- [ ] UI: extender el nuevo textbox/popovers con búsqueda, colores y reset a TODOS los selectores de roles/canales (MultiSelect) y al selector de emoji de economía; DiscordMarkdownField ya usa popovers.
+- [ ] Polls: verificar en producción que la creación desde dashboard persiste y que el historial deja de mostrar JSON crudo; el editor ya usa opciones 1–4 (10 con premium).
+- [ ] Confesiones: verificar en producción el modo público/anon, el error de canal incorrecto y que público quede siempre activo.

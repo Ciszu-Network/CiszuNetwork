@@ -42,6 +42,7 @@ export const FEATURE_DEFS: FeatureDef[] = [
   { slug: 'social', label: 'Social (perfiles)', commands: ['afk', 'marry', 'divorce', 'partner', 'profile'] },
   // Utilidad: sub-opciones por herramienta.
   { slug: 'util_profile', label: 'Perfiles', commands: ['profile'] },
+  { slug: 'util_presentation', label: 'Presentación', commands: ['present', 'whoareyou', 'whoiam', 'whoismyrol'] },
   { slug: 'util_avatar', label: 'Avatar', commands: ['avatar'] },
   { slug: 'util_animal', label: 'Animales', commands: ['animal'] },
   { slug: 'util_serverinfo', label: 'Info del servidor', commands: ['serverinfo'] },

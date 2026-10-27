@@ -204,11 +204,12 @@ const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPag
     { slug: 'minigame_8ball', labelKey: 'feat8ball', descKey: 'feat8ballDesc' },
   ],
   social: [
-    { slug: 'util_profile', labelKey: 'utilProfile', descKey: 'utilProfileDesc' },
     { slug: 'social_afk', labelKey: 'socialAfk', descKey: 'socialAfkDesc' },
     { slug: 'social_marriage', labelKey: 'socialMarriage', descKey: 'socialMarriageDesc' },
   ],
   utility: [
+    { slug: 'util_profile', labelKey: 'utilProfile', descKey: 'utilProfileDesc' },
+    { slug: 'util_presentation', labelKey: 'utilPresentation', descKey: 'utilPresentationDesc' },
     { slug: 'util_avatar', labelKey: 'utilAvatar', descKey: 'utilAvatarDesc' },
     { slug: 'util_animal', labelKey: 'utilAnimal', descKey: 'utilAnimalDesc' },
     { slug: 'util_serverinfo', labelKey: 'utilServerinfo', descKey: 'utilServerinfoDesc' },
@@ -598,11 +599,11 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   // Creación de encuestas desde el dashboard (cola de acciones del bot).
   const [pollForm, setPollForm] = useState<{
     question: string;
-    options: string;
+    options: string[];
     anonymous: boolean;
     minutes: number;
     channel: string | null;
-  }>({ question: '', options: '', anonymous: false, minutes: 0, channel: null });
+  }>({ question: '', options: ['', '', '', ''], anonymous: false, minutes: 0, channel: null });
   const [pollBusy, setPollBusy] = useState(false);
   type PollRow = {
     id: number;
@@ -1056,10 +1057,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   /** Encuestas: inserta `poll_create` y sondea el resultado de la acción. */
   const createDashboardPoll = useCallback(async () => {
     const question = pollForm.question.trim();
-    const options = pollForm.options
-      .split('\n')
-      .map((o) => o.trim())
-      .filter(Boolean);
+    const options = pollForm.options.map((option) => option.trim()).filter(Boolean);
     if (!question || !pollForm.channel || options.length < 2) {
       toast(t.pollFormError, 'error');
       return;
@@ -1093,7 +1091,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         const result = action.result ?? '';
         if (result.startsWith('ok')) {
           toast(t.pollCreated, 'success');
-          setPollForm({ question: '', options: '', anonymous: false, minutes: 0, channel: null });
+          setPollForm({ question: '', options: ['', '', '', ''], anonymous: false, minutes: 0, channel: null });
           void pollRefresh();
         } else {
           toast(result.replace(/^error:\s*/, '') || t.pollError, 'error');
@@ -1255,7 +1253,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         confess_channel_id: cfg?.confess_channel_id ?? null,
         confess_excluded_role_ids: Array.isArray(cfg?.confess_excluded_role_ids) ? cfg.confess_excluded_role_ids : [],
         confess_allow_anonymous: cfg?.confess_allow_anonymous ?? true,
-        confess_allow_public: cfg?.confess_allow_public ?? false,
+        confess_allow_public: cfg?.confess_allow_public ?? true,
         marriage_excluded_role_ids: Array.isArray(cfg?.marriage_excluded_role_ids) ? cfg.marriage_excluded_role_ids : [],
         nitro_repost_mode: cfg?.nitro_repost_mode ?? 'auto',
         nitro_excluded_role_ids: Array.isArray(cfg?.nitro_excluded_role_ids) ? cfg.nitro_excluded_role_ids : [],
@@ -2228,7 +2226,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   config.features?.[activeFeature.slug] !== false ? 'text-emerald-400' : 'text-white/30'
                 }`}
               >
-                <Icon name={activeFeature.icon} size={17} className={activeFeature.colorClass} />
+                <Icon name={activeFeature.icon} size={18} className={activeFeature.colorClass} />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-white">{t[activeFeature.labelKey]}</p>
@@ -3608,12 +3606,40 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   />
                 </Field>
                 <Field label={t.pollOptionsLabel} hint={t.pollOptionsHint}>
-                  <textarea
-                    className={`${inputCls} min-h-24`}
-                    value={pollForm.options}
-                    placeholder={t.pollOptionsPlaceholder}
-                    onChange={(e) => setPollForm({ ...pollForm, options: e.target.value })}
-                  />
+                  <div className="grid gap-2">
+                    {pollForm.options.map((option, index) => (
+                      <div key={`poll-opt-${index}`} className="flex items-center gap-2">
+                        <span className="w-6 shrink-0 text-center text-[10px] font-black text-white/35">{index + 1}</span>
+                        <input
+                          className={inputCls}
+                          maxLength={80}
+                          value={option}
+                          placeholder={`${t.pollOptionsPlaceholder} ${index + 1}`}
+                          onChange={(e) => {
+                            const next = pollForm.options.map((value, i) => (i === index ? e.target.value : value));
+                            setPollForm({ ...pollForm, options: next });
+                          }}
+                        />
+                        <button
+                          type="button"
+                          disabled={pollForm.options.length <= 2}
+                          onClick={() => setPollForm({ ...pollForm, options: pollForm.options.filter((_, i) => i !== index) })}
+                          className="rounded-lg border border-red-400/30 px-2.5 py-2 text-xs font-bold text-red-300 disabled:opacity-30"
+                          title={t.pollRemoveOption}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      disabled={pollForm.options.length >= (config.premium ? 10 : 4)}
+                      onClick={() => setPollForm({ ...pollForm, options: [...pollForm.options, ''] })}
+                      className="justify-self-start rounded-lg border border-white/15 px-3 py-2 text-[10px] font-bold text-white/70 hover:bg-white/5 disabled:opacity-30"
+                    >
+                      + {t.pollAddOption}
+                    </button>
+                  </div>
                 </Field>
                 <div className="grid gap-3 sm:grid-cols-2">
                   {hasGuildData ? (
@@ -4475,10 +4501,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     <p className="text-xs font-semibold text-white/80">{t.confessPublicLabel}</p>
                     <p className="text-[10px] text-white/40">{t.confessPublicHint}</p>
                   </div>
-                  <Toggle
-                    on={Boolean(config.confess_allow_public)}
-                    onChange={(v) => update({ confess_allow_public: v })}
-                  />
+                  <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-emerald-300">
+                    {t.confessPublicAlways}
+                  </span>
                 </div>
               </div>
               <Field label={t.confessExcludedLabel} hint={t.confessExcludedHint}>
@@ -4630,6 +4655,12 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   edit: t.mdEdit,
                   vars: t.mdVars,
                   emoji: t.emojiServerSelect,
+                  quote: t.mdQuote,
+                  role: t.mdRole,
+                  channel: t.mdChannel,
+                  serverEmojis: t.mdServerEmojis,
+                  discordEmojis: t.mdDiscordEmojis,
+                  search: t.mdSearch,
                 }}
               />
               <div>

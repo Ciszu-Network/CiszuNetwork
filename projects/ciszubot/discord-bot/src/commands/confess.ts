@@ -84,12 +84,7 @@ const command: BotCommand = {
       );
       return;
     }
-    if (mode === 'public' && !cfg.confess_allow_public) {
-      await message.reply(
-        tr(L, '❌ Las confesiones públicas están desactivadas.', '❌ Public confessions are disabled.'),
-      );
-      return;
-    }
+
 
     const memberRoles = message.member
       ? [...(message.member.roles as unknown as { cache: Map<string, unknown> }).cache.keys()]
@@ -119,6 +114,17 @@ const command: BotCommand = {
       })
       .setFooter({ text: 'CiszuBot', iconURL: message.client.user?.displayAvatarURL() })
       .setTimestamp();
+
+    if (cfg.confess_channel_id && message.channel?.id !== cfg.confess_channel_id) {
+      await message.reply(
+        tr(
+          L,
+          `Las confesiones solo se publican en <#${cfg.confess_channel_id}>.`,
+          `Confessions are only posted in <#${cfg.confess_channel_id}>.`,
+        ),
+      );
+      return;
+    }
 
     let targetChannel = message.channel as TextChannel | null;
     if (cfg.confess_channel_id) {

@@ -385,6 +385,12 @@ function FeedCard({
               edit: t.mdEdit,
               vars: t.mdVars,
               emoji: t.emojiServerSelect,
+              quote: t.mdQuote,
+              role: t.mdRole,
+              channel: t.mdChannel,
+              serverEmojis: t.mdServerEmojis,
+              discordEmojis: t.mdDiscordEmojis,
+              search: t.mdSearch,
             }}
           />
         </div>

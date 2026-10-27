@@ -423,7 +423,7 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   confess_channel_id: null,
   confess_excluded_role_ids: [],
   confess_allow_anonymous: true,
-  confess_allow_public: false,
+  confess_allow_public: true,
   marriage_excluded_role_ids: [],
   nitro_repost_mode: 'auto',
   nitro_excluded_role_ids: [],
