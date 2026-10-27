@@ -210,6 +210,7 @@ packages/payments/
 - **Activación**: el plan debe estar activo en la cuenta y activado desde preferencias del bot; después se activa por servidor en General. Cada activación tiene un UUID único ligado al usuario y al servidor. Los límites son 3/8/20 servidores según plan; al agotar cupos no se puede activar otro.
 - **Desactivación**: liberar un servidor inicia un cooldown de 7 días. La configuración premium se guarda como snapshot por activación; al reactivar se restaura. Si el plan del usuario caduca o cambia, las activaciones se invalidan y las opciones premium se desactivan.
 - **Beta**: los botones de pago y la activación real están bloqueados hasta que termine la beta. La página Premium ya está disponible con comparativa, divisas, rebajas, confianza, términos y política de reembolsos.
+- **Ciclo de vida**: `premiumLifecycle.ts` expira planes vencidos y desactiva activaciones huérfanas al arrancar y cada hora; `cz!premium activate/deactivate` ya no escribe BD y redirige al dashboard.
 - **Implementación**: `premium_accounts`, `premium_guilds.activation_id`, API `/api/premium/account` y `/api/dashboard/[guildId]/premium`; el bot valida cuenta + activación + beta antes de habilitar funciones.
 - **Facturación**: pantalla de billing en la configuración de cuenta de CiszuBot y Muzicmania con plan actual, cupos, divisa, métodos, conexiones, historial y datos fiscales. Aún no procesa pagos.
 - **Reembolsos**: no existe sistema de reembolsos; los pagos son definitivos. Documentado en la página Premium y en Términos.

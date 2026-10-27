@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto';
 import type {
   NsfwContentPreferences,
   NsfwFetish,
@@ -493,7 +494,7 @@ export function purrbotTag(selection: NsfwSelection, gender: NsfwCommandGender):
   if (def.purrbot) {
     const tags = def.purrbot[gender];
     if (!tags || tags.length === 0) return undefined;
-    return tags[Math.floor(Math.random() * tags.length)];
+    return tags[randomInt(tags.length)];
   }
   return undefined;
 }

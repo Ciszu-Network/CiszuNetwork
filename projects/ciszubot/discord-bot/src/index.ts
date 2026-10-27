@@ -27,6 +27,7 @@ import { runCustomCommand } from './services/customCommands';
 import { startAutopostLoop } from './services/autoposts';
 import { startNewsLoop } from './services/news';
 import { startSocialFeedsLoop } from './services/socialFeeds';
+import { startPremiumLifecycleLoop } from './services/premiumLifecycle';
 
 initErrorTracking();
 
@@ -87,6 +88,9 @@ client.once(Events.ClientReady, async (readyClient) => {
 
   // Redes sociales (RSS/Atom por cuenta y canal)
   startSocialFeedsLoop(readyClient);
+
+  // Premium: expira planes y desactiva activaciones huérfanas cada hora.
+  startPremiumLifecycleLoop(readyClient);
 
   // Registrar comandos de barra — CORREGIDO: applicationCommands con C mayúscula
   // Discord limita a 100 comandos de aplicación globales: se recorta con aviso
