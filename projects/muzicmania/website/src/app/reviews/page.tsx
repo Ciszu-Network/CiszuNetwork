@@ -175,7 +175,7 @@ function profileHrefOf(review: ReviewRecord): string | null {
   if (!SITE.profileBase || review.is_anonymous) return null;
   const username = review.user_profile?.username?.trim();
   if (!username) return null;
-  return `${SITE.profileBase}/${encodeURIComponent(username)}`;
+  return `${SITE.profileBase}/@${encodeURIComponent(username)}`;
 }
 
 function formatReviewDate(iso: string): string {

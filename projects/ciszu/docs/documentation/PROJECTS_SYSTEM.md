@@ -1,8 +1,8 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
-Versión: 2.1.0
-Actualización: 2026-10-23
-Identificador: PROJECTS_SYSTEM_V2.1.0_2026_10_03_ciszunetwork
+Versión: 2.1.1
+Actualización: 2026-10-26
+Identificador: PROJECTS_SYSTEM_V2.1.1_2026_10_26_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
 > general (Projects), el estado detallado (Project State) y el historial cronológico
@@ -675,7 +675,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 23 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 26 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.
 
 ## Historial — Sesión 21-22 oct 2026
@@ -695,3 +695,12 @@ _Última revisión: 23 oct 2026._
 - **Docs**: auditoría de 190 documentos, corrección de referencias rotas y refresco de fechas.
 
 _Última revisión: 23 oct 2026._
+
+## Historial — Sesión 26 oct 2026
+
+- **Buscador global**: `SiteSearch` separa modos Páginas/Usuarios (mínimo uno, Páginas por defecto), Enter refresca, `@` fuerza usuarios y las cards muestran avatar, `@username` y “Ver perfil”.
+- **Perfiles públicos**: rutas `/profile/[identifier]` en ciszu, ciszukoantony y ciszubot por `@username` o UUID; vista compartida `PublicProfileView` en `@ciszu/ui`; reviews enlazan a `/profile/@username` en las 4 webs.
+- **Ciszubot**: iconos del subnav del dashboard con color por función y tamaño 16 px; `embeds` conserva el morado.
+- **Validación**: `pnpm typecheck` y builds de las 4 webs verdes; `SiteSearch` 5/5 tests.
+
+_Última revisión: 26 oct 2026._

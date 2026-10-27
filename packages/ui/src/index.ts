@@ -278,3 +278,6 @@ export type { Ac3SectionProps } from './Ac3Section';
 
 export { SiteSearch } from './SiteSearch';
 export type { SiteSearchProps, SearchPageItem, SearchUserItem } from './SiteSearch';
+
+export { PublicProfileView } from './PublicProfileView';
+export type { PublicProfileData, PublicProfileViewProps } from './PublicProfileView';

@@ -12,6 +12,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Icon } from './Icon';
 
+type SearchMode = 'pages' | 'users';
+
 export interface SearchPageItem {
   href: string;
   label: string;
@@ -38,6 +40,8 @@ export interface SiteSearchProps {
   placeholder?: string;
   pagesLabel?: string;
   usersLabel?: string;
+  usersHint?: string;
+  loadingUsersLabel?: string;
   emptyLabel?: string;
   profileLabel?: string;
   sortAscLabel?: string;
@@ -53,6 +57,8 @@ export function SiteSearch({
   placeholder = 'Buscar…',
   pagesLabel = 'Páginas',
   usersLabel = 'Usuarios',
+  usersHint = 'Escribe un @usuario para buscar.',
+  loadingUsersLabel = 'Buscando usuarios…',
   emptyLabel = 'Sin resultados',
   profileLabel = 'Ver perfil',
   sortAscLabel = 'A → Z',
@@ -61,17 +67,24 @@ export function SiteSearch({
   autoFocus = false,
 }: SiteSearchProps) {
   const [query, setQuery] = useState('');
+  const [modes, setModes] = useState<SearchMode[]>(['pages']);
   const [selected, setSelected] = useState<string[]>([]);
   const [sortAsc, setSortAsc] = useState(true);
   const [users, setUsers] = useState<SearchUserItem[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [searchTick, setSearchTick] = useState(0);
 
   const cats = categories ?? Array.from(new Set(pages.map((p) => p.category))).filter(Boolean);
-  const atMode = query.trim().startsWith('@');
-  const term = (atMode ? query.trim().slice(1) : query).trim().toLowerCase();
+  const trimmedQuery = query.trim();
+  const atMode = !!searchUsers && trimmedQuery.startsWith('@');
+  const term = (trimmedQuery.startsWith('@') ? trimmedQuery.slice(1) : trimmedQuery).trim().toLowerCase();
+  const pagesOn = modes.includes('pages');
+  const usersOn = modes.includes('users');
+  const showPages = !atMode && pagesOn;
+  const showUsers = !!searchUsers && (atMode || usersOn);
 
   const filteredPages = useMemo(() => {
-    if (atMode) return [];
+    if (!showPages) return [];
     const list = pages.filter((p) => {
       if (selected.length > 0 && !selected.includes(p.category)) return false;
       if (!term) return true;
@@ -79,12 +92,13 @@ export function SiteSearch({
       return term.split(/\s+/).every((word) => haystack.includes(word));
     });
     return list.sort((a, b) => (sortAsc ? a.label.localeCompare(b.label) : b.label.localeCompare(a.label)));
-  }, [pages, selected, term, atMode, sortAsc]);
+  }, [pages, selected, term, showPages, sortAsc]);
 
   useEffect(() => {
     let alive = true;
-    if (!searchUsers || !term) {
+    if (!searchUsers || !showUsers || !term) {
       setUsers([]);
+      setLoadingUsers(false);
       return () => {
         alive = false;
       };
@@ -103,57 +117,108 @@ export function SiteSearch({
     return () => {
       alive = false;
     };
-  }, [searchUsers, term]);
+  }, [searchUsers, showUsers, term, searchTick]);
 
   const toggleCategory = (cat: string) =>
     setSelected((prev) => (prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]));
 
+  const toggleMode = (mode: SearchMode) => {
+    setModes((prev) => {
+      const on = prev.includes(mode);
+      if (on && prev.length === 1) return prev;
+      return on ? prev.filter((m) => m !== mode) : [...prev, mode];
+    });
+  };
+
   return (
     <div className={'w-full ' + className}>
-      {/* Input */}
-      <div className="relative">
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40">
-          <Icon name="search" size={16} />
-        </span>
-        <input
-          autoFocus={autoFocus}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={placeholder}
-          className="w-full rounded-xl border border-white/15 bg-black/40 py-2.5 pl-9 pr-3 text-sm text-white placeholder:text-white/35 focus:border-neon-blue/60 focus:outline-none"
-        />
-      </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setSearchTick((v) => v + 1);
+        }}
+      >
+        <div className="relative">
+          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/40">
+            <Icon name="search" size={16} />
+          </span>
+          <input
+            autoFocus={autoFocus}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={placeholder}
+            aria-label={placeholder}
+            className="w-full rounded-xl border border-white/15 bg-black/40 py-2.5 pl-9 pr-3 text-sm text-white placeholder:text-white/35 focus:border-neon-blue/60 focus:outline-none"
+          />
+        </div>
+      </form>
 
       {/* Filtros + orden */}
       <div className="mt-2 flex flex-wrap items-center gap-1.5">
-        {cats.map((cat) => {
-          const on = selected.includes(cat);
-          return (
+        {searchUsers && (
+          <>
             <button
-              key={cat}
               type="button"
-              onClick={() => toggleCategory(cat)}
+              aria-pressed={pagesOn}
+              disabled={atMode}
+              onClick={() => toggleMode('pages')}
               className={
                 'rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider transition-all ' +
-                (on ? 'border-neon-blue/60 bg-neon-blue/20 text-neon-blue' : 'border-white/10 bg-white/5 text-white/50 hover:text-white/80')
+                (pagesOn
+                  ? 'border-neon-blue/60 bg-neon-blue/20 text-neon-blue'
+                  : 'border-white/10 bg-white/5 text-white/50 hover:text-white/80') +
+                (atMode ? ' cursor-not-allowed opacity-40' : '')
               }
             >
-              {cat}
+              {pagesLabel}
             </button>
-          );
-        })}
-        <button
-          type="button"
-          onClick={() => setSortAsc((v) => !v)}
-          className="ml-auto rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/60 hover:text-white"
-          title={sortAsc ? sortDescLabel : sortAscLabel}
-        >
-          {sortAsc ? sortAscLabel : sortDescLabel}
-        </button>
+            <button
+              type="button"
+              aria-pressed={usersOn || atMode}
+              onClick={() => toggleMode('users')}
+              className={
+                'rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider transition-all ' +
+                (usersOn || atMode
+                  ? 'border-neon-blue/60 bg-neon-blue/20 text-neon-blue'
+                  : 'border-white/10 bg-white/5 text-white/50 hover:text-white/80')
+              }
+            >
+              {usersLabel}
+            </button>
+            {showPages && cats.length > 0 && <span className="mx-1 h-3 w-px bg-white/10" />}
+          </>
+        )}
+        {showPages &&
+          cats.map((cat) => {
+            const on = selected.includes(cat);
+            return (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => toggleCategory(cat)}
+                className={
+                  'rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider transition-all ' +
+                  (on ? 'border-neon-blue/60 bg-neon-blue/20 text-neon-blue' : 'border-white/10 bg-white/5 text-white/50 hover:text-white/80')
+                }
+              >
+                {cat}
+              </button>
+            );
+          })}
+        {showPages && (
+          <button
+            type="button"
+            onClick={() => setSortAsc((v) => !v)}
+            className="ml-auto rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white/60 hover:text-white"
+            title={sortAsc ? sortDescLabel : sortAscLabel}
+          >
+            {sortAsc ? sortAscLabel : sortDescLabel}
+          </button>
+        )}
       </div>
 
       {/* Páginas */}
-      {!atMode && (
+      {showPages && (
         <div className="mt-3">
           <p className="mb-1.5 text-[10px] font-black uppercase tracking-widest text-white/35">{pagesLabel}</p>
           {filteredPages.length === 0 ? (
@@ -179,11 +244,13 @@ export function SiteSearch({
       )}
 
       {/* Usuarios (si la web los soporta) */}
-      {searchUsers && (atMode || users.length > 0) && (
+      {showUsers && (
         <div className="mt-3">
           <p className="mb-1.5 text-[10px] font-black uppercase tracking-widest text-white/35">{usersLabel}</p>
-          {loadingUsers ? (
-            <p className="animate-pulse text-xs text-neon-blue">Buscando usuarios…</p>
+          {!term ? (
+            <p className="text-xs text-white/40">{usersHint}</p>
+          ) : loadingUsers ? (
+            <p className="animate-pulse text-xs text-neon-blue">{loadingUsersLabel}</p>
           ) : users.length === 0 ? (
             <p className="text-xs text-white/40">{emptyLabel}</p>
           ) : (

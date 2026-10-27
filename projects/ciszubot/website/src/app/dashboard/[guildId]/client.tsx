@@ -747,39 +747,40 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     }, 200);
     return () => clearTimeout(id);
   }, []);
-  const SUBNAV: ReadonlyArray<{ key: GuildView; icon: string; label: keyof Dict['guildPage']; tag: 'free' | 'premium' | 'mixed' | 'nsfw' }> = [
-    { key: 'general', icon: 'settings', label: 'subnavGeneral', tag: 'free' },
-    { key: 'messages', icon: 'message', label: 'subnavMessages', tag: 'free' },
+  const SUBNAV: ReadonlyArray<{ key: GuildView; icon: string; label: keyof Dict['guildPage']; tag: 'free' | 'premium' | 'mixed' | 'nsfw'; colorClass: string }> = [
+    { key: 'general', icon: 'settings', label: 'subnavGeneral', tag: 'free', colorClass: 'text-neon-blue' },
+    { key: 'messages', icon: 'message', label: 'subnavMessages', tag: 'free', colorClass: 'text-sky-400' },
     ...FEATURE_ROWS.map((f) => ({
       key: `feat:${f.slug}` as GuildView,
       icon: f.icon,
       label: f.labelKey,
       tag: f.premium ? ('premium' as const) : ('free' as const),
+      colorClass: f.colorClass ?? 'text-neon-blue',
     })),
-    { key: 'levels', icon: 'chart-bar', label: 'subnavLevels', tag: 'mixed' },
-    { key: 'economy', icon: 'money-bill-trend-up', label: 'subnavEconomy', tag: 'free' },
-    { key: 'starboard', icon: 'star', label: 'subnavStarboard', tag: 'free' },
-    { key: 'nitro', icon: 'bolt', label: 'subnavNitro', tag: 'free' },
-    { key: 'staff', icon: 'admin-panel-settings', label: 'subnavStaff', tag: 'free' },
-    { key: 'alliance', icon: 'handshake', label: 'subnavAlliance', tag: 'free' },
-    { key: 'tickets', icon: 'support', label: 'subnavTickets', tag: 'free' },
-    { key: 'automod', icon: 'shield', label: 'subnavAutomod', tag: 'free' },
-    { key: 'stats', icon: 'chart-line', label: 'subnavStats', tag: 'free' },
-    { key: 'welcome', icon: 'heart', label: 'subnavWelcome', tag: 'free' },
-    { key: 'goodbye', icon: 'logout', label: 'subnavGoodbye', tag: 'free' },
-    { key: 'invites', icon: 'address-book', label: 'subnavInvites', tag: 'free' },
-    { key: 'vcs', icon: 'cast', label: 'subnavVcs', tag: 'free' },
-    { key: 'counting', icon: 'calculator', label: 'subnavCounting', tag: 'free' },
-    { key: 'suggestions', icon: 'lightbulb', label: 'subnavSuggestions', tag: 'free' },
-    { key: 'polls', icon: 'chart-pie', label: 'subnavPolls', tag: 'free' },
-    { key: 'trivia', icon: 'circle-question', label: 'subnavTrivia', tag: 'free' },
-    { key: 'autoposts', icon: 'bullhorn', label: 'subnavAutoposts', tag: 'free' },
-    { key: 'news', icon: 'globe', label: 'subnavNews', tag: 'free' },
-    { key: 'socialfeeds', icon: 'share', label: 'subnavSocialFeeds', tag: 'mixed' },
-    { key: 'nsfw', icon: 'triangle-exclamation', label: 'subnavNsfw', tag: 'nsfw' },
-    { key: 'confessions', icon: 'heart', label: 'subnavConfessions', tag: 'free' },
-    { key: 'customcmd', icon: 'terminal', label: 'subnavCustomCmd', tag: 'free' },
-    { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free' },
+    { key: 'levels', icon: 'chart-bar', label: 'subnavLevels', tag: 'mixed', colorClass: 'text-amber-400' },
+    { key: 'economy', icon: 'money-bill-trend-up', label: 'subnavEconomy', tag: 'free', colorClass: 'text-emerald-400' },
+    { key: 'starboard', icon: 'star', label: 'subnavStarboard', tag: 'free', colorClass: 'text-yellow-300' },
+    { key: 'nitro', icon: 'bolt', label: 'subnavNitro', tag: 'free', colorClass: 'text-purple-400' },
+    { key: 'staff', icon: 'admin-panel-settings', label: 'subnavStaff', tag: 'free', colorClass: 'text-indigo-300' },
+    { key: 'alliance', icon: 'handshake', label: 'subnavAlliance', tag: 'free', colorClass: 'text-teal-300' },
+    { key: 'tickets', icon: 'support', label: 'subnavTickets', tag: 'free', colorClass: 'text-cyan-300' },
+    { key: 'automod', icon: 'shield', label: 'subnavAutomod', tag: 'free', colorClass: 'text-red-400' },
+    { key: 'stats', icon: 'chart-line', label: 'subnavStats', tag: 'free', colorClass: 'text-lime-300' },
+    { key: 'welcome', icon: 'heart', label: 'subnavWelcome', tag: 'free', colorClass: 'text-pink-300' },
+    { key: 'goodbye', icon: 'logout', label: 'subnavGoodbye', tag: 'free', colorClass: 'text-orange-300' },
+    { key: 'invites', icon: 'address-book', label: 'subnavInvites', tag: 'free', colorClass: 'text-rose-300' },
+    { key: 'vcs', icon: 'cast', label: 'subnavVcs', tag: 'free', colorClass: 'text-violet-300' },
+    { key: 'counting', icon: 'calculator', label: 'subnavCounting', tag: 'free', colorClass: 'text-blue-300' },
+    { key: 'suggestions', icon: 'lightbulb', label: 'subnavSuggestions', tag: 'free', colorClass: 'text-yellow-200' },
+    { key: 'polls', icon: 'chart-pie', label: 'subnavPolls', tag: 'free', colorClass: 'text-fuchsia-300' },
+    { key: 'trivia', icon: 'circle-question', label: 'subnavTrivia', tag: 'free', colorClass: 'text-emerald-300' },
+    { key: 'autoposts', icon: 'bullhorn', label: 'subnavAutoposts', tag: 'free', colorClass: 'text-amber-300' },
+    { key: 'news', icon: 'globe', label: 'subnavNews', tag: 'free', colorClass: 'text-sky-300' },
+    { key: 'socialfeeds', icon: 'share', label: 'subnavSocialFeeds', tag: 'mixed', colorClass: 'text-pink-400' },
+    { key: 'nsfw', icon: 'triangle-exclamation', label: 'subnavNsfw', tag: 'nsfw', colorClass: 'text-red-300' },
+    { key: 'confessions', icon: 'heart', label: 'subnavConfessions', tag: 'free', colorClass: 'text-rose-400' },
+    { key: 'customcmd', icon: 'terminal', label: 'subnavCustomCmd', tag: 'free', colorClass: 'text-teal-400' },
+    { key: 'history', icon: 'verified', label: 'subnavHistory', tag: 'free', colorClass: 'text-cyan-400' },
   ];
 
   const activeFeature = view.startsWith('feat:')
@@ -1925,7 +1926,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     : 'border-white/10 bg-white/5 text-white/60 hover:border-white/25 hover:text-white'
                 }`}
               >
-                <Icon name={item.icon} size={14} className="text-neon-blue" />
+                <Icon name={item.icon} size={16} className={item.colorClass} />
                 {t[item.label]}
                 <span
                   className={`inline-flex items-center gap-0.5 whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[7px] font-black uppercase tracking-widest ${

@@ -23,6 +23,34 @@ import {  loadPreferences, applyZoom, setMuteTab, updatePreferences, consumeRelo
 import {  fill, getDict, parseLang, readCookieLang } from '@/lib/i18n';
 import PreferencesPanel from '@/components/molecules/PreferencesPanel';
 import {  LANGUAGE_OPTIONS, isLangAvailable } from '@ciszu/ui';
+import type { SearchUserItem } from '@ciszu/ui';
+
+interface ProfileSearchRow {
+  id: string;
+  username: string | null;
+  display_name: string | null;
+  avatar_url: string | null;
+}
+
+async function searchUsers(query: string): Promise<SearchUserItem[]> {
+  const term = query.trim().replace(/^@/, '').replace(/[%_(),]/g, ' ').trim();
+  if (!term) return [];
+
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, username, display_name, avatar_url')
+    .ilike('username', `%${term}%`)
+    .order('username', { ascending: true })
+    .limit(12);
+
+  return ((data ?? []) as ProfileSearchRow[]).map((profile) => ({
+    id: profile.id,
+    displayName: profile.display_name?.trim() || profile.username || 'Usuario',
+    username: profile.username,
+    avatar: profile.avatar_url,
+    href: profile.username ? `/profile/@${encodeURIComponent(profile.username)}` : `/profile/${profile.id}`,
+  }));
+}
 
 // El desplegable "Information" es el índice completo: incluye las páginas que
 // ya no viven en el header (foro, changelog, reviews, descarga, feedback,
@@ -534,6 +562,7 @@ export const NavbarContent = () => {
                   keywords: p.keywords,
                 }))}
                 categories={['Páginas']}
+                searchUsers={searchUsers}
                 placeholder={dict.nav.search}
                 pagesLabel="Páginas"
                 emptyLabel={fill(dict.search.noResults, { query })}
@@ -547,7 +576,7 @@ export const NavbarContent = () => {
         supabase={supabase}
         site="muzicmania"
         siteName="MuzicMania"
-        profileUrl={(u) => '/profile/@' + u}
+        profileUrl={(u) => '/profile/@' + encodeURIComponent(u)}
       />
       </nav>
 

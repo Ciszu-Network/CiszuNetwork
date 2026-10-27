@@ -13,6 +13,34 @@ import { getGuestName } from '@/lib/guest';
 import { navLabel, t, type Dict } from '@/lib/i18n';
 import { useI18n } from '@/components/providers/I18nProvider';
 import { SiteSearch } from '@ciszu/ui';
+import type { SearchUserItem } from '@ciszu/ui';
+
+interface ProfileSearchRow {
+  id: string;
+  username: string | null;
+  display_name: string | null;
+  avatar_url: string | null;
+}
+
+async function searchUsers(query: string): Promise<SearchUserItem[]> {
+  const term = query.trim().replace(/^@/, '').replace(/[%_(),]/g, ' ').trim();
+  if (!term) return [];
+
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, username, display_name, avatar_url')
+    .ilike('username', `%${term}%`)
+    .order('username', { ascending: true })
+    .limit(12);
+
+  return ((data ?? []) as ProfileSearchRow[]).map((profile) => ({
+    id: profile.id,
+    displayName: profile.display_name?.trim() || profile.username || 'Usuario',
+    username: profile.username,
+    avatar: profile.avatar_url,
+    href: profile.username ? `/profile/@${encodeURIComponent(profile.username)}` : `/profile/${profile.id}`,
+  }));
+}
 
 const UserIcon = () => (
   <svg viewBox="0 0 24 24" className="w-[20px] h-[20px]" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -430,6 +458,7 @@ export default function Navbar() {
                   keywords: p.keywords,
                 }))}
                 categories={['Portfolio', 'Información', 'Legal', 'General']}
+                searchUsers={searchUsers}
                 placeholder={dict.nav.search}
                 pagesLabel="Páginas"
                 emptyLabel={dict.nav.noResults + ' ' + searchQuery.trim()}
@@ -439,7 +468,12 @@ export default function Navbar() {
         )}
       {/* Modal opcional: recordar sesión (solo en el index, tras login/registro). */}
       <RememberSessionPrompt site="ciszukoantony" siteName="Ciszuko Antony" userId={user?.id ?? null} />
-      <SanctionNotice supabase={supabase} site="ciszukoantony" siteName="Ciszuko Antony" />
+      <SanctionNotice
+        supabase={supabase}
+        site="ciszukoantony"
+        siteName="Ciszuko Antony"
+        profileUrl={(u) => '/profile/@' + encodeURIComponent(u)}
+      />
       </nav>
 
       {/* Slide-right contextual menu (sidebar) */}

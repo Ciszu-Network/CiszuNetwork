@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.2.2
-Actualización: 2026-10-23
-Identificador: STATUS_SYSTEM_V2.2.2_2026_10_03_ciszunetwork
+Versión: 2.2.3
+Actualización: 2026-10-26
+Identificador: STATUS_SYSTEM_V2.2.3_2026_10_26_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -298,7 +298,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
-_Última revisión: 23 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 26 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-10-23
@@ -322,3 +322,12 @@ _Última revisión: 23 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Mantenimiento**: ~8.2 GB liberados de temp/caches (sesión previa).
 
 ÚLTIMA ACTUALIZACIÓN: 2026-10-23
+
+## Sesión 26 oct 2026 — búsqueda de usuarios y perfiles públicos
+
+- **Buscador global**: `SiteSearch` separa modos Páginas/Usuarios (mínimo uno, Páginas por defecto), Enter refresca, `@` fuerza usuarios y las cards muestran avatar, `@username` y “Ver perfil”; usuarios desde `profiles` de Supabase en las 4 webs.
+- **Perfiles públicos**: rutas `/profile/[identifier]` en ciszu, ciszukoantony y ciszubot por `@username` o UUID; vista compartida `PublicProfileView` en `@ciszu/ui`; reviews enlazan a `/profile/@username` en las 4 webs.
+- **Ciszubot**: iconos del subnav del dashboard con color por función y tamaño 16 px; `embeds` conserva el morado.
+- **Validación**: `pnpm typecheck` + builds de las 4 webs verdes; `packages/ui/tests/SiteSearch.test.tsx` 5/5.
+
+ÚLTIMA ACTUALIZACIÓN: 2026-10-26

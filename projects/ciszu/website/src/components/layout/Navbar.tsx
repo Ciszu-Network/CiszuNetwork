@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { SiteSearch, useZoomStatus, publishHeaderMode, useToast, LANGUAGE_OPTIONS, isLangAvailable, getLangLabel, LANG_BLOCKED_MESSAGE, RememberSessionPrompt, SanctionNotice } from '@ciszu/ui';
+import type { SearchUserItem } from '@ciszu/ui';
 import { usePathname } from 'next/navigation';
 import { useAppStore } from '@/store';
 import { supabase } from '@/config/supabase';
@@ -67,6 +68,33 @@ const IcoProjects = () => (
     <rect x="3" y="14" width="7" height="7" />
   </svg>
 );
+
+interface ProfileSearchRow {
+  id: string;
+  username: string | null;
+  display_name: string | null;
+  avatar_url: string | null;
+}
+
+async function searchUsers(query: string): Promise<SearchUserItem[]> {
+  const term = query.trim().replace(/^@/, '').replace(/[%_(),]/g, ' ').trim();
+  if (!term) return [];
+
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, username, display_name, avatar_url')
+    .ilike('username', `%${term}%`)
+    .order('username', { ascending: true })
+    .limit(12);
+
+  return ((data ?? []) as ProfileSearchRow[]).map((profile) => ({
+    id: profile.id,
+    displayName: profile.display_name?.trim() || profile.username || 'Usuario',
+    username: profile.username,
+    avatar: profile.avatar_url,
+    href: profile.username ? `/profile/@${encodeURIComponent(profile.username)}` : `/profile/${profile.id}`,
+  }));
+}
 
 interface NavSubLink { name: string; href: string; icon: React.ReactNode; }
 interface NavEntry {
@@ -566,6 +594,7 @@ export const NavbarContent = () => {
                   keywords: p.keywords,
                 }))}
                 categories={['Páginas']}
+                searchUsers={searchUsers}
                 placeholder={dict.nav.searchPlaceholder}
                 pagesLabel="Páginas"
                 emptyLabel={dict.nav.searchNoResults.replace('{q}', searchQuery)}
@@ -575,7 +604,12 @@ export const NavbarContent = () => {
         )}
       {/* Modal opcional: recordar sesión (solo en el index, tras login/registro). */}
       <RememberSessionPrompt site="ciszunetwork" siteName="Ciszu Network" userId={user?.id ?? null} />
-      <SanctionNotice supabase={supabase} site="ciszunetwork" siteName="Ciszu Network" />
+      <SanctionNotice
+        supabase={supabase}
+        site="ciszunetwork"
+        siteName="Ciszu Network"
+        profileUrl={(u) => '/profile/@' + encodeURIComponent(u)}
+      />
       </nav>
 
       {/* Slide-Right Contextual Menu (Sidebar) */}

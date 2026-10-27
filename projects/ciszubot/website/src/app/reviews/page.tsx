@@ -35,7 +35,7 @@ const SITE = {
   subtitle: 'Reseñas y opiniones de la comunidad',
   domain: 'ciszubot.vercel.app',
   /** Ruta base del perfil público ('' = esta web no tiene perfiles). */
-  profileBase: '',
+  profileBase: '/profile',
   /** Color de acento propio de la web. */
   accent: '#ff33cc',
   accentSoft: '#a855f7',
@@ -174,7 +174,7 @@ function profileHrefOf(review: ReviewRecord): string | null {
   if (!SITE.profileBase || review.is_anonymous) return null;
   const username = review.user_profile?.username?.trim();
   if (!username) return null;
-  return `${SITE.profileBase}/${encodeURIComponent(username)}`;
+  return `${SITE.profileBase}/@${encodeURIComponent(username)}`;
 }
 
 function formatReviewDate(iso: string): string {

@@ -16,6 +16,34 @@ import { PreferencesModal, RememberSessionPrompt, SanctionNotice } from '@ciszu/
 import { LOGO_ISOTIPO_CIRCLE, LOGO_LOGOTIPO, type Dict, type Lang } from '@/lib/i18n';
 import { useClientI18n } from '@/hooks/useClientI18n';
 import { SiteSearch } from '@ciszu/ui';
+import type { SearchUserItem } from '@ciszu/ui';
+
+interface ProfileSearchRow {
+  id: string;
+  username: string | null;
+  display_name: string | null;
+  avatar_url: string | null;
+}
+
+async function searchUsers(query: string): Promise<SearchUserItem[]> {
+  const term = query.trim().replace(/^@/, '').replace(/[%_(),]/g, ' ').trim();
+  if (!term) return [];
+
+  const { data } = await supabase
+    .from('profiles')
+    .select('id, username, display_name, avatar_url')
+    .ilike('username', `%${term}%`)
+    .order('username', { ascending: true })
+    .limit(12);
+
+  return ((data ?? []) as ProfileSearchRow[]).map((profile) => ({
+    id: profile.id,
+    displayName: profile.display_name?.trim() || profile.username || 'Usuario',
+    username: profile.username,
+    avatar: profile.avatar_url,
+    href: profile.username ? `/profile/@${encodeURIComponent(profile.username)}` : `/profile/${profile.id}`,
+  }));
+}
 
 // Header = solo lo esencial. TODO lo demás se indexa en el desplegable
 // "Information" (un único punto de entrada) para no duplicar enlaces en el
@@ -688,6 +716,7 @@ export default function Navbar({ account }: NavbarProps) {
                 keywords: p.keywords,
               }))}
               categories={['Bot', 'Soporte', 'Legal', 'Información']}
+              searchUsers={searchUsers}
               placeholder={dict.nav.search}
               pagesLabel="Páginas"
               emptyLabel={dict.nav.searchHint}
@@ -698,7 +727,12 @@ export default function Navbar({ account }: NavbarProps) {
 
       {/* Modal opcional: recordar sesión (solo en el index, tras login/registro). */}
       <RememberSessionPrompt site="ciszubot" siteName="CiszuBot" userId={user?.id ?? null} />
-      <SanctionNotice supabase={supabase} site="ciszubot" siteName="CiszuBot" />
+      <SanctionNotice
+        supabase={supabase}
+        site="ciszubot"
+        siteName="CiszuBot"
+        profileUrl={(u) => '/profile/@' + encodeURIComponent(u)}
+      />
       </nav>
 
     {isMenuOpen && (
