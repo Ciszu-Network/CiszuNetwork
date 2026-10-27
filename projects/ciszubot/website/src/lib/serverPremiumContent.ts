@@ -1,0 +1,26 @@
+export const SERVER_PREMIUM_COPY = {
+  es: {
+    title: 'Premium del servidor',
+    loading: 'Cargando…',
+    remaining: 'restantes de',
+    activate: 'Activar',
+    deactivate: 'Desactivar',
+    needAccount: 'Activa Premium en Preferencias del bot de tu cuenta antes de aplicarlo aquí.',
+    notEnabled: 'Activa Premium primero en Preferencias del bot de tu cuenta.',
+    limit: 'Has agotado los servidores premium de tu plan.',
+    cooldown: 'Este servidor está en cooldown hasta',
+    error: 'No se pudo cambiar el Premium del servidor.',
+  },
+  en: {
+    title: 'Server Premium',
+    loading: 'Loading…',
+    remaining: 'left of',
+    activate: 'Activate',
+    deactivate: 'Deactivate',
+    needAccount: 'Enable Premium in your account Bot preferences before applying it here.',
+    notEnabled: 'Enable Premium first in your account Bot preferences.',
+    limit: 'You have used all premium servers in your plan.',
+    cooldown: 'This server is on cooldown until',
+    error: 'Could not change the server Premium.',
+  },
+} as const;

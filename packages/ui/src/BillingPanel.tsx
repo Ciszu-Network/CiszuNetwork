@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Icon } from './Icon';
 const CURRENCIES = [
@@ -25,6 +25,7 @@ export interface BillingPanelProps {
   premiumHref?: string;
   planName?: string;
   remaining?: number;
+  accountApi?: string | null;
 }
 
 const COPY = {
@@ -55,6 +56,12 @@ const COPY = {
     amount: 'Importe',
     status: 'Estado',
     noData: 'Sin datos',
+    accountPremium: 'Premium en mi cuenta',
+    accountPremiumHint: 'Activa el plan en tu cuenta antes de aplicarlo a un servidor.',
+    enable: 'Activar',
+    disable: 'Desactivar',
+    plan: 'Plan',
+    remainingShort: 'restantes',
   },
   en: {
     title: 'Billing and payments',
@@ -83,6 +90,12 @@ const COPY = {
     amount: 'Amount',
     status: 'Status',
     noData: 'No data',
+    accountPremium: 'Premium on my account',
+    accountPremiumHint: 'Enable the plan on your account before applying it to a server.',
+    enable: 'Enable',
+    disable: 'Disable',
+    plan: 'Plan',
+    remainingShort: 'left',
   },
 };
 
@@ -93,9 +106,52 @@ export function BillingPanel({
   premiumHref = '/premium',
   planName,
   remaining = 0,
+  accountApi = '/api/premium/account',
 }: BillingPanelProps) {
   const t = COPY[lang];
   const [currency, setCurrency] = useState<CurrencyCode>('USD');
+  const [account, setAccount] = useState<{
+    plan: string;
+    premiumEnabled: boolean;
+    remaining: number;
+    limit: number;
+    used: number;
+  } | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    if (!accountApi) return;
+    let alive = true;
+    fetch(accountApi, { cache: 'no-store' })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: unknown) => {
+        const payload = data as { account?: typeof account } | null;
+        if (alive && payload?.account) setAccount(payload.account);
+      })
+      .catch(() => undefined);
+    return () => {
+      alive = false;
+    };
+  }, [accountApi]);
+
+  const toggleAccount = async () => {
+    if (!accountApi || busy) return;
+    setBusy(true);
+    try {
+      const res = await fetch(accountApi, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ premium_enabled: !(account?.premiumEnabled ?? false) }),
+      });
+      const data = (await res.json().catch(() => null)) as { account?: typeof account } | null;
+      if (res.ok && data?.account) setAccount(data.account);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const effectivePlan = account?.plan ?? planName;
+  const effectiveRemaining = account?.remaining ?? remaining;
   return (
     <section className="space-y-5">
       <header>
@@ -106,9 +162,9 @@ export function BillingPanel({
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl border border-border bg-card p-5">
           <p className="text-[10px] font-black uppercase tracking-widest text-muted">{t.currentPlan}</p>
-          <p className="mt-2 font-header text-2xl font-black text-ink">{planName ?? t.beta}</p>
+          <p className="mt-2 font-header text-2xl font-black text-ink">{effectivePlan ?? t.beta}</p>
           <p className="mt-1 text-xs text-muted">{siteName} · {site}</p>
-          <p className="mt-4 text-sm font-bold text-ink">{remaining} {t.remaining}</p>
+          <p className="mt-4 text-sm font-bold text-ink">{effectiveRemaining} {t.remaining}</p>
           <Link
             href={premiumHref}
             className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-4 py-2.5 font-header text-[10px] font-black uppercase tracking-widest text-white"
@@ -134,6 +190,30 @@ export function BillingPanel({
           </p>
         </div>
       </div>
+
+      {accountApi && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card p-5">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted">{t.accountPremium}</p>
+            <p className="mt-1 text-xs text-muted">{t.accountPremiumHint}</p>
+            <p className="mt-2 text-xs font-bold text-ink">
+              {t.plan}: {account?.plan ?? t.beta} · {account?.remaining ?? 0} {t.remainingShort}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => void toggleAccount()}
+            disabled={busy}
+            className={`rounded-xl px-4 py-2.5 font-header text-[10px] font-black uppercase tracking-widest transition disabled:opacity-50 ${
+              account?.premiumEnabled
+                ? 'border border-rose-400/40 bg-rose-400/10 text-rose-200'
+                : 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white'
+            }`}
+          >
+            {account?.premiumEnabled ? t.disable : t.enable}
+          </button>
+        </div>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border border-border bg-card p-5">

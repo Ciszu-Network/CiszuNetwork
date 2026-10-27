@@ -11,6 +11,7 @@ import type { GuildInfo } from '@/lib/discordGuild';
 import { SaveDock, type SaveStatus } from '@/components/dashboard/SaveDock';
 import DiscordMarkdownField from '@/components/dashboard/DiscordMarkdownField';
 import SocialFeedsEditor, { type SocialFeed } from '@/components/dashboard/SocialFeedsEditor';
+import { ServerPremiumCard } from '@/components/dashboard/ServerPremiumCard';
 import { QuickHelp, HelpZone } from '@/components/dashboard/QuickHelp';
 import { NiceSelect, RichInput, MultiSelect } from '@/components/dashboard/fields';
 import { SECTION_HELP } from '@/lib/dashboardCommands';
@@ -2102,6 +2103,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   }
                 />
               </Field>
+
+              <ServerPremiumCard guildId={guildId} />
 
               <div className="rounded-xl border border-red-400/25 bg-red-500/5 p-4">
                 <div className="flex items-center justify-between gap-3">

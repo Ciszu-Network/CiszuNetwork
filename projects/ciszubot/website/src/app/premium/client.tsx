@@ -82,7 +82,7 @@ export default function PremiumClient({ beta, hasBotInServer }: PremiumClientPro
   }, []);
 
   const rate = rates[currency] ?? CURRENCIES.find((item) => item.code === currency)?.rate ?? 1;
-  const canBuy = !beta && ciszuState === 'yes' && hasBotInServer;
+  const canBuy = false;
   const paidPlans = useMemo(() => PREMIUM_PLANS.filter((plan) => CARD_PLANS.includes(plan.id)), []);
   const lifetime = PREMIUM_PLANS.find((plan) => plan.id === 'lifetime')!;
   const free = PREMIUM_PLANS.find((plan) => plan.id === 'free')!;
@@ -263,7 +263,7 @@ export default function PremiumClient({ beta, hasBotInServer }: PremiumClientPro
                     disabled={!canBuy}
                     className="mt-6 w-full rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-5 py-3 font-header text-[10px] font-black uppercase tracking-widest text-white transition enabled:hover:scale-[1.02] enabled:active:scale-95 disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    {beta ? c.betaCta : c.cta}
+                    {beta ? c.betaCta : c.checkoutSoon}
                   </button>
                 </article>
               );
@@ -295,7 +295,7 @@ export default function PremiumClient({ beta, hasBotInServer }: PremiumClientPro
               disabled={!canBuy}
               className="mt-6 w-full rounded-xl border border-teal-400/40 bg-teal-400/10 px-5 py-3 font-header text-[10px] font-black uppercase tracking-widest text-teal-200 transition enabled:hover:bg-teal-400/20 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              {beta ? c.betaCta : c.cta}
+              {beta ? c.betaCta : c.checkoutSoon}
             </button>
           </article>
 

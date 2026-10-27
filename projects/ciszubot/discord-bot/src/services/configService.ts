@@ -205,6 +205,7 @@ export interface GuildConfig {
   guild_id: string;
   prefix: string;
   lang: string;
+  premium_server_enabled: boolean;
   leveling_enabled: boolean;
   level_channel_id: string | null;
   xp_rate: number;
@@ -333,6 +334,7 @@ const DEFAULT_DROPS: DropsConfig = { list: [] };
 const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   prefix: 'cz!',
   lang: 'es',
+  premium_server_enabled: false,
   leveling_enabled: false,
   level_channel_id: null,
   xp_rate: 1,
@@ -508,6 +510,7 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         guild_id: guildId,
         prefix: data.prefix ?? DEFAULTS.prefix,
         lang: data.lang ?? DEFAULTS.lang,
+        premium_server_enabled: data.premiumServerEnabled ?? DEFAULTS.premium_server_enabled,
         leveling_enabled: data.levelingEnabled ?? DEFAULTS.leveling_enabled,
         level_channel_id: data.levelChannelId ?? DEFAULTS.level_channel_id,
         xp_rate: data.xpRate ?? DEFAULTS.xp_rate,
@@ -639,6 +642,7 @@ export async function updateGuildConfig(
     guildId,
     prefix: merged.prefix,
     lang: merged.lang,
+    premiumServerEnabled: merged.premium_server_enabled,
     levelingEnabled: merged.leveling_enabled,
     levelChannelId: merged.level_channel_id,
     xpRate: merged.xp_rate,

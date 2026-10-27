@@ -70,7 +70,7 @@ export function createDb(data: unknown = null, error: unknown = null, selectSequ
     const q: Record<string, ReturnType<typeof vi.fn>> & { limit: ReturnType<typeof vi.fn> } = {
       limit: vi.fn((_n: number) => Promise.resolve(rr())),
     };
-    for (const m of ['from', 'where', 'orderBy', 'offset']) {
+    for (const m of ['from', 'leftJoin', 'where', 'orderBy', 'offset']) {
       (q as Record<string, unknown>)[m] = vi.fn(() => q);
     }
     return Object.assign(Promise.resolve(rr()), q);

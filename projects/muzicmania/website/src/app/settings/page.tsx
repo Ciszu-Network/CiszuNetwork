@@ -21,7 +21,7 @@ export default function SettingsPage() {
           </p>
         </header>
         <AccountSettingsPanel supabase={supabase} site="muzicmania" siteName="MuzicMania" />
-        <BillingPanel site="muzicmania" siteName="MuzicMania" premiumHref="https://ciszubot.vercel.app/premium" />
+        <BillingPanel site="muzicmania" siteName="MuzicMania" premiumHref="https://ciszubot.vercel.app/premium" accountApi={null} />
       </div>
     </div>
   );

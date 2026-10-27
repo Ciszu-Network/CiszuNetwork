@@ -60,8 +60,10 @@ function premiumEmbed(tag: string, iconURL?: string | null): EmbedBuilder {
 function betaEmbed(): EmbedBuilder {
   return new EmbedBuilder()
     .setColor(BOT_COLORS.secondary)
-    .setTitle('🧪 BETA — gratis por ahora')
-    .setDescription('Todas las funciones premium son **gratis** durante la beta. Puedes usarla sin costo.');
+    .setTitle('🧪 Beta Trial — actívalo en el dashboard')
+    .setDescription(
+      'Durante la beta tienes Premium Dorado temporal, pero debes activarlo: primero en **Preferencias del bot** de tu cuenta y después en **General** del servidor.',
+    );
 }
 
 function nsfwBlockedEmbed(
@@ -190,12 +192,12 @@ export async function gateCommand(ctx: GateContext): Promise<boolean> {
 
   if (!isPremiumCommand(command)) return true;
 
-  if (await isPremiumBeta()) {
-    await send({ embeds: [premiumEmbed(tag, iconURL), betaEmbed()] });
-    return true;
-  }
-
   if (guildId && (await isPremiumGuild(guildId))) return true;
+
+  if (await isPremiumBeta()) {
+    await send({ embeds: [premiumBlockedEmbed(tag, iconURL), betaEmbed()] });
+    return false;
+  }
 
   await send({ embeds: [premiumBlockedEmbed(tag, iconURL)] });
   return false;

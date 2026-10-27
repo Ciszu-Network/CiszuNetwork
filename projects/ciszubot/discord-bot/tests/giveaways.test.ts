@@ -291,7 +291,7 @@ describe('startGiveaway', () => {
   it('permite cupos ilimitados en servidores premium', async () => {
     vi.useFakeTimers();
     const full = Array.from({ length: 10 }, (_, i) => ({ slot: i + 1 }));
-    const { db } = createDb(null, null, [[{ status: 'active', expiresAt: null }], full, [giveawayRow({ slot: 11 })], [], []]);
+    const { db } = createDb(null, null, [[{ status: 'active', expiresAt: null, userId: 'u-owner', activationId: 'a1', accountPlan: 'gold', accountStatus: 'active', accountEnabled: true, accountEnd: null }], full, [giveawayRow({ slot: 11 })], [], []]);
     dbState.set(db);
     const rawChannel = makeChannel();
     const channel = rawChannel as unknown as TextChannel;

@@ -109,17 +109,32 @@ export async function isPremiumBeta(): Promise<boolean> {
   return row ? row.enabled : true;
 }
 
-/** ¿El servidor tiene premium activo? (vacío durante la beta; lo llenan los pagos). */
+/** ¿El servidor tiene una activación premium válida y la cuenta sigue activa? */
 export async function isPremiumGuild(guildId: string): Promise<boolean> {
   try {
+    const guilds = ciszubotSchema.premiumGuilds;
+    const accounts = ciszubotSchema.premiumAccounts;
     const rows = await db
-      .select({ status: ciszubotSchema.premiumGuilds.status, expiresAt: ciszubotSchema.premiumGuilds.expiresAt })
-      .from(ciszubotSchema.premiumGuilds)
-      .where(eq(ciszubotSchema.premiumGuilds.guildId, guildId))
+      .select({
+        status: guilds.status,
+        expiresAt: guilds.expiresAt,
+        userId: guilds.userId,
+        activationId: guilds.activationId,
+        accountPlan: accounts.plan,
+        accountStatus: accounts.status,
+        accountEnabled: accounts.premiumEnabled,
+        accountEnd: accounts.currentPeriodEnd,
+      })
+      .from(guilds)
+      .leftJoin(accounts, eq(accounts.userId, guilds.userId))
+      .where(eq(guilds.guildId, guildId))
       .limit(1);
     const row = rows[0];
-    if (!row || row.status !== 'active') return false;
+    if (!row || row.status !== 'active' || !row.activationId || !row.userId) return false;
     if (row.expiresAt && row.expiresAt.getTime() < Date.now()) return false;
+    if (!row.accountPlan || row.accountStatus !== 'active' || row.accountEnabled !== true) return false;
+    if (row.accountPlan === 'beta' && !(await isPremiumBeta())) return false;
+    if (row.accountEnd && row.accountEnd.getTime() < Date.now()) return false;
     return true;
   } catch (error) {
     logger.warn('No se pudo verificar el premium del servidor:', error);

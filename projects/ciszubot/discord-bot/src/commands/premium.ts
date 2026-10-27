@@ -27,7 +27,7 @@ const command: BotCommand = {
             .setName('plan')
             .setDescription('Plan vinculado')
             .setRequired(false)
-            .addChoices({ name: 'Beta (gratis)', value: 'beta' }, { name: 'Premium', value: 'premium' }),
+            .addChoices({ name: 'Beta Trial', value: 'beta' }, { name: 'Premium', value: 'premium' }),
         ),
     )
     .addSubcommand((s) => s.setName('deactivate').setDescription('Desactiva Premium en este servidor (solo admins)')),
@@ -55,11 +55,22 @@ const command: BotCommand = {
           `**Estado:** ${active ? '✅ Activo' : '⛔ No activo'}\n` +
             `**Plan:** ${row?.plan ?? '—'}\n` +
             `**Expira:** ${row?.expiresAt ? `<t:${Math.floor(row.expiresAt.getTime() / 1000)}:D>` : 'sin expiración'}\n` +
-            (beta ? '\n🧪 **BETA activa:** todas las funciones premium son gratis por ahora.' : ''),
+            (beta ? '\n🧪 **Beta Trial:** actívalo en Preferencias del bot y en General del servidor.' : ''),
         )
         .setFooter(BOT_FOOTER(message.author.tag, message.client.user?.displayAvatarURL()))
         .setTimestamp();
       await message.reply({ embeds: [embed] });
+      return;
+    }
+
+    if (sub === 'activate' || sub === 'deactivate') {
+      await message.reply(
+        tr(
+          L,
+          '🔐 La activación Premium ahora se gestiona desde el dashboard: primero en **Preferencias del bot** de tu cuenta y después en **General** del servidor.',
+          '🔐 Premium activation is now managed from the dashboard: first in your account **Bot preferences**, then in the server **General** section.',
+        ),
+      );
       return;
     }
 
@@ -111,8 +122,12 @@ const command: BotCommand = {
 
     if (beta) {
       embed.addFields({
-        name: tr(L, '🧪 BETA — gratis por ahora', '🧪 BETA — free for now'),
-        value: 'Todas las funciones premium son **gratis** durante la beta. ¡Disfrútalas sin costo!',
+        name: tr(L, '🧪 Beta Trial', '🧪 Beta Trial'),
+        value: tr(
+          L,
+          'Tienes Premium Dorado temporal. Actívalo en **Preferencias del bot** de tu cuenta y después en **General** del servidor.',
+          'You have temporary Gold Premium. Enable it in your account **Bot preferences** and then in the server **General** section.',
+        ),
       });
     }
 

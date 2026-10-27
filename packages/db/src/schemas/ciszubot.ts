@@ -43,6 +43,7 @@ export const guildConfigs = ciszubot.table(
     guildId: text('guild_id').primaryKey(),
     prefix: text('prefix').notNull().default('cz!'),
     lang: text('lang').notNull().default('es'),
+    premiumServerEnabled: boolean('premium_server_enabled').notNull().default(false),
     levelingEnabled: boolean('leveling_enabled').notNull().default(false),
     levelChannelId: text('level_channel_id'),
     xpRate: integer('xp_rate').notNull().default(1),
@@ -439,13 +440,29 @@ export const premiumGuilds = ciszubot.table(
   'premium_guilds',
   {
     guildId: text('guild_id').primaryKey(),
+    userId: text('user_id'),
+    activationId: uuid('activation_id'),
     plan: text('plan').notNull().default('beta'),
     status: text('status').notNull().default('active'),
     expiresAt: timestamp('expires_at', { withTimezone: true }),
+    configSnapshot: jsonb('config_snapshot'),
+    cooldownUntil: timestamp('cooldown_until', { withTimezone: true }),
+    deactivatedAt: timestamp('deactivated_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   }
 );
+
+export const premiumAccounts = ciszubot.table('premium_accounts', {
+  userId: text('user_id').primaryKey(),
+  plan: text('plan').notNull().default('beta'),
+  status: text('status').notNull().default('active'),
+  premiumEnabled: boolean('premium_enabled').notNull().default(false),
+  currentPeriodEnd: timestamp('current_period_end', { withTimezone: true }),
+  provider: text('provider'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
 
 export const auditLog = ciszubot.table(
   'audit_log',
