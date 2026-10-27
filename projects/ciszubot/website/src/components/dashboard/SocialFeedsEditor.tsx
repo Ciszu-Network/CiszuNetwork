@@ -19,6 +19,9 @@ export type SocialPlatform =
   | 'github'
   | 'reddit'
   | 'pinterest'
+  | 'patreon'
+  | 'kofi'
+  | 'buymeacoffee'
   | 'other';
 
 export type SocialFeedKind = 'profile' | 'page' | 'user' | 'group' | 'channel' | 'subreddit' | 'feed';
@@ -50,6 +53,9 @@ const PLATFORMS: SocialPlatform[] = [
   'github',
   'reddit',
   'pinterest',
+  'patreon',
+  'kofi',
+  'buymeacoffee',
   'other',
 ];
 
@@ -146,6 +152,27 @@ const META: Record<
     kinds: ['profile', 'user', 'feed'],
     placeholder: 'https://...rss (RSSHub)',
   },
+  patreon: {
+    label: 'Patreon',
+    color: '#FF424D',
+    icon: 'patreon',
+    kinds: ['profile', 'user', 'feed'],
+    placeholder: 'https://...rss (RSSHub)',
+  },
+  kofi: {
+    label: 'Ko-fi',
+    color: '#FF5E5B',
+    icon: 'kofi',
+    kinds: ['profile', 'user', 'feed'],
+    placeholder: 'https://...rss (RSSHub)',
+  },
+  buymeacoffee: {
+    label: 'Buy Me a Coffee',
+    color: '#FFDD00',
+    icon: 'buymeacoffee',
+    kinds: ['profile', 'user', 'feed'],
+    placeholder: 'https://...rss (RSSHub)',
+  },
   other: {
     label: 'Otra red / RSS',
     color: '#22D3EE',
@@ -168,6 +195,9 @@ const DEFAULT_KIND: Record<SocialPlatform, SocialFeedKind> = {
   github: 'user',
   reddit: 'subreddit',
   pinterest: 'profile',
+  patreon: 'profile',
+  kofi: 'profile',
+  buymeacoffee: 'profile',
   other: 'feed',
 };
 
@@ -384,7 +414,7 @@ export default function SocialFeedsEditor({
   onFeedsChange: (feeds: SocialFeed[]) => void;
 }) {
   const used = new Set(feeds.map((feed) => feed.platform));
-  const limit = premium ? 100 : 5;
+  const limit = premium ? 1000 : 5;
   const canAdd = feeds.length < limit;
   const nextPlatform = PLATFORMS.find((platform) => !used.has(platform)) ?? (premium ? 'other' : undefined);
   const globalPlatformOptions = PLATFORMS.map((platform) => ({ id: platform, label: META[platform].label }));

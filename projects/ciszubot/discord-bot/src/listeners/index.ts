@@ -729,6 +729,74 @@ export function registerListeners(client: Client): void {
 
 export async function handleButton(interaction: ButtonInteraction, client: Client): Promise<void> {
   const { customId } = interaction;
+
+  // Matrimonio: los botones llegan por DM (sin guild), así que se resuelven
+  // antes del guard de servidor. El anuncio público se edita por separado.
+  if (customId.startsWith('marry_accept:') || customId.startsWith('marry_decline:')) {
+    const proposal = takeProposal(customId.split(':')[1] ?? '', interaction.user.id);
+    if (!proposal) {
+      await interaction.followUp({ content: '❌ Esta propuesta ya expiró.', ephemeral: true }).catch(() => undefined);
+      return;
+    }
+    const guild = interaction.guild ?? client.guilds.cache.get(proposal.guildId);
+    const channel = guild?.channels.cache.get(proposal.channelId) as TextChannel | undefined;
+    const announcement = proposal.announcementMessageId
+      ? await channel?.messages.fetch(proposal.announcementMessageId).catch(() => null)
+      : null;
+
+    if (customId.startsWith('marry_decline:')) {
+      await interaction.message.edit({
+        embeds: [
+          new EmbedBuilder()
+            .setColor('#6b7280')
+            .setTitle('💔 Propuesta rechazada')
+            .setDescription('Has rechazado la propuesta de matrimonio.')
+            .setTimestamp(),
+        ],
+        components: [],
+      }).catch(() => undefined);
+      await announcement?.edit({
+        embeds: [
+          new EmbedBuilder()
+            .setColor('#6b7280')
+            .setTitle('💔 Propuesta rechazada')
+            .setDescription(`**${proposal.proposerTag}** y la otra persona no se casaron.`)
+            .setTimestamp(),
+        ],
+        components: [],
+      }).catch(() => undefined);
+      return;
+    }
+
+    await db.insert(ciszubotSchema.marriages).values({
+      guildId: proposal.guildId,
+      userId: proposal.proposer,
+      partnerId: interaction.user.id,
+      active: true,
+    });
+    await interaction.message.edit({
+      embeds: [
+        new EmbedBuilder()
+          .setColor('#ff69b4')
+          .setTitle('💍 ¡Aceptaste!')
+          .setDescription('La propuesta fue aceptada. ¡Felicidades! 🎉')
+          .setTimestamp(),
+      ],
+      components: [],
+    }).catch(() => undefined);
+    await announcement?.edit({
+      embeds: [
+        new EmbedBuilder()
+          .setColor('#ff69b4')
+          .setTitle('💍 ¡Boda!')
+          .setDescription(`<@${proposal.proposer}> y <@${interaction.user.id}> ahora están casados. ¡Felicidades! 🎉`)
+          .setTimestamp(),
+      ],
+      components: [],
+    }).catch(() => undefined);
+    return;
+  }
+
   const guild = interaction.guild;
   if (!guild) return;
 
@@ -875,6 +943,15 @@ export async function handleButton(interaction: ButtonInteraction, client: Clien
 
   // ─── Encuestas (votos y cierre) ───
   if (customId.startsWith('poll_vote:')) {
+    const cfg = await getGuildConfig(guild.id);
+    const memberRoles =
+      interaction.member && 'roles' in interaction.member && typeof interaction.member.roles === 'object'
+        ? [...(interaction.member.roles as unknown as { cache: Map<string, unknown> }).cache.keys()]
+        : [];
+    if (cfg.polls_excluded_role_ids.some((roleId) => memberRoles.includes(roleId))) {
+      await interaction.followUp({ content: '❌ Tienes un rol excluido de las encuestas.', ephemeral: true }).catch(() => undefined);
+      return;
+    }
     const parts = customId.split(':');
     const id = parseInt(parts[1] ?? '', 10);
     const idx = parseInt(parts[2] ?? '', 10);
@@ -921,44 +998,6 @@ export async function handleButton(interaction: ButtonInteraction, client: Clien
         components: [],
       })
       .catch(() => undefined);
-  }
-
-  // ─── Matrimonio ───
-  if (customId === 'marry_accept' || customId === 'marry_decline') {
-    const proposal = takeProposal(interaction.user.id, guild.id);
-    if (!proposal) {
-      await interaction.followUp({ content: '❌ Esta propuesta ya expiró.', ephemeral: true }).catch(() => undefined);
-      return;
-    }
-    if (customId === 'marry_decline') {
-      await interaction.message.edit({
-        embeds: [
-          new EmbedBuilder()
-            .setColor('#6b7280')
-            .setTitle('💔 Propuesta rechazada')
-            .setDescription(`**${proposal.proposerTag}** se quedó con el corazón roto...`)
-            .setTimestamp(),
-        ],
-        components: [],
-      }).catch(() => undefined);
-      return;
-    }
-    await db.insert(ciszubotSchema.marriages).values({
-      guildId: guild.id,
-      userId: proposal.proposer,
-      partnerId: interaction.user.id,
-      active: true,
-    });
-    await interaction.message.edit({
-      embeds: [
-        new EmbedBuilder()
-          .setColor('#ff69b4')
-          .setTitle('💍 ¡Boda!')
-          .setDescription(`<@${proposal.proposer}> y <@${interaction.user.id}> ahora están casados. ¡Felicidades! 🎉`)
-          .setTimestamp(),
-      ],
-      components: [],
-    }).catch(() => undefined);
   }
 
   // ─── Canales de voz privados (panel) ───

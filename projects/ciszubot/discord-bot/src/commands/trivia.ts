@@ -119,7 +119,20 @@ const command: BotCommand = {
     }
 
     // Iniciar (con dificultad opcional).
-    const difficulty = DIFF_ALIASES[first] ?? undefined;
+    if (cfg.trivia_channel_id && message.channel?.id !== cfg.trivia_channel_id) {
+      await message.reply(
+        tr(
+          L,
+          `❌ La trivia solo puede iniciarse en <#${cfg.trivia_channel_id}>.`,
+          `❌ Trivia can only be started in <#${cfg.trivia_channel_id}>.`,
+        ),
+      );
+      return;
+    }
+    const difficulty =
+      first === 'iniciar'
+        ? DIFF_ALIASES[(args[1] ?? '').toLowerCase()] ?? undefined
+        : DIFF_ALIASES[first] ?? undefined;
     const memberRoles = message.member
       ? [...(message.member.roles as unknown as { cache: Map<string, unknown> }).cache.keys()]
       : [];

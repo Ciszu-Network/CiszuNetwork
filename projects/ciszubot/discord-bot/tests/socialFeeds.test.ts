@@ -162,7 +162,7 @@ describe('social feed parsing', () => {
 
 describe('syncSocialFeeds', () => {
   it('siembra la primera sincronización sin publicar historial', async () => {
-    const { db } = createDb(null, null, [[guildConfigRow()], [{ seen: {} }]]);
+    const { db } = createDb(null, null, [[guildConfigRow()], [], [{ seen: {} }]]);
     dbState.set(db);
     const channel = makeChannel();
     const client = makeClient(channel);
@@ -181,7 +181,7 @@ describe('syncSocialFeeds', () => {
 
   it('publica solo lo nuevo, aplica texto y ping, y actualiza el dedupe', async () => {
     const config = { ...guildConfigRow(), socialFeeds: [{ ...FEED, ping_role_id: 'r1', message: '{title} en {platform}' }] };
-    const { db } = createDb(null, null, [[config], [{ seen: { f1: ['yt:video:1'] } }]]);
+    const { db } = createDb(null, null, [[config], [], [{ seen: { f1: ['yt:video:1'] } }]]);
     dbState.set(db);
     const channel = makeChannel();
     const client = makeClient(channel);

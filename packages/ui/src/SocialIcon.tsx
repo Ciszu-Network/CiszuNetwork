@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icon } from './Icon';
 
 export type SocialPlatform =
   | 'youtube'
@@ -13,7 +14,10 @@ export type SocialPlatform =
   | 'spotify'
   | 'soundcloud'
   | 'reddit'
-  | 'pinterest';
+  | 'pinterest'
+  | 'patreon'
+  | 'kofi'
+  | 'buymeacoffee';
 
 export const SOCIAL_COLORS: Record<SocialPlatform, string> = {
   youtube: '#FF0000',
@@ -29,6 +33,9 @@ export const SOCIAL_COLORS: Record<SocialPlatform, string> = {
   soundcloud: '#FF5500',
   reddit: '#FF4500',
   pinterest: '#E60023',
+  patreon: '#FF424D',
+  kofi: '#FF5E5B',
+  buymeacoffee: '#FFDD00',
 };
 
 /**
@@ -46,7 +53,7 @@ export const SOCIAL_COLORS: Record<SocialPlatform, string> = {
 export const socialInk = (platform: SocialPlatform): string =>
   `color-mix(in srgb, ${SOCIAL_COLORS[platform]} var(--brand-ink-mix, 100%), #0d1526)`;
 
-const PATHS: Record<SocialPlatform, { viewBox: string; d: string }> = {
+const PATHS: Partial<Record<SocialPlatform, { viewBox: string; d: string }>> = {
   youtube: {
     viewBox: '0 0 24 24',
     d: 'M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 0 0 .5 6.19 31.6 31.6 0 0 0 0 12a31.6 31.6 0 0 0 .5 5.81 3.02 3.02 0 0 0 2.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14A31.6 31.6 0 0 0 24 12a31.6 31.6 0 0 0-.5-5.81zM9.55 15.57V8.43L15.82 12l-6.27 3.57z',
@@ -111,6 +118,9 @@ interface SocialIconProps {
 export function SocialIcon({ platform, size = 24, colored = true, className }: SocialIconProps) {
   const data = PATHS[platform];
   const color = colored ? SOCIAL_COLORS[platform] : 'currentColor';
+  if (!data) {
+    return <Icon name={platform} style="brand" size={size} color={color} className={className} />;
+  }
   return (
     <svg
       viewBox={data.viewBox}

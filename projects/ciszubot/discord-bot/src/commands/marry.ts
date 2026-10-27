@@ -1,9 +1,19 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, SlashCommandBuilder, TextChannel } from 'discord.js';
 import type { BotCommand } from '../types/command';
 import { db, ciszubotSchema, eq, and, or } from '../services/supabase';
-import { setProposal } from '../services/proposals';
+import { setProposal, getProposal, deleteProposal } from '../services/proposals';
 import { getGuildConfig } from '../services/configService';
 import { langOf, tr } from '../services/i18n';
+
+async function proposalsAllowed(userId: string): Promise<boolean> {
+  const rows = await db
+    .select({ settings: ciszubotSchema.profiles.settingsControls })
+    .from(ciszubotSchema.profiles)
+    .where(eq(ciszubotSchema.profiles.id, userId))
+    .limit(1);
+  const settings = rows[0]?.settings as Record<string, unknown> | undefined;
+  return settings?.marriageProposals !== false;
+}
 
 async function findMarriage(guildId: string, userId: string) {
   const m = ciszubotSchema.marriages;
@@ -39,7 +49,11 @@ const marry: BotCommand = {
       return;
     }
     const targetUser = await message.client.users.fetch(target.id).catch(() => null);
-    if (targetUser?.bot) {
+    if (!targetUser) {
+      await message.reply(tr(L, '❌ No pude encontrar a ese usuario.', '❌ I could not find that user.'));
+      return;
+    }
+    if (targetUser.bot) {
       await message.reply(tr(L, '❌ No puedes casarte con un bot. 😅', '❌ You cannot marry a bot. 😅'));
       return;
     }
@@ -74,31 +88,115 @@ const marry: BotCommand = {
     }
     const targetMarriage = await findMarriage(message.guild.id, target.id);
     if (targetMarriage) {
-      await message.reply(`❌ **${target.tag ?? target.username}** ya está casado/a.`);
+      await message.reply(tr(L, '❌ Esa persona ya está casada.', '❌ That person is already married.'));
+      return;
+    }
+    if (!(await proposalsAllowed(target.id))) {
+      await message.reply(
+        tr(
+          L,
+          '❌ Esa persona ha desactivado las propuestas de matrimonio en su perfil.',
+          '❌ That person has disabled marriage proposals in their profile.',
+        ),
+      );
       return;
     }
 
-    setProposal({
+    const channel = message.channel as TextChannel | null;
+    if (!channel) return;
+    const announcement = new EmbedBuilder()
+      .setColor('#ff69b4')
+      .setTitle(tr(L, '💍 Propuesta de matrimonio', '💍 Marriage proposal'))
+      .setDescription(
+        tr(
+          L,
+          `**${message.author.tag}** ha enviado una propuesta de matrimonio.\nLa persona elegida tiene **60 segundos** para responder en privado.`,
+          `**${message.author.tag}** has sent a marriage proposal.\nThe chosen person has **60 seconds** to answer privately.`,
+        ),
+      )
+      .setFooter({ text: 'CiszuBot • Social', iconURL: message.client.user?.displayAvatarURL() })
+      .setTimestamp();
+    const announcementMessage = await channel.send({ embeds: [announcement] }).catch(() => null);
+    if (!announcementMessage) {
+      await message.reply(tr(L, '❌ No pude publicar la propuesta en este canal.', '❌ I could not post the proposal in this channel.'));
+      return;
+    }
+    await message.delete?.().catch(() => undefined);
+
+    const proposal = setProposal({
       proposer: message.author.id,
       proposerTag: message.author.tag,
       target: target.id,
       guildId: message.guild.id,
+      channelId: channel.id,
+      announcementMessageId: announcementMessage.id,
       expires: Date.now() + 60_000,
     });
 
-    const embed = new EmbedBuilder()
+    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+      new ButtonBuilder().setCustomId(`marry_accept:${proposal.id}`).setLabel(tr(L, '💍 Acepto', '💍 Accept')).setStyle(ButtonStyle.Success),
+      new ButtonBuilder().setCustomId(`marry_decline:${proposal.id}`).setLabel(tr(L, '💔 Rechazo', '💔 Decline')).setStyle(ButtonStyle.Danger),
+    );
+
+    const dmEmbed = new EmbedBuilder()
       .setColor('#ff69b4')
-      .setTitle(tr(L, '💍 ¡Propuesta de matrimonio!', '💍 Marriage proposal!'))
-      .setDescription(`**${message.author.tag}** le propone matrimonio a **${target.tag ?? target.username}**.\n\n¿Aceptas? (60 segundos)`)
+      .setTitle(tr(L, '💍 Te han propuesto matrimonio', '💍 Someone proposed to you'))
+      .setDescription(
+        tr(
+          L,
+          `**${message.author.tag}** te ha propuesto matrimonio.\n\n¿Aceptas?`,
+          `**${message.author.tag}** proposed to you.\n\nDo you accept?`,
+        ),
+      )
       .setFooter({ text: 'CiszuBot • Social', iconURL: message.client.user?.displayAvatarURL() })
       .setTimestamp();
 
-    const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-      new ButtonBuilder().setCustomId('marry_accept').setLabel('💍 Acepto').setStyle(ButtonStyle.Success),
-      new ButtonBuilder().setCustomId('marry_decline').setLabel('💔 Rechazo').setStyle(ButtonStyle.Danger),
-    );
+    const dm = await targetUser?.send({ embeds: [dmEmbed], components: [row] }).catch(() => null);
+    if (!dm) {
+      deleteProposal(proposal.id);
+      await announcementMessage.edit({
+        embeds: [
+          new EmbedBuilder()
+            .setColor('#6b7280')
+            .setTitle(tr(L, '💔 Propuesta no entregada', '💔 Proposal not delivered'))
+            .setDescription(
+              tr(
+                L,
+                'No pude enviar la propuesta por mensaje privado. La persona debe permitir DMs del bot.',
+                'I could not deliver the proposal via direct message. The person must allow DMs from the bot.',
+              ),
+            )
+            .setTimestamp(),
+        ],
+        components: [],
+      }).catch(() => undefined);
+      return;
+    }
 
-    await message.reply({ content: `<@${target.id}>`, embeds: [embed], components: [row] });
+    setTimeout(() => {
+      void (async () => {
+        const pending = getProposal(proposal.id);
+        if (!pending) return;
+        deleteProposal(proposal.id);
+        const guild = message.client.guilds.cache.get(pending.guildId);
+        const announceChannel = guild?.channels.cache.get(pending.channelId) as TextChannel | undefined;
+        const messageToEdit = pending.announcementMessageId
+          ? await announceChannel?.messages.fetch(pending.announcementMessageId).catch(() => null)
+          : null;
+        await messageToEdit?.edit({
+          embeds: [
+            new EmbedBuilder()
+              .setColor('#6b7280')
+              .setTitle(tr(L, '⌛ Sin respuesta', '⌛ No response'))
+              .setDescription(
+                tr(L, 'Nadie respondió a la propuesta de matrimonio.', 'Nobody answered the marriage proposal.'),
+              )
+              .setTimestamp(),
+          ],
+          components: [],
+        }).catch(() => undefined);
+      })();
+    }, 60_000);
   },
 };
 
@@ -167,4 +265,74 @@ const partner: BotCommand = {
   },
 };
 
-export default [marry, divorce, partner];
+const marrysettings: BotCommand = {
+  name: 'marrysettings',
+  description: 'Activa o desactiva las propuestas de matrimonio en tu perfil',
+  aliases: ['marryconfig', 'propuestas', 'ajustescasamiento'],
+  usage: 'cz!marrysettings [on|off|status]',
+  category: 'Social',
+  slashCommand: new SlashCommandBuilder()
+    .setName('marrysettings')
+    .setDescription('Activa o desactiva las propuestas de matrimonio')
+    .addStringOption((o) =>
+      o
+        .setName('estado')
+        .setDescription('Estado de las propuestas')
+        .setRequired(false)
+        .addChoices(
+          { name: 'Activar', value: 'on' },
+          { name: 'Desactivar', value: 'off' },
+          { name: 'Ver estado', value: 'status' },
+        ),
+    ),
+
+  async execute(message, args) {
+    const L = await langOf(message);
+    const sub = (args[0] ?? 'status').toLowerCase();
+    const rows = await db
+      .select({ settings: ciszubotSchema.profiles.settingsControls })
+      .from(ciszubotSchema.profiles)
+      .where(eq(ciszubotSchema.profiles.id, message.author.id))
+      .limit(1);
+    if (!rows[0]) {
+      await message.reply(
+        tr(
+          L,
+          '❌ Necesitas una cuenta CISZU ID vinculada para guardar esta preferencia.',
+          '❌ You need a linked CISZU ID account to save this preference.',
+        ),
+      );
+      return;
+    }
+    const settings = (rows[0].settings as Record<string, unknown>) ?? {};
+    const current = settings.marriageProposals !== false;
+    if (sub === 'status') {
+      await message.reply(
+        tr(
+          L,
+          `💍 Propuestas de matrimonio: **${current ? 'activadas' : 'desactivadas'}**.`,
+          `💍 Marriage proposals: **${current ? 'enabled' : 'disabled'}**.`,
+        ),
+      );
+      return;
+    }
+    if (sub !== 'on' && sub !== 'off') {
+      await message.reply(tr(L, '❌ Uso: `cz!marrysettings [on|off|status]`.', '❌ Usage: `cz!marrysettings [on|off|status]`.'));
+      return;
+    }
+    const enabled = sub === 'on';
+    await db
+      .update(ciszubotSchema.profiles)
+      .set({ settingsControls: { ...settings, marriageProposals: enabled }, updatedAt: new Date() })
+      .where(eq(ciszubotSchema.profiles.id, message.author.id));
+    await message.reply(
+      tr(
+        L,
+        `✅ Propuestas de matrimonio **${enabled ? 'activadas' : 'desactivadas'}**.`,
+        `✅ Marriage proposals **${enabled ? 'enabled' : 'disabled'}**.`,
+      ),
+    );
+  },
+};
+
+export default [marry, divorce, partner, marrysettings];

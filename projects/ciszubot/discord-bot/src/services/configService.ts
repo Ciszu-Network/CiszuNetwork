@@ -110,6 +110,9 @@ export const SOCIAL_PLATFORMS = [
   'github',
   'reddit',
   'pinterest',
+  'patreon',
+  'kofi',
+  'buymeacoffee',
   'other',
 ] as const;
 
@@ -266,6 +269,8 @@ export interface GuildConfig {
   trivia_timed: boolean;
   trivia_time_seconds: number;
   trivia_difficulty: string;
+  trivia_categories: string[];
+  trivia_channel_id: string | null;
   trivia_rewards: Array<{ points: number; role_id: string }>;
   autoposts_enabled: boolean;
   autoposts: Array<{ id: string; type: string; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }>;
@@ -283,6 +288,9 @@ export interface GuildConfig {
   nsfw_commands_enabled: boolean;
   nsfw_content: NsfwContentPreferences;
   confess_channel_id: string | null;
+  confess_excluded_role_ids: string[];
+  confess_allow_anonymous: boolean;
+  confess_allow_public: boolean;
   marriage_excluded_role_ids: string[];
   nitro_repost_mode: 'auto' | 'manual';
   nitro_excluded_role_ids: string[];
@@ -386,6 +394,8 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   trivia_timed: true,
   trivia_time_seconds: 60,
   trivia_difficulty: 'mixed',
+  trivia_categories: [],
+  trivia_channel_id: null,
   trivia_rewards: [],
   autoposts_enabled: false,
   autoposts: [],
@@ -403,6 +413,9 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   nsfw_commands_enabled: false,
   nsfw_content: DEFAULT_NSFW_CONTENT,
   confess_channel_id: null,
+  confess_excluded_role_ids: [],
+  confess_allow_anonymous: true,
+  confess_allow_public: false,
   marriage_excluded_role_ids: [],
   nitro_repost_mode: 'auto',
   nitro_excluded_role_ids: [],
@@ -421,7 +434,7 @@ const cache = new Map<string, GuildConfig>();
  * proceso, así que sin caducidad el bot NO veía nunca los cambios (bug real:
  * cambiar la moneda en la web no se reflejaba en Discord hasta reiniciar).
  */
-const CACHE_TTL_MS = 5_000;
+const CACHE_TTL_MS = 1_000;
 const cacheAt = new Map<string, number>();
 
 function cacheFresh(guildId: string): GuildConfig | null {
@@ -554,6 +567,8 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         trivia_timed: data.triviaTimed ?? DEFAULTS.trivia_timed,
         trivia_time_seconds: data.triviaTimeSeconds ?? DEFAULTS.trivia_time_seconds,
         trivia_difficulty: data.triviaDifficulty ?? DEFAULTS.trivia_difficulty,
+        trivia_categories: asArray(data.triviaCategories, DEFAULTS.trivia_categories),
+        trivia_channel_id: data.triviaChannelId ?? DEFAULTS.trivia_channel_id,
         trivia_rewards: (data.triviaRewards as Array<{ points: number; role_id: string }>) ?? DEFAULTS.trivia_rewards,
         autoposts_enabled: data.autopostsEnabled ?? DEFAULTS.autoposts_enabled,
         autoposts: asArray(data.autoposts, DEFAULTS.autoposts) as typeof DEFAULTS.autoposts,
@@ -571,6 +586,9 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         nsfw_commands_enabled: nsfwEnabled && (data.nsfwCommandsEnabled ?? DEFAULTS.nsfw_commands_enabled),
         nsfw_content: normalizeNsfwContent(data.nsfwContent),
         confess_channel_id: data.confessChannelId ?? DEFAULTS.confess_channel_id,
+        confess_excluded_role_ids: asArray(data.confessExcludedRoleIds, DEFAULTS.confess_excluded_role_ids),
+        confess_allow_anonymous: data.confessAllowAnonymous ?? DEFAULTS.confess_allow_anonymous,
+        confess_allow_public: data.confessAllowPublic ?? DEFAULTS.confess_allow_public,
         marriage_excluded_role_ids: asArray(data.marriageExcludedRoleIds, DEFAULTS.marriage_excluded_role_ids),
         nitro_repost_mode: (data.nitroRepostMode as 'auto' | 'manual') ?? DEFAULTS.nitro_repost_mode,
         nitro_excluded_role_ids: asArray(data.nitroExcludedRoleIds, DEFAULTS.nitro_excluded_role_ids),
@@ -674,6 +692,8 @@ export async function updateGuildConfig(
     triviaTimed: merged.trivia_timed,
     triviaTimeSeconds: merged.trivia_time_seconds,
     triviaDifficulty: merged.trivia_difficulty,
+    triviaCategories: merged.trivia_categories,
+    triviaChannelId: merged.trivia_channel_id,
     triviaRewards: merged.trivia_rewards,
     autopostsEnabled: merged.autoposts_enabled,
     autoposts: merged.autoposts,
@@ -691,6 +711,9 @@ export async function updateGuildConfig(
     nsfwCommandsEnabled: merged.nsfw_commands_enabled,
     nsfwContent: merged.nsfw_content,
     confessChannelId: merged.confess_channel_id,
+    confessExcludedRoleIds: merged.confess_excluded_role_ids,
+    confessAllowAnonymous: merged.confess_allow_anonymous,
+    confessAllowPublic: merged.confess_allow_public,
     marriageExcludedRoleIds: merged.marriage_excluded_role_ids,
     nitroRepostMode: merged.nitro_repost_mode,
     nitroExcludedRoleIds: merged.nitro_excluded_role_ids,
@@ -731,5 +754,7 @@ export async function getPrefix(guildId: string | null | undefined): Promise<str
 
 /** Moneda formateada con el emoji/nombre configurado del servidor. */
 export function formatCoins(cfg: GuildConfig, amount: number): string {
-  return `${amount.toLocaleString('es-ES')} ${cfg.coin_emoji} ${cfg.coin_name}`;
+  const locale = cfg.lang === 'en' ? 'en-US' : 'es-ES';
+  const name = cfg.lang === 'en' && cfg.coin_name === 'monedas' ? 'coins' : cfg.coin_name;
+  return `${amount.toLocaleString(locale)} ${cfg.coin_emoji} ${name}`;
 }

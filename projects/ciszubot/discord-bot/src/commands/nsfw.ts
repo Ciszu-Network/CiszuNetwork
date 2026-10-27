@@ -25,6 +25,9 @@ function buildSlashCommand(def: NsfwBaseDef) {
         .setDescription('Estilo del contenido')
         .setRequired(false)
         .addChoices(...NSFW_STYLES.map((style) => ({ name: style, value: style }))),
+    )
+    .addUserOption((option) =>
+      option.setName('usuario').setDescription('Usuario con quien realizar la acción').setRequired(false),
     );
 
   if (def.genders.length > 0) {
@@ -105,6 +108,7 @@ async function runNsfwCommand(
     );
   }
 
+  const target = message.mentions?.users?.first() ?? null;
   const gender = effectiveGender(selection, cfg.nsfw_content);
   const media = await fetchNsfwMedia(selection, gender);
   if (!media) {
@@ -127,10 +131,18 @@ async function runNsfwCommand(
     embed.setDescription(tr(L, `[Ver el vídeo completo](${media.link})`, `[Watch the full video](${media.link})`));
   }
   embed.addFields(
-    { name: 'Fuente', value: media.source, inline: true },
-    { name: 'Estilo', value: selection.style, inline: true },
-    { name: 'Género', value: gender, inline: true },
+    { name: tr(L, 'Fuente', 'Source'), value: media.source, inline: true },
+    { name: tr(L, 'Estilo', 'Style'), value: selection.style, inline: true },
+    { name: tr(L, 'Género', 'Gender'), value: gender, inline: true },
+    { name: tr(L, 'Contenido', 'Content'), value: tr(L, 'Adultos (+18)', 'Adults (+18)'), inline: true },
   );
+  if (target) {
+    embed.addFields({
+      name: tr(L, 'Con', 'With'),
+      value: `<@${target.id}>`,
+      inline: true,
+    });
+  }
   return message.reply({ embeds: [embed] });
 }
 
@@ -138,7 +150,7 @@ const commands: BotCommand[] = NSFW_BASES.map((def) => ({
   name: def.base,
   description: def.description,
   aliases: nsfwAliasesFor(def),
-  usage: def.usage ?? `cz!${def.base} [estilo] [género]`,
+  usage: def.usage ?? `cz!${def.base} [estilo] [género] [@usuario]`,
   category: '+18',
   slashCommand: buildSlashCommand(def),
   execute(message, args, invokedName) {

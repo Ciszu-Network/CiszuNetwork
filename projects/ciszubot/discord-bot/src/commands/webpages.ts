@@ -200,9 +200,9 @@ const SIMPLE_COMMANDS: Simple[] = [
     extra: { label: 'Ko-fi', url: LINKS.koFi },
   },
   {
-    name: 'partner',
+    name: 'partnerprogram',
     description: 'Programa de partners y colaboraciones',
-    aliases: ['partners', 'colaborar'],
+    aliases: ['partners', 'colaborar', 'colaborador', 'colaboradores'],
     title: '🤝 Partners',
     body: '¿Quieres ser partner o colaborar con Ciszu Network? Únete al Discord y habla con el equipo.',
     url: LINKS.discordServer,

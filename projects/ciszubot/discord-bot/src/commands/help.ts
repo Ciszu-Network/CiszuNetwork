@@ -36,7 +36,7 @@ const command: BotCommand = {
   name: 'help',
   description: 'Muestra información del bot y lista de comandos disponibles',
   aliases: ['ayuda', 'comandos', 'botinfo', 'comando', 'commands', 'botayuda', 'botcomandos', 'bothelp', 'h', 'cmds', 'cmd'],
-  usage: 'cz!help [comando]',
+  usage: 'cz!help [comando|categoría]',
   category: 'Información',
 
   slashCommand: new SlashCommandBuilder()
@@ -62,6 +62,33 @@ const command: BotCommand = {
     if (args.length > 0) {
       const name = args[0].toLowerCase();
       const found = allCommands.find((c) => c.name === name || c.aliases.includes(name));
+      const categoryMatch = Array.from(new Set(listedCommands.map((c) => c.category || 'General'))).find(
+        (cat) => cat.toLowerCase() === name,
+      );
+      if (!found && categoryMatch) {
+        if (categoryMatch === '+18' && !nsfwAllowed) {
+          return message.reply(
+            tr(
+              L,
+              '🔞 La categoría +18 está desactivada. Activa los tres candados en el dashboard → **General** → **+18**.',
+              '🔞 The +18 category is disabled. Enable all three locks in the dashboard → **General** → **+18**.',
+            ),
+          );
+        }
+        const list = listedCommands.filter((c) => (c.category || 'General') === categoryMatch);
+        const lines = list.map((c) => `\`cz!${c.name}\` - ${c.description || 'Sin descripción'}`);
+        const description = lines.join('\n');
+        const categoryEmbed = new EmbedBuilder()
+          .setColor('#4f46e5')
+          .setTitle(`${catEmoji(categoryMatch)} ${categoryMatch}`)
+          .setDescription(description.length > 4000 ? `${description.slice(0, 3990)}…` : description)
+          .setFooter({
+            text: tr(L, `CiszuBot • ${list.length} comandos`, `CiszuBot • ${list.length} commands`),
+            iconURL: message.client.user?.displayAvatarURL(),
+          })
+          .setTimestamp();
+        return message.reply({ embeds: [categoryEmbed] });
+      }
       if (!found) {
         const errorEmbed = new EmbedBuilder()
           .setColor('#4f46e5')
@@ -202,7 +229,7 @@ const command: BotCommand = {
     embed.addFields(
       {
         name: '🔧 Información del Bot',
-        value: `• Prefijo: \`cz!\`\n• Comandos: ${allCommands.length}\n• Servidores: ${totalServers}\n• Idioma: Español`,
+        value: `• ${tr(L, 'Prefijo', 'Prefix')}: \`cz!\`\n• ${tr(L, 'Comandos', 'Commands')}: ${allCommands.length}\n• ${tr(L, 'Servidores', 'Servers')}: ${totalServers}\n• ${tr(L, 'Idioma', 'Language')}: ${L === 'en' ? 'English' : 'Español'}`,
         inline: true,
       },
       {

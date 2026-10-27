@@ -12,6 +12,7 @@ import {
   timestamp,
   uniqueIndex,
   index,
+  uuid,
 } from 'drizzle-orm/pg-core';
 
 /**
@@ -108,6 +109,8 @@ export const guildConfigs = ciszubot.table(
     triviaTimed: boolean('trivia_timed').notNull().default(true),
     triviaTimeSeconds: integer('trivia_time_seconds').notNull().default(60),
     triviaDifficulty: text('trivia_difficulty').notNull().default('mixed'),
+    triviaCategories: jsonb('trivia_categories').notNull().default([]),
+    triviaChannelId: text('trivia_channel_id'),
     triviaRewards: jsonb('trivia_rewards').notNull().default([]),
     autopostsEnabled: boolean('autoposts_enabled').notNull().default(false),
     autoposts: jsonb('autoposts').notNull().default([]),
@@ -148,6 +151,9 @@ export const guildConfigs = ciszubot.table(
       },
     }),
     confessChannelId: text('confess_channel_id'),
+    confessExcludedRoleIds: jsonb('confess_excluded_role_ids').notNull().default([]),
+    confessAllowAnonymous: boolean('confess_allow_anonymous').notNull().default(true),
+    confessAllowPublic: boolean('confess_allow_public').notNull().default(false),
     marriageExcludedRoleIds: jsonb('marriage_excluded_role_ids').notNull().default([]),
     nitroRepostMode: text('nitro_repost_mode').notNull().default('auto'),
     nitroExcludedRoleIds: jsonb('nitro_excluded_role_ids').notNull().default([]),
@@ -634,6 +640,22 @@ export const polls = ciszubot.table(
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index('idx_polls_guild').on(t.guildId, t.createdAt)],
+);
+
+/** Confesiones privadas para moderación y dashboard. */
+export const confessions = ciszubot.table(
+  'confessions',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    guildId: text('guild_id').notNull(),
+    userId: text('user_id').notNull(),
+    anonymous: boolean('anonymous').notNull().default(true),
+    content: text('content').notNull(),
+    channelId: text('channel_id'),
+    messageId: text('message_id'),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [index('idx_confessions_guild_created').on(t.guildId, t.createdAt)],
 );
 
 /** Sugerencias de la comunidad (votos + decision del staff). */

@@ -31,7 +31,9 @@ export async function sendNitroWebhook(
   const channel = message.channel as TextChannel;
   if (typeof channel.fetchWebhooks !== 'function') return false;
   const me = message.guild.members.me;
-  if (!me || !channel.permissionsFor(me)?.has(PermissionsBitField.Flags.ManageWebhooks)) return false;
+  const perms = me ? channel.permissionsFor(me) : null;
+  if (!perms?.has(PermissionsBitField.Flags.ManageWebhooks)) return false;
+  if (!perms.has(PermissionsBitField.Flags.UseExternalEmojis)) return false;
 
   try {
     const hooks = await channel.fetchWebhooks();

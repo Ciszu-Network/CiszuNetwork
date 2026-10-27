@@ -1,5 +1,5 @@
 import { Client, EmbedBuilder, TextChannel } from 'discord.js';
-import { getGuildConfig, DropEntry } from './configService';
+import { getGuildConfig, formatCoins, DropEntry, type GuildConfig } from './configService';
 import { randomBetween } from './economy';
 import { addMoney } from './economy';
 import { isPremiumGuild } from './featureFlags';
@@ -75,14 +75,14 @@ function pickChannel(client: Client, guildId: string, configured: string[]): Tex
   return all.random() as TextChannel;
 }
 
-async function spawnDrop(client: Client, guildId: string, entry: DropEntry, coinEmoji: string): Promise<void> {
+async function spawnDrop(client: Client, guildId: string, entry: DropEntry, cfg: GuildConfig): Promise<void> {
   const channel = pickChannel(client, guildId, entry.channels);
   if (!channel) return;
 
   const amount = randomBetween(Math.min(entry.min, entry.max), Math.max(entry.min, entry.max));
   const text =
     entry.message ??
-    `💎 ¡Ha caído un drop de **${amount.toLocaleString('es-ES')} ${coinEmoji}**! El primero que pulse el botón se lo lleva.`;
+    `💎 ¡Ha caído un drop de **${formatCoins(cfg, amount)}**! El primero que pulse el botón se lo lleva.`;
 
   const embed = new EmbedBuilder()
     .setColor('#fbbf24')
@@ -161,7 +161,7 @@ async function tick(client: Client): Promise<void> {
         const min = Math.max(5, entry.interval_min);
         const max = Math.max(min + 5, entry.interval_max);
         nextSpawn.set(key, now + randomBetween(min, max) * 60_000);
-        await spawnDrop(client, guild.id, entry, cfg.coin_emoji);
+        await spawnDrop(client, guild.id, entry, cfg);
         break; // un drop activo a la vez por servidor
       }
     } catch (error) {

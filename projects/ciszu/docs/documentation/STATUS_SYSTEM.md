@@ -330,4 +330,17 @@ _Última revisión: 26 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Ciszubot**: iconos del subnav del dashboard con color por función y tamaño 16 px; `embeds` conserva el morado.
 - **Validación**: `pnpm typecheck` + builds de las 4 webs verdes; `packages/ui/tests/SiteSearch.test.tsx` 5/5.
 
+## Sesión 26 oct 2026 (cont.) — Ciszubot: sistemas y paridad de checklist
+
+- **Nitro**: modo auto/manual y roles excluidos visibles en el dashboard; `/nitro mode` y `/nitro emoji`; auto exige permiso de emojis externos.
+- **Ayuda/coin**: `cz!help <categoría>` funcional; subcomandos slash anidados (`/coin emoji`, `/coin name`, etc.) corregidos; caché de config a 1 s; formato de moneda usa idioma del servidor.
+- **NSFW**: comandos aceptan `@usuario` y muestran “Con”; alias español para LGBT/fetiches; autopics respeta el kill switch global.
+- **Trivia**: 24 categorías incluidas/excluidas y canal fijo opcional; banco ampliado.
+- **Confesiones**: modos anónimo/público, roles excluidos y registro privado en dashboard.
+- **Matrimonio**: anuncio público sin revelar objetivo, aceptación/rechazo por DM, timeout sin nombres, preferencia por usuario (`cz!marrysettings`) y arreglo del partner duplicado.
+- **Social feeds**: plataformas Patreon/Ko-fi/Buy Me a Coffee, video RSS, límites premium 1000 y revalidación en el servicio.
+- **Polls**: roles excluidos también bloquean el voto.
+- **Migraciones**: `trivia_categories`, `confessions` y columnas de confesiones aplicadas; RLS deny-all en `ciszubot.confessions`.
+- **Validación**: `pnpm typecheck`, `pnpm test` (405/405), build del bot y build de ciszubot verdes.
+
 ÚLTIMA ACTUALIZACIÓN: 2026-10-26

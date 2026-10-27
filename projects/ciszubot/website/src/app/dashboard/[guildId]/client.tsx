@@ -96,6 +96,8 @@ interface GuildConfig {
   trivia_timed?: boolean;
   trivia_time_seconds?: number;
   trivia_difficulty?: 'easy' | 'medium' | 'hard' | 'mixed';
+  trivia_categories?: string[];
+  trivia_channel_id?: string | null;
   trivia_rewards?: { points: number; role_id: string }[];
   autoposts_enabled?: boolean;
   autoposts?: { id: string; type: 'custom' | 'animals' | 'anime'; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }[];
@@ -117,6 +119,9 @@ interface GuildConfig {
     fetishes: Record<string, boolean>;
   };
   confess_channel_id?: string | null;
+  confess_excluded_role_ids?: string[];
+  confess_allow_anonymous?: boolean;
+  confess_allow_public?: boolean;
   marriage_excluded_role_ids?: string[];
   nitro_repost_mode?: 'auto' | 'manual';
   nitro_excluded_role_ids?: string[];
@@ -225,12 +230,12 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   counting: ['counting_enabled', 'counting_channel_id', 'counting_start', 'counting_style', 'counting_allow_repeat', 'counting_authenticity'],
   suggestions: ['suggestions_enabled', 'suggestions_channel_id', 'suggestions_excluded_role_ids', 'suggestions_max_active', 'suggestions_cooldown_minutes'],
   polls: ['polls_enabled', 'polls_excluded_role_ids', 'polls_max_active', 'polls_cooldown_minutes'],
-  trivia: ['trivia_enabled', 'trivia_excluded_role_ids', 'trivia_timed', 'trivia_time_seconds', 'trivia_difficulty', 'trivia_rewards'],
+  trivia: ['trivia_enabled', 'trivia_excluded_role_ids', 'trivia_timed', 'trivia_time_seconds', 'trivia_difficulty', 'trivia_categories', 'trivia_channel_id', 'trivia_rewards'],
   autoposts: ['autoposts_enabled', 'autoposts'],
   news: ['news_enabled', 'news_channels'],
   socialfeeds: ['social_enabled', 'social_feeds'],
   nsfw: ['nsfw_bot_preferences_enabled', 'nsfw_general_enabled', 'nsfw_enabled', 'nsfw_channel_id', 'nsfw_autopost_channel_id', 'nsfw_autopost_enabled', 'nsfw_autopost_minutes', 'nsfw_commands_enabled', 'nsfw_content'],
-  confessions: ['confess_channel_id'],
+  confessions: ['confess_channel_id', 'confess_excluded_role_ids', 'confess_allow_anonymous', 'confess_allow_public'],
   customcmd: [],
   history: ['history_enabled', 'history_channel_id'],
   economy: ['coin_emoji', 'coin_name', 'drops', 'invite_points_per'],
@@ -264,6 +269,12 @@ const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPag
   { slug: 'utility', icon: 'ri-code-s-slash', labelKey: 'featUtility', descKey: 'featUtilityDesc', colorClass: 'text-teal-300' },
   { slug: 'moderation', icon: 'gavel', labelKey: 'featModeration', descKey: 'featModerationDesc', colorClass: 'text-red-400' },
   { slug: 'social', icon: 'users', labelKey: 'featSocial', descKey: 'featSocialDesc', colorClass: 'text-pink-300' },
+];
+
+const TRIVIA_CATEGORY_IDS = [
+  'general', 'anime', 'videogames', 'music', 'history', 'movies', 'series', 'sports',
+  'science', 'geography', 'literature', 'art', 'technology', 'programming', 'space',
+  'nature', 'math', 'language', 'food', 'mythology', 'cars', 'internet', 'pokemon', 'comics',
 ];
 
 /** Permisos clave del bot (bitfields de Discord). */
@@ -605,6 +616,17 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     ends_at: string | null;
   };
   const [pollList, setPollList] = useState<PollRow[]>([]);
+  type ConfessionRow = {
+    id: string;
+    anonymous: boolean;
+    content: string;
+    userId: string;
+    channelId: string | null;
+    messageId: string | null;
+    createdAt: string;
+  };
+  const [confessionList, setConfessionList] = useState<ConfessionRow[]>([]);
+  const [confessionMode, setConfessionMode] = useState<'all' | 'anonymous' | 'public'>('all');
   const [pollCloseBusy, setPollCloseBusy] = useState<number | null>(null);
   const gwActive = gwList.filter((g) => g.status === 'running' || g.status === 'paused');
   const gwNextSlot = Array.from({ length: 10 }, (_, i) => i + 1).find((slot) => !gwActive.some((g) => g.slot === slot)) ?? null;
@@ -1007,6 +1029,26 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     return () => clearInterval(timer);
   }, [view, pollRefresh]);
 
+  useEffect(() => {
+    if (view !== 'confessions') return;
+    let alive = true;
+    void (async () => {
+      try {
+        const res = await fetch(`/api/dashboard/${guildId}/confessions?mode=${confessionMode}`, {
+          cache: 'no-store',
+        });
+        if (!res.ok) return;
+        const json = (await res.json()) as { confessions?: ConfessionRow[] };
+        if (alive) setConfessionList(json.confessions ?? []);
+      } catch {
+        /* red */
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, [view, guildId, confessionMode]);
+
   /** Encuestas: inserta `poll_create` y sondea el resultado de la acción. */
   const createDashboardPoll = useCallback(async () => {
     const question = pollForm.question.trim();
@@ -1175,6 +1217,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         trivia_timed: cfg?.trivia_timed ?? true,
         trivia_time_seconds: cfg?.trivia_time_seconds ?? 60,
         trivia_difficulty: cfg?.trivia_difficulty ?? 'mixed',
+        trivia_categories: Array.isArray(cfg?.trivia_categories) ? cfg.trivia_categories : [],
+        trivia_channel_id: cfg?.trivia_channel_id ?? null,
         trivia_rewards: Array.isArray(cfg?.trivia_rewards) ? cfg.trivia_rewards : [],
         autoposts_enabled: cfg?.autoposts_enabled ?? false,
         autoposts: Array.isArray(cfg?.autoposts) ? cfg.autoposts : [],
@@ -1202,6 +1246,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           fetishes: { ...DEFAULT_NSFW_CONTENT.fetishes, ...(cfg?.nsfw_content?.fetishes ?? {}) },
         },
         confess_channel_id: cfg?.confess_channel_id ?? null,
+        confess_excluded_role_ids: Array.isArray(cfg?.confess_excluded_role_ids) ? cfg.confess_excluded_role_ids : [],
+        confess_allow_anonymous: cfg?.confess_allow_anonymous ?? true,
+        confess_allow_public: cfg?.confess_allow_public ?? false,
         marriage_excluded_role_ids: Array.isArray(cfg?.marriage_excluded_role_ids) ? cfg.marriage_excluded_role_ids : [],
         nitro_repost_mode: cfg?.nitro_repost_mode ?? 'auto',
         nitro_excluded_role_ids: Array.isArray(cfg?.nitro_excluded_role_ids) ? cfg.nitro_excluded_role_ids : [],
@@ -2595,29 +2642,6 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </div>
             )}
 
-            {/* Emojis nitro: modo (auto/manual) y roles excluidos */}
-            {activeFeature.slug === 'nitro' && (
-              <div className="mt-4 grid gap-4">
-                <Field label={t.nitroModeLabel}>
-                  <NiceSelect
-                    value={config.nitro_repost_mode ?? 'auto'}
-                    options={[
-                      { id: 'auto', label: t.nitroModeAuto },
-                      { id: 'manual', label: t.nitroModeManual },
-                    ]}
-                    onChange={(v) => update({ nitro_repost_mode: v as 'auto' | 'manual' })}
-                  />
-                </Field>
-                <Field label={t.nitroExcludedLabel}>
-                  <MultiSelect
-                    values={config.nitro_excluded_role_ids ?? []}
-                    options={roleOptions}
-                    placeholder={t.pickRole}
-                    onChange={(v) => update({ nitro_excluded_role_ids: v })}
-                  />
-                </Field>
-              </div>
-            )}
           </section>
           )}
 
@@ -3800,6 +3824,25 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                       />
                     </Field>
                   </div>
+                  <SelectField
+                    label={t.triviaChannelLabel}
+                    hint={t.triviaChannelHint}
+                    value={config.trivia_channel_id}
+                    placeholder={t.triviaAnyChannel}
+                    options={textChannelOptions}
+                    onChange={(v) => update({ trivia_channel_id: v })}
+                  />
+                  <Field label={t.triviaCategoriesLabel} hint={t.triviaCategoriesHint}>
+                    <MultiSelect
+                      values={config.trivia_categories ?? []}
+                      options={TRIVIA_CATEGORY_IDS.map((id) => ({
+                        id,
+                        label: id.charAt(0).toUpperCase() + id.slice(1),
+                      }))}
+                      placeholder={t.triviaAnyCategory}
+                      onChange={(v) => update({ trivia_categories: v })}
+                    />
+                  </Field>
                   <Field label={t.triviaExcludedLabel} hint={t.triviaExcludedHint}>
                     <MultiSelect
                       values={config.trivia_excluded_role_ids ?? []}
@@ -4363,6 +4406,75 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 </Field>
               )}
               <p className="text-[10px] text-white/35">{t.confessChannelHint}</p>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-white/80">{t.confessAnonLabel}</p>
+                    <p className="text-[10px] text-white/40">{t.confessAnonHint}</p>
+                  </div>
+                  <Toggle
+                    on={config.confess_allow_anonymous !== false}
+                    onChange={(v) => update({ confess_allow_anonymous: v })}
+                  />
+                </div>
+                <div className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-white/80">{t.confessPublicLabel}</p>
+                    <p className="text-[10px] text-white/40">{t.confessPublicHint}</p>
+                  </div>
+                  <Toggle
+                    on={Boolean(config.confess_allow_public)}
+                    onChange={(v) => update({ confess_allow_public: v })}
+                  />
+                </div>
+              </div>
+              <Field label={t.confessExcludedLabel} hint={t.confessExcludedHint}>
+                <MultiSelect
+                  values={config.confess_excluded_role_ids ?? []}
+                  options={roleOptions}
+                  placeholder={t.pickRole}
+                  onChange={(v) => update({ confess_excluded_role_ids: v })}
+                />
+              </Field>
+              <div>
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-white/45">{t.confessRecordsTitle}</p>
+                  <div className="flex flex-wrap gap-1">
+                    {(['all', 'anonymous', 'public'] as const).map((mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setConfessionMode(mode)}
+                        className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider transition ${
+                          confessionMode === mode
+                            ? 'border-neon-pink/50 bg-neon-pink/15 text-neon-pink'
+                            : 'border-white/10 text-white/45 hover:text-white'
+                        }`}
+                      >
+                        {mode === 'all' ? t.confessRecordsAll : mode === 'anonymous' ? t.confessRecordsAnonymous : t.confessRecordsPublic}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {confessionList.length === 0 ? (
+                  <p className="text-xs text-white/40">{t.confessRecordsEmpty}</p>
+                ) : (
+                  <div className="grid max-h-80 gap-2 overflow-auto pr-1">
+                    {confessionList.map((row) => (
+                      <div key={row.id} className="rounded-xl border border-white/10 bg-black/20 p-3">
+                        <div className="mb-1 flex flex-wrap items-center gap-2 text-[9px] font-bold uppercase tracking-wider">
+                          <span className={row.anonymous ? 'text-white/45' : 'text-emerald-300'}>
+                            {row.anonymous ? t.confessRecordsAnonymous : t.confessRecordsPublic}
+                          </span>
+                          <span className="text-white/30">{new Date(row.createdAt).toLocaleString()}</span>
+                          {!row.anonymous && <span className="text-white/30">{row.userId}</span>}
+                        </div>
+                        <p className="whitespace-pre-wrap break-words text-xs text-white/80">{row.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
             <HelpZone title={SECTION_HELP.confessions.title} commands={SECTION_HELP.confessions.commands} note={SECTION_HELP.confessions.note} />
           </section>
@@ -4612,6 +4724,26 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <p className="text-xs text-white/50">{t.nitroToggleHint}</p>
               </div>
               <Toggle on={Boolean(config.nitro_repost_enabled)} onChange={(v) => update({ nitro_repost_enabled: v })} />
+            </div>
+            <div className="mt-4 grid gap-4">
+              <Field label={t.nitroModeLabel}>
+                <NiceSelect
+                  value={config.nitro_repost_mode ?? 'auto'}
+                  options={[
+                    { id: 'auto', label: t.nitroModeAuto },
+                    { id: 'manual', label: t.nitroModeManual },
+                  ]}
+                  onChange={(v) => update({ nitro_repost_mode: v as 'auto' | 'manual' })}
+                />
+              </Field>
+              <Field label={t.nitroExcludedLabel}>
+                <MultiSelect
+                  values={config.nitro_excluded_role_ids ?? []}
+                  options={roleOptions}
+                  placeholder={t.pickRole}
+                  onChange={(v) => update({ nitro_excluded_role_ids: v })}
+                />
+              </Field>
             </div>
             <HelpZone title={SECTION_HELP.nitro.title} commands={SECTION_HELP.nitro.commands} note={SECTION_HELP.nitro.note} />
           </section>

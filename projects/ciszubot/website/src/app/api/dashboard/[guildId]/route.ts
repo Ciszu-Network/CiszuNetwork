@@ -23,6 +23,9 @@ const SOCIAL_PLATFORMS = [
   'github',
   'reddit',
   'pinterest',
+  'patreon',
+  'kofi',
+  'buymeacoffee',
   'other',
 ] as const;
 
@@ -194,6 +197,8 @@ const guildConfigPatchSchema = z.object({
   trivia_timed: z.boolean().optional(),
   trivia_time_seconds: z.number().int().min(10).max(600).optional(),
   trivia_difficulty: z.enum(['easy', 'medium', 'hard', 'mixed']).optional(),
+  trivia_categories: z.array(z.string().min(1).max(32)).max(24).optional(),
+  trivia_channel_id: z.string().max(32).nullable().optional(),
   trivia_rewards: z.array(z.object({ points: z.number().int().min(1).max(100000), role_id: z.string().min(1).max(32) })).max(20).optional(),
   autoposts_enabled: z.boolean().optional(),
   autoposts: z.array(z.object({ id: z.string().max(40), type: z.enum(['custom', 'animals', 'anime']), channel_id: z.string().max(32), interval_minutes: z.number().int().min(5).max(10080), text: z.string().max(2000).optional(), url: z.string().max(500).optional(), nsfw: z.boolean().optional() })).max(20).optional(),
@@ -207,7 +212,7 @@ const guildConfigPatchSchema = z.object({
     })
     .optional(),
   social_enabled: z.boolean().optional(),
-  social_feeds: z.array(socialFeedSchema).max(100).optional(),
+  social_feeds: z.array(socialFeedSchema).max(1000).optional(),
   nsfw_bot_preferences_enabled: z.boolean().optional(),
   nsfw_general_enabled: z.boolean().optional(),
   nsfw_enabled: z.boolean().optional(),
@@ -224,6 +229,9 @@ const guildConfigPatchSchema = z.object({
     })
     .optional(),
   confess_channel_id: z.string().max(32).nullable().optional(),
+  confess_excluded_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
+  confess_allow_anonymous: z.boolean().optional(),
+  confess_allow_public: z.boolean().optional(),
   marriage_enabled: z.boolean().optional(),
   marriage_allow_admin_pairs: z.boolean().optional(),
   command_global_cooldown: z.number().int().min(0).max(60).optional(),
@@ -357,6 +365,8 @@ interface GuildConfig {
   trivia_timed?: boolean;
   trivia_time_seconds?: number;
   trivia_difficulty?: 'easy' | 'medium' | 'hard' | 'mixed';
+  trivia_categories?: string[];
+  trivia_channel_id?: string | null;
   trivia_rewards?: { points: number; role_id: string }[];
   autoposts_enabled?: boolean;
   autoposts?: { id: string; type: 'custom' | 'animals' | 'anime'; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }[];
@@ -387,6 +397,9 @@ interface GuildConfig {
     fetishes?: Record<string, boolean>;
   };
   confess_channel_id?: string | null;
+  confess_excluded_role_ids?: string[];
+  confess_allow_anonymous?: boolean;
+  confess_allow_public?: boolean;
   marriage_enabled?: boolean;
   marriage_allow_admin_pairs?: boolean;
   command_global_cooldown?: number;
@@ -537,8 +550,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   }
 
   const allowed: Record<string, unknown> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id', 'nsfw_autopost_channel_id', 'confess_channel_id'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed', 'autoposts_enabled', 'news_enabled', 'social_enabled', 'nsfw_bot_preferences_enabled', 'nsfw_general_enabled', 'nsfw_enabled', 'nsfw_autopost_enabled', 'nsfw_commands_enabled'];
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id', 'nsfw_autopost_channel_id', 'confess_channel_id', 'trivia_channel_id'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed', 'autoposts_enabled', 'news_enabled', 'social_enabled', 'confess_allow_anonymous', 'confess_allow_public', 'nsfw_bot_preferences_enabled', 'nsfw_general_enabled', 'nsfw_enabled', 'nsfw_autopost_enabled', 'nsfw_commands_enabled'];
 
   for (const key of stringFields) {
     if (body[key] !== undefined) allowed[key] = body[key] === null ? null : String(body[key]);
@@ -636,7 +649,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
       ping_role_id: feed.ping_role_id ? String(feed.ping_role_id).trim().slice(0, 32) : null,
       message: String(feed.message).slice(0, 2000),
       enabled: Boolean(feed.enabled),
-    })).slice(0, 100);
+    })).slice(0, 1000);
 
     if (!isPremium) {
       if (feeds.length > 5) {
@@ -666,6 +679,11 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   if (body.trivia_time_seconds !== undefined) {
     const value = Number(body.trivia_time_seconds);
     if (Number.isFinite(value) && value >= 10 && value <= 600) allowed.trivia_time_seconds = Math.round(value);
+  }
+  if (body.trivia_categories !== undefined) {
+    allowed.trivia_categories = Array.isArray(body.trivia_categories)
+      ? body.trivia_categories.map((value) => String(value).slice(0, 32)).slice(0, 24)
+      : [];
   }
   if (body.trivia_rewards !== undefined) {
     allowed.trivia_rewards = Array.isArray(body.trivia_rewards) ? body.trivia_rewards.slice(0, 20) : [];
@@ -716,7 +734,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   if (body.invite_message !== undefined) {
     allowed.invite_message = String(body.invite_message).slice(0, 2000);
   }
-  for (const roleKey of ['owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'marriage_excluded_role_ids', 'nitro_excluded_role_ids', 'suggestions_excluded_role_ids', 'polls_excluded_role_ids', 'trivia_excluded_role_ids'] as const) {
+  for (const roleKey of ['owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'marriage_excluded_role_ids', 'nitro_excluded_role_ids', 'suggestions_excluded_role_ids', 'polls_excluded_role_ids', 'trivia_excluded_role_ids', 'confess_excluded_role_ids'] as const) {
     if (body[roleKey] !== undefined) {
       allowed[roleKey] = Array.isArray(body[roleKey]) ? (body[roleKey] as string[]).slice(0, 20) : [];
     }
@@ -866,6 +884,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     trivia_timed: 'triviaTimed',
     trivia_time_seconds: 'triviaTimeSeconds',
     trivia_difficulty: 'triviaDifficulty',
+    trivia_categories: 'triviaCategories',
+    trivia_channel_id: 'triviaChannelId',
     trivia_rewards: 'triviaRewards',
     autoposts_enabled: 'autopostsEnabled',
     autoposts: 'autoposts',
@@ -883,6 +903,9 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     nsfw_commands_enabled: 'nsfwCommandsEnabled',
     nsfw_content: 'nsfwContent',
     confess_channel_id: 'confessChannelId',
+    confess_excluded_role_ids: 'confessExcludedRoleIds',
+    confess_allow_anonymous: 'confessAllowAnonymous',
+    confess_allow_public: 'confessAllowPublic',
     marriage_excluded_role_ids: 'marriageExcludedRoleIds',
     nitro_repost_mode: 'nitroRepostMode',
     nitro_excluded_role_ids: 'nitroExcludedRoleIds',

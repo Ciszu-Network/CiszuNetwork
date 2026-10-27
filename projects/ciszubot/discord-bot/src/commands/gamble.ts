@@ -36,7 +36,7 @@ const create = (): BotCommand => ({
 
     const embed = new EmbedBuilder()
       .setColor(won ? '#00ff88' : '#ff0000')
-      .setTitle(won ? tr(L, '🪙 ¡Ganaste la apuesta!', '🪙 You won the bet!') : tr(L, '🪙 Perdiste la apuesta...', '🪙 You lost the bet...'))
+      .setTitle(won ? tr(L, `${cfg.coin_emoji} ¡Ganaste la apuesta!`, `${cfg.coin_emoji} You won the bet!`) : tr(L, `${cfg.coin_emoji} Perdiste la apuesta...`, `${cfg.coin_emoji} You lost the bet...`))
       .setDescription(
         tr(
           L,

@@ -20,7 +20,25 @@ const command: BotCommand = {
     .setDefaultMemberPermissions(0)
     .addSubcommand((s) => s.setName('on').setDescription('Activa el reenvío de emojis Nitro'))
     .addSubcommand((s) => s.setName('off').setDescription('Desactiva el reenvío'))
-    .addSubcommand((s) => s.setName('status').setDescription('Muestra el estado')),
+    .addSubcommand((s) => s.setName('status').setDescription('Muestra el estado'))
+    .addSubcommand((s) =>
+      s
+        .setName('emoji')
+        .setDescription('Reenvía un emoji externo (modo manual)')
+        .addStringOption((o) => o.setName('emoji').setDescription('Emoji externo a reenviar').setRequired(true)),
+    )
+    .addSubcommand((s) =>
+      s
+        .setName('mode')
+        .setDescription('Cambia entre automático y manual')
+        .addStringOption((o) =>
+          o
+            .setName('modo')
+            .setDescription('Modo de reenvío')
+            .setRequired(true)
+            .addChoices({ name: 'Automático', value: 'auto' }, { name: 'Manual', value: 'manual' }),
+        ),
+    ),
 
   async execute(message, args) {
     const L = await langOf(message);
@@ -31,7 +49,13 @@ const command: BotCommand = {
     const realMessage = message as unknown as Message;
 
     let manualContent = '';
-    if (!SETTING_SUBS.has(sub)) {
+    if (sub === 'emoji') {
+      manualContent = args.slice(1).join(' ').trim();
+      if (!manualContent) {
+        await message.reply(tr(L, '❌ Uso: `/nitro emoji emoji:<emoji>`.', '❌ Usage: `/nitro emoji emoji:<emoji>`.'));
+        return;
+      }
+    } else if (!SETTING_SUBS.has(sub)) {
       manualContent = args.join(' ').trim();
       if (!manualContent && realMessage.reference?.messageId && typeof realMessage.fetchReference === 'function') {
         const referenced = await realMessage.fetchReference().catch(() => null);

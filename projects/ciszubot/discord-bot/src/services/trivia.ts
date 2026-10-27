@@ -3,7 +3,7 @@ import { db, ciszubotSchema, eq, and, desc, sql } from '@ciszunetwork/db';
 import { logger } from './logger';
 import type { GuildConfig } from './configService';
 import { BOT_COLORS, BOT_FOOTER } from '../config/links';
-import { TRIVIA_BANK, normalizeAnswer, type TriviaQuestion } from '../config/triviaBank';
+import { TRIVIA_BANK, TRIVIA_CATEGORIES, normalizeAnswer, type TriviaQuestion } from '../config/triviaBank';
 
 /**
  * Sistema de trivia (cz!trivia):
@@ -30,8 +30,13 @@ export function hasActiveSession(channelId: string): boolean {
   return sessions.has(channelId);
 }
 
-async function pickQuestion(guildId: string, difficulty: string): Promise<TriviaQuestion | null> {
+async function pickQuestion(
+  guildId: string,
+  difficulty: string,
+  categories: string[],
+): Promise<TriviaQuestion | null> {
   const want = difficulty === 'mixed' ? null : difficulty;
+  const wantedCategories = categories.length > 0 ? new Set(categories) : null;
   // Personalizadas primero (50%), luego el banco integrado.
   try {
     const table = ciszubotSchema.triviaQuestions;
@@ -39,17 +44,24 @@ async function pickQuestion(guildId: string, difficulty: string): Promise<Trivia
       .select({ question: table.question, answers: table.answers, difficulty: table.difficulty })
       .from(table)
       .where(want ? and(eq(table.guildId, guildId), eq(table.difficulty, want)) : eq(table.guildId, guildId));
-    if (rows.length > 0 && Math.random() < 0.5) {
+    if (rows.length > 0 && Math.random() < 0.5 && (!wantedCategories || wantedCategories.has('general'))) {
       const row = rows[Math.floor(Math.random() * rows.length)];
       const answers = Array.isArray(row.answers) ? (row.answers as string[]) : [];
       if (answers.length > 0) {
-        return { question: row.question, answers, difficulty: (row.difficulty as TriviaQuestion['difficulty']) ?? 'medium' };
+        return {
+          question: row.question,
+          answers,
+          difficulty: (row.difficulty as TriviaQuestion['difficulty']) ?? 'medium',
+          category: 'general',
+        };
       }
     }
   } catch (error) {
     logger.warn('pickQuestion custom:', error);
   }
-  const pool = want ? TRIVIA_BANK.filter((q) => q.difficulty === want) : TRIVIA_BANK;
+  const pool = TRIVIA_BANK.filter(
+    (q) => (!want || q.difficulty === want) && (!wantedCategories || wantedCategories.has(q.category)),
+  );
   if (pool.length === 0) return null;
   return pool[Math.floor(Math.random() * pool.length)];
 }
@@ -68,15 +80,17 @@ export async function startTrivia(
   if (sessions.has(channel.id)) return { ok: false, reason: 'Ya hay una trivia activa en este canal. Responde o espera a que termine.' };
 
   const difficulty = difficultyOverride ?? cfg.trivia_difficulty;
-  const question = await pickQuestion(channel.guild.id, difficulty);
-  if (!question) return { ok: false, reason: 'No hay preguntas para esa dificultad.' };
+  const question = await pickQuestion(channel.guild.id, difficulty, cfg.trivia_categories);
+  if (!question) return { ok: false, reason: 'No hay preguntas para esa dificultad y categorías.' };
 
+  const categoryLabel = TRIVIA_CATEGORIES.find((category) => category.id === question.category)?.label ?? question.category;
   const seconds = cfg.trivia_timed ? Math.max(10, cfg.trivia_time_seconds) : null;
   const embed = new EmbedBuilder()
     .setColor(BOT_COLORS.primary)
     .setTitle('❓ ¡Trivia!')
     .setDescription(
       `**${question.question}**\n\n` +
+        `Categoría: **${categoryLabel}**\n` +
         `Dificultad: ${DIFF_LABEL[question.difficulty] ?? question.difficulty}\n` +
         (seconds ? `⏱️ Tienes **${seconds}s** para responder en este canal.` : '📝 Responde en este canal cuando quieras.'),
     )

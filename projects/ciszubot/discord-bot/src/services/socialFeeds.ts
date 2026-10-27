@@ -2,6 +2,7 @@ import { Client, EmbedBuilder, TextChannel } from 'discord.js';
 import { db, ciszubotSchema, eq } from '@ciszunetwork/db';
 import { BOT_FOOTER } from '../config/links';
 import { getGuildConfig, type SocialFeed, type SocialPlatform } from './configService';
+import { isPremiumGuild } from './featureFlags';
 import { tr } from './i18n';
 import { logger } from './logger';
 import { parseRssFeed, type NewsItem } from './news';
@@ -27,6 +28,9 @@ const PLATFORM_LABEL: Record<SocialPlatform, [string, string]> = {
   github: ['GitHub', 'GitHub'],
   reddit: ['Reddit', 'Reddit'],
   pinterest: ['Pinterest', 'Pinterest'],
+  patreon: ['Patreon', 'Patreon'],
+  kofi: ['Ko-fi', 'Ko-fi'],
+  buymeacoffee: ['Buy Me a Coffee', 'Buy Me a Coffee'],
   other: ['Otra red', 'Other network'],
 };
 
@@ -43,6 +47,9 @@ const PLATFORM_COLOR = {
   github: '#E6EDF3',
   reddit: '#FF4500',
   pinterest: '#E60023',
+  patreon: '#FF424D',
+  kofi: '#FF5E5B',
+  buymeacoffee: '#FFDD00',
   other: '#22D3EE',
 } as const;
 
@@ -363,7 +370,7 @@ export async function publishSocialItem(
     author: item.source || feed.account,
   });
   const ping = feed.ping_role_id ? `<@&${feed.ping_role_id}>` : '';
-  const content = [ping, text].filter(Boolean).join(' ').slice(0, 2000);
+  const content = [ping, text, item.video ?? ''].filter(Boolean).join(' ').slice(0, 2000);
 
   const embed = new EmbedBuilder()
     .setColor(PLATFORM_COLOR[feed.platform])
@@ -404,7 +411,16 @@ async function syncGuild(client: Client, guildId: string): Promise<void> {
   if (!guild) return;
   const cfg = await getGuildConfig(guildId);
   if (!cfg.social_enabled) return;
-  const active = cfg.social_feeds.filter((feed) => feed.enabled && feed.account.trim() && feed.channel_id);
+  const premium = await isPremiumGuild(guildId);
+  const usedPlatforms = new Set<string>();
+  const active = cfg.social_feeds
+    .filter((feed) => feed.enabled && feed.account.trim() && feed.channel_id)
+    .filter((feed) => {
+      if (premium) return true;
+      if (usedPlatforms.has(feed.platform)) return false;
+      usedPlatforms.add(feed.platform);
+      return usedPlatforms.size <= 5;
+    });
 
   const guildConfigs = ciszubotSchema.guildConfigs;
   const rows = await db

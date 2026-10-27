@@ -6,6 +6,7 @@ import { BOT_COLORS, BOT_FOOTER } from '../config/links';
 import { NSFW_BASES, effectiveGender, isNsfwSelectionEnabled } from './nsfw/catalog';
 import type { NsfwSelection } from './nsfw/catalog';
 import { fetchNsfwMedia } from './nsfw/providers';
+import { getFeatureState } from './featureFlags';
 
 /**
  * Autopublicaciones: el bot publica periódicamente en canales configurados.
@@ -146,7 +147,8 @@ export function syncAutoposts(client: Client): void {
         }
       }
       const nsfwChannelId = cfg.nsfw_autopost_channel_id ?? cfg.nsfw_channel_id;
-      if (isNsfwUnlocked(cfg) && cfg.nsfw_autopost_enabled && nsfwChannelId) {
+      const nsfwFeature = await getFeatureState('nsfw');
+      if (nsfwFeature.enabled && isNsfwUnlocked(cfg) && cfg.nsfw_autopost_enabled && nsfwChannelId) {
         const mins = Math.max(15, cfg.nsfw_autopost_minutes);
         wanted.set(`${guild.id}:nsfw`, {
           id: 'nsfw',

@@ -13,6 +13,7 @@ export interface NewsItem {
   description: string;
   link: string;
   image?: string;
+  video?: string;
   publishedAt: Date;
   source: string;
 }
@@ -140,6 +141,14 @@ function extractImage(block: string, description: string): string | undefined {
   return firstHttpsUrl(media) ?? firstHttpsUrl(enclosure) ?? firstHttpsUrl(inline);
 }
 
+function extractVideo(block: string): string | undefined {
+  const media = block.match(/<media:content[^>]*\btype=["']video\/[^"']+["'][^>]*\burl=["']([^"']+)["']/i)?.[1]
+    ?? block.match(/<media:content[^>]*\burl=["']([^"']+)["'][^>]*\btype=["']video\/[^"']+["']/i)?.[1];
+  const enclosure = block.match(/<enclosure[^>]*\btype=["']video\/[^"']+["'][^>]*\burl=["']([^"']+)["']/i)?.[1]
+    ?? block.match(/<enclosure[^>]*\burl=["']([^"']+)["'][^>]*\btype=["']video\/[^"']+["']/i)?.[1];
+  return firstHttpsUrl(media) ?? firstHttpsUrl(enclosure);
+}
+
 export function parseRssFeed(xml: string): NewsItem[] {
   const items: NewsItem[] = [];
   for (const match of xml.matchAll(/<(item|entry)\b[\s\S]*?<\/\1>/gi)) {
@@ -168,6 +177,7 @@ export function parseRssFeed(xml: string): NewsItem[] {
       description: cleanText(descriptionRaw).slice(0, 1200),
       link: decodeXml(link).trim(),
       image: extractImage(block, descriptionRaw),
+      video: extractVideo(block),
       publishedAt,
       source: '',
     });

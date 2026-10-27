@@ -162,6 +162,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     genders: ['girl', 'mixed'],
     defaultStyle: 'real',
     defaultGender: 'girl',
+    extraAliases: ['tetas', 'pechos', 'boob'],
     search: 'boobs',
   },
   {
@@ -172,6 +173,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     genders: ['boy', 'mixed'],
     defaultStyle: 'real',
     defaultGender: 'boy',
+    extraAliases: ['polla', 'pene'],
     search: 'dick',
   },
   {
@@ -182,6 +184,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     genders: ALL_GENDERS,
     defaultStyle: 'real',
     defaultGender: 'mixed',
+    extraAliases: ['culo', 'nalgas', 'butt'],
     search: 'ass',
   },
   {
@@ -192,6 +195,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     genders: ['girl'],
     defaultStyle: 'real',
     defaultGender: 'girl',
+    extraAliases: ['vulva', 'vagina'],
     search: 'pussy',
   },
   {
@@ -203,6 +207,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'mixed',
     fetish: 'feet',
+    extraAliases: ['pies', 'foot'],
     search: 'feet',
   },
   {
@@ -214,6 +219,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'mixed',
     fetish: 'thighs',
+    extraAliases: ['muslos'],
     search: 'thighs',
   },
   {
@@ -225,6 +231,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'mixed',
     fetish: 'belly',
+    extraAliases: ['vientre'],
     search: 'belly',
   },
   {
@@ -240,6 +247,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
       boy: ['solo_male'],
       mixed: ['neko', 'solo_male'],
     },
+    extraAliases: ['waifus'],
     search: 'waifu',
   },
   {
@@ -252,6 +260,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultGender: 'boy',
     lgbt: 'gay',
     purrbot: 'yaoi',
+    extraAliases: ['gays'],
     search: 'gay',
   },
   {
@@ -264,6 +273,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultGender: 'girl',
     lgbt: 'lesbian',
     purrbot: 'yuri',
+    extraAliases: ['lesbiana', 'lesbianas'],
     search: 'lesbian',
   },
   {
@@ -275,6 +285,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'mixed',
     lgbt: 'trans',
+    extraAliases: ['transsexual', 'transexual', 'transgenero'],
     search: 'trans',
   },
   {
@@ -286,6 +297,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'mixed',
     lgbt: 'bisexual',
+    extraAliases: ['bi', 'bisexuales'],
     search: 'bisexual',
   },
   {
@@ -297,6 +309,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'mixed',
     lgbt: 'pansexual',
+    extraAliases: ['pan', 'pansexuales'],
     search: 'pansexual',
   },
   {
@@ -308,6 +321,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'mixed',
     lgbt: 'nonbinary',
+    extraAliases: ['nobinario', 'nobinarie'],
     search: 'nonbinary',
   },
   {
@@ -319,6 +333,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'boy',
     fetish: 'femboy',
+    extraAliases: ['femboys'],
     search: 'femboy',
   },
   {
@@ -341,6 +356,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'girl',
     fetish: 'blonde',
+    extraAliases: ['rubia', 'rubias'],
     search: 'blonde',
   },
   {
@@ -352,6 +368,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'girl',
     fetish: 'ebony',
+    extraAliases: ['negra', 'negras'],
     search: 'ebony',
   },
   {
@@ -363,6 +380,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'girl',
     fetish: 'latina',
+    extraAliases: ['latinas'],
     search: 'latina',
   },
   {
@@ -374,6 +392,7 @@ export const NSFW_BASES: NsfwBaseDef[] = [
     defaultStyle: 'real',
     defaultGender: 'girl',
     fetish: 'milf',
+    extraAliases: ['maduras'],
     search: 'milf',
   },
 ];

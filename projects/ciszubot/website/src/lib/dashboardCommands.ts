@@ -50,7 +50,7 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
   },
   community: {
     title: 'Comandos de comunidad',
-    commands: byNames(['starboard', 'invites', 'marry', 'divorce', 'partner', 'nitro', 'afk']),
+    commands: byNames(['starboard', 'invites', 'marry', 'divorce', 'partner', 'marrysettings', 'nitro', 'afk']),
     note: 'Starboard destaca mensajes; invites premia a quien invita.',
   },
   automod: {
@@ -116,7 +116,7 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
   trivia: {
     title: 'Comandos de trivia',
     commands: byNames(['trivia']),
-    note: 'cz!trivia [facil|media|dificil|mixta] inicia; cz!trivia top muestra el ranking; cz!trivia add <pregunta> | resp1 | resp2 agrega preguntas (staff).',
+    note: 'cz!trivia [facil|media|dificil|mixta] inicia; cz!trivia top muestra el ranking; cz!trivia add <pregunta> | resp1 | resp2 agrega preguntas (staff). Las categorías y el canal fijo se configuran aquí.',
   },
   autoposts: {
     title: 'Autopublicaciones',
@@ -136,7 +136,7 @@ export const SECTION_HELP: Record<string, SectionHelp> = {
   confessions: {
     title: 'Comandos de confesiones',
     commands: byNames(['confess']),
-    note: 'cz!confess envía una confesión anónima al canal configurado en esta sección.',
+    note: 'cz!confess [anon|public] <mensaje> publica según los modos permitidos; el registro queda en esta sección.',
   },
   customcmd: {
     title: 'Comandos personalizados',

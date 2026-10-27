@@ -7,6 +7,7 @@ import {
   REST,
   Routes,
 } from 'discord.js';
+import type { CommandInteractionOption } from 'discord.js';
 import path from 'path';
 import 'dotenv/config';
 import { config, BOT_TOKEN, GUILD_ID } from './config';
@@ -136,21 +137,31 @@ client.on(Events.InteractionCreate, async (interaction) => {
       const userOptions: Array<{ id: string; tag?: string; username?: string; displayAvatarURL?: (opts?: { size?: number }) => string }> = [];
       const roleOptions: Array<{ id: string }> = [];
       const channelOptions: Array<{ id: string; type: number; send?: (content: unknown) => Promise<unknown> }> = [];
-      for (const opt of interaction.options.data) {
+      const collectOption = (opt: CommandInteractionOption) => {
+        if (opt.type === 1 || opt.type === 2) {
+          args.push(opt.name);
+          for (const child of opt.options ?? []) collectOption(child);
+          return;
+        }
         if (opt.type === 3) args.push(opt.value as string);
         else if (opt.type === 6) {
-          const user = interaction.options.getUser(opt.name);
+          const user = opt.user ?? interaction.options.getUser(opt.name);
           args.push(`<@${opt.value}>`);
           userOptions.push(user as never);
         } else if (opt.type === 8) {
           args.push(`<@&${opt.value}>`);
           roleOptions.push({ id: String(opt.value) });
         } else if (opt.type === 7) {
-          const channel = interaction.options.getChannel(opt.name) as never as { id: string; type: number; send?: (c: unknown) => Promise<unknown> };
+          const channel = (opt.channel ?? interaction.options.getChannel(opt.name)) as never as {
+            id: string;
+            type: number;
+            send?: (c: unknown) => Promise<unknown>;
+          };
           args.push(`<#${opt.value}>`);
           channelOptions.push({ id: String(opt.value), type: channel?.type ?? 0, send: channel?.send });
         } else if (opt.value !== undefined) args.push(String(opt.value));
-      }
+      };
+      for (const opt of interaction.options.data) collectOption(opt);
 
       // Enviar "pensando" para evitar el timeout de 3 segundos
       await interaction.deferReply({ ephemeral: false });

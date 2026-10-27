@@ -99,7 +99,7 @@ const whoiam = (): BotCommand => ({
 const whoismyrol = (): BotCommand => ({
   name: 'whoismyrol',
   description: 'Tus roles y rango en este servidor',
-  aliases: ['misroles', 'mirango', 'rol', 'roles'],
+  aliases: ['misroles', 'mirango', 'mirol', 'rol', 'roles', 'role', 'myrole'],
   usage: 'cz!whoismyrol',
   category: 'Presentación',
   // Sin versión slash (Discord limita a 100 comandos globales): cz!whoismyrol
@@ -159,7 +159,11 @@ const present = (): BotCommand => ({
         .setTitle(tr(L, '👋 ¡Hola! Soy CiszuBot', '👋 Hi! I am CiszuBot'))
         .setThumbnail(BOT_ASSETS.isotype)
         .setDescription(
-          `Un gusto, me presento: soy el bot oficial de **Ciszu Network**, creado por **Ciszuko Antony**.\n\n${mood}`,
+          tr(
+            L,
+            `Un gusto, me presento: soy el bot oficial de **Ciszu Network**, creado por **Ciszuko Antony**.\n\n${mood}`,
+            `Nice to meet you: I am the official **Ciszu Network** bot, created by **Ciszuko Antony**.\n\n${mood}`,
+          ),
         )
         .addFields(
           { name: tr(L, '🏠 Dónde vivo', '🏠 Where I live'), value: `${guilds} ` + tr(L, 'servidor(es)', 'server(s)'), inline: true },
@@ -186,16 +190,16 @@ const present = (): BotCommand => ({
     const top = roles.first();
     const embed = new EmbedBuilder()
       .setColor(BOT_COLORS.secondary)
-      .setTitle(`👋 Presentando a ${member.displayName}`)
+      .setTitle(tr(L, `👋 Presentando a ${member.displayName}`, `👋 Introducing ${member.displayName}`))
       .setThumbnail(member.displayAvatarURL({ size: 256 }))
       .setDescription(
-        `Todos den la bienvenida a <@${member.id}>.\n\n` +
-          `**Usuario:** ${member.user.tag}\n` +
-          `**Rol más alto:** ${top ? `<@&${top.id}>` : tr(L, 'Sin roles', 'No roles')}\n` +
-          `**En el servidor desde:** ${ts(member.joinedAt)}\n` +
-          `**Roles:** ${roles.size}`,
+        tr(
+          L,
+          `Todos den la bienvenida a <@${member.id}>.\n\n**Usuario:** ${member.user.tag}\n**Rol más alto:** ${top ? `<@&${top.id}>` : 'Sin roles'}\n**En el servidor desde:** ${ts(member.joinedAt)}\n**Roles:** ${roles.size}`,
+          `Everyone welcome <@${member.id}>.\n\n**User:** ${member.user.tag}\n**Top role:** ${top ? `<@&${top.id}>` : 'No roles'}\n**In the server since:** ${ts(member.joinedAt)}\n**Roles:** ${roles.size}`,
+        ),
       )
-      .setFooter(BOT_FOOTER(`Presentado por ${message.author.tag}`, message.client.user?.displayAvatarURL()))
+      .setFooter(BOT_FOOTER(tr(L, `Presentado por ${message.author.tag}`, `Presented by ${message.author.tag}`), message.client.user?.displayAvatarURL()))
       .setTimestamp();
     await message.reply({ embeds: [embed] });
   },
