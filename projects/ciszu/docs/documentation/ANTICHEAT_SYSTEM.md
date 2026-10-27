@@ -45,7 +45,7 @@ sanciones** y el **sistema de apelaciones** en soporte para TODAS las webs.
               ┌────────────────────┴─────────────────────┐
               ▼                                          ▼
    cuenta bot del juego                    usuario afectado
-   "MuzicMania Anti-cheat"                (modal + email + estado de cuenta)
+   "Ciszu Anticheat"                      (modal + email + estado de cuenta)
               │                                          │
               ▼                                          ▼
    sanciones (warn/mute/ban/delete)        Soporte → Apelaciones (siempre)
@@ -91,7 +91,7 @@ Se acumula en `anticheat.scores` por `(game, user_id)` con **decaimiento tempora
 ## 5. La cuenta del anticheat (un bot del juego)
 
 - El sistema actúa **como una cuenta oficial del proyecto**: p. ej. en MuzicMania,
-  **`MuzicMania Anti-cheat @muzicmania_anticheat`**, con **rango `bot`** y la etiqueta
+  **`Ciszu Anticheat @muzicmania_anticheat`**, con **rango `bot`** y la etiqueta
   **`anticheat`** (tag de perfil nueva).
 - **Sin correo propio → usa `ciszunetwork@gmail.com`** (regla de cuentas del ecosistema).
 - Esa cuenta **no se elimina** ni se puede sancionar/apelar (es sistema).

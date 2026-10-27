@@ -1,8 +1,8 @@
 ﻿# PAYMENTS_SYSTEM — Metodología de pagos y donaciones de Ciszu Network
 
-Versión: 2.0.0
-Actualización: 2026-10-23
-Identificador: PAYMENTS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-10-27
+Identificador: PAYMENTS_SYSTEM_V2.1.0_2026_10_27_ciszunetwork
 
 > **Definición**: metodología de pagos y donaciones del ecosistema: matriz producto×método,
 > rieles por país (VE), roadmap por edad, integración NOWPayments (paquete `@ciszunetwork/
@@ -203,6 +203,16 @@ packages/payments/
 - Toda donación/venta se registra en `archives/legal` (privado, gitignored) para conciliar después.
 - Cuando se active la venta, activar también el schema `pagos` (orders/transactions con RLS).
 
+## Premium CiszuBot — planes, activación y facturación (27 oct 2026)
+
+- **Planes**: Free (0 servidores, gratis de por vida), Beta Trial (Dorado temporal, 3 servidores), Dorado (3, 2,99 USD/mes), Diamante (8, 9,99 USD/mes), Platino (20, 39,99 USD/mes) y Premium de por vida (20, 100 USD pago único). Anual = mensual ×12.
+- **Rebajas**: Dorado 15%, Diamante 20%, Platino 30%; indefinidas. El plan de por vida y Free nunca tienen rebaja. El precio final se calcula al comprar y se muestra con el original tachado.
+- **Activación**: el plan debe estar activo en la cuenta y activado desde preferencias del bot; después se activa por servidor en General. Cada activación tiene un UUID único ligado al usuario y al servidor. Los límites son 3/8/20 servidores según plan; al agotar cupos no se puede activar otro.
+- **Desactivación**: liberar un servidor inicia un cooldown de 7 días. La configuración premium se guarda como snapshot por activación; al reactivar se restaura. Si el plan del usuario caduca o cambia, las activaciones se invalidan y las opciones premium se desactivan.
+- **Beta**: los botones de pago y la activación real están bloqueados hasta que termine la beta. La página Premium ya está disponible con comparativa, divisas, rebajas, confianza, términos y política de reembolsos.
+- **Facturación**: pantalla de billing en la configuración de cuenta de CiszuBot y Muzicmania con plan actual, cupos, divisa, métodos, conexiones, historial y datos fiscales. Aún no procesa pagos.
+- **Reembolsos**: no existe sistema de reembolsos; los pagos son definitivos. Documentado en la página Premium y en Términos.
+
 ## Riesgos y mitigaciones
 
 | Riesgo | Mitigación |
@@ -220,6 +230,6 @@ packages/payments/
 - `SECURITY_PROTOCOLS.md` — rate limit y RLS obligatorios.
 - `STATUS_SYSTEM.md` / `STATISTICS_SYSTEM.md` — estado y cifras de pagos cuando haya ingresos.
 
-_Última revisión: 23 oct 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
+_Última revisión: 27 oct 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
 `INTERNATIONAL_LLC_PLAN.md`, `EMAILS_SYSTEM.md`, `REVIEWS_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`.

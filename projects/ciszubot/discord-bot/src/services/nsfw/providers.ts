@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto';
 import type { NsfwCommandGender, NsfwSelection } from './catalog';
 import { purrbotTag } from './catalog';
 
@@ -128,7 +129,7 @@ async function searchRedgifs(query: string, title: string): Promise<NsfwMedia | 
   if (!Array.isArray(gifs) || gifs.length === 0) return null;
 
   const candidates = (gifs as RedGif[]).filter((gif) => !hasDeniedTag(gif.tags));
-  const gif = candidates[Math.floor(Math.random() * candidates.length)];
+  const gif = candidates[randomInt(candidates.length)];
   if (!gif) return null;
 
   const url = safeUrl(gif.urls?.poster ?? gif.urls?.thumbnail, ['media.redgifs.com']);

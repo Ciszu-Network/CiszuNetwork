@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { AccountSettingsPanel } from '@ciszu/ui';
+import { AccountSettingsPanel, BillingPanel } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
@@ -12,7 +12,7 @@ import { useClientI18n } from '@/hooks/useClientI18n';
  * CISZU ID. Con ambas sesiones, control total.
  */
 export default function SettingsPage() {
-  const { dict } = useClientI18n();
+  const { dict, lang } = useClientI18n();
   const t = dict.settingsPage;
   const [state, setState] = useState<'loading' | 'guest' | 'authed'>('loading');
 
@@ -62,7 +62,15 @@ export default function SettingsPage() {
         )}
 
         {state === 'authed' && (
-          <AccountSettingsPanel supabase={supabase} site="ciszubot" siteName="CiszuBot" />
+          <>
+            <AccountSettingsPanel supabase={supabase} site="ciszubot" siteName="CiszuBot" />
+            <BillingPanel
+              site="ciszubot"
+              siteName="CiszuBot"
+              lang={lang.startsWith('en') ? 'en' : 'es'}
+              premiumHref="/premium"
+            />
+          </>
         )}
       </div>
     </div>

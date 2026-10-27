@@ -109,12 +109,33 @@ function decodeXml(value: string): string {
     .replace(/&amp;/gi, '&');
 }
 
+function stripHtml(value: string): string {
+  let output = '';
+  let index = 0;
+  while (index < value.length) {
+    if (value[index] !== '<') {
+      output += value[index];
+      index += 1;
+      continue;
+    }
+    const lower = value.slice(index, index + 9).toLowerCase();
+    const tag = lower.startsWith('<script') ? 'script' : lower.startsWith('<style') ? 'style' : null;
+    if (tag) {
+      const close = value.toLowerCase().indexOf(`</${tag}`, index + 1);
+      if (close === -1) break;
+      const end = value.indexOf('>', close);
+      index = end === -1 ? value.length : end + 1;
+      continue;
+    }
+    const end = value.indexOf('>', index + 1);
+    index = end === -1 ? value.length : end + 1;
+  }
+  return output;
+}
+
 function cleanText(value: string | undefined): string {
   if (!value) return '';
-  return decodeXml(value)
-    .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
-    .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
-    .replace(/<[^>]*>/g, ' ')
+  return stripHtml(decodeXml(value))
     .replace(/\s+/g, ' ')
     .replace(/\s+([.,;:!?])/g, '$1')
     .trim();

@@ -1,6 +1,6 @@
 'use client';
 
-import { AccountSettingsPanel } from '@ciszu/ui';
+import { AccountSettingsPanel, BillingPanel } from '@ciszu/ui';
 import { useT } from '@/hooks/useT';
 import { supabase } from '@/config/supabase';
 
@@ -21,6 +21,7 @@ export default function SettingsPage() {
           </p>
         </header>
         <AccountSettingsPanel supabase={supabase} site="muzicmania" siteName="MuzicMania" />
+        <BillingPanel site="muzicmania" siteName="MuzicMania" premiumHref="https://ciszubot.vercel.app/premium" />
       </div>
     </div>
   );
