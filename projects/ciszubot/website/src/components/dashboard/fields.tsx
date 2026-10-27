@@ -66,37 +66,62 @@ function insertAtCursor(el: HTMLInputElement | HTMLTextAreaElement | null, text:
 function EmojiPanel({ emojis, onPick, onClose }: { emojis: GuildEmoji[]; onPick: (e: string) => void; onClose: () => void }) {
   const { dict } = useClientI18n();
   const t = dict.guildPage;
+  const [tab, setTab] = useState<'server' | 'discord'>(emojis.length > 0 ? 'server' : 'discord');
+  const [query, setQuery] = useState('');
   const STANDARD = ['😀', '😂', '😍', '🤝', '🎉', '⭐', '💎', '🔥', '❤️', '✅', '❌', '⚠️', '💰', '🏆', '📢', '🎫'];
+  const filtered = emojis.filter((emoji) => !query.trim() || emoji.name.toLowerCase().includes(query.trim().toLowerCase()));
   return (
-    <div className="absolute right-0 top-full z-50 mt-1 w-64 rounded-xl border border-white/15 bg-[#0b0f1a]/98 p-2 shadow-2xl">
+    <div className="absolute right-0 top-full z-50 mt-1 w-72 rounded-xl border border-white/15 bg-[#0b0f1a]/98 p-2 shadow-2xl">
       <div className="mb-1.5 flex items-center justify-between">
         <span className="text-[9px] font-black uppercase tracking-widest text-white/40">{t.emojiServerLabel}</span>
         <button type="button" onClick={onClose} className="text-xs text-white/40 hover:text-white">✕</button>
       </div>
-      <div className="grid max-h-40 grid-cols-8 gap-1 overflow-y-auto">
-        {emojis.length === 0 && <p className="col-span-8 text-[10px] text-white/35">{t.emojiServerEmpty}</p>}
-        {emojis.map((e) => (
-          <button
-            key={e.id}
-            type="button"
-            title={`:${e.name}:`}
-            onClick={() => {
-              onPick(`<${e.animated ? 'a' : ''}:${e.name}:${e.id}>`);
-              onClose();
-            }}
-            className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-white/10"
-          >
-            <img
-              src={`https://cdn.discordapp.com/emojis/${e.id}.${e.animated ? 'gif' : 'png'}?size=32`}
-              alt={e.name}
-              className="h-5 w-5"
-            />
-          </button>
-        ))}
+      <div className="flex border-b border-white/10">
+        <button
+          type="button"
+          onClick={() => setTab('server')}
+          className={`flex-1 px-2 py-1.5 text-[9px] font-black uppercase tracking-widest ${tab === 'server' ? 'text-neon-blue' : 'text-white/40'}`}
+        >
+          {t.mdServerEmojis}
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab('discord')}
+          className={`flex-1 px-2 py-1.5 text-[9px] font-black uppercase tracking-widest ${tab === 'discord' ? 'text-neon-blue' : 'text-white/40'}`}
+        >
+          {t.mdDiscordEmojis}
+        </button>
       </div>
-      <div className="mt-2 border-t border-white/10 pt-1.5">
-        <span className="text-[9px] font-black uppercase tracking-widest text-white/40">{t.emojiStandard}</span>
-        <div className="mt-1 grid grid-cols-8 gap-1">
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder={t.mdSearch}
+        className="mt-1.5 w-full rounded-lg border border-white/10 bg-black/30 px-2 py-1.5 text-[10px] text-white outline-none placeholder:text-white/25"
+      />
+      {tab === 'server' ? (
+        <div className="mt-1.5 grid max-h-40 grid-cols-8 gap-1 overflow-y-auto">
+          {filtered.length === 0 && <p className="col-span-8 text-[10px] text-white/35">{t.emojiServerEmpty}</p>}
+          {filtered.map((e) => (
+            <button
+              key={e.id}
+              type="button"
+              title={`:${e.name}:`}
+              onClick={() => {
+                onPick(`<${e.animated ? 'a' : ''}:${e.name}:${e.id}>`);
+                onClose();
+              }}
+              className="flex h-7 w-7 items-center justify-center rounded-lg hover:bg-white/10"
+            >
+              <img
+                src={`https://cdn.discordapp.com/emojis/${e.id}.${e.animated ? 'gif' : 'png'}?size=32`}
+                alt={e.name}
+                className="h-5 w-5"
+              />
+            </button>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-1.5 grid max-h-40 grid-cols-8 gap-1 overflow-y-auto">
           {STANDARD.map((e) => (
             <button
               key={e}
@@ -111,7 +136,7 @@ function EmojiPanel({ emojis, onPick, onClose }: { emojis: GuildEmoji[]; onPick:
             </button>
           ))}
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -254,6 +279,7 @@ export function MultiSelect({
   const { dict } = useClientI18n();
   const t = dict.guildPage;
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const boxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (!open) return;
@@ -268,12 +294,17 @@ export function MultiSelect({
     onChange(values.includes(id) ? values.filter((v) => v !== id) : [...values, id]);
   };
 
+  const filtered = options.filter(
+    (opt) => !query.trim() || opt.label.toLowerCase().includes(query.trim().toLowerCase()),
+  );
+  const colors = ['#f472b6', '#60a5fa', '#34d399', '#fbbf24', '#a78bfa', '#22d3ee'];
+
   return (
-    <div ref={boxRef} className="relative">
+    <div ref={boxRef} className="relative flex gap-1">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`${FIELD_CLS} flex min-h-[34px] flex-wrap items-center gap-1 text-left`}
+        className={`${FIELD_CLS} flex min-h-[34px] flex-1 flex-wrap items-center gap-1 text-left`}
       >
         {values.length === 0 && <span className="text-white/30">{placeholder ?? '—'}</span>}
         {values.slice(0, 4).map((id) => {
@@ -287,10 +318,26 @@ export function MultiSelect({
         {values.length > 4 && <span className="text-[10px] text-white/40">+{values.length - 4}</span>}
         <span className="ml-auto text-[10px] text-white/40">▼</span>
       </button>
+      {values.length > 0 && (
+        <button
+          type="button"
+          onClick={() => onChange([])}
+          className="rounded-lg border border-white/10 px-2 text-[10px] text-white/40 transition hover:border-rose-400/40 hover:text-rose-200"
+          title={t.multiSelectClear}
+        >
+          ✕
+        </button>
+      )}
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl border border-white/15 bg-[#0b0f1a]/98 p-1.5 shadow-2xl">
-          {options.length === 0 && <p className="p-2 text-[10px] text-white/35">{t.multiSelectEmpty}</p>}
-          {options.map((opt) => (
+        <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-xl border border-white/15 bg-[#0b0f1a]/98 p-1.5 shadow-2xl">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t.mdSearch}
+            className="mb-1 w-full rounded-lg border border-white/10 bg-black/30 px-2 py-1.5 text-[10px] text-white outline-none placeholder:text-white/25"
+          />
+          {filtered.length === 0 && <p className="p-2 text-[10px] text-white/35">{t.multiSelectEmpty}</p>}
+          {filtered.map((opt, index) => (
             <button
               key={opt.id}
               type="button"
@@ -306,6 +353,7 @@ export function MultiSelect({
               >
                 {values.includes(opt.id) && <span className="text-[8px] font-black">✓</span>}
               </span>
+              <span className="h-2 w-2 rounded-full" style={{ background: colors[index % colors.length] }} />
               {opt.label}
             </button>
           ))}

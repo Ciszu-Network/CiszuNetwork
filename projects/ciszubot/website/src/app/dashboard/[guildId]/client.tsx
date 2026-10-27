@@ -1094,7 +1094,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           setPollForm({ question: '', options: ['', '', '', ''], anonymous: false, minutes: 0, channel: null });
           void pollRefresh();
         } else {
-          toast(result.replace(/^error:\s*/, '') || t.pollError, 'error');
+          toast(result.trim().startsWith('{') ? t.pollError : result.replace(/^error:\s*/, '') || t.pollError, 'error');
         }
         return;
       }
@@ -1132,7 +1132,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           toast(t.pollClosed, 'success');
           void pollRefresh();
         } else {
-          toast(result.replace(/^error:\s*/, '') || t.pollError, 'error');
+          toast(result.trim().startsWith('{') ? t.pollError : result.replace(/^error:\s*/, '') || t.pollError, 'error');
         }
         return;
       }
