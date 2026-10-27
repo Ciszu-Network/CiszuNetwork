@@ -192,6 +192,7 @@ const guildConfigPatchSchema = z.object({
   polls_excluded_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
   polls_max_active: z.number().int().min(0).max(100).optional(),
   polls_cooldown_minutes: z.number().int().min(0).max(1440).optional(),
+  poll_style: z.enum(['classic', 'neon', 'pulse', 'compact']).optional(),
   trivia_enabled: z.boolean().optional(),
   trivia_excluded_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
   trivia_timed: z.boolean().optional(),
@@ -203,6 +204,8 @@ const guildConfigPatchSchema = z.object({
   autoposts_enabled: z.boolean().optional(),
   autoposts: z.array(z.object({ id: z.string().max(40), type: z.enum(['custom', 'animals', 'anime']), channel_id: z.string().max(32), interval_minutes: z.number().int().min(5).max(10080), text: z.string().max(2000).optional(), url: z.string().max(500).optional(), nsfw: z.boolean().optional() })).max(20).optional(),
   news_enabled: z.boolean().optional(),
+  news_rss_url: z.string().url().max(500).nullable().optional(),
+  news_rss_channel_id: z.string().max(32).nullable().optional(),
   news_channels: z
     .object({
       anime: z.string().max(32).nullable().optional(),
@@ -360,6 +363,7 @@ interface GuildConfig {
   polls_excluded_role_ids?: string[];
   polls_max_active?: number;
   polls_cooldown_minutes?: number;
+  poll_style?: 'classic' | 'neon' | 'pulse' | 'compact';
   trivia_enabled?: boolean;
   trivia_excluded_role_ids?: string[];
   trivia_timed?: boolean;
@@ -371,6 +375,8 @@ interface GuildConfig {
   autoposts_enabled?: boolean;
   autoposts?: { id: string; type: 'custom' | 'animals' | 'anime'; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }[];
   news_enabled?: boolean;
+  news_rss_url?: string | null;
+  news_rss_channel_id?: string | null;
   news_channels?: { anime?: string | null; games?: string | null; steam?: string | null; tech?: string | null };
   social_enabled?: boolean;
   social_feeds?: {
@@ -550,7 +556,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   }
 
   const allowed: Record<string, unknown> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id', 'nsfw_autopost_channel_id', 'confess_channel_id', 'trivia_channel_id'];
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id', 'nsfw_autopost_channel_id', 'confess_channel_id', 'trivia_channel_id', 'news_rss_url', 'news_rss_channel_id', 'poll_style'];
   const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed', 'autoposts_enabled', 'news_enabled', 'social_enabled', 'confess_allow_anonymous', 'confess_allow_public', 'nsfw_bot_preferences_enabled', 'nsfw_general_enabled', 'nsfw_enabled', 'nsfw_autopost_enabled', 'nsfw_commands_enabled'];
 
   for (const key of stringFields) {
@@ -879,6 +885,7 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     polls_excluded_role_ids: 'pollsExcludedRoleIds',
     polls_max_active: 'pollsMaxActive',
     polls_cooldown_minutes: 'pollsCooldownMinutes',
+    poll_style: 'pollStyle',
     trivia_enabled: 'triviaEnabled',
     trivia_excluded_role_ids: 'triviaExcludedRoleIds',
     trivia_timed: 'triviaTimed',
@@ -890,6 +897,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     autoposts_enabled: 'autopostsEnabled',
     autoposts: 'autoposts',
     news_enabled: 'newsEnabled',
+    news_rss_url: 'newsRssUrl',
+    news_rss_channel_id: 'newsRssChannelId',
     news_channels: 'newsChannels',
     social_enabled: 'socialEnabled',
     social_feeds: 'socialFeeds',

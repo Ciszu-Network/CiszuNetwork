@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, EmbedBuilder, TextChannel } from 'discord.js';
 import { db, ciszubotSchema, eq, and, desc } from '@ciszunetwork/db';
 import { logger } from './logger';
-import type { GuildConfig } from './configService';
+import { getGuildConfig, type GuildConfig } from './configService';
 import { BOT_COLORS, BOT_FOOTER } from '../config/links';
 
 /**
@@ -38,11 +38,14 @@ function votesOf(row: { votes: unknown }): Record<string, number> {
   return (row.votes && typeof row.votes === 'object' ? row.votes : {}) as Record<string, number>;
 }
 
-/** Barra visual de 10 bloques. */
-function bar(count: number, total: number): string {
+/** Barra visual de 10 bloques con estilos. */
+function bar(count: number, total: number, style = 'classic', pulseFrame = false): string {
   const ratio = total > 0 ? count / total : 0;
   const filled = Math.round(ratio * 10);
-  return `${'█'.repeat(filled)}${'░'.repeat(10 - filled)} ${Math.round(ratio * 100)}%`;
+  if (style === 'compact') return `${Math.round(ratio * 100)}% (${count})`;
+  const full = style === 'neon' ? '🟦' : style === 'pulse' && !pulseFrame ? '▓' : '█';
+  const empty = style === 'neon' ? '⬛' : style === 'pulse' && !pulseFrame ? '▒' : '░';
+  return `${full.repeat(filled)}${empty.repeat(10 - filled)} ${Math.round(ratio * 100)}%`;
 }
 
 function countsOf(row: PollRow): number[] {
@@ -62,7 +65,7 @@ function computeWinner(counts: number[]): number | null {
   return leaders.length === 1 ? leaders[0] : null;
 }
 
-function pollEmbed(row: PollRow, tag: string, iconURL?: string | null): EmbedBuilder {
+function pollEmbed(row: PollRow, tag: string, iconURL?: string | null, style = 'classic', pulseFrame = false): EmbedBuilder {
   const options = optionsOf(row);
   const counts = countsOf(row);
   const total = counts.reduce((a, b) => a + b, 0);
@@ -80,7 +83,7 @@ function pollEmbed(row: PollRow, tag: string, iconURL?: string | null): EmbedBui
         ? `\n${votersByOption[i].slice(0, 15).map((u) => `<@${u}>`).join(' ')}${votersByOption[i].length > 15 ? ' …' : ''}`
         : '';
     const trophy = winner === i ? ' 🏆' : '';
-    return { name: `${i + 1}. ${opt}${trophy}`, value: `${bar(counts[i], total)} — **${counts[i]}** voto(s)${votersLine}`, inline: false };
+    return { name: `${i + 1}. ${opt}${trophy}`, value: `${bar(counts[i], total, style, pulseFrame)} — **${counts[i]}** voto(s)${votersLine}`, inline: false };
   });
   const stateLine = row.ended
     ? winner !== null
@@ -131,9 +134,24 @@ async function editPollMessage(client: Client, row: PollRow, tag = 'Encuesta'): 
   if (!row.messageId) return;
   const channel = (client.channels.cache.get(row.channelId) ?? (await client.channels.fetch(row.channelId).catch(() => null))) as TextChannel | null;
   if (!channel) return;
-  await channel.messages
-    .fetch(row.messageId)
-    .then((m) => m.edit({ embeds: [pollEmbed(row, tag)], components: pollButtons(row.id, optionsOf(row), row.ended) }))
+  const cfg = await getGuildConfig(row.guildId).catch(() => null);
+  const style = cfg?.poll_style ?? 'classic';
+  const message = await channel.messages.fetch(row.messageId).catch(() => null);
+  if (!message) return;
+  const components = pollButtons(row.id, optionsOf(row), row.ended);
+  if (style === 'pulse' && !row.ended) {
+    await message
+      .edit({ embeds: [pollEmbed(row, tag, undefined, style, true)], components })
+      .catch(() => undefined);
+    setTimeout(() => {
+      void message
+        .edit({ embeds: [pollEmbed(row, tag, undefined, style, false)], components })
+        .catch(() => undefined);
+    }, 350);
+    return;
+  }
+  await message
+    .edit({ embeds: [pollEmbed(row, tag, undefined, style, false)], components })
     .catch(() => undefined);
 }
 
@@ -212,7 +230,7 @@ export async function createPoll(
     createdAt: new Date(),
   };
   const message = await channel
-    .send({ embeds: [pollEmbed(fallback, author.tag, author.displayAvatarURL())], components: pollButtons(id, opts, false) })
+    .send({ embeds: [pollEmbed(fallback, author.tag, author.displayAvatarURL(), cfg.poll_style)], components: pollButtons(id, opts, false) })
     .catch((error) => {
       logger.warn('createPoll send:', error);
       return null;

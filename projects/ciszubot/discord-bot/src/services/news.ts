@@ -6,6 +6,7 @@ import { tr } from './i18n';
 import { logger } from './logger';
 
 export type NewsCategory = 'anime' | 'games' | 'steam' | 'tech';
+export type PublishNewsCategory = NewsCategory | 'rss';
 
 export interface NewsItem {
   id: string;
@@ -59,11 +60,12 @@ const NEWS_SOURCES: Record<NewsCategory, NewsSource> = {
   },
 };
 
-const CATEGORY_LABEL: Record<NewsCategory, [string, string]> = {
+const CATEGORY_LABEL: Record<PublishNewsCategory, [string, string]> = {
   anime: ['Anime', 'Anime'],
   games: ['Videojuegos', 'Video games'],
   steam: ['Steam gratis', 'Free Steam'],
   tech: ['Tecnología', 'Technology'],
+  rss: ['RSS personalizada', 'Custom RSS'],
 };
 
 const USER_AGENT = 'CiszuBot/3.4 (+https://ciszubot.vercel.app)';
@@ -277,6 +279,85 @@ export async function getNewsItems(category: NewsCategory): Promise<NewsItem[]> 
   return request;
 }
 
+const customCache = new Map<string, { at: number; items: NewsItem[] }>();
+const customInFlight = new Map<string, Promise<NewsItem[]>>();
+
+function safeCustomRssUrl(raw: string | null): string | null {
+  if (!raw) return null;
+  try {
+    const url = new URL(raw.trim());
+    if (url.protocol !== 'https:' || url.username || url.password) return null;
+    const host = url.hostname.toLowerCase();
+    if (
+      host === 'localhost' ||
+      host.endsWith('.local') ||
+      host === '0.0.0.0' ||
+      host === '[::1]' ||
+      /^127\./.test(host) ||
+      /^10\./.test(host) ||
+      /^192\.168\./.test(host) ||
+      /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
+      /^169\.254\./.test(host)
+    ) {
+      return null;
+    }
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+async function fetchCustomRss(rawUrl: string): Promise<NewsItem[]> {
+  const url = safeCustomRssUrl(rawUrl);
+  if (!url) return [];
+  const response = await fetch(url, {
+    headers: { 'User-Agent': USER_AGENT, Accept: 'application/rss+xml, application/atom+xml, application/xml, text/xml;q=0.9, */*;q=0.5' },
+    signal: AbortSignal.timeout(15_000),
+  });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const body = await response.text();
+  const now = Date.now();
+  return parseRssFeed(body)
+    .filter((item) => {
+      try {
+        const link = new URL(item.link);
+        if (link.protocol !== 'https:') return false;
+        const published = item.publishedAt.getTime();
+        if (!Number.isFinite(published)) return false;
+        if (published > now + 2 * 60 * 60_000) return false;
+        if (published < now - 30 * 86_400_000) return false;
+        if (item.image && !/^https:\/\//i.test(item.image)) return false;
+        return true;
+      } catch {
+        return false;
+      }
+    })
+    .slice(0, 30);
+}
+
+async function getCustomNewsItems(rawUrl: string): Promise<NewsItem[]> {
+  const key = safeCustomRssUrl(rawUrl);
+  if (!key) return [];
+  const cached = customCache.get(key);
+  if (cached && Date.now() - cached.at < CACHE_TTL_MS) return cached.items;
+  const pending = customInFlight.get(key);
+  if (pending) return pending;
+  const request = fetchCustomRss(key)
+    .then((items) => {
+      customCache.set(key, { at: Date.now(), items });
+      return items;
+    })
+    .catch((error) => {
+      logger.warn('news custom rss:', error);
+      return cached?.items ?? [];
+    })
+    .finally(() => {
+      customInFlight.delete(key);
+    });
+  customInFlight.set(key, request);
+  return request;
+}
+
 async function translateFor(lang: string, text: string): Promise<string> {
   if (lang !== 'es' || !text || process.env.NODE_ENV === 'test' || process.env.VITEST) return text;
   const cacheKey = `es:${text}`;
@@ -311,7 +392,7 @@ export async function publishNewsItem(
   client: Client,
   channel: TextChannel,
   lang: string,
-  category: NewsCategory,
+  category: PublishNewsCategory,
   item: NewsItem,
 ): Promise<boolean> {
   const [title, description] = await Promise.all([
@@ -340,12 +421,12 @@ export async function publishNewsItem(
   }
 }
 
-type SeenMap = Partial<Record<NewsCategory, string[]>>;
+type SeenMap = Partial<Record<PublishNewsCategory, string[]>>;
 
 function asSeenMap(value: unknown): SeenMap {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
   const result: SeenMap = {};
-  for (const category of NEWS_CATEGORIES) {
+  for (const category of [...NEWS_CATEGORIES, 'rss'] as PublishNewsCategory[]) {
     const ids = (value as Record<string, unknown>)[category];
     if (Array.isArray(ids)) result[category] = ids.filter((id): id is string => typeof id === 'string');
   }
@@ -359,7 +440,8 @@ async function syncGuild(client: Client, guildId: string): Promise<void> {
   if (!cfg.news_enabled) return;
   const channels = cfg.news_channels as Partial<NewsChannels>;
   const active = NEWS_CATEGORIES.filter((category) => Boolean(channels[category]));
-  if (active.length === 0) return;
+  const rssActive = Boolean(cfg.news_rss_url && cfg.news_rss_channel_id);
+  if (active.length === 0 && !rssActive) return;
 
   const guildConfigs = ciszubotSchema.guildConfigs;
   const rows = await db
@@ -401,6 +483,37 @@ async function syncGuild(client: Client, guildId: string): Promise<void> {
     if (categoryChanged) {
       seen[category] = [...seenIds].slice(-MAX_SEEN_PER_CATEGORY);
       changed = true;
+    }
+  }
+
+  if (rssActive && cfg.news_rss_url && cfg.news_rss_channel_id) {
+    const channel = guild.channels.cache.get(cfg.news_rss_channel_id) as TextChannel | undefined;
+    if (channel?.isTextBased()) {
+      const items = await getCustomNewsItems(cfg.news_rss_url);
+      if (items.length > 0) {
+        const previous = seen.rss;
+        if (!Array.isArray(previous)) {
+          seen.rss = items.map((item) => item.id).slice(0, MAX_SEEN_PER_CATEGORY);
+          changed = true;
+        } else {
+          const seenIds = new Set(previous);
+          const fresh = items
+            .filter((item) => !seenIds.has(item.id))
+            .sort((a, b) => a.publishedAt.getTime() - b.publishedAt.getTime())
+            .slice(0, MAX_ITEMS_PER_CYCLE);
+          let rssChanged = false;
+          for (const item of fresh) {
+            const sent = await publishNewsItem(client, channel, cfg.lang, 'rss', item);
+            if (!sent) continue;
+            seenIds.add(item.id);
+            rssChanged = true;
+          }
+          if (rssChanged) {
+            seen.rss = [...seenIds].slice(-MAX_SEEN_PER_CATEGORY);
+            changed = true;
+          }
+        }
+      }
     }
   }
 

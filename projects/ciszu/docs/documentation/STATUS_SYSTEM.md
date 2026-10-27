@@ -339,8 +339,10 @@ _Última revisión: 26 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Confesiones**: modos anónimo/público, roles excluidos y registro privado en dashboard.
 - **Matrimonio**: anuncio público sin revelar objetivo, aceptación/rechazo por DM, timeout sin nombres, preferencia por usuario (`cz!marrysettings`) y arreglo del partner duplicado.
 - **Social feeds**: plataformas Patreon/Ko-fi/Buy Me a Coffee, video RSS, límites premium 1000 y revalidación en el servicio.
-- **Polls**: roles excluidos también bloquean el voto.
-- **Migraciones**: `trivia_categories`, `confessions` y columnas de confesiones aplicadas; RLS deny-all en `ciszubot.confessions`.
+- **Polls**: roles excluidos también bloquean el voto; estilos `classic`, `neon`, `pulse` (animación de 350 ms) y `compact` configurables.
+- **Noticias**: RSS personalizada por servidor (`news_rss_url` + canal), validación HTTPS/anti-SSRF y dedupe propio.
+- **Idiomas**: `verify:i18n` en 0 textos sin traducir en las 4 webs; perfiles, campos del dashboard y play usan diccionario.
+- **Migraciones**: `trivia_categories`, `confessions`, `news_rss_*` y `poll_style` aplicadas; RLS deny-all en `ciszubot.confessions`.
 - **Validación**: `pnpm typecheck`, `pnpm test` (405/405), build del bot y build de ciszubot verdes.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-10-26

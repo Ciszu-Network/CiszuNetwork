@@ -703,6 +703,7 @@ _Última revisión: 23 oct 2026._
 - **Ciszubot**: iconos del subnav del dashboard con color por función y tamaño 16 px; `embeds` conserva el morado.
 - **Validación**: `pnpm typecheck` y builds de las 4 webs verdes; `SiteSearch` 5/5 tests.
 - **Ciszubot (cont.)**: Nitro dashboard/slash, ayuda por categoría, subcomandos slash anidados, moneda por servidor, NSFW con usuario/alias, trivia con 24 categorías y canal fijo, confesiones con modos/roles/registro, matrimonio con DM y preferencia por usuario, social feeds ampliados y exclusión de roles al votar encuestas.
-- **Migraciones**: categorías de trivia y registro privado de confesiones aplicados con RLS deny-all.
+- **Migraciones**: categorías de trivia, registro privado de confesiones, RSS de noticias y estilos de encuestas aplicados con RLS deny-all.
+- **Extras**: RSS personalizada por servidor, estilos de encuesta `classic/neon/pulse/compact` y cobertura i18n de las 4 webs en 0 literales pendientes.
 
 _Última revisión: 26 oct 2026._

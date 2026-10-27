@@ -4341,7 +4341,7 @@ function PlayPageContent() {
                               {showInputDeviceDropdown && (
                                 <div className="absolute z-[120] mt-1 w-full bg-[#1a1a2e] border border-white/10 rounded-xl overflow-hidden shadow-xl max-h-48 overflow-y-auto">
                     {scanningDevices && (
-                      <div className="px-4 py-3 text-[9px] text-neon-cyan text-center animate-pulse uppercase tracking-widest">Buscando dispositivos…</div>
+                      <div className="px-4 py-3 text-[9px] text-neon-cyan text-center animate-pulse uppercase tracking-widest">{t.pages.play.scanningDevices}</div>
                     )}
                                   {!scanningDevices && inputDeviceList.length === 0 ? (
                                     <div className="px-4 py-3 text-[9px] text-gray-500 text-center space-y-2">
@@ -4413,7 +4413,7 @@ function PlayPageContent() {
                               {showAudioDeviceDropdown && (
                                 <div className="absolute z-[120] mt-1 w-full bg-[#1a1a2e] border border-white/10 rounded-xl overflow-hidden shadow-xl max-h-48 overflow-y-auto">
                     {scanningDevices && (
-                      <div className="px-4 py-3 text-[9px] text-neon-cyan text-center animate-pulse uppercase tracking-widest">Buscando dispositivos…</div>
+                      <div className="px-4 py-3 text-[9px] text-neon-cyan text-center animate-pulse uppercase tracking-widest">{t.pages.play.scanningDevices}</div>
                     )}
                                   {!scanningDevices && audioDeviceList.length === 0 ? (
                                     <div className="px-4 py-3 text-[9px] text-gray-500 text-center space-y-2">

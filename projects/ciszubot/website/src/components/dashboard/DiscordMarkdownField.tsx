@@ -12,6 +12,7 @@ export interface DiscordMarkdownLabels {
   preview: string;
   edit: string;
   vars: string;
+  emoji: string;
 }
 
 interface Props {
@@ -159,7 +160,7 @@ export default function DiscordMarkdownField({
               }}
               className="max-w-40 rounded-lg border border-white/15 bg-black/30 px-2 py-1 text-[10px] text-white/70"
             >
-              <option value="">Emoji del servidor</option>
+              <option value="">{labels.emoji}</option>
               {emojis.map((e) => (
                 <option key={e.id} value={`<${e.animated ? 'a' : ''}:${e.name}:${e.id}>`}>
                   :{e.name}:

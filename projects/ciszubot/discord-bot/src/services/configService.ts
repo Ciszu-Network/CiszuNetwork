@@ -264,6 +264,7 @@ export interface GuildConfig {
   polls_excluded_role_ids: string[];
   polls_max_active: number;
   polls_cooldown_minutes: number;
+  poll_style: string;
   trivia_enabled: boolean;
   trivia_excluded_role_ids: string[];
   trivia_timed: boolean;
@@ -276,6 +277,8 @@ export interface GuildConfig {
   autoposts: Array<{ id: string; type: string; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }>;
   news_enabled: boolean;
   news_channels: NewsChannels;
+  news_rss_url: string | null;
+  news_rss_channel_id: string | null;
   social_enabled: boolean;
   social_feeds: SocialFeed[];
   nsfw_bot_preferences_enabled: boolean;
@@ -389,6 +392,7 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   polls_excluded_role_ids: [],
   polls_max_active: 0,
   polls_cooldown_minutes: 0,
+  poll_style: 'classic',
   trivia_enabled: false,
   trivia_excluded_role_ids: [],
   trivia_timed: true,
@@ -401,6 +405,8 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   autoposts: [],
   news_enabled: false,
   news_channels: { anime: null, games: null, steam: null, tech: null },
+  news_rss_url: null,
+  news_rss_channel_id: null,
   social_enabled: false,
   social_feeds: [],
   nsfw_bot_preferences_enabled: false,
@@ -562,6 +568,7 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         polls_excluded_role_ids: asArray(data.pollsExcludedRoleIds, DEFAULTS.polls_excluded_role_ids),
         polls_max_active: data.pollsMaxActive ?? DEFAULTS.polls_max_active,
         polls_cooldown_minutes: data.pollsCooldownMinutes ?? DEFAULTS.polls_cooldown_minutes,
+        poll_style: data.pollStyle ?? DEFAULTS.poll_style,
         trivia_enabled: data.triviaEnabled ?? DEFAULTS.trivia_enabled,
         trivia_excluded_role_ids: asArray(data.triviaExcludedRoleIds, DEFAULTS.trivia_excluded_role_ids),
         trivia_timed: data.triviaTimed ?? DEFAULTS.trivia_timed,
@@ -574,6 +581,8 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         autoposts: asArray(data.autoposts, DEFAULTS.autoposts) as typeof DEFAULTS.autoposts,
         news_enabled: data.newsEnabled ?? DEFAULTS.news_enabled,
         news_channels: asObject(data.newsChannels, DEFAULTS.news_channels) as NewsChannels,
+        news_rss_url: data.newsRssUrl ?? DEFAULTS.news_rss_url,
+        news_rss_channel_id: data.newsRssChannelId ?? DEFAULTS.news_rss_channel_id,
         social_enabled: data.socialEnabled ?? DEFAULTS.social_enabled,
         social_feeds: asSocialFeeds(data.socialFeeds),
         nsfw_bot_preferences_enabled: nsfwBotPreferencesEnabled,
@@ -687,6 +696,7 @@ export async function updateGuildConfig(
     pollsExcludedRoleIds: merged.polls_excluded_role_ids,
     pollsMaxActive: merged.polls_max_active,
     pollsCooldownMinutes: merged.polls_cooldown_minutes,
+    pollStyle: merged.poll_style,
     triviaEnabled: merged.trivia_enabled,
     triviaExcludedRoleIds: merged.trivia_excluded_role_ids,
     triviaTimed: merged.trivia_timed,
@@ -699,6 +709,8 @@ export async function updateGuildConfig(
     autoposts: merged.autoposts,
     newsEnabled: merged.news_enabled,
     newsChannels: merged.news_channels,
+    newsRssUrl: merged.news_rss_url,
+    newsRssChannelId: merged.news_rss_channel_id,
     socialEnabled: merged.social_enabled,
     socialFeeds: merged.social_feeds,
     nsfwBotPreferencesEnabled: merged.nsfw_bot_preferences_enabled,

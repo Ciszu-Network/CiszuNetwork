@@ -91,6 +91,7 @@ interface GuildConfig {
   polls_excluded_role_ids?: string[];
   polls_max_active?: number;
   polls_cooldown_minutes?: number;
+  poll_style?: 'classic' | 'neon' | 'pulse' | 'compact';
   trivia_enabled?: boolean;
   trivia_excluded_role_ids?: string[];
   trivia_timed?: boolean;
@@ -102,6 +103,8 @@ interface GuildConfig {
   autoposts_enabled?: boolean;
   autoposts?: { id: string; type: 'custom' | 'animals' | 'anime'; channel_id: string; interval_minutes: number; text?: string; url?: string; nsfw?: boolean }[];
   news_enabled?: boolean;
+  news_rss_url?: string | null;
+  news_rss_channel_id?: string | null;
   news_channels?: { anime: string | null; games: string | null; steam: string | null; tech: string | null };
   social_enabled?: boolean;
   social_feeds?: SocialFeed[];
@@ -229,10 +232,10 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   vcs: ['private_channels', 'private_category_id', 'private_vc_hub_id'],
   counting: ['counting_enabled', 'counting_channel_id', 'counting_start', 'counting_style', 'counting_allow_repeat', 'counting_authenticity'],
   suggestions: ['suggestions_enabled', 'suggestions_channel_id', 'suggestions_excluded_role_ids', 'suggestions_max_active', 'suggestions_cooldown_minutes'],
-  polls: ['polls_enabled', 'polls_excluded_role_ids', 'polls_max_active', 'polls_cooldown_minutes'],
+  polls: ['polls_enabled', 'polls_excluded_role_ids', 'polls_max_active', 'polls_cooldown_minutes', 'poll_style'],
   trivia: ['trivia_enabled', 'trivia_excluded_role_ids', 'trivia_timed', 'trivia_time_seconds', 'trivia_difficulty', 'trivia_categories', 'trivia_channel_id', 'trivia_rewards'],
   autoposts: ['autoposts_enabled', 'autoposts'],
-  news: ['news_enabled', 'news_channels'],
+  news: ['news_enabled', 'news_channels', 'news_rss_url', 'news_rss_channel_id'],
   socialfeeds: ['social_enabled', 'social_feeds'],
   nsfw: ['nsfw_bot_preferences_enabled', 'nsfw_general_enabled', 'nsfw_enabled', 'nsfw_channel_id', 'nsfw_autopost_channel_id', 'nsfw_autopost_enabled', 'nsfw_autopost_minutes', 'nsfw_commands_enabled', 'nsfw_content'],
   confessions: ['confess_channel_id', 'confess_excluded_role_ids', 'confess_allow_anonymous', 'confess_allow_public'],
@@ -1212,6 +1215,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         polls_excluded_role_ids: cfg?.polls_excluded_role_ids ?? [],
         polls_max_active: cfg?.polls_max_active ?? 0,
         polls_cooldown_minutes: cfg?.polls_cooldown_minutes ?? 0,
+        poll_style: cfg?.poll_style ?? 'classic',
         trivia_enabled: cfg?.trivia_enabled ?? false,
         trivia_excluded_role_ids: cfg?.trivia_excluded_role_ids ?? [],
         trivia_timed: cfg?.trivia_timed ?? true,
@@ -1223,6 +1227,8 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         autoposts_enabled: cfg?.autoposts_enabled ?? false,
         autoposts: Array.isArray(cfg?.autoposts) ? cfg.autoposts : [],
         news_enabled: cfg?.news_enabled ?? false,
+        news_rss_url: cfg?.news_rss_url ?? null,
+        news_rss_channel_id: cfg?.news_rss_channel_id ?? null,
         news_channels: {
           anime: cfg?.news_channels?.anime ?? null,
           games: cfg?.news_channels?.games ?? null,
@@ -3058,7 +3064,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 </Field>
               </div>
               <div className="rounded-xl border border-white/10 bg-black/20 px-4 py-2 text-xs text-white/60">
-                Vista previa: <span className="font-bold text-white">1.500 {config.coin_emoji ?? '🪙'}</span> (
+                {t.coinPreview} <span className="font-bold text-white">1.500 {config.coin_emoji ?? '🪙'}</span> (
                 {config.coin_name ?? 'monedas'})
               </div>
 
@@ -3246,7 +3252,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <Field label={t.msgChannelLabel} hint={t.manualIdHint}>
                   <input
                     className={inputCls}
-                    placeholder="ID del canal"
+                    placeholder={t.channelIdPlaceholder}
                     value={msgChannel ?? ''}
                     onChange={(e) => setMsgChannel(e.target.value || null)}
                   />
@@ -3749,6 +3755,18 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                       />
                     </Field>
                   </div>
+                  <Field label={t.pollsStyleLabel} hint={t.pollsStyleHint}>
+                    <NiceSelect
+                      value={config.poll_style ?? 'classic'}
+                      options={[
+                        { id: 'classic', label: t.pollsStyleClassic },
+                        { id: 'neon', label: t.pollsStyleNeon },
+                        { id: 'pulse', label: t.pollsStylePulse },
+                        { id: 'compact', label: t.pollsStyleCompact },
+                      ]}
+                      onChange={(v) => update({ poll_style: v as 'classic' | 'neon' | 'pulse' | 'compact' })}
+                    />
+                  </Field>
                   <Field label={t.pollsExcludedLabel} hint={t.pollsExcludedHint}>
                     <MultiSelect
                       values={config.polls_excluded_role_ids ?? []}
@@ -4083,6 +4101,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <Toggle on={Boolean(config.news_enabled)} onChange={(v) => update({ news_enabled: v })} />
               </div>
               {config.news_enabled && (
+                <>
                 <div className="grid gap-4 sm:grid-cols-2">
                   {([
                     { key: 'anime', label: t.newsAnime },
@@ -4108,6 +4127,37 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     </Field>
                   ))}
                 </div>
+                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                  <p className="mb-1 text-sm font-semibold text-white/90">{t.newsRssTitle}</p>
+                  <p className="mb-3 text-[10px] text-white/40">{t.newsRssHint}</p>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Field label={t.newsRssUrlLabel}>
+                      <input
+                        className={inputCls}
+                        placeholder="https://ejemplo.com/feed.xml"
+                        value={config.news_rss_url ?? ''}
+                        onChange={(e) => update({ news_rss_url: e.target.value.trim() || null })}
+                      />
+                    </Field>
+                    <Field label={t.newsRssChannelLabel}>
+                      {hasGuildData ? (
+                        <NiceSelect
+                          value={config.news_rss_channel_id ?? null}
+                          options={textChannelOptions}
+                          placeholder={t.pickChannel}
+                          onChange={(v) => update({ news_rss_channel_id: v || null })}
+                        />
+                      ) : (
+                        <input
+                          className={inputCls}
+                          value={config.news_rss_channel_id ?? ''}
+                          onChange={(e) => update({ news_rss_channel_id: e.target.value || null })}
+                        />
+                      )}
+                    </Field>
+                  </div>
+                </div>
+                </>
               )}
             </div>
             <HelpZone title={SECTION_HELP.news.title} commands={SECTION_HELP.news.commands} note={SECTION_HELP.news.note} />
@@ -4576,6 +4626,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   preview: t.mdPreview,
                   edit: t.mdEdit,
                   vars: t.mdVars,
+                  emoji: t.emojiServerSelect,
                 }}
               />
               <div>
@@ -4834,7 +4885,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   ) : (
                     <input
                       className={`${inputCls} w-56`}
-                      placeholder="ID del canal de voz"
+                      placeholder={t.voiceChannelIdPlaceholder}
                       value={row.channel_id}
                       onChange={(e) => {
                         const next = (config.counters ?? []).map((r, i) => (i === idx ? { ...r, channel_id: e.target.value } : r));
@@ -4920,7 +4971,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   <input
                     className={inputCls}
                     value={automodCfg.words.join(', ')}
-                    placeholder="palabra1, palabra2"
+                    placeholder={t.wordsPlaceholder}
                     onChange={(e) =>
                       update({
                         automod_config: {
@@ -5138,7 +5189,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   <Field label={t.allianceRewardsLabel} hint={t.allianceRewardsHint}>
                     <input
                       className={inputCls}
-                      placeholder="5:@RolAliado:500"
+                      placeholder={t.allianceExamplePlaceholder}
                       value={allianceCfg.rewards.map((r) => `${r.points}:${r.role_id ?? ''}:${r.money ?? ''}`).join(', ')}
                       onChange={(e) => {
                         const rewards = e.target.value
@@ -5172,7 +5223,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                       <input
                         className={inputCls}
                         value={allianceCfg.embed_success.description}
-                        placeholder="descripción"
+                        placeholder={t.descriptionPlaceholder}
                         onChange={(e) => update({ alliance_config: { ...allianceCfg, embed_success: { ...allianceCfg.embed_success, description: e.target.value } } })}
                       />
                     </div>

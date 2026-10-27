@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import MainLayout from '@/components/templates/MainLayout';
 import { PublicProfileView, type PublicProfileData } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
+import { useDict } from '@/lib/useDict';
 
 interface ProfileRow {
   id: string;
@@ -15,6 +16,7 @@ interface ProfileRow {
 }
 
 export default function ProfilePage() {
+  const t = useDict();
   const params = useParams();
   const identifier = params?.identifier;
   const rawIdentifier = Array.isArray(identifier) ? identifier[0] : identifier;
@@ -75,7 +77,7 @@ export default function ProfilePage() {
         <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
           <div className="h-14 w-14 animate-spin rounded-full border-4 border-neon-blue border-t-transparent" />
           <p className="animate-pulse text-[10px] font-black uppercase tracking-widest text-neon-blue">
-            Cargando perfil…
+            {t.common.loading}
           </p>
         </div>
       </MainLayout>
@@ -88,16 +90,16 @@ export default function ProfilePage() {
         <div className="flex min-h-[60vh] flex-col items-center justify-center gap-5 px-4 text-center">
           <h1 className="select-none text-8xl font-black text-white/10">404</h1>
           <div>
-            <h2 className="text-2xl font-black uppercase tracking-tight text-neon-pink">Perfil no encontrado</h2>
+            <h2 className="text-2xl font-black uppercase tracking-tight text-neon-pink">{t.notFoundPage.profileTitle}</h2>
             <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-white/40">
-              El usuario no existe o no pertenece a esta web.
+              {t.notFoundPage.profileBody}
             </p>
           </div>
           <Link
             href="/"
             className="rounded-xl border border-neon-pink/30 bg-neon-pink/10 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-neon-pink transition hover:bg-neon-pink hover:text-white"
           >
-            Volver al inicio
+            {t.common.backToHome}
           </Link>
         </div>
       </MainLayout>

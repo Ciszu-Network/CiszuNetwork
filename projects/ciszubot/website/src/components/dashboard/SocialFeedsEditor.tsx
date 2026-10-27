@@ -384,6 +384,7 @@ function FeedCard({
               preview: t.mdPreview,
               edit: t.mdEdit,
               vars: t.mdVars,
+              emoji: t.emojiServerSelect,
             }}
           />
         </div>

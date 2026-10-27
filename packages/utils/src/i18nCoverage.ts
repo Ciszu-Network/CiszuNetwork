@@ -24,6 +24,9 @@ const NOT_PROSE = [
   /^#[0-9a-f]{3,8}$/i,
   /^[A-Z_]{3,}$/,
   /\bclass(Name)?\b/,
+  /===|!==|&&|\|\||\.length\b/,
+  /\bhasGuildData\b|\bas Record\b/,
+  /\bcz![\w-]+/i,
   /^(px|py|pt|pb|pl|pr|m|mx|my|w|h|text|bg|border|rounded|flex|grid|gap|space|font|leading|tracking|opacity|shadow|z|top|bottom|left|right|inset|translate|scale|rotate|duration|ease|animate|hover|focus|active|group|peer|absolute|relative|fixed|sticky|hidden|block|inline|overflow|transition|transform|backdrop|blur|fill|stroke|strokeWidth|viewBox|xmlns|d|points|cx|cy|r|x|y|width|height)[-:]/,
 ];
 

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { GuildEmoji } from '@/lib/discordGuild';
+import { useClientI18n } from '@/hooks/useClientI18n';
 
 /**
  * Campos enriquecidos del dashboard:
@@ -63,15 +64,17 @@ function insertAtCursor(el: HTMLInputElement | HTMLTextAreaElement | null, text:
 }
 
 function EmojiPanel({ emojis, onPick, onClose }: { emojis: GuildEmoji[]; onPick: (e: string) => void; onClose: () => void }) {
+  const { dict } = useClientI18n();
+  const t = dict.guildPage;
   const STANDARD = ['😀', '😂', '😍', '🤝', '🎉', '⭐', '💎', '🔥', '❤️', '✅', '❌', '⚠️', '💰', '🏆', '📢', '🎫'];
   return (
     <div className="absolute right-0 top-full z-50 mt-1 w-64 rounded-xl border border-white/15 bg-[#0b0f1a]/98 p-2 shadow-2xl">
       <div className="mb-1.5 flex items-center justify-between">
-        <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Emojis del servidor</span>
+        <span className="text-[9px] font-black uppercase tracking-widest text-white/40">{t.emojiServerLabel}</span>
         <button type="button" onClick={onClose} className="text-xs text-white/40 hover:text-white">✕</button>
       </div>
       <div className="grid max-h-40 grid-cols-8 gap-1 overflow-y-auto">
-        {emojis.length === 0 && <p className="col-span-8 text-[10px] text-white/35">Sin emojis en este servidor.</p>}
+        {emojis.length === 0 && <p className="col-span-8 text-[10px] text-white/35">{t.emojiServerEmpty}</p>}
         {emojis.map((e) => (
           <button
             key={e.id}
@@ -92,7 +95,7 @@ function EmojiPanel({ emojis, onPick, onClose }: { emojis: GuildEmoji[]; onPick:
         ))}
       </div>
       <div className="mt-2 border-t border-white/10 pt-1.5">
-        <span className="text-[9px] font-black uppercase tracking-widest text-white/40">Estándar</span>
+        <span className="text-[9px] font-black uppercase tracking-widest text-white/40">{t.emojiStandard}</span>
         <div className="mt-1 grid grid-cols-8 gap-1">
           {STANDARD.map((e) => (
             <button
@@ -135,6 +138,8 @@ export function RichInput({
   emojis?: GuildEmoji[];
   className?: string;
 }) {
+  const { dict } = useClientI18n();
+  const t = dict.guildPage;
   const { ref, open, setOpen, insert } = useEmojiInsert();
   return (
     <div className={`relative ${className ?? ''}`}>
@@ -148,7 +153,7 @@ export function RichInput({
       />
       <button
         type="button"
-        title="Insertar emoji"
+        title={t.emojiInsert}
         onClick={() => setOpen((v) => !v)}
         className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-white/40 transition hover:text-neon-blue"
       >
@@ -174,6 +179,8 @@ export function RichTextarea({
   emojis?: GuildEmoji[];
   rows?: number;
 }) {
+  const { dict } = useClientI18n();
+  const t = dict.guildPage;
   const { ref, open, setOpen, insert } = useEmojiInsert();
   const wrap = (before: string, after = before) => {
     const el = ref.current as HTMLTextAreaElement | null;
@@ -217,7 +224,7 @@ export function RichTextarea({
         ))}
         <button
           type="button"
-          title="Insertar emoji"
+          title={t.emojiInsert}
           onClick={() => setOpen((v) => !v)}
           className="ml-auto text-sm text-white/40 transition hover:text-neon-blue"
         >
@@ -244,6 +251,8 @@ export function MultiSelect({
   options: { id: string; label: string }[];
   placeholder?: string;
 }) {
+  const { dict } = useClientI18n();
+  const t = dict.guildPage;
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -280,7 +289,7 @@ export function MultiSelect({
       </button>
       {open && (
         <div className="absolute left-0 top-full z-50 mt-1 max-h-52 w-full overflow-y-auto rounded-xl border border-white/15 bg-[#0b0f1a]/98 p-1.5 shadow-2xl">
-          {options.length === 0 && <p className="p-2 text-[10px] text-white/35">Sin opciones.</p>}
+          {options.length === 0 && <p className="p-2 text-[10px] text-white/35">{t.multiSelectEmpty}</p>}
           {options.map((opt) => (
             <button
               key={opt.id}
