@@ -7,30 +7,17 @@ import { langOf, tr } from '../services/i18n';
 
 const command: BotCommand = {
   name: 'premium',
-  description: 'Información y activación de CiszuBot Premium',
+  description: 'Información y estado de CiszuBot Premium',
   aliases: ['vip'],
   usage: 'cz!premium [status]',
   category: 'Información',
 
   slashCommand: new SlashCommandBuilder()
     .setName('premium')
-    .setDescription('Información y activación de CiszuBot Premium')
+    .setDescription('Información y estado de CiszuBot Premium')
     .setDefaultMemberPermissions(0)
     .addSubcommand((s) => s.setName('info').setDescription('Información de Premium'))
-    .addSubcommand((s) => s.setName('status').setDescription('Estado del premium en este servidor'))
-    .addSubcommand((s) =>
-      s
-        .setName('activate')
-        .setDescription('Activa Premium para todo el servidor (solo admins)')
-        .addStringOption((o) =>
-          o
-            .setName('plan')
-            .setDescription('Plan vinculado')
-            .setRequired(false)
-            .addChoices({ name: 'Beta Trial', value: 'beta' }, { name: 'Premium', value: 'premium' }),
-        ),
-    )
-    .addSubcommand((s) => s.setName('deactivate').setDescription('Desactiva Premium en este servidor (solo admins)')),
+    .addSubcommand((s) => s.setName('status').setDescription('Estado del premium en este servidor')),
 
   async execute(message, args) {
     const L = await langOf(message);

@@ -597,13 +597,13 @@ export const COMMANDS: CommandInfo[] = [
   },
   {
     name: 'premium',
-    description: 'Información y activación de CiszuBot Premium',
+    description: 'Información y estado de CiszuBot Premium',
     aliases: ["vip"],
-    usage: 'cz!premium [activate plan | deactivate | status]',
+    usage: 'cz!premium [status]',
     category: 'Información',
     icon: 'info',
     premium: false,
-    tags: ["información","premium","informacion","activacion","ciszubot"],
+    tags: ["información","premium","informacion","estado","ciszubot"],
   },
   {
     name: 'serverinfo',
