@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { InfoHero, useToast, FlagIcon, type InfoTheme } from '@ciszu/ui';
+import { InfoHero, SupportPolicy, useToast, FlagIcon, type InfoTheme } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { SOCIALS } from '@/config/navigation';
 import Link from 'next/link';
@@ -13,6 +13,7 @@ import { useDict } from '@/components/providers/I18nProvider';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
+import { submitSupportTicket } from '@ciszunetwork/utils/support-client';
 
 const I = {
   // Icono de soporte: boya salvavidas circular (Lucide life-buoy), no auriculares.
@@ -144,39 +145,34 @@ export default function SupportPage() {
       return;
     }
 
-    const activeTicketsCount = tickets.filter(t => t.status !== 'closed').length;
+    const activeTicketsCount = tickets.filter(t => ['pending','open','in_progress'].includes(String(t.status ?? ''))).length;
     if (activeTicketsCount >= 3) {
       showToast('Límite excedido: Máximo 3 tickets activos permitidos.', 'error');
       return;
     }
 
     setSubmitting(true);
-    const { data, error } = await supabase.from('ciszukoantony_tickets').insert([{
-      user_id: user.id,
-      display_name: formData.displayName,
-      username: formData.username,
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      email: formData.email,
-      region: formData.region,
-      contact_type: formData.contactType,
-      phone: formData.phone,
-      device: formData.device,
-      category: formData.category,
-      sub_category: formData.subCategory,
-      message: formData.message,
-      status: 'pending'
-    }]).select();
-
-    if (error) {
-      showToast('Falla en la transmisión: ' + error.message, 'error');
-    } else {
-      showToast('Ticket sincronizado. ID: #' + data[0].id.slice(0, 8).toUpperCase(), 'success');
-      setFormData({ ...formData, message: '' });
-      fetchUserAndTickets();
-      setActiveTab('list');
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session.session?.access_token;
+      if (!token) {
+        setIsAuthWarningOpen(true);
+        return;
+      }
+      const result = await submitSupportTicket(formData, token);
+      if (!result.ok) {
+        showToast(`Falla en la transmisión: ${result.error ?? 'db_error'}`, 'error');
+      } else {
+        showToast(`Ticket sincronizado. ID: #${result.id}`, 'success');
+        setFormData({ ...formData, message: '' });
+        fetchUserAndTickets();
+        setActiveTab('list');
+      }
+    } catch {
+      showToast('Falla en la transmisión.', 'error');
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const handleStatusUpdate = async (id: string, status: string) => {
@@ -219,6 +215,8 @@ export default function SupportPage() {
           subtitle={dict.support.subtitle}
           theme={THEME}
         />
+
+        <SupportPolicy mode="support" siteName="Ciszuko Antony" />
 
         <div className="flex justify-center gap-4 pt-8">
             <button

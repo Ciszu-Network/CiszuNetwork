@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useT } from '@/hooks/useT';
@@ -10,7 +10,7 @@ import { useAppStore } from '@/store';
 import Link from 'next/link';
 import { FlagVE } from '@/components/atoms/FlagVE';
 import { usePageTitle } from '@/lib/usePageTitle';
-import { useToast } from '@ciszu/ui';
+import { ContactForm, SupportPolicy, useToast } from '@ciszu/ui';
 
 // --- Shared Icon Library ---
 const I = {
@@ -127,6 +127,11 @@ export default function ContactPage() {
              </p>
           </div>
         </motion.header>
+
+        <div className="mx-auto max-w-3xl">
+          <ContactForm site="MuzicMania" />
+          <SupportPolicy mode="contact" siteName="MuzicMania" className="mt-4" />
+        </div>
 
         {/* --- MAIN CONTACT GRID --- */}
         <motion.div initial="hidden" animate="visible" variants={sectionVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">

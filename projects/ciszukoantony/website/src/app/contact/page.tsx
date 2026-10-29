@@ -6,7 +6,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
 import { useDict } from '@/components/providers/I18nProvider';
-import { InfoHero, useToast, type InfoTheme } from '@ciszu/ui';
+import { ContactForm, InfoHero, SupportPolicy, useToast, type InfoTheme } from '@ciszu/ui';
 import Link from 'next/link';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
@@ -169,6 +169,11 @@ export default function ContactPage() {
           subtitle={dict.contact.heroSubtitle}
           theme={THEME}
         />
+
+        <PageReveal className="relative mx-auto max-w-3xl">
+          <ContactForm site="Ciszuko Antony" />
+          <SupportPolicy mode="contact" siteName="Ciszuko Antony" className="mt-4" />
+        </PageReveal>
 
         {/* --- MAIN CONTACT GRID --- */}
         <motion.div initial="hidden" animate="visible" variants={sectionVariants} className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">

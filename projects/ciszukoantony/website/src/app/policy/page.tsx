@@ -1,6 +1,6 @@
 'use client';
 
-import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
+import { LegalDocument, SupportPolicy, type LegalArticle, type InfoTheme } from '@ciszu/ui';
 import { useDict } from '@/components/providers/I18nProvider';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -113,6 +113,10 @@ export default function PolicyPage() {
           theme={THEME}
         />
       </PageReveal>
+
+      <div className="mx-auto max-w-4xl px-4 pb-10">
+        <SupportPolicy mode="support" siteName="Ciszuko Antony" />
+      </div>
 
       <QuickDocks />
     </div>

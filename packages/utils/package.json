@@ -20,7 +20,10 @@
     "./recovery-client": "./src/recoveryClient.ts",
     "./two-factor": "./src/twoFactor.ts",
     "./i18n-audit": "./src/i18nAudit.ts",
-    "./i18n-coverage": "./src/i18nCoverage.ts"
+    "./i18n-coverage": "./src/i18nCoverage.ts",
+    "./contact-support": "./src/contactSupport.ts",
+    "./support-server": "./src/supportServer.ts",
+    "./support-client": "./src/supportClient.ts"
   },
   "scripts": {
     "lint": "tsc --noEmit",
@@ -28,6 +31,7 @@
   },
   "dependencies": {
     "@logtail/pino": "^0.5.8",
+    "@supabase/supabase-js": "^2.116.0",
     "@sinclair/typebox": "^0.34.52",
     "pino": "^9.14.0",
     "pino-pretty": "^13.1.3",

@@ -5,7 +5,7 @@ import { useT } from '@/hooks/useT';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { LegalCiszuLink } from '@ciszu/ui';
+import { LegalCiszuLink, SupportPolicy } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
@@ -137,6 +137,8 @@ export default function TermsPage() {
 
           </div>
         </motion.div>
+
+        <SupportPolicy mode="support" siteName="MuzicMania" />
 
         <QuickDocks />
 

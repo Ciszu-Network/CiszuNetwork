@@ -279,6 +279,12 @@ export type { Ac3SectionProps } from './Ac3Section';
 export { SiteSearch } from './SiteSearch';
 export type { SiteSearchProps, SearchPageItem, SearchUserItem } from './SiteSearch';
 
+export { SupportPolicy } from './SupportPolicy';
+export type { SupportPolicyProps } from './SupportPolicy';
+
+export { ContactForm } from './ContactForm';
+export type { ContactFormProps } from './ContactForm';
+
 export { BillingPanel } from './BillingPanel';
 export type { BillingPanelProps } from './BillingPanel';
 

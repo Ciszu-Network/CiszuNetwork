@@ -5,6 +5,7 @@ import LegalPage from '@/components/LegalPage';
 import { useClientI18n } from '@/hooks/useClientI18n';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { PREMIUM_COPY } from '@/lib/premiumContent';
+import { SupportPolicy } from '@ciszu/ui';
 
 export default function TermsPage() {
   const { dict: t, lang } = useClientI18n();
@@ -23,6 +24,9 @@ export default function TermsPage() {
           </Link>
         </div>
       </section>
+      <div className="mx-auto max-w-3xl px-4 pb-10">
+        <SupportPolicy mode="support" siteName="CiszuBot" lang={lang.startsWith('en') ? 'en' : 'es'} />
+      </div>
       <QuickDocks />
     </>
   );

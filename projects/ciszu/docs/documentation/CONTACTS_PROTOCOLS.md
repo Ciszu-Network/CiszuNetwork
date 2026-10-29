@@ -1,8 +1,8 @@
-﻿# CONTACTS_PROTOCOLS — Protocolos de Contacto (redes, números, correos, nombres)
+# CONTACTS_PROTOCOLS — Protocolos de Contacto (redes, números, correos, nombres)
 
-Versión: 2.1.0
-Actualización: 2026-10-23
-Identificador: CONTACTS_PROTOCOLS_V2.1.0_2026_09_27_ciszunetwork
+Versión: 2.2.0
+Actualización: 2026-10-27
+Identificador: CONTACTS_PROTOCOLS_V2.2.0_2026_10_27_ciszunetwork
 
 > Directorio de contacto oficial de Ciszu Network / Ciszuko Antony. Los valores provienen de
 > las configs reales de las webs (`navigation.tsx`, páginas de soporte/contacto). Mantener
@@ -188,7 +188,15 @@ Para añadir un contacto nuevo, rellenar esta ficha en la tabla correspondiente:
 | ¿Dónde están los tokens de los servicios? | `VAULT_SYSTEM.md`, nunca aquí |
 | ¿Quién responde WhatsApp? | Ciszuko Antony (soporte directo) |
 
-## 16. Checklist de mantenimiento de contactos
+## 16. Contacto vs Soporte (formularios web)
+
+- **Contacto**: formulario público. No crea ticket ni escribe en la base de datos. El contenido se envía por email al buzón de la web (Ciszu Network o Ciszuko Antony según corresponda) y el usuario recibe una copia con referencia. Las respuestas se gestionan como hilo manual desde el correo.
+- **Soporte**: requiere cuenta autenticada. Crea un ticket en la tabla de la web con UUID único (CZN-, CZB-, CZA-, MZM- + fragmento). Límite de 3 tickets activos por usuario; el servidor valida el límite, no solo la UI. El ticket se guarda en DB y se notifica al buzón interno y al usuario con ID, fecha, categoría y texto.
+- **Ciclo de vida**: pending → open/in_progress → completed/not_completed/cancelled. Al cerrar, los correos posteriores se ignoran. STAFFCON permite resumen, búsqueda por @username, cambio de estado y borrado sin historial.
+- **Plantillas**: los correos internos incluyen todos los campos del formulario, cuenta, ID, email, tickets activos/límite y posición. La copia al usuario incluye referencia, asunto, mensaje y enlace a la web.
+- **Privacidad**: no se incluyen secretos ni datos de pago. El buzón interno por web se configura en SUPPORT_SITES (@ciszunetwork/utils/contact-support).
+
+## 17. Checklist de mantenimiento de contactos
 
 - [ ] URLs de §2 válidas (sin 404, sin duplicados).
 - [ ] Mapeo §6 alineado con servicios reales (sin servicios dados de baja).
@@ -196,12 +204,12 @@ Para añadir un contacto nuevo, rellenar esta ficha en la tabla correspondiente:
 - [ ] Configs de webs apuntando a las URLs de este doc.
 - [ ] Documento cerrado con revisión y refs vigentes.
 
-## 17. Nomenclatura y formatos de contacto
+## 18. Nomenclatura y formatos de contacto
 
 - **WhatsApp**: formato `https://wa.me/<CódigoPaís><Número>` (ej. `+58` → `584...`), sin `+`, espacios ni guiones.
 - **Email**: siempre minúsculas; el corporativo es el único para asuntos formales.
 - **Discord**: las invitaciones pueden caducar — revisarlas si el enlace deja de funcionar.
 - **Telegram**: `t.me/<handle>`; distinguir canal vs chat personal por el prefijo del handle.
 
-_Última revisión: 23 oct 2026._ Relacionado: `ONLINE_SERVICES_SYSTEM.md`, `VAULT_SYSTEM.md`,
+_Última revisión: 27 oct 2026._ Relacionado: `ONLINE_SERVICES_SYSTEM.md`, `VAULT_SYSTEM.md`,
 `SOCIAL_NETWORK_PROTOCOLS.md`, `PROJECTS_SYSTEM.md`, `AGENTS.md`.

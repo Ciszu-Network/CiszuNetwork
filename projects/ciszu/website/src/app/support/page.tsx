@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import Link from 'next/link';
 import { Mail, MessageCircle, ExternalLink, LifeBuoy } from "lucide-react";
-import { SocialIcon, SOCIAL_COLORS, InfoHero, type InfoTheme } from '@ciszu/ui';
+import { SocialIcon, SOCIAL_COLORS, InfoHero, SupportPolicy, type InfoTheme } from '@ciszu/ui';
 import { CISZU_NETWORK } from "@/config/site";
 import QuickDocks from "@/components/molecules/QuickDocks";
 import PageAmbience from "@/components/layout/PageAmbience";
@@ -168,7 +168,7 @@ export default function SupportPage() {
       return;
     }
 
-    const activeTicketsCount = tickets.filter(t => t.status !== 'closed').length;
+    const activeTicketsCount = tickets.filter(t => ['pending','open','in_progress'].includes(String(t.status ?? ''))).length;
     if (activeTicketsCount >= 3) {
       showToast(t.supportPage.limitError, 'error');
       return;
@@ -249,6 +249,8 @@ export default function SupportPage() {
           kicker={t.supportPage.heroKicker}
           theme={THEME}
         />
+
+        <SupportPolicy mode="support" siteName="Ciszu Network" />
 
         {/* TABS NAVEGACIÓN */}
         <div className="flex justify-center gap-4 pt-8">

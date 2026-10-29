@@ -6,7 +6,7 @@ import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useAppStore } from '@/store';
-import { InfoHero, useToast, type InfoTheme } from '@ciszu/ui';
+import { InfoHero, SupportPolicy, useToast, type InfoTheme } from '@ciszu/ui';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import Link from 'next/link';
@@ -337,6 +337,10 @@ export default function ContactPage() {
             </div>
           </form>
         </motion.section>
+
+        <div className="mx-auto max-w-3xl">
+          <SupportPolicy mode="contact" siteName="Ciszu Network" />
+        </div>
 
         {/* --- OPERATIONAL INFO --- */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8">

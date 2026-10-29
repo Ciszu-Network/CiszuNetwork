@@ -8,13 +8,14 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { supabase } from "@/config/supabase";
 import AuthWarningModal from "@/components/shared/AuthWarningModal";
 import { useAppStore } from '@/store';
-import { InfoHero, useToast, Button } from '@ciszu/ui';
+import { InfoHero, SupportPolicy, useToast, Button } from '@ciszu/ui';
 import { FlagIcon } from '@ciszu/ui';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useClientI18n } from '@/hooks/useClientI18n';
+import { submitSupportTicket } from '@ciszunetwork/utils/support-client';
 
 const SUPPORT_EMAIL = 'ciszunetwork@gmail.com';
 
@@ -154,39 +155,34 @@ export default function SupportPage() {
       return;
     }
 
-    const activeTicketsCount = tickets.filter(t => t.status !== 'closed').length;
+    const activeTicketsCount = tickets.filter(t => ['pending','open','in_progress'].includes(String(t.status ?? ''))).length;
     if (activeTicketsCount >= 3) {
       showToast('Límite excedido: Máximo 3 tickets activos permitidos.', 'error');
       return;
     }
 
     setSubmitting(true);
-    const { data, error } = await supabase.from('ciszubot_tickets').insert([{
-      user_id: user.id,
-      display_name: formData.displayName,
-      username: formData.username,
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      email: formData.email,
-      region: formData.region,
-      contact_type: formData.contactType,
-      phone: formData.phone,
-      device: formData.device,
-      category: formData.category,
-      sub_category: formData.subCategory,
-      message: formData.message,
-      status: 'pending'
-    }]).select();
-
-    if (error) {
-      showToast('Falla en la transmisión: ' + error.message, 'error');
-    } else {
-      showToast('Ticket sincronizado. ID: #' + data[0].id.slice(0, 8).toUpperCase(), 'success');
-      setFormData({ ...formData, message: '' });
-      fetchUserAndTickets();
-      setActiveTab('list');
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session.session?.access_token;
+      if (!token) {
+        setIsAuthWarningOpen(true);
+        return;
+      }
+      const result = await submitSupportTicket(formData, token);
+      if (!result.ok) {
+        showToast(`Falla en la transmisión: ${result.error ?? 'db_error'}`, 'error');
+      } else {
+        showToast(`Ticket sincronizado. ID: #${String(result.id).slice(0, 8).toUpperCase()}`, 'success');
+        setFormData({ ...formData, message: '' });
+        fetchUserAndTickets();
+        setActiveTab('list');
+      }
+    } catch {
+      showToast('Falla en la transmisión.', 'error');
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const handleStatusUpdate = async (id: string, status: string) => {
@@ -233,6 +229,8 @@ export default function SupportPage() {
             theme={THEME}
           />
         </PageReveal>
+
+        <SupportPolicy mode="support" siteName="CiszuBot" />
 
         {/* TABS NAVEGACIÓN */}
         <div className="flex justify-center gap-4 pt-8">
@@ -486,7 +484,7 @@ export default function SupportPage() {
                                    </div>
                                 </div>
                                 <div className="flex md:flex-col gap-3 shrink-0">
-                                   {ticket.status !== 'closed' && (
+                                   {['pending','open','in_progress'].includes(String(ticket.status ?? '')) && (
                                      <button onClick={() => handleStatusUpdate(ticket.id, 'closed')} className="flex-1 md:w-full px-6 py-3 bg-white/5 rounded-2xl text-[9px] font-black uppercase text-white hover:bg-neon-green hover:text-black transition-all flex items-center justify-center gap-2">
                                         <div className="w-3 h-3">{I.close}</div> TERMINAR
                                      </button>

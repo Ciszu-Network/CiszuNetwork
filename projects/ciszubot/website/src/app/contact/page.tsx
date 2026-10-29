@@ -7,7 +7,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useClientI18n } from '@/hooks/useClientI18n';
 import { useAppStore } from '@/store';
-import { InfoHero, useToast } from '@ciszu/ui';
+import { ContactForm, InfoHero, SupportPolicy, useToast } from '@ciszu/ui';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
@@ -165,6 +165,11 @@ export default function ContactPage() {
             subtitle="Núcleo de Asistencia y Canales de Comunicación"
             theme={THEME}
           />
+        </PageReveal>
+
+        <PageReveal className="relative mx-auto max-w-3xl">
+          <ContactForm site="CiszuBot" />
+          <SupportPolicy mode="contact" siteName="CiszuBot" className="mt-4" />
         </PageReveal>
 
         {/* --- MAIN CONTACT GRID --- */}
