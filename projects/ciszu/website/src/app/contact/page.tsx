@@ -145,10 +145,36 @@ export default function ContactPage() {
   const { toast } = useToast();
   const [selectedDiscord, setSelectedDiscord] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [contactForm, setContactForm] = useState({ name: '', email: '', subject: '', message: '', website: '' });
+  const [contactBusy, setContactBusy] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const submitContact = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (contactBusy) return;
+    setContactBusy(true);
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(contactForm),
+      });
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; email_sent?: boolean };
+      if (!res.ok || !json.ok) {
+        toast(t.contactPage.formError, 'error');
+        return;
+      }
+      toast(t.contactPage.formOk, 'success');
+      setContactForm({ name: '', email: '', subject: '', message: '', website: '' });
+    } catch {
+      toast(t.contactPage.formError, 'error');
+    } finally {
+      setContactBusy(false);
+    }
+  };
 
   const sectionVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -227,6 +253,90 @@ export default function ContactPage() {
              </div>
           </div>
         </motion.div>
+
+        {/* --- CONTACT FORM --- */}
+        <motion.section
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          variants={sectionVariants}
+          className="mx-auto max-w-3xl"
+        >
+          <form onSubmit={(event) => void submitContact(event)} className="rounded-[2.5rem] border border-white/10 bg-black/40 p-6 md:p-10">
+            <h2 className="font-header text-3xl font-black uppercase italic tracking-tighter text-white">{t.contactPage.formTitle}</h2>
+            <p className="mt-2 text-sm text-white/50">{t.contactPage.formHint}</p>
+            <div className="mt-6 grid gap-4 sm:grid-cols-2">
+              <label className="block text-[10px] font-black uppercase tracking-widest text-white/45">
+                {t.contactPage.formName}
+                <input
+                  required
+                  minLength={2}
+                  maxLength={120}
+                  value={contactForm.name}
+                  onChange={(event) => setContactForm({ ...contactForm, name: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-black/30 px-3.5 py-2.5 text-sm text-white outline-none focus:border-brand-light"
+                />
+              </label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-white/45">
+                {t.contactPage.formEmail}
+                <input
+                  required
+                  type="email"
+                  maxLength={254}
+                  value={contactForm.email}
+                  onChange={(event) => setContactForm({ ...contactForm, email: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-black/30 px-3.5 py-2.5 text-sm text-white outline-none focus:border-brand-light"
+                />
+              </label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-white/45 sm:col-span-2">
+                {t.contactPage.formSubject}
+                <input
+                  required
+                  minLength={3}
+                  maxLength={160}
+                  value={contactForm.subject}
+                  onChange={(event) => setContactForm({ ...contactForm, subject: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-black/30 px-3.5 py-2.5 text-sm text-white outline-none focus:border-brand-light"
+                />
+              </label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-white/45 sm:col-span-2">
+                {t.contactPage.formMessage}
+                <textarea
+                  required
+                  minLength={10}
+                  maxLength={5000}
+                  rows={5}
+                  value={contactForm.message}
+                  onChange={(event) => setContactForm({ ...contactForm, message: event.target.value })}
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-black/30 px-3.5 py-2.5 text-sm text-white outline-none focus:border-brand-light"
+                />
+              </label>
+              <input
+                tabIndex={-1}
+                autoComplete="off"
+                value={contactForm.website}
+                onChange={(event) => setContactForm({ ...contactForm, website: event.target.value })}
+                className="hidden"
+                aria-hidden="true"
+              />
+            </div>
+            <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-[10px] text-white/35">
+                {t.contactPage.formPrivacy}{' '}
+                <Link href="/privacy" className="underline hover:text-white">
+                  {t.footer.privacy}
+                </Link>
+              </p>
+              <button
+                type="submit"
+                disabled={contactBusy}
+                className="rounded-xl bg-gradient-to-r from-brand-light to-brand-accent px-6 py-3 font-header text-[10px] font-black uppercase tracking-widest text-white transition hover:scale-[1.02] disabled:opacity-50"
+              >
+                {contactBusy ? t.contactPage.formSending : t.contactPage.formSend}
+              </button>
+            </div>
+          </form>
+        </motion.section>
 
         {/* --- OPERATIONAL INFO --- */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="grid grid-cols-1 md:grid-cols-2 gap-8">

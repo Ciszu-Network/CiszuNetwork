@@ -175,32 +175,35 @@ export default function SupportPage() {
     }
 
     setSubmitting(true);
-    const { data, error } = await supabase.from('ciszunetwork_tickets').insert([{
-      user_id: user.id,
-      display_name: formData.displayName,
-      username: formData.username,
-      first_name: formData.firstName,
-      last_name: formData.lastName,
-      email: formData.email,
-      region: formData.region,
-      contact_type: formData.contactType,
-      phone: formData.phone,
-      device: formData.device,
-      category: formData.category,
-      sub_category: formData.subCategory,
-      message: formData.message,
-      status: 'pending'
-    }]).select();
-
-    if (error) {
-      showToast(t.supportPage.syncError + error.message, 'error');
-    } else {
-      showToast(t.supportPage.syncOk + data[0].id.slice(0, 8).toUpperCase(), 'success');
-      setFormData({ ...formData, message: '' });
-      fetchUserAndTickets();
-      setActiveTab('list');
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session.session?.access_token;
+      if (!token) {
+        setIsAuthWarningOpen(true);
+        return;
+      }
+      const res = await fetch('/api/support/ticket', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; id?: string; error?: string; email_sent?: boolean };
+      if (!res.ok || !json.ok || !json.id) {
+        showToast(`${t.supportPage.syncError}${json.error ?? 'db_error'}`, 'error');
+      } else {
+        showToast(`${t.supportPage.syncOk}${String(json.id).slice(0, 8).toUpperCase()}`, 'success');
+        setFormData({ ...formData, message: '' });
+        fetchUserAndTickets();
+        setActiveTab('list');
+      }
+    } catch {
+      showToast(t.supportPage.syncError, 'error');
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const handleStatusUpdate = async (id: string, status: string) => {
