@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Icon } from '@ciszu/ui';
+import { Icon, PaymentTrustBadges } from '@ciszu/ui';
 import {
   CURRENCIES,
   PREMIUM_PLANS,
@@ -375,27 +375,11 @@ export default function PremiumClient({ beta, hasBotInServer }: PremiumClientPro
           <div className={`rounded-3xl border p-6 ${THEME.border} ${THEME.card}`}>
             <h2 className={`text-[11px] font-black uppercase tracking-[0.3em] ${THEME.accent}`}>{c.trust}</h2>
             <p className="mt-2 text-sm text-white/50">{c.trustBody}</p>
-            <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-white/65">
-              {[
-                { label: c.trustStripe, href: 'https://stripe.com/legal' },
-                { label: c.trustPaypal, href: 'https://www.paypal.com/legalhub/home' },
-                { label: c.trustMercado, href: 'https://www.mercadopago.com/legal' },
-                { label: c.trustBank, href: '/terms' },
-                { label: c.trustSecurity, href: 'https://www.rfc-editor.org/rfc/rfc8446' },
-                { label: c.trustPci, href: 'https://www.pcisecuritystandards.org/' },
-                { label: c.trustSupport, href: '/support' },
-              ].map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith('http') ? '_blank' : undefined}
-                  rel={item.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/20 px-3 py-2 transition hover:border-emerald-400/40 hover:text-white"
-                >
-                  <Icon name="shield" size={13} className="text-emerald-300" /> {item.label}
-                </a>
-              ))}
-            </div>
+            <PaymentTrustBadges
+              lang={lang.startsWith('en') ? 'en' : 'es'}
+              showHeader={false}
+              className="mt-4"
+            />
             <div className="mt-4 flex flex-wrap gap-2">
               <Link href="/terms" className="rounded-full border border-white/10 px-3 py-1.5 text-[10px] font-bold text-white/60 hover:text-white">{c.viewTerms}</Link>
               <Link href="/privacy" className="rounded-full border border-white/10 px-3 py-1.5 text-[10px] font-bold text-white/60 hover:text-white">{c.viewPrivacy}</Link>

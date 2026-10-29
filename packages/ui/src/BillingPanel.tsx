@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Icon } from './Icon';
+import { PaymentTrustBadges } from './PaymentTrustBadges';
 const CURRENCIES = [
   { code: 'USD', label: 'Dólar estadounidense' },
   { code: 'EUR', label: 'Euro' },
@@ -26,6 +27,8 @@ export interface BillingPanelProps {
   planName?: string;
   remaining?: number;
   accountApi?: string | null;
+  showRemaining?: boolean;
+  showTrustBadges?: boolean;
 }
 
 const COPY = {
@@ -107,6 +110,8 @@ export function BillingPanel({
   planName,
   remaining = 0,
   accountApi = '/api/premium/account',
+  showRemaining = true,
+  showTrustBadges = true,
 }: BillingPanelProps) {
   const t = COPY[lang];
   const [currency, setCurrency] = useState<CurrencyCode>('USD');
@@ -164,7 +169,9 @@ export function BillingPanel({
           <p className="text-[10px] font-black uppercase tracking-widest text-muted">{t.currentPlan}</p>
           <p className="mt-2 font-header text-2xl font-black text-ink">{effectivePlan ?? t.beta}</p>
           <p className="mt-1 text-xs text-muted">{siteName} · {site}</p>
-          <p className="mt-4 text-sm font-bold text-ink">{effectiveRemaining} {t.remaining}</p>
+          {showRemaining && (
+            <p className="mt-4 text-sm font-bold text-ink">{effectiveRemaining} {t.remaining}</p>
+          )}
           <Link
             href={premiumHref}
             className="mt-4 inline-flex rounded-xl bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink px-4 py-2.5 font-header text-[10px] font-black uppercase tracking-widest text-white"
@@ -197,7 +204,8 @@ export function BillingPanel({
             <p className="text-[10px] font-black uppercase tracking-widest text-muted">{t.accountPremium}</p>
             <p className="mt-1 text-xs text-muted">{t.accountPremiumHint}</p>
             <p className="mt-2 text-xs font-bold text-ink">
-              {t.plan}: {account?.plan ?? t.beta} · {account?.remaining ?? 0} {t.remainingShort}
+              {t.plan}: {account?.plan ?? t.beta}
+              {showRemaining ? ` · ${account?.remaining ?? 0} ${t.remainingShort}` : ''}
             </p>
           </div>
           <button
@@ -281,6 +289,8 @@ export function BillingPanel({
       <p className="rounded-xl border border-amber-400/20 bg-amber-400/5 px-4 py-3 text-xs text-amber-200">
         {t.refund}
       </p>
+
+      {showTrustBadges && <PaymentTrustBadges lang={lang} compact />}
     </section>
   );
 }

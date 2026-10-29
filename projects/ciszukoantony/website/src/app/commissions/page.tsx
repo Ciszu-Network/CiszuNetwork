@@ -11,6 +11,7 @@ import {
   InfoSteps,
   Modal,
   Icon,
+  PaymentTrustBadges,
   type InfoTheme,
 } from '@ciszu/ui';
 import { usePageTitle } from '@/lib/usePageTitle';
@@ -492,6 +493,8 @@ export default function CommissionsPage() {
       >
         {selected ? <ServiceDetail service={selected} /> : null}
       </Modal>
+
+      <PaymentTrustBadges className="mx-auto mt-12 max-w-4xl" />
 
       <QuickDocks />
     </div>

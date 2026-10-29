@@ -3,7 +3,7 @@
 import { useClientI18n } from "@/hooks/useClientI18n";
 
 import QuickDocks from "@/components/molecules/QuickDocks";
-import { Icon, InfoHero, KoFiEmbed } from '@ciszu/ui';
+import { Icon, InfoHero, KoFiEmbed, PaymentTrustBadges } from '@ciszu/ui';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
@@ -44,7 +44,7 @@ const METHODS = [
 const SUPPORT_EMAIL = 'ciszunetwork@gmail.com';
 
 export default function DonatePage() {
-  const { dict: t } = useClientI18n();
+  const { lang, dict: t } = useClientI18n();
   return (
     <div className="relative min-h-screen pt-24 pb-20 px-4">
       <PageAmbience />
@@ -114,6 +114,8 @@ export default function DonatePage() {
         </div>
       </div>
       </div>
+
+      <PaymentTrustBadges lang={lang.startsWith('en') ? 'en' : 'es'} className="mx-auto mt-12 max-w-4xl" />
 
       <QuickDocks />
     </div>

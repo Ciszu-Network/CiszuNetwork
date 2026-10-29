@@ -1,6 +1,6 @@
 'use client';
 
-import { KoFiEmbed, InfoHero, type InfoTheme } from "@ciszu/ui";
+import { KoFiEmbed, InfoHero, PaymentTrustBadges, type InfoTheme } from "@ciszu/ui";
 import type { DonationMethod } from "@ciszunetwork/payments";
 import DonateButtons from "./DonateButtons";
 import QuickDocks from "@/components/molecules/QuickDocks";
@@ -72,6 +72,8 @@ export default function DonateContent({ methods }: { methods: DonationMethod[] }
           </p>
         </div>
       </PageReveal>
+
+      <PaymentTrustBadges className="mx-auto mt-12 max-w-4xl" />
 
       <QuickDocks />
     </div>

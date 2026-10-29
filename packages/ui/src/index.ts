@@ -288,5 +288,8 @@ export type { ContactFormProps } from './ContactForm';
 export { BillingPanel } from './BillingPanel';
 export type { BillingPanelProps } from './BillingPanel';
 
+export { PaymentTrustBadges } from './PaymentTrustBadges';
+export type { PaymentTrustBadgesProps } from './PaymentTrustBadges';
+
 export { PublicProfileView } from './PublicProfileView';
 export type { PublicProfileData, PublicProfileViewProps } from './PublicProfileView';

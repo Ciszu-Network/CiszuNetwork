@@ -10,6 +10,7 @@ export const I = {
   info:        <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>,
   contact:     <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
   support:     <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="2" y1="12" x2="8" y2="12"/><line x1="16" y1="12" x2="22" y2="12"/></svg>,
+  premium:     <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}><path d="m12 3 2.4 5.2 5.6.7-4.1 4 1 5.6-4.9-2.7-4.9 2.7 1-5.6-4.1-4 5.6-.7z"/></svg>,
   search:      <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>,
   close:       <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}><path d="M18 6 6 18m0-12 12 12"/></svg>,
   menu:        <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>,
@@ -86,6 +87,7 @@ export const COMMUNITY_LINKS = [
   { name: 'Credits',       href: '/credits',       icon: I.credits,  keywords: ['creditos', 'contribuciones', 'agradecimientos', 'handshake', 'legal'] },
   { name: 'Contact',       href: '/contact',       icon: I.contact,    keywords: ['contacto', 'email', 'mensaje', 'soporte', 'support', 'hablar'] },
   { name: 'Support',        href: '/support',       icon: I.support,    keywords: ['ayuda', 'soporte', 'support', 'tecnico', 'technical', 'asistencia'] },
+  { name: 'Premium',        href: '/premium',       icon: I.premium,    keywords: ['premium', 'plus', 'pro', 'suscripcion', 'subscription', 'plan'] },
 ];
 
 export const LEGAL_LINKS = [

@@ -2,7 +2,7 @@
 
 import QuickDocks from "@/components/molecules/QuickDocks";
 import { useDict } from '@/components/providers/I18nProvider';
-import { Icon, InfoHero, KoFiEmbed, type InfoTheme } from '@ciszu/ui';
+import { Icon, InfoHero, KoFiEmbed, PaymentTrustBadges, type InfoTheme } from '@ciszu/ui';
 import PageAmbience from '@/components/layout/PageAmbience';
 import PageReveal from '@/components/layout/PageReveal';
 
@@ -107,6 +107,8 @@ export default function DonatePage() {
           </p>
         </div>
       </PageReveal>
+
+      <PaymentTrustBadges className="mx-auto mt-12 max-w-4xl" />
 
       <QuickDocks />
     </div>

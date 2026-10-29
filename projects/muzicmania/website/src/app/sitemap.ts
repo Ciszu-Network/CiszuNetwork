@@ -23,6 +23,7 @@ const ROUTES = [
   'library',
   'license',
   'play',
+  'premium',
   'policy',
   'profile',
   'reviews',

@@ -3,6 +3,7 @@
 import { AccountSettingsPanel, BillingPanel } from '@ciszu/ui';
 import { useT } from '@/hooks/useT';
 import { supabase } from '@/config/supabase';
+import { useAppStore } from '@/store';
 
 /**
  * {t.pages.misc.settingsTitle} (CISZU ID) — paridad entre webs.
@@ -11,6 +12,7 @@ import { supabase } from '@/config/supabase';
  */
 export default function SettingsPage() {
   const t = useT();
+  const lang = useAppStore((state: { lang: string }) => state.lang);
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 relative overflow-hidden">
       <div className="max-w-2xl mx-auto space-y-6">
@@ -21,7 +23,15 @@ export default function SettingsPage() {
           </p>
         </header>
         <AccountSettingsPanel supabase={supabase} site="muzicmania" siteName="MuzicMania" />
-        <BillingPanel site="muzicmania" siteName="MuzicMania" premiumHref="https://ciszubot.vercel.app/premium" accountApi={null} />
+        <BillingPanel
+          site="muzicmania"
+          siteName="MuzicMania"
+          premiumHref="/premium"
+          planName="Free"
+          accountApi={null}
+          showRemaining={false}
+          lang={lang.startsWith('en') ? 'en' : 'es'}
+        />
       </div>
     </div>
   );

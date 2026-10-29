@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useT } from '@/hooks/useT';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
-import { Icon, KoFiEmbed } from '@ciszu/ui';
+import { Icon, KoFiEmbed, PaymentTrustBadges } from '@ciszu/ui';
+import { useAppStore } from '@/store';
 
 /**
  * Página de donaciones de MuzicMania.
@@ -61,6 +62,7 @@ const METHODS: Method[] = [
 
 export default function DonationPage() {
   const t = useT();
+  const lang = useAppStore((state: { lang: string }) => state.lang);
   return (
     <MainLayout>
       <div className="relative min-h-screen px-4 pb-24 pt-24">
@@ -147,6 +149,11 @@ export default function DonationPage() {
             </Link>
           </div>
         </div>
+
+        <PaymentTrustBadges
+          lang={lang.startsWith('en') ? 'en' : 'es'}
+          className="mx-auto mt-12 max-w-4xl"
+        />
 
         <QuickDocks />
       </div>
