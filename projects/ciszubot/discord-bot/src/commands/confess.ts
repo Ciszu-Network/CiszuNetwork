@@ -28,6 +28,9 @@ const command: BotCommand = {
     .setName('confess')
     .setDescription('Publica una confesión anónima o pública')
     .addStringOption((option) =>
+      option.setName('mensaje').setDescription('El mensaje que quieres confesar').setRequired(true),
+    )
+    .addStringOption((option) =>
       option
         .setName('modo')
         .setDescription('Anónima o pública')
@@ -36,9 +39,6 @@ const command: BotCommand = {
           { name: 'Anónima', value: 'anonymous' },
           { name: 'Pública', value: 'public' },
         ),
-    )
-    .addStringOption((option) =>
-      option.setName('mensaje').setDescription('El mensaje que quieres confesar').setRequired(true),
     ),
 
   async execute(message, args) {
