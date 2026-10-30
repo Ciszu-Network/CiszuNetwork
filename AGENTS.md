@@ -1,4 +1,4 @@
-﻿# Ciszu Network — AGENTS.md
+# Ciszu Network — AGENTS.md
 
 Este archivo es la **primera lectura de toda sesión** y se relee en cada compactación. Es un
 **mapa + reglas**, no una enciclopedia: la documentación técnica completa vive en
@@ -165,7 +165,7 @@ registrado como `actor` en los logs de sesión (`tools/consoles/local-logs/`).
 | `ciszubot`             | `projects/ciszubot/discord-bot/`  | Discord.js bot (TS, pnpm workspace, Docker) |
 | `@ciszunetwork/cdn`    | `packages/cdn/`                   | Asset resolver                              |
 
-Package manager: **pnpm v10.8.1**, Node >=24. Todas las webs: Next.js 15 (App Router) +
+Package manager: **pnpm v12.16.1**, Node >=24. Todas las webs: Next.js 15 (App Router) +
 Tailwind 4 + PostCSS + ESLint. Assets vía resolver/CDN (`public/` solo docs/pwa/sw.js).
 
 ### 4.2 Paquetes compartidos (`packages/`)

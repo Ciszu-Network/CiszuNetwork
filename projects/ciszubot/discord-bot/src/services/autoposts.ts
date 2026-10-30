@@ -1,3 +1,4 @@
+import { randomInt } from 'crypto';
 import { Client, EmbedBuilder, TextChannel } from 'discord.js';
 import { DEFAULT_NSFW_CONTENT, getGuildConfig, isNsfwUnlocked } from './configService';
 import type { NsfwContentPreferences } from './configService';
@@ -75,7 +76,7 @@ function randomNsfwSelection(prefs: NsfwContentPreferences): NsfwSelection | nul
       : undefined,
   })).filter((selection) => isNsfwSelectionEnabled(selection, prefs));
   if (candidates.length === 0) return null;
-  return candidates[Math.floor(Math.random() * candidates.length)] ?? null;
+  return candidates[randomInt(candidates.length)] ?? null;
 }
 
 async function postOnce(client: Client, guildId: string, post: AutopostConfig): Promise<void> {

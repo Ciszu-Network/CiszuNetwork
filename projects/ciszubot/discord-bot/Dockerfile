@@ -2,7 +2,7 @@
 # Contexto de build: raíz del monorepo (necesita pnpm-workspace.yaml + pnpm-lock.yaml)
 FROM node:24-alpine AS builder
 
-RUN corepack enable; corepack prepare pnpm@11.18.0 --activate
+RUN corepack enable; corepack prepare pnpm@12.16.1 --activate
 
 WORKDIR /repo
 
@@ -20,7 +20,7 @@ RUN pnpm --filter ciszubot build
 # ── Stage 2: runtime (solo producción, mínimo) ──
 FROM node:24-alpine
 
-RUN corepack enable; corepack prepare pnpm@11.18.0 --activate
+RUN corepack enable; corepack prepare pnpm@12.16.1 --activate
 RUN apk add --no-cache ffmpeg python3 make g++
 
 WORKDIR /repo

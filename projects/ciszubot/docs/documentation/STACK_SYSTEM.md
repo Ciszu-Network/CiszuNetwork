@@ -30,7 +30,7 @@ La pila de CiszuBot se divide en tres dominios claros:
 2. **Bot** (`ciszubot`): TypeScript + **Discord.js v14** en Node 24 (Docker `node:24-alpine`).
 3. **Datos** (Supabase): schema **`ciszubot`** con 13 tablas + Storage/CDN para assets.
 
-Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/ui`, `@ciszunetwork/utils`, `@ciszunetwork/cdn`). El package manager es **pnpm 10.8.1** y Node >= 20 (el bot exige >= 22).
+Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/ui`, `@ciszunetwork/utils`, `@ciszunetwork/cdn`). El package manager es **pnpm 12.16.1** y Node >= 20 (el bot exige >= 22).
 
 ## 2. Resumen de la pila
 
@@ -173,7 +173,7 @@ dashboard; el detalle funcional vive en `FEATURE_FLAGS_SYSTEM.md` §3.1 (ciszu).
 - `Dockerfile` multi-stage basado en **`node:24-alpine`**.
 - Runtime incluye **ffmpeg** (obligatorio para música con play-dl).
 - Corre como **usuario `node`** (no root), expone **puerto 5000**.
-- pnpm 11.18.0 activado vía corepack en ambas stages.
+- pnpm 12.16.1 activado vía corepack en ambas stages.
 - Build: `pnpm --filter ciszubot build` (tsc). Runtime: `node dist/src/index.js`.
 
 ### 6.3 Hosting 24/7
@@ -185,7 +185,7 @@ dashboard; el detalle funcional vive en `FEATURE_FLAGS_SYSTEM.md` §3.1 (ciszu).
 
 | Herramienta | Uso |
 | --- | --- |
-| pnpm 10.8.1 | Gestión de paquetes y workspaces |
+| pnpm 12.16.1 | Gestión de paquetes y workspaces |
 | Node ≥ 20 (local) | Runtime de desarrollo |
 | TypeScript 5.9 | Compilación del bot |
 | ESLint | Lint (turbo `pnpm lint`) |
@@ -230,7 +230,7 @@ Dependencias de producción: `@ciszunetwork/utils` (workspace), `@discordjs/voic
 | Tailwind | 4 | 4.2.4 | PostCSS plugin |
 | Supabase JS | 2 | 2.60.0 | schema `ciszubot` |
 | Sentry | 10 | 10.69.0 | node + nextjs |
-| pnpm | 10 | 10.8.1 | CI/container: 11.18.0 |
+| pnpm | 12 | 12.16.1 | CI/container: 12.16.1 |
 
 ## 10. Entornos y variables de entorno
 

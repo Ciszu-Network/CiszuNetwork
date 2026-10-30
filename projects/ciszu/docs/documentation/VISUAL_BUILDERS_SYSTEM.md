@@ -206,7 +206,7 @@ Antes de elegir hay que saber qué hay instalado. Datos tomados de los `package.
 | React                | **React 19.2.7** + React DOM 19.2.7                       | Criterio duro: el editor debe soportar React 19              |
 | Tailwind             | **Tailwind CSS 4.2.4** + `@tailwindcss/postcss`           | Config en CSS-first (v4), no`tailwind.config.js` clásico     |
 | TypeScript           | 6.0.3                                                     | Strict                                                       |
-| Package manager      | **pnpm 10.8.1** monorepo                                  | Workspaces en la raíz (`pnpm-workspace.yaml`)                |
+| Package manager      | **pnpm 12.16.1** monorepo                                  | Workspaces en la raíz (`pnpm-workspace.yaml`)                |
 | UI compartido        | `@ciszu/ui` (workspace)                                   | Iconos, tokens, Modal Radix accesible; Storybook + Chromatic |
 | Resolución de assets | `@ciszunetwork/cdn` (`assetResolver`)                     | SVG/imágenes vía Supabase Storage`ciszu-cdn`                 |
 | Validación           | `zod` 4.4.3 + `@ciszunetwork/utils` (TypeBox server-only) | —                                                            |

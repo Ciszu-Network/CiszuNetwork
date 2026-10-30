@@ -243,7 +243,7 @@ este runner; el resto (semgrep, gitleaks, security-e2e, DAST, CodeQL) queda docu
 
 | Requisito | Estado actual |
 |---|---|
-| Node ≥ 20 + pnpm 10.8.1 | ✅ instalado |
+| Node ≥ 20 + pnpm 12.16.1 | ✅ instalado |
 | Git + SSH/https operativo | ✅ con VPN activa (requisito para que el runner se registre y hable con GitHub) |
 | WSL2 + Docker Desktop (opcional, para jobs con contenedores) | ✅ operativo (15 ago 2026, engine 29.6.2) |
 | Espacio en disco | ⚠️ limitado (C:); runners viven en `E:\actions-runners\` (fuera del repo; rutas sin espacios obligatorias) |

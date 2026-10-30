@@ -1,4 +1,4 @@
-﻿# WORKFLOW_SYSTEM — Flujo de Trabajo (CiszuBot)
+# WORKFLOW_SYSTEM — Flujo de Trabajo (CiszuBot)
 
 Versión: 1.0.0
 Actualización: 2026-10-23
@@ -99,7 +99,7 @@ Puntos del Dockerfile a recordar:
 - Multi-stage sobre `node:24-alpine`; ffmpeg en runtime.
 - Corre como usuario `node` (no root).
 - Expone el puerto 5000 (statsServer interno).
-- pnpm 11.18.0 vía corepack.
+- pnpm 12.16.1 vía corepack.
 
 ### 5.1 Docker Compose (recomendado para VPS)
 
@@ -237,5 +237,3 @@ Al acercarse al límite de contexto (~110-120k tokens en opencode):
 - [ ] Protocolos de inicio/cierre de sesión completos.
 - [ ] Tabla de troubleshooting sin datos inventados.
 - [ ] Referencias cruzadas a `ARCHITECTURE.md`, `STACK_SYSTEM.md`, `BRAND_PLAN.md` y `VPS_PLAN.md` (ciszu).
-
-

@@ -1,4 +1,4 @@
-﻿# STACK_SYSTEM — Stack Tecnológico del Portfolio (Ciszuko Antony)
+# STACK_SYSTEM — Stack Tecnológico del Portfolio (Ciszuko Antony)
 
 Versión: 1.0.0
 Actualización: 2026-10-23
@@ -31,7 +31,7 @@ usan, qué versiones, para qué y con qué reglas. Sirve para:
 | Lint | ESLint (`eslint-config-next`) | 9.x |
 | Análisis | ESLint + TypeScript | — |
 | Deploy | Vercel | — |
-| Package manager | pnpm | 10.8.1 |
+| Package manager | pnpm | 12.16.1 |
 | Runtime | Node.js | >=20 |
 
 ### 2.1 Dependencias principales (`website/package.json`)
@@ -107,7 +107,7 @@ usan, qué versiones, para qué y con qué reglas. Sirve para:
 ### 5.3 Node y entorno
 
 - Node `>=20` (engines en `package.json`).
-- pnpm `10.8.1` en el monorepo.
+- pnpm `12.16.1` en el monorepo.
 
 ## 6. Capa de deploy (Vercel)
 
@@ -180,7 +180,7 @@ usan, qué versiones, para qué y con qué reglas. Sirve para:
 
 **¿Qué versión de Next.js usa el portfolio?** Next.js 15 (App Router), con React 19.
 
-**¿Por qué pnpm y no npm/yarn?** Es el gestor de workspaces del monorepo (pnpm 10.8.1), que
+**¿Por qué pnpm y no npm/yarn?** Es el gestor de workspaces del monorepo (pnpm 12.16.1), que
 maneja los paquetes compartidos (`workspace:*`).
 
 **¿Puedo añadir una librería nueva?** No sin validación: primero se propone y se espera
@@ -210,11 +210,10 @@ conecta directamente a la base de datos.
 ## 13. Resumen ejecutivo
 
 - Stack: Next.js 15 (App Router) + React 19 + TypeScript strict + Tailwind v4 + ESLint.
-- Tooling: pnpm 10.8.1 workspaces, Node >=20; deploy en Vercel desde `main`.
+- Tooling: pnpm 12.16.1 workspaces, Node >=20; deploy en Vercel desde `main`.
 - Fuentes: Exo_2 (titulares) y Rajdhani (subtítulos) vía `next/font/google`.
 - Redes y medios centralizados en `navigation.tsx`; guía de uso en `BRAND_PLAN.md`.
 - Seguridad del stack: middlewares, CSP, Turnstile y rate limiting (reglas en ciszu).
 
 _Última revisión: 23 oct 2026._ Relacionado: `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`,
 `BRAND_PLAN.md`, `README.md`.
-

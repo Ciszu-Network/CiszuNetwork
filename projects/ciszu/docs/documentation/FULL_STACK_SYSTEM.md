@@ -1,4 +1,4 @@
-﻿# FULL_STACK_SYSTEM — Stack tecnológico de Ciszu Network
+# FULL_STACK_SYSTEM — Stack tecnológico de Ciszu Network
 
 Versión: 2.3.0
 Actualización: 2026-10-25
@@ -13,7 +13,7 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 ## Core
 
 - **Runtime:** Node.js 20+ (PC local: Node v24.18.0; bot en Docker: Node 24 `node:24-alpine`)
-- **Package Manager:** pnpm 10.8.1 (workspaces/Turbo monorepo)
+- **Package Manager:** pnpm 12.16.1 (workspaces/Turbo monorepo)
 - **Language:** TypeScript (strict)
 - **BD:** PostgreSQL (Supabase, server 17.6 remote; PostgreSQL 18.4 local para tooling)
 
@@ -107,7 +107,7 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 - **Pandoc 3.10** — conversión de documentos (md → docx)
 - **Python/pip** — PDF (reportlab), weasyprint (GTK), openpyxl
 - **Windows** — plataforma principal de desarrollo
-- **Runtimes:** Node 24 (bot) / Node >=20 (webs), pnpm 10.8.1, PostgreSQL 18.4 local / 17.6 remote, Rust toolchain (Tauri)
+- **Runtimes:** Node 24 (bot) / Node >=20 (webs), pnpm 12.16.1, PostgreSQL 18.4 local / 17.6 remote, Rust toolchain (Tauri)
 
 ## Mapa de stack por proyecto (resumen)
 
@@ -127,7 +127,7 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 |---|---|
 | Node.js (PC local) | 24.18.0 |
 | Node.js (bot Docker) | 24 alpine |
-| pnpm | 10.8.1 |
+| pnpm | 12.16.1 |
 | Next.js | 15.x |
 | React | 19 |
 | Tailwind CSS | 4 |
@@ -274,4 +274,3 @@ _Última revisión: 25 oct 2026._ Relacionados: `BACKEND_SYSTEM.md` · `FRONTEND
 `PACKAGES_SYSTEM.md` · `ORM_SYSTEM.md` · `VAULT_SYSTEM.md` · `TOOLS_SYSTEM.md` ·
 `ONLINE_SERVICES_SYSTEM.md` · `MODELS_LLM_SYSTEM.md` · `UI_COMPONENTS_SYSTEM.md` ·
 `FEATURE_FLAGS_SYSTEM.md` (subsistema +18).
-

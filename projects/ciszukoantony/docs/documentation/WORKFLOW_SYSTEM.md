@@ -1,4 +1,4 @@
-﻿# WORKFLOW_SYSTEM — Flujo de Trabajo del Portfolio (Ciszuko Antony)
+# WORKFLOW_SYSTEM — Flujo de Trabajo del Portfolio (Ciszuko Antony)
 
 Versión: 1.0.0
 Actualización: 2026-10-23
@@ -146,7 +146,7 @@ feat: añadir página de certificados
 
 | Síntoma | Causa probable | Solución |
 |---|---|---|
-| `pnpm --filter ... dev` no arranca | Node <20 o pnpm desactualizado | Usar Node >=20 y pnpm 10.8.1 (`pnpm install -g pnpm@10.8.1`) |
+| `pnpm --filter ... dev` no arranca | Node <20 o pnpm desactualizado | Usar Node >=20 y pnpm 12.16.1 (`pnpm install -g pnpm@12.16.1`) |
 | Push falla por DNS | github.com no resuelve | Hacer push manual o reintentar más tarde |
 | Lint falla | Errores de ESLint | Correr `pnpm --filter ciszukoantony-website lint` y corregir |
 | Build falla | TypeScript o dependencias | Corregir tipos; verificar que los paquetes `workspace:*` están instalados |
@@ -203,6 +203,3 @@ commit listo para que el usuario haga push manual.
 _Última revisión: 23 oct 2026._ Relacionado: `ARCHITECTURE.md`, `STACK_SYSTEM.md`,
 `BRAND_PLAN.md`, `PROJECT_STATE.md`, `PROJECT_STATE.md`, `PROJECT_HISTORY.md`, `TODO.md`,
 `README.md`.
-
-
-

@@ -59,7 +59,7 @@ git push origin feature/nombre-de-la-funcionalidad
 
 ### Stack y estructura
 
-- **Package manager**: pnpm v10.8.1 (workspaces). Node >= 20. Nada de npm/yarn para instalar.
+- **Package manager**: pnpm v12.16.1 (workspaces). Node >= 20. Nada de npm/yarn para instalar.
 - **Apps**: `projects/<nombre>/website` — Next.js 15 + Tailwind 4, con `images.unoptimized: true`.
 - **Paquetes compartidos**: `packages/cdn` (`@ciszunetwork/cdn`), `packages/ui` (`@ciszu/ui`).
 - **CI/CD**: GitHub Actions en `.github/workflows/` — CI + CodeQL + 4 deploys a Vercel (`deploy-*-website.yml`). Los deploys se disparan con cambios en `projects/<proyecto>/**` o `packages/**`.

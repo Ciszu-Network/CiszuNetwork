@@ -125,7 +125,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 ### 2.4 Stack tecnológico
 
-- **Monorepo**: pnpm 10.8.1 + Turborepo
+- **Monorepo**: pnpm 12.16.1 + Turborepo
 - **Web**: Next.js 15 + TypeScript + Tailwind CSS v4
 - **Backend**: Supabase (PostgreSQL + Auth + Storage)
 - **Desktop**: Tauri 2 (Rust + WebView2)

@@ -77,7 +77,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 | Limpieza de repo | ✅ (bucket legacy eliminado, EXCLUDED_EXT) |
 
 ### Stack Tecnológico
-- **Monorepo**: pnpm 10.8.1 + Turborepo
+- **Monorepo**: pnpm 12.16.1 + Turborepo
 - **Web**: Next.js 15 + TypeScript + Tailwind CSS v4
 - **Backend**: Supabase (PostgreSQL + Auth + Storage) + **Drizzle ORM** (`@ciszunetwork/db`, server-only) + Zod (borde de entrada)
 - **CLientes dinámicos**: TanStack Query (ciszubot dashboard) + Storybook + Chromatic (dev-only, `@ciszu/ui`)

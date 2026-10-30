@@ -1,4 +1,4 @@
-﻿# STATISTICS_SYSTEM — Estadísticas reales del ecosistema
+# STATISTICS_SYSTEM — Estadísticas reales del ecosistema
 
 Versión: 2.0.0
 Actualización: 2026-10-23
@@ -15,7 +15,7 @@ Identificador: STATISTICS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 - **Comandos del bot**: 72 comandos en 9 categorías.
 - **Migraciones de BD aplicadas**: 17 (jul–ago 2026).
 - **Tests**: suite Vitest 157 tests (11 ago 2026), E2E smoke + 5 E2E de seguridad.
-- **Package managers**: pnpm 10.8.1 (monorepo).
+- **Package managers**: pnpm 12.16.1 (monorepo).
 
 ## Base de datos (Supabase)
 
