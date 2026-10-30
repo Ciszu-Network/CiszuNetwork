@@ -39,7 +39,7 @@ jobs:
           node-version: '24'
           cache: pnpm
       - name: Install Vercel CLI
-        run: pnpm add -g vercel
+        run: npm install -g vercel
       - name: Link Vercel Project
         run: vercel link --yes --project muzicmania --token=${{ secrets.VERCEL_TOKEN }}
         working-directory: .

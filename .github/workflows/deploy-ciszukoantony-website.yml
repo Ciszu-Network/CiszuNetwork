@@ -39,7 +39,7 @@ jobs:
           node-version: '24'
           cache: pnpm
       - name: Install Vercel CLI
-        run: pnpm add -g vercel
+        run: npm install -g vercel
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Sync certificates
