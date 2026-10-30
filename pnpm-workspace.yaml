@@ -14,8 +14,6 @@ allowBuilds:
   workerd: true
   '@parcel/watcher': true
   msw: true
-  phaser: true
-  pixi.js: true
 
 overrides:
   undici: 8.12.2
@@ -51,9 +49,3 @@ engineStrict: true
 preferFrozenLockfile: true
 
 shamefullyHoist: false
-
-permissions:
-  phaser:
-    skills: true
-  pixi.js:
-    skills: true
