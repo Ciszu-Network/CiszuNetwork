@@ -47,7 +47,7 @@ interface GuildConfig {
   staff_role_id?: string | null;
   level_message?: string;
   level_roles?: { level: number; role_id: string }[];
-  automod_config?: { links: boolean; invites: boolean; caps: boolean; spam: boolean; flood: boolean; words: string[] };
+  automod_config?: { links: boolean; invites: boolean; caps: boolean; spam: boolean; flood: boolean; words: string[]; cooldown_seconds?: number; excluded_role_ids?: string[]; excluded_channel_ids?: string[] };
   drops?: {
     list: {
       id: string;
@@ -269,7 +269,7 @@ const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPag
   { slug: 'search', icon: 'search', labelKey: 'featSearch', descKey: 'featSearchDesc', premium: true, colorClass: 'text-cyan-400' },
   { slug: 'minigames', icon: 'gamepad', labelKey: 'featMinigames', descKey: 'featMinigamesDesc', colorClass: 'text-emerald-400' },
   { slug: 'giveaways', icon: 'trophy', labelKey: 'featGiveaways', descKey: 'featGiveawaysDesc', colorClass: 'text-amber-400' },
-  { slug: 'embeds', icon: 'ri-braces', labelKey: 'featEmbeds', descKey: 'featEmbedsDesc', premium: true, colorClass: 'text-purple-400' },
+  { slug: 'embeds', icon: 'message-square', labelKey: 'featEmbeds', descKey: 'featEmbedsDesc', premium: true, colorClass: 'text-purple-400' },
   { slug: 'misc', icon: 'box-archive', labelKey: 'featMisc', descKey: 'featMiscDesc', colorClass: 'text-orange-300' },
   { slug: 'utility', icon: 'ri-code-s-slash', labelKey: 'featUtility', descKey: 'featUtilityDesc', colorClass: 'text-teal-300' },
   { slug: 'moderation', icon: 'gavel', labelKey: 'featModeration', descKey: 'featModerationDesc', colorClass: 'text-red-400' },
@@ -283,13 +283,13 @@ const TRIVIA_CATEGORY_IDS = [
 ];
 
 /** Permisos clave del bot (bitfields de Discord). */
-const PERMS: { key: string; bit: number }[] = [
-  { key: 'permManageGuild', bit: 32 },
-  { key: 'permManageRoles', bit: 268435456 },
-  { key: 'permManageChannels', bit: 16 },
-  { key: 'permManageMessages', bit: 8192 },
-  { key: 'permKick', bit: 2 },
-  { key: 'permBan', bit: 4 },
+const PERMS: { key: string; bit: number; icon: string }[] = [
+  { key: 'permManageGuild', bit: 32, icon: 'settings' },
+  { key: 'permManageRoles', bit: 268435456, icon: 'shield' },
+  { key: 'permManageChannels', bit: 16, icon: 'message-square' },
+  { key: 'permManageMessages', bit: 8192, icon: 'message' },
+  { key: 'permKick', bit: 2, icon: 'user' },
+  { key: 'permBan', bit: 4, icon: 'gavel' },
 ];
 
 /** ¿El bitfield del bot incluye el permiso? null = no se pudo verificar. */
@@ -343,10 +343,23 @@ interface Props {
   hasBotGuild?: boolean | null;
 }
 
-function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
+function Field({
+  label,
+  hint,
+  icon,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  icon?: string;
+  children: React.ReactNode;
+}) {
   return (
     <label className="block">
-      <span className="mb-1 block text-sm font-semibold text-white/85">{label}</span>
+      <span className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-white/85">
+        {icon && <Icon name={icon} size={13} className="shrink-0 text-neon-blue" />}
+        {label}
+      </span>
       {children}
       {hint && <span className="mt-1 block text-xs text-white/45">{hint}</span>}
     </label>
@@ -410,30 +423,25 @@ function SelectField({
   placeholder,
   options,
   onChange,
+  icon,
 }: {
   label: string;
   hint?: string;
+  icon?: string;
   value: string | null | undefined;
   placeholder: string;
   options: { id: string; label: string }[];
   onChange: (v: string | null) => void;
 }) {
   return (
-    <Field label={label} hint={hint}>
-      <select
-        className={inputCls}
-        value={value ?? ''}
-        onChange={(e) => onChange(e.target.value || null)}
-      >
-        <option value="" className="bg-[#0a0a14]">
-          {placeholder}
-        </option>
-        {options.map((o) => (
-          <option key={o.id} value={o.id} className="bg-[#0a0a14]">
-            {o.label}
-          </option>
-        ))}
-      </select>
+    <Field label={label} hint={hint} icon={icon}>
+      <NiceSelect
+        value={value ?? null}
+        placeholder={placeholder}
+        options={options}
+        clearable
+        onChange={(v) => onChange(v || null)}
+      />
     </Field>
   );
 }
@@ -1181,7 +1189,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         staff_role_id: cfg?.staff_role_id ?? null,
         level_message: cfg?.level_message ?? '🎉 ¡{user} subió al nivel {level} en {guild}!',
         level_roles: Array.isArray(cfg?.level_roles) ? cfg.level_roles : [],
-        automod_config: cfg?.automod_config ?? { links: false, invites: false, caps: false, spam: false, flood: false, words: [] },
+        automod_config: cfg?.automod_config ?? { links: false, invites: false, caps: false, spam: false, flood: false, words: [], cooldown_seconds: 0, excluded_role_ids: [], excluded_channel_ids: [] },
         drops: cfg?.drops ?? { enabled: false, channels: [], min: 50, max: 200, interval_min: 60, interval_max: 180, message: null, excluded_roles: [] },
         starboard_channel_id: cfg?.starboard_channel_id ?? null,
         starboard_emoji: cfg?.starboard_emoji ?? '⭐',
@@ -1273,11 +1281,31 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   });
 
   useEffect(() => {
-    if (serverConfig && !config) {
+    if (!serverConfig) return;
+    if (!config) {
+      setConfig(serverConfig);
+      setBaseline(JSON.stringify(serverConfig));
+      return;
+    }
+    // Sincroniza cambios hechos fuera de esta vista (p. ej. preferencias del
+    // bot, +18) sin pisar ediciones locales pendientes.
+    if (JSON.stringify(config) === baseline && JSON.stringify(serverConfig) !== baseline) {
       setConfig(serverConfig);
       setBaseline(JSON.stringify(serverConfig));
     }
-  }, [serverConfig, config]);
+  }, [serverConfig, config, baseline]);
+
+  useEffect(() => {
+    const refresh = () => {
+      void queryClient.invalidateQueries({ queryKey: ['guild-config', guildId] });
+    };
+    window.addEventListener('focus', refresh);
+    window.addEventListener('pageshow', refresh);
+    return () => {
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('pageshow', refresh);
+    };
+  }, [queryClient, guildId]);
 
   const {
     data: liveGuild,
@@ -1399,14 +1427,14 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         body: JSON.stringify(patch),
       });
       if (!res.ok) {
-        const body = (await res.json().catch(() => ({}))) as { error?: string };
+        const body = (await res.json().catch(() => ({}))) as { error?: string; issue?: string };
         const code =
           body.error === 'slug_taken' ||
           body.error === 'social_limit_networks' ||
           body.error === 'social_limit_platform'
             ? body.error
             : 'save_failed';
-        throw new Error(code);
+        throw new Error(body.issue ? `${code}:${body.issue}` : code);
       }
       return res.json();
     },
@@ -1450,6 +1478,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     onError: (err: unknown) => {
       setStatus('error');
       const message = err instanceof Error ? err.message : '';
+      const issue = message.startsWith('save_failed:') ? message.slice('save_failed:'.length) : '';
       setError(
         message === 'slug_taken'
           ? t.slugTaken
@@ -1457,7 +1486,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
             ? t.socialLimitNetworks
             : message === 'social_limit_platform'
               ? t.socialLimitPlatform
-              : t.saveError,
+              : issue
+                ? `${t.saveError}: ${issue}`
+                : t.saveError,
       );
     },
   });
@@ -1548,7 +1579,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
 
   /** Defaults de bloques JSONB (coinciden con los del bot). */
   const dropsCfg = config?.drops ?? { list: [] as NonNullable<GuildConfig['drops']>['list'] };
-  const automodCfg = config?.automod_config ?? { links: false, invites: false, caps: false, spam: false, flood: false, words: [] as string[] };
+  const automodCfg = config?.automod_config ?? { links: false, invites: false, caps: false, spam: false, flood: false, words: [] as string[], cooldown_seconds: 0, excluded_role_ids: [] as string[], excluded_channel_ids: [] as string[] };
   const newsChannels = config?.news_channels ?? {
     anime: null as string | null,
     games: null as string | null,
@@ -1839,19 +1870,19 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           {/* Resumen: datos en vivo del servidor */}
           <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
             <div className="rounded-xl border border-white/10 bg-black/25 px-3 py-2.5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/40">{t.membersLabel}</p>
+              <p className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-white/40"><Icon name="users" size={10} /> {t.membersLabel}</p>
               <p className="text-lg font-bold text-white">{guildData?.memberCount ?? '—'}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-black/25 px-3 py-2.5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/40">{t.rolesLabel}</p>
+              <p className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-white/40"><Icon name="shield" size={10} /> {t.rolesLabel}</p>
               <p className="text-lg font-bold text-white">{roles.length || '—'}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-black/25 px-3 py-2.5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/40">{t.channelsLabel}</p>
+              <p className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-white/40"><Icon name="message-square" size={10} /> {t.channelsLabel}</p>
               <p className="text-lg font-bold text-white">{channels.length || '—'}</p>
             </div>
             <div className="rounded-xl border border-white/10 bg-black/25 px-3 py-2.5">
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/40">{t.botLabel}</p>
+              <p className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-white/40"><Icon name="robot" size={10} /> {t.botLabel}</p>
               <p className={`text-lg font-bold ${hasBotGuild === false || !botOnlineNow ? 'text-red-400' : 'text-emerald-400'}`}>
                 {hasBotGuild === false ? t.botNotInGuildShort : botOnlineNow ? t.botOnline : t.botOffline}
               </p>
@@ -1886,11 +1917,21 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                         : 'border-red-400/40 bg-red-400/10 text-red-400'
                     }`}
                   >
-                    <span className={`h-1.5 w-1.5 rounded-full ${ok ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                    <Icon name={perm.icon} size={10} className={ok ? 'text-emerald-400' : 'text-red-400'} />
                     {(t[perm.key as keyof typeof t] as string) ?? perm.key}
                   </span>
                 );
               })}
+              {PERMS.some((perm) => hasPerm(guildData.botPermissions, perm.bit) === false) && (
+                <InviteLink
+                  href={`${INVITE_URL}&guild_id=${guildId}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 rounded-full border border-amber-400/50 bg-amber-400/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-widest text-amber-300 transition hover:bg-amber-400/20"
+                >
+                  <Icon name="refresh" size={10} /> {t.permsRerequest}
+                </InviteLink>
+              )}
             </div>
           )}
           <p className="mt-2 text-[10px] text-white/35">{t.refreshHint}</p>
@@ -1937,12 +1978,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
         <div className="mt-8 lg:flex lg:items-start lg:gap-6">
           <nav className="mb-4 flex gap-1.5 overflow-x-auto pb-1 lg:mb-0 lg:w-72 lg:shrink-0 lg:flex-col lg:overflow-visible lg:pb-0">
             <div className="mb-2 w-full space-y-1.5 lg:w-72">
-              <input
-                value={subnavQuery}
-                onChange={(e) => setSubnavQuery(e.target.value)}
-                placeholder={searchUi.placeholder}
-                className="w-full rounded-lg border border-white/10 bg-black/30 px-3 py-1.5 text-[11px] text-white outline-none placeholder:text-white/30 focus:border-neon-blue/60"
-              />
+              <label className="flex w-full items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-3 py-1.5">
+                <Icon name="search" size={12} className="shrink-0 text-white/35" />
+                <input
+                  value={subnavQuery}
+                  onChange={(e) => setSubnavQuery(e.target.value)}
+                  placeholder={searchUi.placeholder}
+                  className="min-w-0 flex-1 bg-transparent text-[11px] text-white outline-none placeholder:text-white/30"
+                />
+              </label>
               <div className="flex flex-wrap gap-1">
                 {(['all', 'free', 'premium'] as const).map((f) => (
                   <button
@@ -1961,8 +2005,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <button
                   type="button"
                   onClick={() => setSubnavSort(subnavSort === 'asc' ? 'desc' : 'asc')}
-                  className="ml-auto rounded-full border border-white/15 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-white/45 transition hover:text-white"
+                  className="ml-auto inline-flex items-center gap-1 rounded-full border border-white/15 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-white/45 transition hover:text-white"
                 >
+                  <Icon name="refresh" size={8} />
                   {subnavSort === 'asc' ? searchUi.asc : searchUi.desc}
                 </button>
               </div>
@@ -2201,7 +2246,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <h2 className="flex items-center gap-2 font-bold text-white">
-                <Icon name={activeFeature.icon} size={18} className={activeFeature.colorClass ?? 'text-neon-blue'} /> {t[activeFeature.labelKey]}
+                <Icon name={activeFeature.icon} size={20} className={activeFeature.colorClass ?? 'text-neon-blue'} /> {t[activeFeature.labelKey]}
               </h2>
               <QuickHelp
                 title={SECTION_HELP[activeFeature.slug]?.title ?? t[activeFeature.labelKey]}
@@ -2226,7 +2271,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   config.features?.[activeFeature.slug] !== false ? 'text-emerald-400' : 'text-white/30'
                 }`}
               >
-                <Icon name={activeFeature.icon} size={18} className={activeFeature.colorClass} />
+                <Icon name={activeFeature.icon} size={20} className={activeFeature.colorClass} />
               </span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-white">{t[activeFeature.labelKey]}</p>
@@ -2446,6 +2491,29 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                       );
                     })}
                   </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {(
+                    [
+                      ['all', t.gwFilterAll, 'menu'],
+                      ['running', t.gwFilterRunning, 'play'],
+                      ['paused', t.gwFilterPaused, 'pause'],
+                      ['ended', t.gwFilterEnded, 'check'],
+                      ['cancelled', t.gwFilterCancelled, 'close'],
+                    ] as const
+                  ).map(([f, label, icon]) => (
+                    <button
+                      key={f}
+                      type="button"
+                      onClick={() => setGwFilter(f)}
+                      className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition ${
+                        gwFilter === f ? 'border-neon-blue/60 bg-neon-blue/10 text-neon-blue' : 'border-white/15 text-white/50 hover:text-white'
+                      }`}
+                    >
+                      <Icon name={icon} size={10} /> {label}
+                    </button>
+                  ))}
                 </div>
 
                 {gwLimit && (
@@ -4138,7 +4206,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     { key: 'steam', label: t.newsSteam },
                     { key: 'tech', label: t.newsTech },
                   ] as const).map(({ key, label }) => (
-                    <Field key={key} label={label}>
+                    <Field key={key} label={label} icon="message-square">
                       {hasGuildData ? (
                         <NiceSelect
                           value={newsChannels[key]}
@@ -4157,10 +4225,10 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   ))}
                 </div>
                 <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <p className="mb-1 text-sm font-semibold text-white/90">{t.newsRssTitle}</p>
+                  <p className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-white/90"><Icon name="globe" size={13} className="text-neon-blue" /> {t.newsRssTitle}</p>
                   <p className="mb-3 text-[10px] text-white/40">{t.newsRssHint}</p>
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <Field label={t.newsRssUrlLabel}>
+                    <Field label={t.newsRssUrlLabel} icon="globe">
                       <input
                         className={inputCls}
                         placeholder="https://ejemplo.com/feed.xml"
@@ -4168,7 +4236,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                         onChange={(e) => update({ news_rss_url: e.target.value.trim() || null })}
                       />
                     </Field>
-                    <Field label={t.newsRssChannelLabel}>
+                    <Field label={t.newsRssChannelLabel} icon="message-square">
                       {hasGuildData ? (
                         <NiceSelect
                           value={config.news_rss_channel_id ?? null}
@@ -4811,17 +4879,17 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <Toggle on={Boolean(config.nitro_repost_enabled)} onChange={(v) => update({ nitro_repost_enabled: v })} />
             </div>
             <div className="mt-4 grid gap-4">
-              <Field label={t.nitroModeLabel}>
+              <Field label={t.nitroModeLabel} icon="bolt">
                 <NiceSelect
                   value={config.nitro_repost_mode ?? 'auto'}
                   options={[
-                    { id: 'auto', label: t.nitroModeAuto },
-                    { id: 'manual', label: t.nitroModeManual },
+                    { id: 'auto', label: t.nitroModeAuto, icon: 'bolt' },
+                    { id: 'manual', label: t.nitroModeManual, icon: 'hand' },
                   ]}
                   onChange={(v) => update({ nitro_repost_mode: v as 'auto' | 'manual' })}
                 />
               </Field>
-              <Field label={t.nitroExcludedLabel}>
+              <Field label={t.nitroExcludedLabel} icon="user">
                 <MultiSelect
                   values={config.nitro_excluded_role_ids ?? []}
                   options={roleOptions}
@@ -4985,15 +5053,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 <div className="grid gap-3 sm:grid-cols-2">
                   {(
                     [
-                      ['links', t.automodWordLinks],
-                      ['invites', t.automodWordInvites],
-                      ['caps', t.automodWordCaps],
-                      ['spam', t.automodWordSpam],
-                      ['flood', t.automodWordFlood],
+                      ['links', t.automodWordLinks, 'link'],
+                      ['invites', t.automodWordInvites, 'discord'],
+                      ['caps', t.automodWordCaps, 'text'],
+                      ['spam', t.automodWordSpam, 'message'],
+                      ['flood', t.automodWordFlood, 'layer-group'],
                     ] as const
-                  ).map(([key, label]) => (
+                  ).map(([key, label, icon]) => (
                     <div key={key} className="flex items-center justify-between rounded-xl bg-black/20 px-4 py-2.5">
-                      <p className="text-xs font-semibold text-white/80">{label}</p>
+                      <p className="flex items-center gap-1.5 text-xs font-semibold text-white/80"><Icon name={icon} size={12} className="text-neon-blue" /> {label}</p>
                       <Toggle
                         on={automodCfg[key]}
                         onChange={(v) => update({ automod_config: { ...automodCfg, [key]: v } })}
@@ -5022,11 +5090,54 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                 </Field>
               </div>
             )}
-            <div className="mt-4 rounded-xl border border-white/10 bg-black/20 px-4 py-3">
+            <div className="mt-4 rounded-xl border border-white/10 bg-black/20 p-4">
               <p className="flex items-center gap-2 text-sm font-bold text-white">
                 <Icon name="clock" size={15} className="text-neon-blue" /> {t.cooldownTitle}
               </p>
               <p className="mt-1 text-[11px] text-white/45">{t.cooldownHint}</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <Field label={t.automodCooldownLabel} hint={t.automodCooldownHint} icon="clock">
+                  <input
+                    type="number"
+                    min={0}
+                    max={86400}
+                    className={inputCls}
+                    value={automodCfg.cooldown_seconds ?? 0}
+                    onChange={(e) =>
+                      update({
+                        automod_config: {
+                          ...automodCfg,
+                          cooldown_seconds: Math.min(86400, Math.max(0, Number(e.target.value) || 0)),
+                        },
+                      })
+                    }
+                  />
+                </Field>
+                <div className="rounded-xl border border-emerald-400/20 bg-emerald-400/5 px-3 py-2.5 text-[10px] leading-relaxed text-emerald-200">
+                  <p className="flex items-center gap-1.5 font-black uppercase tracking-widest">
+                    <Icon name="shield" size={11} /> {t.automodAdminsTitle}
+                  </p>
+                  <p className="mt-1 text-emerald-200/70">{t.automodAdminsHint}</p>
+                </div>
+              </div>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <Field label={t.automodExcludedRoles} hint={t.automodExcludedRolesHint} icon="user">
+                  <MultiSelect
+                    values={automodCfg.excluded_role_ids ?? []}
+                    options={roleOptions}
+                    placeholder={t.pickRole}
+                    onChange={(v) => update({ automod_config: { ...automodCfg, excluded_role_ids: v } })}
+                  />
+                </Field>
+                <Field label={t.automodExcludedChannels} hint={t.automodExcludedChannelsHint} icon="message-square">
+                  <MultiSelect
+                    values={automodCfg.excluded_channel_ids ?? []}
+                    options={textChannelOptions}
+                    placeholder={t.pickChannel}
+                    onChange={(v) => update({ automod_config: { ...automodCfg, excluded_channel_ids: v } })}
+                  />
+                </Field>
+              </div>
             </div>
 
             {/* Roles de moderación (repartidos aquí desde General): quién puede
@@ -5198,17 +5309,17 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     </Field>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label={t.allianceSanctionLabel} hint={t.allianceSanctionHint}>
-                      <select
-                        className={inputCls}
+                    <Field label={t.allianceSanctionLabel} hint={t.allianceSanctionHint} icon="gavel">
+                      <NiceSelect
                         value={allianceCfg.sanction}
-                        onChange={(e) => update({ alliance_config: { ...allianceCfg, sanction: e.target.value as 'none' | 'mute' | 'kick' | 'ban' } })}
-                      >
-                        <option value="none">none</option>
-                        <option value="mute">mute</option>
-                        <option value="kick">kick</option>
-                        <option value="ban">ban</option>
-                      </select>
+                        options={[
+                          { id: 'none', label: 'none', icon: 'close' },
+                          { id: 'mute', label: 'mute', icon: 'lock' },
+                          { id: 'kick', label: 'kick', icon: 'logout' },
+                          { id: 'ban', label: 'ban', icon: 'gavel' },
+                        ]}
+                        onChange={(v) => update({ alliance_config: { ...allianceCfg, sanction: v as 'none' | 'mute' | 'kick' | 'ban' } })}
+                      />
                     </Field>
                     <Field label={`${t.allianceSanctionLabel} — minutos`} hint="Solo para mute">
                       <input

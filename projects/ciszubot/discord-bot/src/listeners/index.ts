@@ -101,11 +101,20 @@ async function handleXp(message: Message): Promise<void> {
 // ─── Automod ───
 
 const spamTracker = new Map<string, { t: number; content: string }[]>();
+const automodCooldown = new Map<string, number>();
 
 /** Devuelve la regla incumplida o null. */
 async function automodViolation(message: Message, cfg: GuildConfig): Promise<string | null> {
   if (!cfg.automod_enabled || !message.guild) return null;
+  const member = message.member;
+  if (member?.permissions.has(PermissionsBitField.Flags.Administrator)) return null;
+  const memberRoles = member ? [...member.roles.cache.keys()] : [];
+  if (memberRoles.some((roleId) => cfg.owner_role_ids.includes(roleId) || cfg.admin_role_ids.includes(roleId))) {
+    return null;
+  }
   const am = cfg.automod_config;
+  if (am.excluded_role_ids?.some((roleId) => memberRoles.includes(roleId))) return null;
+  if (am.excluded_channel_ids?.includes(message.channelId)) return null;
   const content = message.content ?? '';
   if (am.links && /(https?:\/\/|www\.)\S+/i.test(content)) return 'links';
   if (am.invites && /(discord\.gg\/|discord(app)?\.com\/invite\/)\S+/i.test(content)) return 'invitaciones';
@@ -137,8 +146,13 @@ async function automodViolation(message: Message, cfg: GuildConfig): Promise<str
 }
 
 async function handleAutomod(message: Message, cfg: GuildConfig): Promise<boolean> {
+  const cooldownKey = `${message.author.id}:${message.guildId ?? 'dm'}`;
+  const cooldownMs = Math.max(0, Number(cfg.automod_config.cooldown_seconds ?? 0)) * 1000;
+  const last = automodCooldown.get(cooldownKey) ?? 0;
+  if (cooldownMs > 0 && Date.now() - last < cooldownMs) return false;
   const violation = await automodViolation(message, cfg);
   if (!violation) return false;
+  automodCooldown.set(cooldownKey, Date.now());
   const me = message.guild?.members.me;
   const textChannel = 'permissionsFor' in message.channel ? (message.channel as TextChannel) : null;
   const deletable = me && textChannel ? textChannel.permissionsFor(me)?.has(PermissionsBitField.Flags.ManageMessages) : false;

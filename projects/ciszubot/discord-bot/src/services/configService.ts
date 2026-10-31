@@ -8,6 +8,9 @@ export interface AutomodConfig {
   spam: boolean;
   flood: boolean;
   words: string[];
+  cooldown_seconds: number;
+  excluded_role_ids: string[];
+  excluded_channel_ids: string[];
 }
 
 export interface DropEntry {
@@ -306,7 +309,7 @@ export interface GuildConfig {
   ticket_config: TicketConfig;
 }
 
-const DEFAULT_AUTOMOD: AutomodConfig = { links: false, invites: false, caps: false, spam: false, flood: false, words: [] };
+const DEFAULT_AUTOMOD: AutomodConfig = { links: false, invites: false, caps: false, spam: false, flood: false, words: [], cooldown_seconds: 0, excluded_role_ids: [], excluded_channel_ids: [] };
 const DEFAULT_ALLIANCE: AllianceConfig = {
   enabled: false,
   channel_id: null,

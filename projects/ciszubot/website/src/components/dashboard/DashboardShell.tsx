@@ -292,7 +292,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
 
   const itemBase = 'flex w-full items-center gap-2.5 rounded-xl border px-3 py-2.5 text-sm font-semibold transition';
   const itemIdle = 'border-transparent text-white/70 hover:text-white';
-  const sectionTitle = 'px-3 pb-1 pt-4 text-[10px] font-black uppercase tracking-[0.25em] text-white/40';
+  const sectionTitle = 'flex items-center gap-1.5 px-3 pb-1 pt-4 text-[10px] font-black uppercase tracking-[0.25em] text-white/40';
 
   const initials = (me?.displayName ?? me?.username ?? 'C').charAt(0).toUpperCase();
 
@@ -364,7 +364,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
       </div>
 
       {/* ─── PANEL ─── */}
-      <p className={sectionTitle}>{t.panel}</p>
+      <p className={sectionTitle}><Icon name="settings" size={11} /> {t.panel}</p>
       <Link
         href="/dashboard"
         className={`${itemBase} ${!activeId ? ACCENTS[1].active : itemIdle} ${ACCENTS[1].hover}`}
@@ -389,7 +389,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
       </Link>
 
       {/* ─── SERVIDORES (mosaico en popover, selección única) ─── */}
-      <p className={sectionTitle}>{t.servers}</p>
+      <p className={sectionTitle}><Icon name="server" size={11} /> {t.servers}</p>
       <div className="relative" ref={serversRef}>
         <button
           type="button"
@@ -416,32 +416,37 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
               <p className="text-xs leading-relaxed text-white/50">{t.noServers}</p>
             ) : (
               <>
-              <input
-                value={serverQuery}
-                onChange={(e) => setServerQuery(e.target.value)}
-                placeholder={t.searchPlaceholder}
-                className="mb-2 w-full rounded-lg border border-white/15 bg-black/40 px-3 py-2 text-xs text-white outline-none placeholder:text-white/30 focus:border-neon-cyan/60"
-              />
+              <label className="mb-2 flex items-center gap-2 rounded-lg border border-white/15 bg-black/40 px-3 py-2">
+                <Icon name="search" size={12} className="shrink-0 text-white/35" />
+                <input
+                  value={serverQuery}
+                  onChange={(e) => setServerQuery(e.target.value)}
+                  placeholder={t.searchPlaceholder}
+                  className="min-w-0 flex-1 bg-transparent text-xs text-white outline-none placeholder:text-white/30"
+                />
+              </label>
               <div className="mb-2 flex flex-wrap items-center gap-1.5">
                 {(['all', 'invited', 'unknown'] as const).map((f) => (
                   <button
                     key={f}
                     type="button"
                     onClick={() => setServerFilter(f)}
-                    className={`rounded-full border px-2.5 py-1 text-[9px] font-black uppercase tracking-widest transition ${
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[9px] font-black uppercase tracking-widest transition ${
                       serverFilter === f
                         ? 'border-neon-cyan/60 bg-neon-cyan/10 text-neon-cyan'
                         : 'border-white/15 text-white/50 hover:text-white'
                     }`}
                   >
+                    <Icon name={f === 'all' ? 'menu' : f === 'invited' ? 'check' : 'triangle-exclamation'} size={9} />
                     {f === 'all' ? t.filterAll : f === 'invited' ? t.filterInvited : t.filterUnverified}
                   </button>
                 ))}
                 <button
                   type="button"
                   onClick={() => setServerSort(serverSort === 'asc' ? 'desc' : 'asc')}
-                  className="ml-auto rounded-full border border-white/15 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-white/50 transition hover:text-white"
+                  className="ml-auto inline-flex items-center gap-1 rounded-full border border-white/15 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-white/50 transition hover:text-white"
                 >
+                  <Icon name="refresh" size={9} />
                   {serverSort === 'asc' ? t.sortAsc : t.sortDesc}
                 </button>
               </div>
@@ -547,7 +552,7 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
       </div>
 
       {/* ─── ATAJOS ─── */}
-      <p className={sectionTitle}>{t.shortcuts}</p>
+      <p className={sectionTitle}><Icon name="bolt" size={11} /> {t.shortcuts}</p>
       <div className="space-y-1">
         <Link
           href="/faq"
@@ -722,8 +727,9 @@ export default function DashboardShell({ guilds, lang, inviteUrl, me, footer, ch
               <button
                 type="button"
                 onClick={() => setServersOpen(true)}
-                className="rounded-xl border border-white/15 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white/60 transition hover:border-neon-blue/60 hover:text-white"
               >
+                <Icon name="server" size={11} />
                 {t.changeServer}
               </button>
               {activeGuild.invited === false && (

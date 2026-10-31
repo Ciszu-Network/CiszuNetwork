@@ -78,32 +78,35 @@ export default function ServersGrid({
     })
     .sort((a, b) => (sort === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
 
-  const FILTERS: { key: typeof filter; label: string }[] = [
-    { key: 'all', label: t.searchUi.all },
-    { key: 'notInvited', label: t.searchUi.unverified },
-    { key: 'notConfigured', label: t.searchUi.invited },
-    { key: 'configured', label: t.searchUi.configured },
+  const FILTERS: { key: typeof filter; label: string; icon: string }[] = [
+    { key: 'all', label: t.searchUi.all, icon: 'menu' },
+    { key: 'notInvited', label: t.searchUi.unverified, icon: 'triangle-exclamation' },
+    { key: 'notConfigured', label: t.searchUi.invited, icon: 'gift' },
+    { key: 'configured', label: t.searchUi.configured, icon: 'check' },
   ];
 
   return (
     <>
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t.searchUi.placeholder}
-          className="w-full max-w-xs rounded-xl border border-border bg-card px-3 py-2 text-xs text-ink outline-none placeholder:text-muted/60 focus:border-neon-blue/60"
-        />
+        <label className="flex w-full max-w-xs items-center gap-2 rounded-xl border border-border bg-card px-3 py-2">
+          <Icon name="search" size={13} className="shrink-0 text-muted" />
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t.searchUi.placeholder}
+            className="min-w-0 flex-1 bg-transparent text-xs text-ink outline-none placeholder:text-muted/60"
+          />
+        </label>
         {FILTERS.map((f) => (
           <button
             key={f.key}
             type="button"
             onClick={() => setFilter(f.key)}
-            className={`rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition ${
+            className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-widest transition ${
               filter === f.key ? 'border-neon-blue/60 bg-neon-blue/10 text-neon-blue' : 'border-border text-muted hover:text-ink'
             }`}
           >
-            {f.label}
+            <Icon name={f.icon} size={10} /> {f.label}
           </button>
         ))}
         <button

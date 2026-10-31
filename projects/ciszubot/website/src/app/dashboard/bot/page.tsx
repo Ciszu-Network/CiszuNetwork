@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { Icon, LANGUAGE_OPTIONS, Modal, useToast } from '@ciszu/ui';
 import { useClientI18n } from '@/hooks/useClientI18n';
@@ -8,7 +9,7 @@ import { usePageTitle } from '@/lib/usePageTitle';
 import InviteLink from '@/components/dashboard/InviteLink';
 import { INVITE_URL } from '@/lib/i18n';
 import { updatePreferences, loadPreferences, savePreferences, syncPreferencesToProfile } from '@/lib/preferences';
-import { NiceSelect, MultiSelect } from '@/components/dashboard/fields';
+import { GuildPicker, NiceSelect, MultiSelect } from '@/components/dashboard/fields';
 import { BOT_ID } from '@/lib/botStatus';
 
 interface SaveEntry {
@@ -38,6 +39,7 @@ export default function BotPreferencesPage() {
   const { lang, dict } = useClientI18n();
   const t = dict.botPrefs;
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [beta, setBeta] = useState<boolean | null>(null);
   const [langModal, setLangModal] = useState(false);
   const [saves, setSaves] = useState<SaveEntry[]>([]);
@@ -156,14 +158,17 @@ export default function BotPreferencesPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(roleCfg),
       });
-      if (res.ok) toast(t.rolesSaved ?? 'Roles guardados', 'success');
+      if (res.ok) {
+        void queryClient.invalidateQueries({ queryKey: ['guild-config', roleGuildId] });
+        toast(t.rolesSaved ?? 'Roles guardados', 'success');
+      }
       else toast(t.rolesSaveError ?? 'No se pudieron guardar los roles', 'error');
     } catch {
       toast(t.rolesSaveError ?? 'No se pudieron guardar los roles', 'error');
     } finally {
       setRoleSaving(false);
     }
-  }, [roleGuildId, roleCfg, roleSaving, toast, t]);
+  }, [roleGuildId, roleCfg, roleSaving, toast, t, queryClient]);
 
   // Buscador de secciones (filtra por el título de cada tarjeta).
   useEffect(() => {
@@ -216,12 +221,15 @@ export default function BotPreferencesPage() {
 
   return (
     <div id="bot-prefs-root" className="space-y-6 pb-16">
-      <input
-        value={prefsQuery}
-        onChange={(e) => setPrefsQuery(e.target.value)}
-        placeholder={t.searchPlaceholder}
-        className="w-full max-w-xs rounded-xl border border-white/10 bg-black/30 px-4 py-2.5 text-xs text-white outline-none placeholder:text-white/30 focus:border-neon-blue/60"
-      />
+      <label className="flex w-full max-w-xs items-center gap-2 rounded-xl border border-white/10 bg-black/30 px-4 py-2.5">
+        <Icon name="search" size={14} className="shrink-0 text-white/35" />
+        <input
+          value={prefsQuery}
+          onChange={(e) => setPrefsQuery(e.target.value)}
+          placeholder={t.searchPlaceholder}
+          className="min-w-0 flex-1 bg-transparent text-xs text-white outline-none placeholder:text-white/30"
+        />
+      </label>
       {/* Plan */}
       <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
         <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -372,9 +380,9 @@ export default function BotPreferencesPage() {
           </h2>
         </div>
         <p className="mb-4 text-xs text-white/45">{t.botPrefsHint}</p>
-        <NiceSelect
+        <GuildPicker
+          guilds={roleGuilds}
           value={roleGuildId}
-          options={roleGuilds.map((g) => ({ id: g.id, label: g.name }))}
           placeholder={t.rolesGuildPick}
           onChange={(v) => setRoleGuildId(v)}
         />
@@ -426,9 +434,9 @@ export default function BotPreferencesPage() {
           </h2>
         </div>
         <p className="mb-4 text-xs text-white/45">{t.rolesSectionHint}</p>
-        <NiceSelect
+        <GuildPicker
+          guilds={roleGuilds}
           value={roleGuildId}
-          options={roleGuilds.map((g) => ({ id: g.id, label: g.name }))}
           placeholder={t.rolesGuildPick}
           onChange={(v) => setRoleGuildId(v)}
         />

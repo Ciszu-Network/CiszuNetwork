@@ -1,12 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { Icon } from '@ciszu/ui';
 import type { GuildEmoji } from '@/lib/discordGuild';
 import { useClientI18n } from '@/hooks/useClientI18n';
 
 /**
  * Campos enriquecidos del dashboard:
- *  · NiceSelect   → select con estilo propio (no nativo)
+ *  · NiceSelect   → lista personalizada con buscador, iconos y filtros
+ *  · GuildPicker  → mosaico de servidores con buscador (sin acciones de config)
  *  · EmojiPicker  → panel rápido con los emojis REALES del servidor
  *  · RichInput    → input con botón de emojis
  *  · RichTextarea → textarea auto-ajustable con emojis + markdown rápido
@@ -16,36 +18,315 @@ import { useClientI18n } from '@/hooks/useClientI18n';
 const FIELD_CLS =
   'w-full rounded-xl border border-white/15 bg-black/25 px-3 py-2 text-xs text-white outline-none placeholder:text-white/30 focus:border-neon-blue/60';
 
+export interface ListOption {
+  id: string;
+  label: string;
+  icon?: string;
+  kind?: string;
+}
+
+export interface PickerGuild {
+  id: string;
+  name: string;
+  icon: string | null;
+  invited?: boolean | null;
+}
+
+function optionIcon(option: ListOption): string {
+  if (option.icon) return option.icon;
+  if (option.label.startsWith('🔊')) return 'music';
+  if (option.label.startsWith('📁')) return 'box-archive';
+  if (option.label.startsWith('🔞')) return 'triangle-exclamation';
+  if (option.label.startsWith('@')) return 'user';
+  if (option.label.startsWith('#')) return 'message-square';
+  return 'message';
+}
+
+function optionKind(option: ListOption): string {
+  if (option.kind) return option.kind;
+  if (option.label.startsWith('🔊')) return 'voice';
+  if (option.label.startsWith('📁')) return 'category';
+  if (option.label.startsWith('🔞')) return 'nsfw';
+  if (option.label.startsWith('@')) return 'role';
+  if (option.label.startsWith('#')) return 'text';
+  return 'other';
+}
+
+function PickerAvatar({ guild, size = 28 }: { guild: PickerGuild; size?: number }) {
+  if (guild.icon) {
+    return (
+      <img
+        src={`https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`}
+        alt=""
+        width={size}
+        height={size}
+        style={{ width: size, height: size }}
+        className="shrink-0 rounded-full"
+      />
+    );
+  }
+  return (
+    <span
+      className="flex shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-neon-blue to-neon-purple font-black text-white"
+      style={{ width: size, height: size, fontSize: size * 0.4 }}
+    >
+      {guild.name.charAt(0).toUpperCase()}
+    </span>
+  );
+}
+
 export function NiceSelect({
   value,
   onChange,
   options,
   placeholder,
   className,
+  clearable = false,
 }: {
   value: string | null;
   onChange: (v: string) => void;
-  options: { id: string; label: string }[];
+  options: ListOption[];
+  placeholder?: string;
+  className?: string;
+  clearable?: boolean;
+}) {
+  const { dict } = useClientI18n();
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [kind, setKind] = useState('all');
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const selected = options.find((option) => option.id === value) ?? null;
+  const kinds = Array.from(new Set(options.map(optionKind)));
+  const hasKinds = kinds.length > 1 && !kinds.every((entry) => entry === 'other');
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (event: MouseEvent) => {
+      if (boxRef.current && !boxRef.current.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
+
+  const filtered = options.filter((option) => {
+    const q = query.trim().toLowerCase();
+    const matchesQuery = !q || option.label.toLowerCase().includes(q);
+    const matchesKind = kind === 'all' || optionKind(option) === kind;
+    return matchesQuery && matchesKind;
+  });
+
+  return (
+    <div ref={boxRef} className={`relative ${className ?? ''}`}>
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+        className={`${FIELD_CLS} flex min-h-[34px] items-center gap-2 text-left`}
+      >
+        <Icon name={selected ? optionIcon(selected) : 'menu'} size={13} className="shrink-0 text-neon-blue" />
+        <span className={`min-w-0 flex-1 truncate ${selected ? 'text-white' : 'text-white/30'}`}>
+          {selected?.label ?? placeholder ?? '—'}
+        </span>
+        {clearable && selected && (
+          <span
+            role="button"
+            tabIndex={0}
+            onClick={(event) => {
+              event.stopPropagation();
+              onChange('');
+              setOpen(false);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                onChange('');
+                setOpen(false);
+              }
+            }}
+            className="rounded p-0.5 text-[10px] text-white/35 hover:text-rose-300"
+            title={dict.guildPage.multiSelectClear}
+          >
+            ✕
+          </span>
+        )}
+        <span className="text-[10px] text-white/40">▼</span>
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full z-[60] mt-1 w-full min-w-[220px] rounded-xl border border-white/15 bg-[#0b0f1a]/98 p-2 shadow-2xl">
+          <label className="mb-1.5 flex items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-2 py-1.5">
+            <Icon name="search" size={12} className="shrink-0 text-white/35" />
+            <input
+              autoFocus
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={dict.guildPage.mdSearch}
+              className="min-w-0 flex-1 bg-transparent text-[10px] text-white outline-none placeholder:text-white/25"
+            />
+          </label>
+          {hasKinds && (
+            <div className="mb-1.5 flex flex-wrap gap-1">
+              <button
+                type="button"
+                onClick={() => setKind('all')}
+                className={`rounded-full border px-2 py-0.5 text-[8px] font-black uppercase tracking-widest ${
+                  kind === 'all' ? 'border-neon-blue/60 bg-neon-blue/10 text-neon-blue' : 'border-white/10 text-white/40'
+                }`}
+              >
+                {dict.dashboardPage.searchUi.all}
+              </button>
+              {kinds.map((entry) => (
+                <button
+                  key={entry}
+                  type="button"
+                  onClick={() => setKind(entry)}
+                  className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[8px] font-black uppercase tracking-widest ${
+                    kind === entry ? 'border-neon-blue/60 bg-neon-blue/10 text-neon-blue' : 'border-white/10 text-white/40'
+                  }`}
+                >
+                  <Icon name={entry === 'text' ? 'message-square' : entry === 'voice' ? 'music' : entry === 'role' ? 'user' : entry === 'category' ? 'box-archive' : 'triangle-exclamation'} size={9} />
+                  {entry}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="max-h-56 overflow-y-auto">
+            {filtered.length === 0 ? (
+              <p className="p-2 text-[10px] text-white/35">{dict.guildPage.multiSelectEmpty}</p>
+            ) : (
+              filtered.map((option) => {
+                const active = option.id === value;
+                return (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => {
+                      onChange(option.id);
+                      setOpen(false);
+                    }}
+                    className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[11px] transition ${
+                      active ? 'bg-neon-blue/15 text-neon-blue' : 'text-white/70 hover:bg-white/5'
+                    }`}
+                  >
+                    <Icon name={optionIcon(option)} size={13} className="shrink-0" />
+                    <span className="min-w-0 flex-1 truncate">{option.label}</span>
+                    {active && <Icon name="check" size={11} className="shrink-0" />}
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function GuildPicker({
+  guilds,
+  value,
+  onChange,
+  placeholder,
+  className,
+}: {
+  guilds: PickerGuild[];
+  value: string | null;
+  onChange: (v: string) => void;
   placeholder?: string;
   className?: string;
 }) {
+  const { dict } = useClientI18n();
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [onlyAvailable, setOnlyAvailable] = useState(true);
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const selected = guilds.find((guild) => guild.id === value) ?? null;
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (event: MouseEvent) => {
+      if (boxRef.current && !boxRef.current.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
+
+  const visible = guilds.filter((guild) => {
+    const q = query.trim().toLowerCase();
+    const matchesQuery = !q || guild.name.toLowerCase().includes(q) || guild.id.includes(q);
+    const matchesAvailability = !onlyAvailable || guild.invited !== false;
+    return matchesQuery && matchesAvailability;
+  });
+
   return (
-    <div className={`relative ${className ?? ''}`}>
-      <select
-        value={value ?? ''}
-        onChange={(e) => onChange(e.target.value)}
-        className={`${FIELD_CLS} appearance-none pr-8 [&>option]:bg-[#0b0f1a] [&>option]:text-white`}
+    <div ref={boxRef} className={`relative ${className ?? ''}`}>
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        aria-expanded={open}
+        className={`${FIELD_CLS} flex min-h-[34px] items-center gap-2 text-left`}
       >
-        <option value="" disabled>
-          {placeholder ?? '—'}
-        </option>
-        {options.map((opt) => (
-          <option key={opt.id} value={opt.id}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-      <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-white/40">▼</span>
+        {selected ? <PickerAvatar guild={selected} size={22} /> : <Icon name="server" size={14} className="text-neon-blue" />}
+        <span className={`min-w-0 flex-1 truncate ${selected ? 'text-white' : 'text-white/30'}`}>
+          {selected?.name ?? placeholder ?? '—'}
+        </span>
+        <span className="text-[10px] text-white/40">▼</span>
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full z-[60] mt-1 w-full min-w-[280px] rounded-2xl border border-white/15 bg-[#0a0a14]/98 p-3 shadow-2xl">
+          <label className="mb-2 flex items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-2 py-1.5">
+            <Icon name="search" size={12} className="shrink-0 text-white/35" />
+            <input
+              autoFocus
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={dict.dashboardPage.searchUi.placeholder}
+              className="min-w-0 flex-1 bg-transparent text-[10px] text-white outline-none placeholder:text-white/25"
+            />
+          </label>
+          <div className="mb-2 flex flex-wrap gap-1">
+            <button
+              type="button"
+              onClick={() => setOnlyAvailable(false)}
+              className={`rounded-full border px-2 py-0.5 text-[8px] font-black uppercase tracking-widest ${!onlyAvailable ? 'border-neon-cyan/60 bg-neon-cyan/10 text-neon-cyan' : 'border-white/10 text-white/40'}`}
+            >
+              {dict.dashboardPage.searchUi.all}
+            </button>
+            <button
+              type="button"
+              onClick={() => setOnlyAvailable(true)}
+              className={`rounded-full border px-2 py-0.5 text-[8px] font-black uppercase tracking-widest ${onlyAvailable ? 'border-neon-cyan/60 bg-neon-cyan/10 text-neon-cyan' : 'border-white/10 text-white/40'}`}
+            >
+              {dict.dashboardPage.searchUi.invited}
+            </button>
+          </div>
+          {visible.length === 0 ? (
+            <p className="p-2 text-[10px] text-white/35">{dict.dashboardPage.searchUi.noResults}</p>
+          ) : (
+            <div className="grid max-h-64 grid-cols-3 gap-2 overflow-y-auto pr-1">
+              {visible.map((guild) => {
+                const active = guild.id === value;
+                return (
+                  <button
+                    key={guild.id}
+                    type="button"
+                    onClick={() => {
+                      onChange(guild.id);
+                      setOpen(false);
+                    }}
+                    title={guild.name}
+                    className={`flex flex-col items-center gap-1.5 rounded-xl border p-2 transition ${
+                      active ? 'border-neon-cyan/60 bg-neon-cyan/10' : 'border-white/10 hover:border-neon-cyan/40 hover:bg-white/5'
+                    }`}
+                  >
+                    <PickerAvatar guild={guild} size={36} />
+                    <span className="w-full truncate text-center text-[9px] font-bold text-white/75">{guild.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -273,7 +554,7 @@ export function MultiSelect({
 }: {
   values: string[];
   onChange: (v: string[]) => void;
-  options: { id: string; label: string }[];
+  options: ListOption[];
   placeholder?: string;
 }) {
   const { dict } = useClientI18n();
@@ -297,7 +578,7 @@ export function MultiSelect({
   const filtered = options.filter(
     (opt) => !query.trim() || opt.label.toLowerCase().includes(query.trim().toLowerCase()),
   );
-  const colors = ['#f472b6', '#60a5fa', '#34d399', '#fbbf24', '#a78bfa', '#22d3ee'];
+
 
   return (
     <div ref={boxRef} className="relative flex gap-1">
@@ -330,14 +611,17 @@ export function MultiSelect({
       )}
       {open && (
         <div className="absolute left-0 top-full z-50 mt-1 max-h-60 w-full overflow-y-auto rounded-xl border border-white/15 bg-[#0b0f1a]/98 p-1.5 shadow-2xl">
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={t.mdSearch}
-            className="mb-1 w-full rounded-lg border border-white/10 bg-black/30 px-2 py-1.5 text-[10px] text-white outline-none placeholder:text-white/25"
-          />
+          <label className="mb-1 flex items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-2 py-1.5">
+            <Icon name="search" size={11} className="shrink-0 text-white/35" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={t.mdSearch}
+              className="min-w-0 flex-1 bg-transparent text-[10px] text-white outline-none placeholder:text-white/25"
+            />
+          </label>
           {filtered.length === 0 && <p className="p-2 text-[10px] text-white/35">{t.multiSelectEmpty}</p>}
-          {filtered.map((opt, index) => (
+          {filtered.map((opt) => (
             <button
               key={opt.id}
               type="button"
@@ -353,8 +637,8 @@ export function MultiSelect({
               >
                 {values.includes(opt.id) && <span className="text-[8px] font-black">✓</span>}
               </span>
-              <span className="h-2 w-2 rounded-full" style={{ background: colors[index % colors.length] }} />
-              {opt.label}
+              <Icon name={optionIcon(opt)} size={12} className="shrink-0 text-white/40" />
+              <span className="min-w-0 flex-1 truncate">{opt.label}</span>
             </button>
           ))}
         </div>

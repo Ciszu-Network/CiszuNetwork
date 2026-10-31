@@ -88,6 +88,9 @@ const guildConfigPatchSchema = z.object({
       spam: z.boolean(),
       flood: z.boolean(),
       words: z.array(z.string().min(1).max(64)).max(100),
+      cooldown_seconds: z.number().int().min(0).max(86400).optional(),
+      excluded_role_ids: z.array(z.string().min(1).max(32)).max(50).optional(),
+      excluded_channel_ids: z.array(z.string().min(1).max(32)).max(50).optional(),
     })
     .optional(),
   alliance_config: z
@@ -319,7 +322,7 @@ interface GuildConfig {
   staff_role_id?: string | null;
   level_message?: string;
   level_roles?: { level: number; role_id: string }[];
-  automod_config?: { links: boolean; invites: boolean; caps: boolean; spam: boolean; words: string[] };
+  automod_config?: { links: boolean; invites: boolean; caps: boolean; spam: boolean; flood: boolean; words: string[]; cooldown_seconds?: number; excluded_role_ids?: string[]; excluded_channel_ids?: string[] };
   drops?: {
     list: {
       id: string;
@@ -756,7 +759,11 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
         invites: Boolean(am.invites),
         caps: Boolean(am.caps),
         spam: Boolean(am.spam),
+        flood: Boolean(am.flood),
         words: Array.isArray(am.words) ? am.words.map((w) => String(w).slice(0, 64)).slice(0, 100) : [],
+        cooldown_seconds: Math.min(86400, Math.max(0, Math.round(Number(am.cooldown_seconds) || 0))),
+        excluded_role_ids: Array.isArray(am.excluded_role_ids) ? am.excluded_role_ids.map((id) => String(id).slice(0, 32)).slice(0, 50) : [],
+        excluded_channel_ids: Array.isArray(am.excluded_channel_ids) ? am.excluded_channel_ids.map((id) => String(id).slice(0, 32)).slice(0, 50) : [],
       };
     }
   }
