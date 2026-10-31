@@ -11,15 +11,9 @@ import { Icon, useToast } from '@ciszu/ui';
 import { useAppStore } from '@/store/useAppStore';
 import Image from 'next/image';
 import { usePageTitle } from '@/lib/usePageTitle';
+import BadgesSection from '@/components/profile/BadgesSection';
 
 
-const ACHIEVEMENTS = [
-  { id: 1, name: 'Primera Partida', icon: <Icon name="medal" />, unlocked: true, color: 'text-yellow-500' },
-  { id: 2, name: 'Amante de la Música', icon: <Icon name="music" />, unlocked: true, color: 'text-neon-blue' },
-  { id: 3, name: 'Top 10', icon: <Icon name="trophy" />, unlocked: false, color: 'text-gray-600' },
-  { id: 4, name: 'Perfección', icon: <Icon name="target" />, unlocked: false, color: 'text-gray-600' },
-  { id: 5, name: 'En Racha', icon: <Icon name="flame" size={16} />, unlocked: false, color: 'text-gray-600' },
-];
 
 export default function DynamicProfilePage() {
   const t = useT();
@@ -400,29 +394,7 @@ export default function DynamicProfilePage() {
         {/* Achievements & Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-12">
-            <section className="space-y-8">
-              <h2 className="text-3xl font-header font-black italic tracking-tighter text-neon-blue flex items-center gap-3 uppercase">
-                <Icon name="medal" size={32} />
-                {t.pages.profile.achievements}
-              </h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
-                {ACHIEVEMENTS.map((achievement) => (
-                  <div 
-                    key={achievement.id}
-                    className={`p-8 rounded-[2rem] border transition-all text-center flex flex-col items-center gap-4 ${
-                      achievement.unlocked ? 'bg-white/5 border-white/10 hover:border-white/20' : 'bg-black opacity-30 border-dashed border-gray-800'
-                    }`}
-                  >
-                    <div className={`w-14 h-14 flex items-center justify-center text-4xl ${achievement.unlocked ? achievement.color : 'text-gray-800'}`}>
-                      {achievement.icon}
-                    </div>
-                    <div className={`text-[10px] font-black uppercase tracking-[0.2em] ${achievement.unlocked ? 'text-gray-300' : 'text-gray-600'}`}>
-                      {achievement.name}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
+            <BadgesSection userId={profile.id} isOwnProfile={isOwnProfile} />
 
             <section className="space-y-8">
               <div className="flex items-center justify-between">

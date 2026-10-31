@@ -38,8 +38,9 @@ function generateNotes(levelId: string, durationSec: number, bpm: number, diffic
     let type: NoteType = 'tap';
     let endTime: number | undefined = undefined;
 
-    // 15% de probabilidad de hold notes en Normal, Hard, Expert
-    if (difficulty !== 'Easy' && seededRandom(seed + index) < 0.15) {
+    // Holds: más frecuentes cuanto mayor es la dificultad.
+    const holdChance = difficulty === 'Easy' ? 0 : difficulty === 'Normal' ? 0.12 : difficulty === 'Hard' ? 0.28 : 0.42;
+    if (holdChance > 0 && seededRandom(seed + index) < holdChance) {
       type = 'hold';
       // duración sostenida entre 0.5s y 1.5s
       const duration = 0.5 + seededRandom(seed + index + 999) * 1.0;

@@ -233,3 +233,45 @@ export const tickets = muzicmania.table(
   },
   (t) => [index('idx_tickets_user_id').on(t.userId)]
 );
+export const badgeDefinitions = muzicmania.table(
+  'badge_definitions',
+  {
+    id: text('id').primaryKey(),
+    category: text('category').notNull(),
+    name: text('name').notNull(),
+    description: text('description').notNull().default(''),
+    icon: text('icon').notNull().default('medal'),
+    kind: text('kind').notNull().default('auto'),
+    metric: text('metric'),
+    maxLevel: integer('max_level').notNull().default(1),
+    thresholds: jsonb('thresholds').notNull().default([]),
+    levels: jsonb('levels').notNull().default([]),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+);
+
+export const userBadges = muzicmania.table(
+  'user_badges',
+  {
+    userId: uuid('user_id').notNull(),
+    badgeId: text('badge_id').notNull(),
+    level: integer('level').notNull().default(0),
+    progress: bigint('progress', { mode: 'number' }).notNull().default(0),
+    obtainedAt: timestamp('obtained_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.userId, t.badgeId] }),
+    index('idx_user_badges_badge').on(t.badgeId),
+    index('idx_user_badges_user').on(t.userId),
+  ]
+);
+
+export const profileFavoriteBadges = muzicmania.table(
+  'profile_favorite_badges',
+  {
+    userId: uuid('user_id').primaryKey(),
+    badgeIds: text('badge_ids').array().notNull().default([]),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+  }
+);

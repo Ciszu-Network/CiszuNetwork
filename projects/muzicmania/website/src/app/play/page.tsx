@@ -478,6 +478,45 @@ function PlayPageContent() {
     if (typeof window === 'undefined') return false;
     return localStorage.getItem('display_tactile') === 'true';
   });
+  const [touchSize, setTouchSize] = useState(() => {
+    if (typeof window === 'undefined') return 64;
+    return Math.min(96, Math.max(44, Number(localStorage.getItem('touch_size')) || 64));
+  });
+  const [touchBottom, setTouchBottom] = useState(() => {
+    if (typeof window === 'undefined') return 24;
+    return Math.min(96, Math.max(8, Number(localStorage.getItem('touch_bottom')) || 24));
+  });
+
+  useEffect(() => {
+    if (!isTouchDevice) return;
+    setInputMode('touch');
+    setTactileControls(true);
+    try {
+      localStorage.setItem('display_tactile', 'true');
+    } catch {
+      /* noop */
+    }
+  }, [isTouchDevice]);
+
+  useEffect(() => {
+    if (!isTouchDevice) return;
+    const lock = () => {
+      const orientation = (screen as Screen & { orientation?: { lock?: (mode: string) => Promise<void>; unlock?: () => void } }).orientation;
+      const playing = Boolean((gameState as { isPlaying?: boolean } | null)?.isPlaying);
+      if (document.fullscreenElement || playing) {
+        void orientation?.lock?.('landscape').catch(() => undefined);
+      } else {
+        orientation?.unlock?.();
+      }
+    };
+    lock();
+    document.addEventListener('fullscreenchange', lock);
+    return () => {
+      document.removeEventListener('fullscreenchange', lock);
+      const orientation = (screen as Screen & { orientation?: { unlock?: () => void } }).orientation;
+      orientation?.unlock?.();
+    };
+  }, [isTouchDevice, gameState]);
 
   const screenFilter = useMemo(() => {
     let filter = '';
@@ -5536,21 +5575,49 @@ function PlayPageContent() {
         </div>
       </div>
       {isTouchDevice && (
-        <div data-touch-controls className="fixed inset-x-0 bottom-6 z-[150] flex justify-center gap-3 pointer-events-none md:hidden">
-          {[{ lane: 3, label: '←' }, { lane: 1, label: '↓' }, { lane: 2, label: '↑' }, { lane: 0, label: '→' }].map((b) => (
-            <button
-              key={b.lane}
-              type="button"
-              aria-label={'Lane ' + b.lane}
-              onPointerDown={(e) => {
-                e.preventDefault();
-                activeHandleInput(b.lane);
-              }}
-              className="pointer-events-auto w-16 h-16 rounded-2xl border-2 border-white/20 bg-black/60 backdrop-blur text-white text-2xl font-black active:scale-95 active:bg-neon-cyan/30 select-none touch-none"
-            >
-              {b.label}
-            </button>
-          ))}
+        <div data-touch-controls className="fixed inset-x-0 z-[150] pointer-events-none md:hidden" style={{ bottom: touchBottom }}>
+          <div className="flex items-end justify-between px-4">
+            <div className="flex items-end gap-2">
+              <button
+                type="button"
+                aria-label={`Lane ${3}`}
+                onPointerDown={(e) => { e.preventDefault(); activeHandleInput(3); }}
+                style={{ width: touchSize, height: touchSize, borderColor: currentLevel?.config.colors.primary ?? '#22d3ee', boxShadow: `0 0 18px ${currentLevel?.config.colors.primary ?? '#22d3ee'}44` }}
+                className="pointer-events-auto mb-7 rounded-2xl border-2 border-cyan-400/40 bg-black/55 text-white/90 shadow-[0_0_18px_rgba(34,211,238,0.25)] backdrop-blur-md active:scale-95 active:bg-cyan-400/30 select-none touch-none"
+              >
+                <span className="text-2xl font-black">←</span>
+              </button>
+              <button
+                type="button"
+                aria-label={`Lane ${1}`}
+                onPointerDown={(e) => { e.preventDefault(); activeHandleInput(1); }}
+                style={{ width: touchSize, height: touchSize, borderColor: currentLevel?.config.colors.primary ?? '#22d3ee', boxShadow: `0 0 18px ${currentLevel?.config.colors.primary ?? '#22d3ee'}44` }}
+                className="pointer-events-auto rounded-2xl border-2 bg-black/55 text-white/90 backdrop-blur-md active:scale-95 active:bg-cyan-400/30 select-none touch-none"
+              >
+                <span className="text-2xl font-black">↓</span>
+              </button>
+            </div>
+            <div className="flex items-end gap-2">
+              <button
+                type="button"
+                aria-label={`Lane ${2}`}
+                onPointerDown={(e) => { e.preventDefault(); activeHandleInput(2); }}
+                style={{ width: touchSize, height: touchSize, borderColor: currentLevel?.config.colors.primary ?? '#22d3ee', boxShadow: `0 0 18px ${currentLevel?.config.colors.primary ?? '#22d3ee'}44` }}
+                className="pointer-events-auto rounded-2xl border-2 bg-black/55 text-white/90 backdrop-blur-md active:scale-95 active:bg-cyan-400/30 select-none touch-none"
+              >
+                <span className="text-2xl font-black">↑</span>
+              </button>
+              <button
+                type="button"
+                aria-label={`Lane ${0}`}
+                onPointerDown={(e) => { e.preventDefault(); activeHandleInput(0); }}
+                style={{ width: touchSize, height: touchSize, borderColor: currentLevel?.config.colors.primary ?? '#22d3ee', boxShadow: `0 0 18px ${currentLevel?.config.colors.primary ?? '#22d3ee'}44` }}
+                className="pointer-events-auto mb-7 rounded-2xl border-2 bg-black/55 text-white/90 backdrop-blur-md active:scale-95 active:bg-cyan-400/30 select-none touch-none"
+              >
+                <span className="text-2xl font-black">→</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
       <AuthWarningModal isOpen={isAuthWarningOpen} onClose={() => setIsAuthWarningOpen(false)} />
