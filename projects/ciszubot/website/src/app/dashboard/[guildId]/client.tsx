@@ -13,7 +13,7 @@ import DiscordMarkdownField from '@/components/dashboard/DiscordMarkdownField';
 import SocialFeedsEditor, { type SocialFeed } from '@/components/dashboard/SocialFeedsEditor';
 import { ServerPremiumCard } from '@/components/dashboard/ServerPremiumCard';
 import { QuickHelp, HelpZone } from '@/components/dashboard/QuickHelp';
-import { NiceSelect, RichInput, MultiSelect } from '@/components/dashboard/fields';
+import { NiceSelect, MultiSelect } from '@/components/dashboard/fields';
 import { SECTION_HELP } from '@/lib/dashboardCommands';
 import useLiveBotStatus from '@/components/home/useLiveBotStatus';
 import { resolveBotStatus } from '@/lib/botStatus';
@@ -347,15 +347,17 @@ function Field({
   label,
   hint,
   icon,
+  className,
   children,
 }: {
   label: string;
   hint?: string;
   icon?: string;
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
+    <label className={`block ${className ?? ''}`}>
       <span className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-white/85">
         {icon && <Icon name={icon} size={13} className="shrink-0 text-neon-blue" />}
         {label}
@@ -539,6 +541,23 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
     setDict(getDict(readCookieLang()));
   }, []);
   const t = dict.guildPage;
+  const mdLabels = {
+    bold: t.mdBold,
+    italic: t.mdItalic,
+    underline: t.mdUnderline,
+    spoiler: t.mdSpoiler,
+    code: t.mdCode,
+    preview: t.mdPreview,
+    edit: t.mdEdit,
+    vars: t.mdVars,
+    emoji: t.emojiServerSelect,
+    quote: t.mdQuote,
+    role: t.mdRole,
+    channel: t.mdChannel,
+    serverEmojis: t.mdServerEmojis,
+    discordEmojis: t.mdDiscordEmojis,
+    search: t.mdSearch,
+  };
 
   const [error, setError] = useState<string | null>(null);
   const [flash, setFlash] = useState<string | null>(null);
@@ -1420,7 +1439,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   }, [dirty]);
 
   const saveMutation = useMutation({
-    mutationFn: async (patch: GuildConfig) => {
+    mutationFn: async (next: GuildConfig) => {
+      const base = baseline ? (JSON.parse(baseline) as GuildConfig) : null;
+      const patch = base
+        ? Object.fromEntries(
+            Object.entries(next).filter(
+              ([key, value]) => JSON.stringify(value) !== JSON.stringify((base as Record<string, unknown>)[key]),
+            ),
+          )
+        : next;
       const res = await fetch(`/api/dashboard/${guildId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2078,15 +2105,15 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
             <div className="flex flex-wrap gap-4 text-center text-xs text-white/60">
               <div>
                 <p className="text-base font-black text-white">{guildData?.memberCount ?? guildInfo?.memberCount ?? "—"}</p>
-                <p>{t.membersLabel}</p>
+                <p className="flex items-center justify-center gap-1"><Icon name="users" size={9} /> {t.membersLabel}</p>
               </div>
               <div>
                 <p className="text-base font-black text-white">{guildData?.roles?.length ?? guildInfo?.roles?.length ?? "—"}</p>
-                <p>{t.rolesLabel}</p>
+                <p className="flex items-center justify-center gap-1"><Icon name="shield" size={9} /> {t.rolesLabel}</p>
               </div>
               <div>
                 <p className="text-base font-black text-white">{guildData?.channels?.length ?? guildInfo?.channels?.length ?? "—"}</p>
-                <p>{t.channelsLabel}</p>
+                <p className="flex items-center justify-center gap-1"><Icon name="message-square" size={9} /> {t.channelsLabel}</p>
               </div>
               <div>
                 <p className={`text-base font-black ${hasBotGuild === false ? "text-amber-400" : "text-emerald-400"}`}>
@@ -2862,14 +2889,19 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                     />
                   </Field>
                 )}
-                <Field label={t.levelMessageLabel} hint={t.levelMessageHint}>
-                  <RichInput
-                    value={config.level_message ?? '🎉 ¡{user} subió al nivel {level} en {guild}!'}
-                    maxLength={500}
-                    emojis={emojis}
-                    onChange={(v) => update({ level_message: v })}
-                  />
-                </Field>
+                <DiscordMarkdownField
+                  label={t.levelMessageLabel}
+                  icon="star"
+                  hint={t.levelMessageHint}
+                  value={config.level_message ?? '🎉 ¡{user} subió al nivel {level} en {guild}!'}
+                  maxLength={500}
+                  onChange={(v) => update({ level_message: v })}
+                  variables={['{user}', '{level}', '{guild}', '{members}']}
+                  emojis={emojis}
+                  roles={roleOptions}
+                  channels={textChannelOptions}
+                  labels={mdLabels}
+                />
                 <div>
                   <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-white/45">{t.levelRolesLabel}</p>
                   <p className="mb-3 text-[10px] text-white/35">{t.levelRolesHint}</p>
@@ -3074,14 +3106,19 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   />
                 </Field>
               )}
-              <Field label={t.welcomeMessageLabel} hint={t.varsHint}>
-                <RichInput
-                  value={config.welcome_message ?? 'Bienvenido/a {user} a {guild}!'}
-                  maxLength={500}
-                  emojis={emojis}
-                  onChange={(v) => update({ welcome_message: v })}
-                />
-              </Field>
+              <DiscordMarkdownField
+                label={t.welcomeMessageLabel}
+                icon="user"
+                hint={t.varsHint}
+                value={config.welcome_message ?? 'Bienvenido/a {user} a {guild}!'}
+                maxLength={500}
+                onChange={(v) => update({ welcome_message: v })}
+                variables={['{user}', '{guild}', '{members}']}
+                emojis={emojis}
+                roles={roleOptions}
+                channels={textChannelOptions}
+                labels={mdLabels}
+              />
               <Field label={t.autoroleLabel} hint={t.autoroleHint}>
                 <MultiSelect
                   values={config.autorole_ids ?? []}
@@ -3209,15 +3246,22 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                               />
                             </div>
                           </Field>
-                          <Field label={t.dropsMessageLabel} hint={t.dropsMessageHint}>
-                            <RichInput
+                          <div className="sm:col-span-2">
+                            <DiscordMarkdownField
+                              label={t.dropsMessageLabel}
+                              icon="gift"
+                              hint={t.dropsMessageHint}
                               value={drop.message ?? ''}
                               maxLength={300}
-                              emojis={emojis}
                               onChange={(v) => patchDrop({ message: v || null })}
+                              variables={['{user}', '{guild}']}
+                              emojis={emojis}
+                              roles={roleOptions}
+                              channels={textChannelOptions}
+                              labels={mdLabels}
                             />
-                          </Field>
-                          <Field label={t.dropsChannelsLabel} hint={t.dropsChannelsHint}>
+                          </div>
+                          <Field className="sm:col-span-2" label={t.dropsChannelsLabel} hint={t.dropsChannelsHint}>
                             <MultiSelect
                               values={drop.channels}
                               options={textChannelOptions}
@@ -3327,15 +3371,18 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   />
                 </Field>
               )}
-              <Field label={t.msgContentLabel}>
-                <textarea
-                  className={`${inputCls} min-h-[90px]`}
-                  value={msgContent}
-                  maxLength={2000}
-                  placeholder={t.msgContentLabel}
-                  onChange={(e) => setMsgContent(e.target.value)}
-                />
-              </Field>
+              <DiscordMarkdownField
+                label={t.msgContentLabel}
+                icon="message"
+                value={msgContent}
+                maxLength={2000}
+                onChange={(v) => setMsgContent(v)}
+                variables={['{user}', '{guild}']}
+                emojis={emojis}
+                roles={roleOptions}
+                channels={textChannelOptions}
+                labels={mdLabels}
+              />
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
@@ -3396,14 +3443,19 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                   />
                 </Field>
               )}
-              <Field label={t.goodbyeMessageLabel} hint={t.varsHint}>
-                <RichInput
-                  value={config.goodbye_message ?? 'Adiós {user}, que te vaya bien!'}
-                  maxLength={500}
-                  emojis={emojis}
-                  onChange={(v) => update({ goodbye_message: v })}
-                />
-              </Field>
+              <DiscordMarkdownField
+                label={t.goodbyeMessageLabel}
+                icon="logout"
+                hint={t.varsHint}
+                value={config.goodbye_message ?? 'Adiós {user}, que te vaya bien!'}
+                maxLength={500}
+                onChange={(v) => update({ goodbye_message: v })}
+                variables={['{user}', '{guild}', '{members}']}
+                emojis={emojis}
+                roles={roleOptions}
+                channels={textChannelOptions}
+                labels={mdLabels}
+              />
             </div>
             <HelpZone title={SECTION_HELP.goodbye.title} commands={SECTION_HELP.goodbye.commands} note={SECTION_HELP.goodbye.note} />
           </section>
@@ -4706,6 +4758,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               </Field>
               <DiscordMarkdownField
                 label={t.inviteMessageLabel}
+                icon="mail"
                 hint={t.inviteMessageHint}
                 value={config.invite_message ?? ''}
                 onChange={(v) => update({ invite_message: v })}
@@ -5573,16 +5626,21 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
                             }}
                           />
                         </Field>
-                        <Field label={t.ticketsCatWelcomeLabel} hint="Variable: {user}">
-                          <RichInput
-                            value={cat.welcome}
-                            emojis={emojis}
-                            onChange={(v) => {
-                              const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, welcome: v } : c));
-                              update({ ticket_config: { ...ticketCfg, categories } });
-                            }}
-                          />
-                        </Field>
+                        <DiscordMarkdownField
+                          label={t.ticketsCatWelcomeLabel}
+                          icon="support"
+                          hint={t.varsHint}
+                          value={cat.welcome}
+                          onChange={(v) => {
+                            const categories = ticketCfg.categories.map((c, i) => (i === idx ? { ...c, welcome: v } : c));
+                            update({ ticket_config: { ...ticketCfg, categories } });
+                          }}
+                          variables={['{user}', '{guild}']}
+                          emojis={emojis}
+                          roles={roleOptions}
+                          channels={textChannelOptions}
+                          labels={mdLabels}
+                        />
                       </div>
                     </div>
                   ))}

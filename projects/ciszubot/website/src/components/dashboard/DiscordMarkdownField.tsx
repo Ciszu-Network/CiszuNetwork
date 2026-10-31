@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
+import { Icon } from '@ciszu/ui';
 import type { GuildEmoji } from '@/lib/discordGuild';
 
 export interface DiscordMarkdownLabels {
@@ -24,6 +25,7 @@ export interface DiscordMarkdownLabels {
 interface Props {
   label: string;
   hint?: string;
+  icon?: string;
   value: string;
   onChange: (value: string) => void;
   labels: DiscordMarkdownLabels;
@@ -31,6 +33,8 @@ interface Props {
   emojis?: GuildEmoji[];
   roles?: { id: string; label: string }[];
   channels?: { id: string; label: string }[];
+  maxLength?: number;
+  rows?: number;
 }
 
 /** Escapa HTML antes de aplicar el mini-render de Markdown de Discord. */
@@ -59,10 +63,54 @@ export function renderDiscordMarkdown(raw: string): string {
   return out.replace(/\n/g, '<br/>');
 }
 
-const STANDARD_EMOJIS = [
-  '😀', '😂', '😍', '🤝', '🎉', '⭐', '💎', '🔥', '❤️', '✅', '❌', '⚠️', '💰', '🏆', '📢', '🎫',
-  '😎', '🤔', '😭', '😡', '👍', '👎', '👏', '🙏', '💀', '👀', '🧠', '⚡', '🌈', '🎵', '🎮', '🚀',
-];
+const EMOJI_CATEGORIES = [
+  {
+    id: 'all',
+    icon: 'menu',
+    emojis: [
+      '😀', '😂', '😍', '🤝', '🎉', '⭐', '💎', '🔥', '❤️', '✅', '❌', '⚠️', '💰', '🏆', '📢', '🎫',
+      '😎', '🤔', '😭', '😡', '👍', '👎', '👏', '🙏', '💀', '👀', '🧠', '⚡', '🌈', '🎵', '🎮', '🚀',
+      '😊', '🥰', '😘', '😅', '🤣', '🙃', '😴', '🤯', '🥳', '😤', '🤬', '😱', '🤗', '🤫', '🧐', '🤓',
+      '🐶', '🐱', '🦊', '🐻', '🐼', '🐨', '🦁', '🐸', '🐙', '🦄', '🌸', '🌻', '🌙', '☀️', '🌊', '🍀',
+      '🍕', '🍔', '🍟', '🍣', '🍩', '🍪', '🍫', '☕', '🍺', '🍷', '⚽', '🏀', '🎯', '🎲', '🎸', '🎧',
+      '💻', '📱', '🖥️', '📷', '🎁', '🛒', '🔑', '💡', '📌', '📎', '✏️', '📝', '🔔', '🔒', '🔓', '⚙️',
+      '💯', '✨', '💫', '💥', '💢', '💤', '💬', '💭', '🕐', '📅', '📍', '🔗', '➡️', '⬅️', '⬆️', '⬇️',
+      '🏳️', '🏴', '🏁', '🚩', '🇻🇪', '🇺🇸', '🇪🇸', '🇲🇽', '🇦🇷', '🇨🇴', '🇧🇷', '🇨🇱', '🇵🇪', '🇪🇨', '🇺🇾', '🇵🇾',
+    ],
+  },
+  { id: 'smileys', icon: 'message', emojis: ['😀','😂','😍','😊','🥰','😘','😅','🤣','🙃','😴','🤯','🥳','😤','🤬','😱','🤗','🤫','🧐','🤓','😎','🤔','😭','😡','👍','👎','👏','🙏'] },
+  { id: 'people', icon: 'user', emojis: ['👤','👥','🧑','👩','👨','🧒','👶','🧓','👮','🕵️','💂','👷','🤴','👸','🦸','🦹','🧙','🧚','🧛','🧜','🧝','🙋','🙆','🙅','🤷','🤦','💁','🙇'] },
+  { id: 'nature', icon: 'heart', emojis: ['🐶','🐱','🦊','🐻','🐼','🐨','🦁','🐸','🐙','🦄','🌸','🌻','🌙','☀️','🌊','🍀','🌲','🌴','🌵','🍄','🌹','🌺','🌼','🌷','⭐','✨','⚡','🔥'] },
+  { id: 'food', icon: 'gift', emojis: ['🍕','🍔','🍟','🍣','🍩','🍪','🍫','☕','🍺','🍷','🍎','🍌','🍓','🍉','🍇','🥑','🥕','🌽','🍞','🧀','🍗','🍖','🍤','🍰','🎂','🍿','🥤','🧃'] },
+  { id: 'activities', icon: 'gamepad', emojis: ['⚽','🏀','🏈','⚾','🎾','🏐','🎱','🏓','🏸','🥊','🎯','🎲','🎮','🕹️','🎸','🎧','🎤','🎬','🎨','🎭','🎪','🎉','🎊','🎁','🏆','🥇','🥈','🥉'] },
+  { id: 'objects', icon: 'box-archive', emojis: ['💻','📱','🖥️','📷','🛒','🔑','💡','📌','📎','✏️','📝','🔔','🔒','🔓','⚙️','🛠️','🔧','🔨','🧰','📦','📚','📖','🖊️','📊','📈','📉','🗂️','🗃️'] },
+  { id: 'symbols', icon: 'star', emojis: ['❤️','🧡','💛','💚','💙','💜','🖤','🤍','🤎','💯','✅','❌','⚠️','💥','💢','💤','💬','💭','🔗','➡️','⬅️','⬆️','⬇️','🔴','🟠','🟡','🟢','🔵'] },
+  { id: 'flags', icon: 'globe', emojis: ['🏳️','🏴','🏁','🚩','🇻🇪','🇺🇸','🇪🇸','🇲🇽','🇦🇷','🇨🇴','🇧🇷','🇨🇱','🇵🇪','🇪🇨','🇺🇾','🇵🇾','🇧🇴','🇩🇴','🇵🇦','🇨🇷','🇬🇹','🇭🇳','🇸🇻','🇳🇮','🇨🇺','🇵🇷','🇫🇷','🇩🇪'] },
+] as const;
+
+const EmojiFaceIcon = () => (
+  <svg viewBox="0 0 24 24" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M8.5 14.5c.9 1.2 2.1 1.8 3.5 1.8s2.6-.6 3.5-1.8" />
+    <circle cx="9" cy="9.5" r="0.7" fill="currentColor" stroke="none" />
+    <circle cx="15" cy="9.5" r="0.7" fill="currentColor" stroke="none" />
+  </svg>
+);
+
+const VARIABLE_MEANINGS: Record<string, string> = {
+  '{user}': 'Usuario que se une o interactúa',
+  '{guild}': 'Nombre del servidor',
+  '{members}': 'Cantidad de miembros',
+  '{level}': 'Nivel alcanzado',
+  '{count}': 'Cantidad total',
+  '{inviter}': 'Usuario que invitó',
+  '{account}': 'Cuenta de la red social',
+  '{platform}': 'Plataforma de la red',
+  '{title}': 'Título del contenido',
+  '{url}': 'Enlace del contenido',
+  '{author}': 'Autor del contenido',
+  '{channel}': 'Canal de Discord',
+};
 
 const ROLE_COLORS = ['#f472b6', '#60a5fa', '#34d399', '#fbbf24', '#a78bfa', '#22d3ee'];
 const CHANNEL_COLORS = ['#38bdf8', '#4ade80', '#facc15', '#fb923c', '#c084fc', '#f472b6'];
@@ -76,6 +124,7 @@ const inputCls =
 export default function DiscordMarkdownField({
   label,
   hint,
+  icon,
   value,
   onChange,
   labels,
@@ -83,10 +132,13 @@ export default function DiscordMarkdownField({
   emojis = [],
   roles = [],
   channels = [],
+  maxLength,
+  rows = 4,
 }: Props) {
   const [preview, setPreview] = useState(false);
   const [menu, setMenu] = useState<'emoji' | 'role' | 'channel' | null>(null);
   const [emojiTab, setEmojiTab] = useState<'server' | 'discord'>('server');
+  const [emojiCategory, setEmojiCategory] = useState('all');
   const [query, setQuery] = useState('');
   const ref = useRef<HTMLTextAreaElement | null>(null);
 
@@ -129,12 +181,15 @@ export default function DiscordMarkdownField({
     if (next === 'emoji') setEmojiTab(emojis.length > 0 ? 'server' : 'discord');
   };
 
-  const popover = 'absolute bottom-full right-0 z-50 mb-2 w-72 overflow-hidden rounded-2xl border border-white/15 bg-[#0b0f1a]/98 shadow-2xl';
+  const popover = 'absolute bottom-full right-0 z-50 mb-2 w-80 overflow-hidden rounded-2xl border border-white/15 bg-[#0b0f1a]/98 shadow-2xl';
 
   return (
     <div className="block">
       <div className="mb-1 flex flex-wrap items-center gap-2">
-        <span className="text-sm font-semibold text-white/85">{label}</span>
+        <span className="flex items-center gap-1.5 text-sm font-semibold text-white/85">
+          {icon && <Icon name={icon} size={13} className="text-neon-blue" />}
+          {label}
+        </span>
         <div className="ml-auto flex items-center gap-1">
           <button type="button" onClick={() => wrap('**')} className={btn} title={labels.bold}>B</button>
           <button type="button" onClick={() => wrap('*')} className={`${btn} italic`} title={labels.italic}>I</button>
@@ -161,7 +216,8 @@ export default function DiscordMarkdownField({
         ) : (
           <textarea
             ref={ref}
-            rows={4}
+            rows={rows}
+            maxLength={maxLength}
             className={inputCls}
             value={value}
             placeholder={hint ?? ''}
@@ -170,24 +226,40 @@ export default function DiscordMarkdownField({
         )}
       </div>
 
-      <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-        {variables.map((v) => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => wrap(v, '')}
-            className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[10px] font-bold text-white/60 transition hover:border-neon-blue/60 hover:text-white"
-          >
-            {v}
-          </button>
-        ))}
-        <span className="text-[10px] text-white/35">{labels.vars}</span>
+      <div className="mt-2 rounded-xl border border-white/10 bg-black/20 p-2">
+        <p className="mb-1.5 flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-white/40">
+          <Icon name="ri-braces" size={10} /> {labels.vars}
+        </p>
+        <ul className="grid gap-1 sm:grid-cols-2">
+          {variables.map((v) => (
+            <li key={v} className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1">
+              <button
+                type="button"
+                onClick={() => wrap(v, '')}
+                className="font-mono text-[10px] font-bold text-neon-blue transition hover:text-white"
+              >
+                {v}
+              </button>
+              <span className="min-w-0 flex-1 truncate text-[9px] text-white/35">{VARIABLE_MEANINGS[v] ?? labels.vars}</span>
+              <button
+                type="button"
+                title={labels.vars}
+                onClick={() => void navigator.clipboard?.writeText(v)}
+                className="rounded p-0.5 text-white/35 transition hover:text-neon-blue"
+              >
+                <Icon name="copy" size={10} />
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {(emojis.length > 0 || roles.length > 0 || channels.length > 0) && (
         <div className="relative mt-2 flex flex-wrap items-center gap-1.5">
           {emojis.length > 0 && (
-            <button type="button" onClick={() => toggleMenu('emoji')} className={btn} title={labels.emoji}>😊</button>
+            <button type="button" onClick={() => toggleMenu('emoji')} className={btn} title={labels.emoji}>
+              <EmojiFaceIcon />
+            </button>
           )}
           {roles.length > 0 && (
             <button type="button" onClick={() => toggleMenu('role')} className={btn} title={labels.role}>@</button>
@@ -198,29 +270,43 @@ export default function DiscordMarkdownField({
 
           {menu === 'emoji' && (
             <div className={popover}>
-              <div className="flex border-b border-white/10">
+              <div className="flex items-center gap-1 border-b border-white/10 p-1.5">
                 <button
                   type="button"
                   onClick={() => setEmojiTab('server')}
-                  className={`flex-1 px-3 py-2 text-[10px] font-black uppercase tracking-widest ${emojiTab === 'server' ? 'text-neon-blue' : 'text-white/40'}`}
+                  title={labels.serverEmojis}
+                  className={`flex h-7 w-7 items-center justify-center rounded-lg transition ${emojiTab === 'server' ? 'bg-neon-blue/15 text-neon-blue' : 'text-white/40 hover:text-white'}`}
                 >
-                  {labels.serverEmojis}
+                  <Icon name="server" size={13} />
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setEmojiTab('discord')}
-                  className={`flex-1 px-3 py-2 text-[10px] font-black uppercase tracking-widest ${emojiTab === 'discord' ? 'text-neon-blue' : 'text-white/40'}`}
-                >
-                  {labels.discordEmojis}
-                </button>
+                <span className="mx-1 h-4 w-px bg-white/15" />
+                {EMOJI_CATEGORIES.map((category) => (
+                  <button
+                    key={category.id}
+                    type="button"
+                    onClick={() => {
+                      setEmojiTab('discord');
+                      setEmojiCategory(category.id);
+                    }}
+                    title={category.id}
+                    className={`flex h-7 w-7 items-center justify-center rounded-lg transition ${emojiTab === 'discord' && emojiCategory === category.id ? 'bg-neon-blue/15 text-neon-blue' : 'text-white/40 hover:text-white'}`}
+                  >
+                    <Icon name={category.icon} size={13} />
+                  </button>
+                ))}
               </div>
               <div className="p-2">
-                <input
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  placeholder={labels.search}
-                  className="mb-2 w-full rounded-lg border border-white/10 bg-black/30 px-2 py-1.5 text-[11px] text-white outline-none placeholder:text-white/25"
-                />
+                {emojiTab === 'server' && (
+                  <label className="mb-2 flex items-center gap-2 rounded-lg border border-white/10 bg-black/30 px-2 py-1.5">
+                    <Icon name="search" size={11} className="shrink-0 text-white/35" />
+                    <input
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder={labels.search}
+                      className="min-w-0 flex-1 bg-transparent text-[11px] text-white outline-none placeholder:text-white/25"
+                    />
+                  </label>
+                )}
                 {emojiTab === 'server' ? (
                   <div className="grid max-h-44 grid-cols-8 gap-1 overflow-y-auto">
                     {filteredEmojis.length === 0 && <p className="col-span-8 p-2 text-center text-[10px] text-white/35">—</p>}
@@ -242,7 +328,7 @@ export default function DiscordMarkdownField({
                   </div>
                 ) : (
                   <div className="grid max-h-44 grid-cols-8 gap-1 overflow-y-auto">
-                    {STANDARD_EMOJIS.map((emoji) => (
+                    {(EMOJI_CATEGORIES.find((category) => category.id === emojiCategory)?.emojis ?? []).map((emoji) => (
                       <button
                         key={emoji}
                         type="button"
