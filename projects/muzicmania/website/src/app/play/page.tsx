@@ -5574,8 +5574,8 @@ function PlayPageContent() {
           </div>
         </div>
       </div>
-      {isTouchDevice && (
-        <div data-touch-controls className="fixed inset-x-0 z-[150] pointer-events-none md:hidden" style={{ bottom: touchBottom }}>
+      {isTouchDevice && tactileControls && phase === 'game' && (
+        <div data-touch-controls className="fixed inset-x-0 z-[150] pointer-events-none" style={{ bottom: touchBottom }}>
           <div className="flex items-end justify-between px-4">
             <div className="flex items-end gap-2">
               <button
