@@ -98,7 +98,7 @@ function PlayerCard({
   return (
     <div className={`rounded-[1.75rem] border bg-black/45 p-4 backdrop-blur-xl ${ring}`}>
       <div className="mb-3 flex items-center justify-between gap-2">
-        <span className={`text-[9px] font-black uppercase tracking-[0.3em] ${text}`}>{label}</span>
+        <span className={`min-w-0 truncate text-[9px] font-black uppercase tracking-[0.3em] ${text}`}>{label}</span>
         <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[7px] font-black uppercase tracking-widest text-white/40">
           {loading ? '···' : `${badges.length}/3`}
         </span>

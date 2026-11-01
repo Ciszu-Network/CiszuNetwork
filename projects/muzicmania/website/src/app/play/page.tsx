@@ -1448,6 +1448,7 @@ function PlayPageContent() {
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={bootProgress}
+              aria-label={t.pages.play.loadingResources}
               className="h-1.5 w-72 overflow-hidden rounded-full border border-white/5 bg-white/10"
             >
               <div
