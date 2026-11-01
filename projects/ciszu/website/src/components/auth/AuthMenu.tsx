@@ -108,7 +108,7 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
         variant={open ? "primary" : "outline"}
         size="sm"
         onPress={toggle}
-        className="flex items-center gap-2"
+        className="flex min-h-11 items-center gap-2"
       >
         <span className={`w-7 h-7 rounded-full flex items-center justify-center ${open ? 'bg-black/30' : 'bg-black/40 border border-brand-light/30'}`}>
           {user?.avatar_url ? (
@@ -123,7 +123,7 @@ export default function AuthMenu({ open, onToggle, onClose, lang, dict }: { open
             <span className="text-brand-light"><GuestIcon /></span>
           )}
         </span>
-        <span className="max-w-[120px] truncate text-xs font-header font-bold tracking-wide">
+        <span className="hidden lg:block max-w-[120px] truncate text-xs font-header font-bold tracking-wide">
           {isHydrated ? (user ? displayName : guest) : '…'}
         </span>
       </Button>

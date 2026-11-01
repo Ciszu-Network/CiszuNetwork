@@ -64,7 +64,7 @@ export default function FeedbackFab() {
   if (dismissed && !showWarning) return null;
 
   return (
-    <div className="fixed left-[16px] z-[60]" style={{ bottom: stackBottom, transition: 'bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}>
+    <div className="fixed left-3 sm:left-4 z-[60]" style={{ bottom: `calc(${stackBottom}px + env(safe-area-inset-bottom, 0px))`, transition: 'bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1)' }}>
       {dismissed && showWarning && (
         <FabDismissHint
           slotId="feedback"

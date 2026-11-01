@@ -762,3 +762,34 @@ body.focus-mode [data-focus-container] {
 .light header [class*="bg-[#1"],
 .light footer [class*="bg-[#0"],
 .light footer [class*="bg-[#1"] { background-color: #f5f7fc !important; }
+
+/* ── Mobile hardening (Nov 2026) ─────────────────────────────────────────
+   Evita scroll horizontal accidental en telefonos/tabletas y deja que
+   grids/flex puedan encogerse. Los carruseles internos conservan su
+   overflow-x-auto. */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+main {
+  min-width: 0;
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
+}
+
+button,
+[role='button'],
+a {
+  -webkit-tap-highlight-color: transparent;
+}

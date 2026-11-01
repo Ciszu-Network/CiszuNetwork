@@ -315,7 +315,7 @@ export const NavbarContent = () => {
           <div className={`flex items-center ${floating ? 'h-14' : 'h-[60px]'} gap-3`}>
 
              {/* Logo */}
-             <Link href="/" aria-label="MuzicMania" className="flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
+             <Link href="/" aria-label="MuzicMania" className="hidden lg:flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
                <Image
                  src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
                  alt=""
@@ -331,10 +331,10 @@ export const NavbarContent = () => {
              </Link>
 
             {/* Separator */}
-            <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
+            <div className="hidden lg:block w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
 
             {/* Desktop Nav - Dynamic Zoom Hiding & Active Prioritization */}
-            <div className="flex items-center gap-1 flex-1 overflow-visible">
+            <div className="hidden lg:flex items-center gap-1 flex-1 overflow-visible">
               {NAV_LINKS.filter(l => !(isDesktopApp && l.href === '/download')).map((link) => {
                 const isLinkActive = isActive(link.href);
                 const responsiveClass = isLinkActive ? 'flex' : link.hideCls;
@@ -384,7 +384,7 @@ export const NavbarContent = () => {
               <button
                 ref={searchToggleRef}
                 onClick={toggleSearch}
-                className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.2)] ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.2)] ${
                   isSearchOpen ? 'bg-neon-blue border-neon-blue text-black' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
                 }`}
                 title={dict.nav.search}
@@ -394,7 +394,7 @@ export const NavbarContent = () => {
 
               {/* Hamburger contextual toggle (ALWAYS VISIBLE NEXT TO SEARCH) */}
               <button
-                className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.2)] ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.2)] ${
                   isMenuOpen ? 'bg-neon-blue border-neon-blue text-black' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
                 }`}
                 onClick={toggleMenu}
@@ -408,7 +408,7 @@ export const NavbarContent = () => {
                 {user ? (
                   <button
                     onClick={toggleAcceder}
-                    className="relative w-10 h-10 rounded-full border-2 border-neon-cyan/50 overflow-hidden hover:border-neon-cyan transition-all active:scale-95 shadow-[0_0_15px_rgba(0,212,255,0.3)]"
+                    className="relative w-11 h-11 rounded-full border-2 border-neon-cyan/50 overflow-hidden hover:border-neon-cyan transition-all active:scale-95 shadow-[0_0_15px_rgba(0,212,255,0.3)]"
                     title={user.display_name}
                   >
                     {user.avatar_url ? (
@@ -422,7 +422,7 @@ export const NavbarContent = () => {
                 ) : (
                   <button
                     onClick={toggleAcceder}
-                    className={`flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] ${
+                    className={`flex items-center gap-2 pl-1 pr-3 py-1 min-h-11 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] ${
                       isAccederOpen
                         ? 'bg-gradient-to-r from-neon-blue/40 via-[#6600ff]/40 to-neon-pink/40 border-neon-pink text-white'
                         : 'bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 border-white/20 text-white hover:border-neon-pink'
@@ -584,7 +584,7 @@ export const NavbarContent = () => {
       {isMenuOpen && (
         <div className="fixed inset-0 z-[100] pointer-events-none">
           {/* Main Menu Container - offset by header height (60px) */}
-          <div className="absolute top-[60px] right-0 w-[320px] max-w-[85vw] h-[calc(100vh-60px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
+          <div className="absolute top-[60px] right-0 w-[20rem] max-w-[92vw] h-[calc(100dvh-60px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
             {/* Animated left divider to match header */}
             <div className="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-neon-cyan/50 to-transparent shadow-[0_0_15px_rgba(0,212,255,0.5)] z-10" />
             

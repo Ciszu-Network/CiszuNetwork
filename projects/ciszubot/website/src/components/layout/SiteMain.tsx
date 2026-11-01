@@ -12,5 +12,5 @@ import type { ReactNode } from 'react';
 export default function SiteMain({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const isEdit = pathname === '/edit' || pathname.startsWith('/edit/');
-  return <main className={isEdit ? 'flex-grow' : 'flex-grow pt-[60px]'}>{children}</main>;
+  return <main className={isEdit ? 'flex-grow' : 'flex-grow pt-16'}>{children}</main>;
 }

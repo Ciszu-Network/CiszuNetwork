@@ -53,9 +53,9 @@ export function CookiesBanner() {
           exit={{ y: 100, opacity: 0 }}
           className="fixed bottom-0 left-0 w-full z-[100] p-4 md:p-6 pointer-events-none"
         >
-          <div className="pointer-events-auto max-w-4xl mx-auto bg-black/90 backdrop-blur-xl border-t border-neon-cyan/30 md:border md:rounded-[2rem] p-6 shadow-[0_0_40px_rgba(90,130,232,0.15)] flex flex-col md:flex-row items-center gap-6 justify-between">
+          <div className="pointer-events-auto max-w-4xl mx-auto bg-black/90 backdrop-blur-xl border-t border-neon-cyan/30 md:border md:rounded-[2rem] p-4 sm:p-6 shadow-[0_0_40px_rgba(90,130,232,0.15)] flex flex-col md:flex-row items-center gap-4 md:gap-6 justify-between">
             <div className="space-y-2 flex-1 text-center md:text-left">
-              <h3 className="text-white font-header font-black uppercase italic tracking-widest text-lg flex items-center justify-center md:justify-start gap-2">
+              <h3 className="text-white font-header font-black uppercase italic tracking-widest text-base sm:text-lg flex items-center justify-center md:justify-start gap-2">
                 <svg viewBox="0 0 24 24" className="w-5 h-5 text-yellow-500" fill="currentColor">
                   <path d="M12 2a10 10 0 0 0-6.88 17.26c1.89 1.74 4.3 2.74 6.88 2.74 5.52 0 10-4.48 10-10 0-2.58-1-5-2.74-6.88C17.52 3 15 2 12 2zm1 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-4-3a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm6-2a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm-3-4a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
                 </svg>

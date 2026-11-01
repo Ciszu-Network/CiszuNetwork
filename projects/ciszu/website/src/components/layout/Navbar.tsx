@@ -431,7 +431,7 @@ export const NavbarContent = () => {
           <div className={`flex items-center ${floating ? 'h-14' : 'h-[64px]'} gap-3`}>
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
+            <Link href="/" className="hidden lg:flex items-center gap-2.5 group shrink-0 cursor-pointer hover:scale-110 active:scale-95 transition-all duration-300">
               <Image
                 src={assetResolver.resolve('projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg')}
                 alt={CISZU_NETWORK.name}
@@ -451,10 +451,10 @@ export const NavbarContent = () => {
             </Link>
 
             {/* Separator */}
-            <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
+            <div className="hidden lg:block w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
 
             {/* Desktop Nav */}
-            <div className="flex items-center gap-1 flex-1 overflow-visible min-w-0">
+            <div className="hidden lg:flex items-center gap-1 flex-1 overflow-visible min-w-0">
               {NAV_ITEMS.map((item, idx) => {
                 if (item.links) {
                   const isOpen = openDropdown === item.name;
@@ -538,7 +538,7 @@ export const NavbarContent = () => {
               {/* Search icon toggle */}
               <button
                 onClick={toggleSearch}
-                className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
                   isSearchOpen
                     ? 'bg-brand-light border-brand-light text-black'
                     : 'bg-card border-brand-light/30 text-ink hover:border-brand-light'
@@ -552,7 +552,7 @@ export const NavbarContent = () => {
               {/* Hamburger contextual toggle (siempre visible) */}
               <button
                 onClick={toggleMenu}
-                className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
                   isMenuOpen
                     ? 'bg-brand-light border-brand-light text-black'
                     : 'bg-card border-brand-light/30 text-ink hover:border-brand-light'
@@ -615,7 +615,7 @@ export const NavbarContent = () => {
       {/* Slide-Right Contextual Menu (Sidebar) */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-[100] pointer-events-none">
-          <div className="absolute top-[64px] right-0 w-[320px] max-w-[85vw] h-[calc(100vh-64px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
+          <div className="absolute top-[64px] right-0 w-[20rem] max-w-[92vw] h-[calc(100dvh-64px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
             {/* Animated left divider to match header */}
             <div className="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-brand-light/50 to-transparent shadow-[0_0_15px_rgba(58,107,240,0.4)] z-10" />
 

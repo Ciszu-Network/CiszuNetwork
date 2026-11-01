@@ -432,7 +432,7 @@ export default function Navbar({ account }: NavbarProps) {
         />
       <div className="max-w-screen-xl mx-auto px-4">
         <div className={`flex items-center ${floating ? 'h-14' : 'h-[64px]'} gap-3`}>
-          <Link href="/" className="flex items-center gap-2.5 shrink-0 group cursor-pointer">
+          <Link href="/" className="hidden lg:flex items-center gap-2.5 shrink-0 group cursor-pointer">
             <SmartImage
               src={LOGO_ISOTIPO_CIRCLE}
               alt="CiszuBot"
@@ -451,7 +451,8 @@ export default function Navbar({ account }: NavbarProps) {
             />
           </Link>
 
-          <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />              <div className="flex items-center gap-1 flex-1 min-w-0 overflow-visible">
+          <div className="hidden lg:block w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
+          <div className="hidden lg:flex items-center gap-1 flex-1 min-w-0 overflow-visible">
             {NAV_PAGES.map((link, idx) => {
               const active = isActive(link.href);
               const responsiveClass = active ? 'flex' : (NAV_HIDE_CLS[idx] ?? 'flex');
@@ -521,7 +522,7 @@ export default function Navbar({ account }: NavbarProps) {
             <Link
               href="/invite"
               onClick={() => { setAuthOpen(false); setSearchOpen(false); setIsMenuOpen(false); setInviteOpen(false); }}
-              className="hidden sm:flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-300 cursor-pointer shadow-md border group font-header font-bold text-sm bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white hover:scale-105 hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)] active:scale-95"
+              className="hidden lg:flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-300 cursor-pointer shadow-md border group font-header font-bold text-sm bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink text-white hover:scale-105 hover:shadow-[0_10px_28px_-8px_rgba(0,212,255,0.8)] active:scale-95"
               aria-label={dict.nav.invite}
               title={dict.nav.invite}
             >
@@ -534,7 +535,7 @@ export default function Navbar({ account }: NavbarProps) {
               <button
                 ref={searchToggleRef}
                 onClick={() => { setSearchOpen(v => !v); setIsMenuOpen(false); setAuthOpen(false); setInviteOpen(false); }}
-                className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.25)] ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(0,212,255,0.25)] ${
                   searchOpen
                     ? 'bg-neon-blue border-neon-blue text-black'
                     : 'bg-card border-border text-ink hover:border-neon-blue'
@@ -548,7 +549,7 @@ export default function Navbar({ account }: NavbarProps) {
 
             <button
               onClick={() => { setIsMenuOpen(!isMenuOpen); setSearchOpen(false); setAuthOpen(false); setInviteOpen(false); if (!isMenuOpen) setSidebarView('main'); }}
-              className={`p-2 rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
+              className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
                 isMenuOpen
                   ? 'bg-neon-blue border-neon-blue text-black'
                   : 'bg-card border-border text-ink hover:border-neon-blue'
@@ -563,7 +564,7 @@ export default function Navbar({ account }: NavbarProps) {
               {activeUser ? (
                 <button
                   onClick={() => { setAuthOpen(!authOpen); setSearchOpen(false); setInviteOpen(false); setIsMenuOpen(false); }}
-                  className="flex items-center gap-2 rounded-full border border-border bg-card p-1 pr-2.5 transition hover:border-[#5865F2] hover:bg-muted/15 cursor-pointer"
+                  className="flex min-h-11 items-center gap-2 rounded-full border border-border bg-card p-1 pr-2.5 transition hover:border-[#5865F2] hover:bg-muted/15 cursor-pointer"
                   aria-label={dict.nav.account}
                   aria-expanded={authOpen}
                 >
@@ -580,7 +581,7 @@ export default function Navbar({ account }: NavbarProps) {
               ) : (
                 <button
                   onClick={() => { setAuthOpen(!authOpen); setSearchOpen(false); setInviteOpen(false); setIsMenuOpen(false); }}
-                  className={`flex items-center gap-1.5 rounded-full border transition-all duration-300 cursor-pointer py-1 pl-1.5 pr-2.5 shadow-sm ${
+                  className={`flex min-h-11 items-center gap-1.5 rounded-full border transition-all duration-300 cursor-pointer py-1 pl-1.5 pr-2.5 shadow-sm ${
                     authOpen
                       ? 'bg-[#5865F2]/15 border-[#5865F2] text-[#5865F2]'
                       : 'bg-card border-border text-ink hover:border-[#5865F2] hover:shadow-[0_0_10px_rgba(88,101,242,0.25)]'
@@ -737,7 +738,7 @@ export default function Navbar({ account }: NavbarProps) {
 
     {isMenuOpen && (
       <div className="fixed inset-0 z-[100] pointer-events-none">
-        <div className="absolute top-[64px] right-0 w-[320px] max-w-[85vw] h-[calc(100vh-64px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
+        <div className="absolute top-[64px] right-0 w-[20rem] max-w-[92vw] h-[calc(100dvh-64px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-right-fade">
           <div className="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-neon-blue/50 to-transparent shadow-[0_0_15px_rgba(0,212,255,0.4)] z-10" />
 
           <div className="flex items-center justify-between px-5 pt-8 pb-6 border-b border-white/5 shrink-0 gap-3">

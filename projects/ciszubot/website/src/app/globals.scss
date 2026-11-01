@@ -620,3 +620,34 @@ html:not(.dark) [class*="bg-neon"] .text-white { color: #ffffff !important; }
   to { opacity: 1; transform: translateY(0) scale(1); }
 }
 .cz-pop { animation: cz-pop 0.18s ease-out; transform-origin: top center; }
+
+/* ── Mobile hardening (Nov 2026) ─────────────────────────────────────────
+   Evita scroll horizontal accidental en telefonos/tabletas y deja que
+   grids/flex puedan encogerse. Los carruseles internos conservan su
+   overflow-x-auto. */
+html,
+body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+main {
+  min-width: 0;
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
+}
+
+button,
+[role='button'],
+a {
+  -webkit-tap-highlight-color: transparent;
+}

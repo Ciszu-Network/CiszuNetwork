@@ -1363,7 +1363,7 @@ function SingleAdCard({ ad, onDone, compact, site }: { ad: AdConfig; onDone: () 
   }
 
   return (
-    <div className="relative rounded-xl border border-white/10 bg-[#0e1118] shadow-xl p-4">
+    <div className="relative w-[min(calc(100vw-1.5rem),18rem)] rounded-xl border border-white/10 bg-[#0e1118] p-4 shadow-xl">
       <AdClose onClick={onDone} closable={closable} className="absolute right-2 top-2 h-7 w-7" />
       <span className="shrink-0 rounded bg-yellow-400 px-1.5 py-0.5 text-[9px] font-black uppercase leading-none text-black">AD</span>
 
@@ -1480,7 +1480,7 @@ const item = items[idx];
   }
 
   return (
-    <div className="relative rounded-xl border border-white/10 bg-[#0e1118] shadow-xl p-4">
+    <div className="relative w-[min(calc(100vw-1.5rem),18rem)] rounded-xl border border-white/10 bg-[#0e1118] p-4 shadow-xl">
       <AdClose onClick={finish} closable={closable} className="absolute right-2 top-2 h-7 w-7" />
       <span className="shrink-0 rounded bg-yellow-400 px-1.5 py-0.5 text-[9px] font-black uppercase leading-none text-black">AD</span>
 
@@ -1531,7 +1531,7 @@ function NextAdHint({ msUntil, now, pos, onNow }: { msUntil: number; now: number
   const hintMs = msUntil > 0 ? msUntil : 0;
   if (hintMs <= 0 || hintMs > 120000) return null;
   return createPortal(
-    <div className="fixed z-[50]" style={pos}>
+    <div className="fixed z-[50] hidden sm:block" style={pos}>
       <style>{ADS_CSS}</style>
       <div className="flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-[10px] text-neutral-400 backdrop-blur-sm" style={{ animation: 'ciszu-ad-shrink .25s ease-out' }}>
         <NextArrowIcon />
@@ -1604,7 +1604,7 @@ const pos = side === 'bottom-left' ? { left: 12, bottom: 12 } : { right: 12, bot
 
   const c = showAd.content;
   return createPortal(
-    <div className={`fixed z-[35] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
+    <div className={`fixed z-[35] max-w-[calc(100vw-1.5rem)] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
       <style>{ADS_CSS}</style>
       <PassiveAdCard ad={showAd} onDone={close} site={ads.site} />
     </div>,
@@ -1667,7 +1667,7 @@ const pos = side === 'top-center' ? { top: 12, left: '50%', transform: 'translat
   }
 
   return createPortal(
-    <div className={`fixed z-[45] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
+    <div className={`fixed z-[45] max-w-[calc(100vw-1.5rem)] ${className ?? ''}`} style={{ ...pos, animation: 'ciszu-ad-rise .4s ease-out' }}>
       <style>{ADS_CSS}</style>
       <PassiveAdCard ad={showAd} onDone={close} compact site={ads.site} />
     </div>,

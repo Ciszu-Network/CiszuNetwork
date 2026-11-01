@@ -10,7 +10,7 @@
  * de un tema concreto.
  * ------------------------------------------------------------------ */
 
-import React from 'react';
+import { useEffect, useState } from 'react';
 import { useAdsSafe } from './Ads';
 
 export interface ScrollNavButtonProps {
@@ -31,21 +31,36 @@ export function ScrollNavButton({
   hidden = false,
 }: ScrollNavButtonProps) {
   const ads = useAdsSafe();
+  const [isPhone, setIsPhone] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const update = () => setIsPhone(mq.matches);
+    const onScroll = () => setScrolled(window.scrollY > 160);
+    update();
+    onScroll();
+    mq.addEventListener('change', update);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      mq.removeEventListener('change', update);
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
   // Si hay un anuncio de esquina activo, sube los botones para que NO se
   // superpongan: se desplazan por encima del anuncio con transición fluida.
   const cornerActive = ads?.current?.type === 'particulares' || ads?.floatingActive;
-  // Altura real del anuncio de esquina completo (no-compact): AD label + banner
-  // h-28 (112px) + título/descripción + CTA + countdown + términos + padding
-  // del card ≈ 300px. Forzamos 340px para que AMBOS botones queden
-  // claramente por ENCIMA del anuncio.
-  const lift = cornerActive ? 340 : 0;
-  if (hidden) return null;
+  // En móvil el anuncio ocupa casi todo el ancho y no hay sitio para dos
+  // columnas de flotantes: se ocultan las flechas mientras el anuncio está vivo.
+  const lift = cornerActive ? (isPhone ? 0 : 340) : 0;
+  if (hidden || !scrolled || (isPhone && cornerActive)) return null;
 
   return (
     <div
-      className={`fixed right-8 z-40 flex flex-col gap-3 ${className}`}
+      className={`fixed right-3 sm:right-8 z-40 flex flex-col gap-2 sm:gap-3 ${className}`}
       style={{
-        bottom: `calc(2rem + ${lift}px)`,
+        bottom: `calc(1rem + ${lift}px + env(safe-area-inset-bottom, 0px))`,
         transition: 'bottom .45s cubic-bezier(.16,1,.3,1)',
         ['--btn-accent' as string]: accent,
         ['--btn-accent-hover' as string]: accentAlt,
@@ -55,9 +70,9 @@ export function ScrollNavButton({
         type="button"
         onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         aria-label="Ir arriba"
-        className="p-3 rounded-full bg-black/60 backdrop-blur-md border-2 border-[var(--btn-accent)] text-[var(--btn-accent)] shadow-[0_0_15px_var(--btn-accent)] hover:border-[var(--btn-accent-hover)] hover:text-[var(--btn-accent-hover)] hover:shadow-[0_0_15px_var(--btn-accent-hover)] transition-all active:scale-95 cursor-pointer"
+        className="p-2.5 sm:p-3 rounded-full bg-black/60 backdrop-blur-md border-2 border-[var(--btn-accent)] text-[var(--btn-accent)] shadow-[0_0_15px_var(--btn-accent)] hover:border-[var(--btn-accent-hover)] hover:text-[var(--btn-accent-hover)] hover:shadow-[0_0_15px_var(--btn-accent-hover)] transition-all active:scale-95 cursor-pointer"
       >
-        <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}>
+        <svg viewBox="0 0 24 24" className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth={2}>
           <path d="m18 15-6-6-6 6" />
         </svg>
       </button>
@@ -65,9 +80,9 @@ export function ScrollNavButton({
         type="button"
         onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
         aria-label="Ir abajo"
-        className="p-3 rounded-full bg-black/60 backdrop-blur-md border-2 border-[var(--btn-accent)] text-[var(--btn-accent)] shadow-[0_0_15px_var(--btn-accent)] hover:border-[var(--btn-accent-hover)] hover:text-[var(--btn-accent-hover)] hover:shadow-[0_0_15px_var(--btn-accent-hover)] transition-all active:scale-95 cursor-pointer"
+        className="p-2.5 sm:p-3 rounded-full bg-black/60 backdrop-blur-md border-2 border-[var(--btn-accent)] text-[var(--btn-accent)] shadow-[0_0_15px_var(--btn-accent)] hover:border-[var(--btn-accent-hover)] hover:text-[var(--btn-accent-hover)] hover:shadow-[0_0_15px_var(--btn-accent-hover)] transition-all active:scale-95 cursor-pointer"
       >
-        <svg viewBox="0 0 24 24" className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth={2}>
+        <svg viewBox="0 0 24 24" className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" strokeWidth={2}>
           <path d="m6 9 6 6 6-6" />
         </svg>
       </button>

@@ -107,7 +107,7 @@ export default function PlatformsSection({ dict }: PlatformsSectionProps) {
             return (
               <Reveal key={platform.key} delay={i * 80}>
                 <article
-                  className={`group flex h-full flex-col rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 ${platform.border}`}
+                  className={`group flex h-full flex-col rounded-2xl border border-border bg-card p-4 sm:p-6 transition-all duration-300 hover:-translate-y-1 ${platform.border}`}
                 >
                   <span className={`inline-flex h-11 w-11 items-center justify-center rounded-xl mb-4 ${platform.bg} ${platform.accent} transition-transform duration-300 group-hover:scale-110`}>
                     <Icon name={platform.icon} size={22} />
@@ -137,9 +137,9 @@ export default function PlatformsSection({ dict }: PlatformsSectionProps) {
 
         {/* Widgets oficiales de Top.gg + código copiable */}
         <Reveal delay={120}>
-          <div className="mt-14 rounded-3xl border border-border bg-card p-8">
+          <div className="mt-14 rounded-3xl border border-border bg-card p-4 sm:p-8">
             <div className="text-center mb-8">
-              <h3 className="font-header text-2xl font-black text-ink">{dict.explorePage.widgetsTitle}</h3>
+              <h3 className="font-header text-xl sm:text-2xl font-black text-ink">{dict.explorePage.widgetsTitle}</h3>
               <p className="mx-auto mt-2 max-w-xl text-sm text-muted">{dict.explorePage.widgetsDesc}</p>
             </div>
             <div className="grid gap-6 md:grid-cols-2">
@@ -235,7 +235,7 @@ export default function PlatformsSection({ dict }: PlatformsSectionProps) {
 
         {/* Servidor de soporte real */}
         <Reveal delay={160}>
-          <div className="mt-14 relative overflow-hidden rounded-3xl border border-[#5865F2]/40 bg-[#5865F2]/5 p-8 md:p-10">
+          <div className="mt-14 relative overflow-hidden rounded-3xl border border-[#5865F2]/40 bg-[#5865F2]/5 p-5 sm:p-8 md:p-10">
             <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-[#5865F2]/10 blur-[90px] pointer-events-none" />
             <div className="relative flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="flex items-center gap-5 text-center md:text-left flex-col md:flex-row">
@@ -247,7 +247,7 @@ export default function PlatformsSection({ dict }: PlatformsSectionProps) {
                   className="w-16 h-16 rounded-full ring-2 ring-[#5865F2]/50 object-contain shrink-0"
                 />
                 <div>
-                  <h3 className="font-header text-2xl font-black text-ink flex items-center justify-center md:justify-start gap-2">
+                  <h3 className="font-header text-xl sm:text-2xl font-black text-ink flex items-center justify-center md:justify-start gap-2">
                     <CiszugamensLogo size={22} />
                     {dict.supportPage.joinTitle}
                   </h3>

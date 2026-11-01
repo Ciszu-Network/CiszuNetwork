@@ -195,7 +195,7 @@ export default function HomeContent() {
       {/* ═══════════════════ HERO ═══════════════════ */}
       <section
         id="hero"
-        className="relative flex min-h-[92vh] flex-col items-center justify-center overflow-hidden px-4 pt-24 pb-16 text-center scroll-mt-24"
+        className="relative flex min-h-[92vh] flex-col items-center justify-center overflow-hidden px-4 pt-24 pb-32 sm:pb-16 text-center scroll-mt-24"
       >
         <div className="pointer-events-none absolute inset-0 home-hero-glow" />
 
@@ -265,7 +265,7 @@ export default function HomeContent() {
             </Link>
           </div>
 
-          <div className="mt-10 flex items-center justify-center gap-3">
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
             {socialItems.map(([platform, url]) => (
               <a
                 key={platform}

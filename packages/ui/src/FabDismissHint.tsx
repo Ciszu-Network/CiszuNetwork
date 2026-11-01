@@ -128,7 +128,7 @@ export default function FabDismissHint({
   return (
     <div
       ref={containerRef}
-      style={{ ...containerStyle, bottom }}
+      style={{ ...containerStyle, bottom: `calc(${bottom}px + env(safe-area-inset-bottom, 0px))` }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >

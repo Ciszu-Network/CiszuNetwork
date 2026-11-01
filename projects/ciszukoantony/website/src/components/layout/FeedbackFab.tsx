@@ -83,7 +83,7 @@ export default function FeedbackFab() {
   if (dismissed && !panel) return null;
 
   return (
-    <div style={{ ...containerStyle, bottom: stackBottom }} data-feedback-host="true">
+    <div style={{ ...containerStyle, bottom: `calc(${stackBottom}px + env(safe-area-inset-bottom, 0px))` }} data-feedback-host="true">
       <style>{FEEDBACK_CSS}</style>
 
       {dismissed && panel && (

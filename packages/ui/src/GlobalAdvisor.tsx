@@ -211,7 +211,7 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
   if (queue.length === 0) return null;
 
   return (
-    <div className="fixed bottom-14 left-1/2 -translate-x-1/2 z-[1100] flex flex-col items-center gap-2 pointer-events-none px-4 max-w-full">
+    <div className="fixed bottom-20 sm:bottom-14 left-1/2 -translate-x-1/2 z-[1100] flex w-full max-w-[min(94vw,32rem)] flex-col items-center gap-2 pointer-events-none px-2 sm:px-4">
       {queue.map((a) => {
         const style = KIND_STYLES[a.kind] || KIND_STYLES.info;
         const verified = Boolean(a.sender_username);
@@ -219,12 +219,12 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
         return (
           <div
             key={a.id}
-            className={`bg-[#05050a]/95 border border-white/10 px-5 py-3 rounded-2xl ${style.shadow} backdrop-blur-md flex items-center gap-3 animate-fade-in-up pointer-events-auto max-w-[92vw]`}
+            className={`w-full bg-[#05050a]/95 border border-white/10 px-3 py-2.5 sm:px-5 sm:py-3 rounded-2xl ${style.shadow} backdrop-blur-md flex items-start sm:items-center gap-2.5 sm:gap-3 animate-fade-in-up pointer-events-auto`}
             role="status"
           >
             <span className={`w-2 h-2 rounded-full ${style.dot} animate-pulse shrink-0`} />
-            <div className="flex flex-col">
-              <span className={`${style.text} font-bold uppercase tracking-widest text-[10px] leading-tight`}>
+            <div className="min-w-0 flex-1">
+              <span className={`${style.text} font-bold uppercase tracking-widest text-[9px] sm:text-[10px] leading-tight [overflow-wrap:anywhere]`}>
                 {verified ? (
                   <span className="inline-flex items-center gap-1.5">
                     {profileHref ? (
@@ -253,7 +253,7 @@ export default function GlobalAdvisor({ site, pollInterval = POLL_INTERVAL, disa
                   <span>{a.sender} · {a.source}</span>
                 )}
               </span>
-              <span className="text-white/90 text-xs sm:text-sm font-medium">{a.message}</span>
+              <span className="text-white/90 text-[11px] sm:text-sm font-medium [overflow-wrap:anywhere]">{a.message}</span>
             </div>
             <button
               onClick={() => dismiss(a.id)}

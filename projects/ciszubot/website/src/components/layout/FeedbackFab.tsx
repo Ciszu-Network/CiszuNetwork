@@ -112,7 +112,7 @@ export default function FeedbackFab({
   } as CSSProperties;
 
   return (
-    <div style={{ ...vars, ...containerStyle, bottom: stackBottom }} data-fb-host="true">
+    <div style={{ ...vars, ...containerStyle, bottom: `calc(${stackBottom}px + env(safe-area-inset-bottom, 0px))` }} data-fb-host="true">
       {dismissed && dismissHint && (
         <FabDismissHint
           slotId="feedback"

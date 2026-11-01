@@ -102,7 +102,7 @@ export default function FeedbackFab() {
       )}
 
       {!isDesktop && !dismissed && (
-        <div style={{ ...containerStyle, bottom: stackBottom }}>
+        <div style={{ ...containerStyle, bottom: `calc(${stackBottom}px + env(safe-area-inset-bottom, 0px))` }}>
           <div style={fabRowStyle}>
             <button
               type="button"

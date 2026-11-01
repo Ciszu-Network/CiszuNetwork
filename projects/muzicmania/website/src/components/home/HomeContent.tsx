@@ -70,7 +70,7 @@ export default function HomeContent() {
       <FloatingSymbols />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 overflow-hidden">
+      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-4 pb-20 sm:pb-0 overflow-hidden">
         <h1 className="sr-only">{t.pages.home.title}</h1>
         {/* Deep radial glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(40,0,90,0.45)_0%,rgba(0,10,30,0.2)_60%,transparent_100%)] pointer-events-none" />
@@ -118,7 +118,7 @@ export default function HomeContent() {
           <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-neon-pink/10 rounded-full blur-[80px] animate-blob animation-delay-4000" />
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto">
+        <div className="relative z-10 w-full max-w-5xl mx-auto">
           <div className="flex items-center justify-center gap-6 mb-4 flex-wrap group cursor-pointer">
             <Image
               src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/logotype/gradient/color/muzicmania_logotipo_degradado_color.svg')}
@@ -126,7 +126,7 @@ export default function HomeContent() {
               width={380}
               height={100}
               priority
-              className="drop-shadow-[0_0_20px_rgba(0,128,255,0.4)] group-hover:drop-shadow-[0_0_40px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_60px_rgba(145,70,255,0.6)] transition-all duration-500 animate-float"
+              className="h-auto w-[min(72vw,380px)] drop-shadow-[0_0_20px_rgba(0,128,255,0.4)] group-hover:drop-shadow-[0_0_40px_rgba(0,128,255,0.8)] group-hover:drop-shadow-[0_0_60px_rgba(145,70,255,0.6)] transition-all duration-500 animate-float"
             />
             <Image
               src={resolveAssetPath('projects/muzicmania/content/logos/images/not-outline/isotype/gradient/color/muzicmania_logo_isotipo_notoutline_degradado_color.svg')}
@@ -134,7 +134,7 @@ export default function HomeContent() {
               width={100}
               height={100}
               priority
-              className="drop-shadow-[0_0_20px_rgba(145,70,255,0.5)] group-hover:drop-shadow-[0_0_40px_rgba(145,70,255,0.8)] group-hover:drop-shadow-[0_0_60px_rgba(0,128,255,0.6)] transition-all duration-500 animate-float-delayed"
+              className="h-auto w-[min(20vw,100px)] drop-shadow-[0_0_20px_rgba(145,70,255,0.5)] group-hover:drop-shadow-[0_0_40px_rgba(145,70,255,0.8)] group-hover:drop-shadow-[0_0_60px_rgba(0,128,255,0.6)] transition-all duration-500 animate-float-delayed"
             />
           </div>
 
@@ -190,9 +190,9 @@ export default function HomeContent() {
       {/* Ecosystem Section */}
       <section id="ecosystem" className="pt-24 pb-12 container mx-auto px-4">
         <div className="text-center mb-16 space-y-4">
-          <div className="inline-flex items-center justify-center gap-6 mb-2">
-            <Icon name="star" size={64} className="text-neon-blue drop-shadow-neon-blue shrink-0" />
-            <h2 className="text-4xl md:text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink bg-clip-text text-transparent py-2 uppercase leading-none whitespace-nowrap flex items-center justify-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mb-2">
+            <Icon name="star" size={64} className="hidden sm:block text-neon-blue drop-shadow-neon-blue shrink-0" />
+            <h2 className="flex items-center justify-center gap-4 text-2xl sm:text-4xl md:text-5xl font-header font-black tracking-tighter bg-gradient-to-r from-neon-blue via-neon-purple to-neon-pink bg-clip-text text-transparent py-2 uppercase leading-tight sm:leading-none whitespace-normal sm:whitespace-nowrap">
               {t.pages.homeBody.ecoRhythm}
             </h2>
           </div>
@@ -217,7 +217,7 @@ export default function HomeContent() {
               desc: 'Sube en el ranking mundial y demuestra quién es el verdadero maestro del ritmo.'
             },
           ] as { icon: React.FC<{className?:string}>; title: string; color: string; desc: string }[]).map((f, i) => (
-            <div key={i} className={`p-10 rounded-3xl bg-doc-dark border-2 border-white/5 backdrop-blur-xl transition-all group active-depth hover:-translate-y-2 hover-glow-${f.color} border-neon-${f.color}/20`}>
+            <div key={i} className={`p-6 sm:p-10 rounded-3xl bg-doc-dark border-2 border-white/5 backdrop-blur-xl transition-all group active-depth hover:-translate-y-2 hover-glow-${f.color} border-neon-${f.color}/20`}>
               <div className={`mb-6 flex justify-center text-neon-${f.color} drop-shadow-neon-${f.color}`}>
                 <f.icon className="w-16 h-16" />
               </div>
@@ -231,8 +231,8 @@ export default function HomeContent() {
       {/* Mission & Community Section */}
       <section className="pt-12 pb-12 bg-gradient-to-b from-transparent to-black/80">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
-          <div className="p-10 rounded-3xl bg-doc-dark border-2 border-neon-blue/30 backdrop-blur-xl hover:hover-glow-blue transition-all group active-depth">
-            <h2 className="text-4xl font-header font-bold mb-8 flex items-center justify-center gap-6 text-neon-blue uppercase tracking-tight text-center italic">
+          <div className="p-6 sm:p-10 rounded-3xl bg-doc-dark border-2 border-neon-blue/30 backdrop-blur-xl hover:hover-glow-blue transition-all group active-depth">
+            <h2 className="text-2xl sm:text-4xl font-header font-bold mb-8 flex items-center justify-center gap-6 text-neon-blue uppercase tracking-tight text-center italic">
               <div className="p-4 bg-neon-blue/10 rounded-2xl drop-shadow-neon-blue">
                 <Icon name="target" size={40} />
               </div>
@@ -248,8 +248,8 @@ export default function HomeContent() {
             </div>
           </div>
 
-          <div className="p-10 rounded-3xl bg-doc-dark border-2 border-neon-pink/30 backdrop-blur-xl hover:hover-glow-pink transition-all group active-depth">
-            <h2 className="text-4xl font-header font-bold mb-8 flex items-center justify-center gap-6 text-neon-pink uppercase tracking-tight text-center italic">
+          <div className="p-6 sm:p-10 rounded-3xl bg-doc-dark border-2 border-neon-pink/30 backdrop-blur-xl hover:hover-glow-pink transition-all group active-depth">
+            <h2 className="text-2xl sm:text-4xl font-header font-bold mb-8 flex items-center justify-center gap-6 text-neon-pink uppercase tracking-tight text-center italic">
               <div className="p-4 bg-neon-pink/10 rounded-2xl drop-shadow-neon-pink">
                 <Icon name="users" size={40} />
               </div>
@@ -420,7 +420,7 @@ export default function HomeContent() {
         <div className="mt-12 p-12 rounded-[2.5rem] bg-doc-dark border-2 border-white/5 text-center space-y-6 relative overflow-hidden group hover:border-neon-blue/50 transition-all hover-glow-blue">
           <div className="absolute top-0 right-0 w-64 h-64 bg-neon-blue/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2"></div>
           <svg viewBox="0 0 24 24" className="w-16 h-16 mx-auto text-neon-blue drop-shadow-neon-blue mb-4 animate-bounce" fill="none" stroke="currentColor" strokeWidth={2}><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4.5c1.1-1.1 2.54-1.5 4.5-1.5"/><path d="M15 5s.3 3.4 2 5c1.1 1.1 2.54 1.5 4.5 1.5"/><path d="M11.5 15.5 10 17l-1-1 1-1.5.5-1.5Z"/></svg>
-          <h2 className="text-4xl font-header font-black text-white uppercase tracking-tighter italic">{t.pages.homeBody.ideaTitle}</h2>
+          <h2 className="text-2xl sm:text-4xl font-header font-black text-white uppercase tracking-tighter italic">{t.pages.homeBody.ideaTitle}</h2>
           <p className="text-gray-400 max-w-2xl mx-auto font-medium leading-relaxed uppercase text-[10px] tracking-widest opacity-80">
             {t.pages.homeBody.ideaDesc}
           </p>
@@ -439,14 +439,14 @@ export default function HomeContent() {
         <div className="mt-12 relative p-12 rounded-[3.5rem] bg-gradient-to-r from-neon-purple/20 via-neon-blue/10 to-transparent border-2 border-neon-purple/30 overflow-hidden text-center lg:text-left hover:border-neon-purple/60 transition-all hover-glow-purple group active-depth">
           <svg viewBox="0 0 24 24" className="absolute -top-10 -right-10 w-96 h-96 text-neon-purple/5 pointer-events-none rotate-12" fill="none" stroke="currentColor" strokeWidth={1}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           <div className="relative z-10 max-w-3xl">
-            <h2 className="text-5xl md:text-6xl font-header font-black mb-8 bg-gradient-to-r from-white via-neon-purple to-neon-pink bg-clip-text text-transparent uppercase tracking-tighter italic">
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-header font-black mb-8 bg-gradient-to-r from-white via-neon-purple to-neon-pink bg-clip-text text-transparent uppercase tracking-tighter italic">
               {t.pages.homeBody.futureNow}
             </h2>
             <p className="text-xl text-gray-300 leading-relaxed mb-10 font-medium uppercase text-xs tracking-[0.2em]">
               {t.pages.homeBody.futureNowDesc}
             </p>
             <div className="flex flex-wrap gap-6 justify-center lg:justify-start">
-              <Link href="/play" className="inline-flex items-center gap-3 px-10 py-5 bg-neon-purple text-white font-black rounded-2xl shadow-neon-purple hover:scale-105 active-depth transition-all uppercase tracking-widest border-2 border-white/20">
+              <Link href="/play" className="inline-flex items-center gap-3 px-6 py-4 sm:px-10 sm:py-5 bg-neon-purple text-white font-black rounded-2xl shadow-neon-purple hover:scale-105 active-depth transition-all uppercase tracking-widest border-2 border-white/20">
                 {t.pages.homeBody.startNow}
                 <Icon name="arrow-right" size={24} className="animate-bounce-x" />
               </Link>

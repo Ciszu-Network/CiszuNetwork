@@ -93,14 +93,14 @@ export function ToastProvider({
       {children}
       <div
         aria-live="polite"
-        className={`fixed bottom-10 left-1/2 z-[1000] flex -translate-x-1/2 flex-col items-center gap-2 pointer-events-none ${viewportClassName}`}
+        className={`fixed bottom-24 sm:bottom-10 left-1/2 z-[1000] flex -translate-x-1/2 flex-col items-center gap-2 px-2 pointer-events-none ${viewportClassName}`}
       >
         {toasts.map((t) => {
           const style = TYPE_STYLES[t.type];
           return (
             <div
               key={t.id}
-              className="animate-fade-in-up pointer-events-auto flex max-w-[90vw] items-center gap-3 rounded-full border bg-[#05050a]/95 px-5 py-2.5 shadow-[0_4px_30px_rgba(0,0,0,0.4)] backdrop-blur-md sm:px-6 sm:py-3"
+              className="animate-fade-in-up pointer-events-auto flex max-w-[94vw] items-start sm:items-center gap-2.5 sm:gap-3 rounded-2xl sm:rounded-full border bg-[#05050a]/95 px-4 py-2.5 shadow-[0_4px_30px_rgba(0,0,0,0.4)] backdrop-blur-md sm:px-6 sm:py-3"
               style={{ borderColor: style.border, boxShadow: `0 4px 30px ${style.shadow}` }}
             >
               <span
@@ -108,7 +108,7 @@ export function ToastProvider({
                 style={{ background: style.color }}
               />
               <span
-                className="text-[10px] font-bold uppercase tracking-widest sm:text-xs"
+                className="text-[10px] font-bold uppercase tracking-wider sm:tracking-widest sm:text-xs [overflow-wrap:anywhere]"
                 style={{ color: style.color }}
               >
                 {t.message}

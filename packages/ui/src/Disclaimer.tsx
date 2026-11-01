@@ -369,6 +369,41 @@ const DISCLAIMER_CSS = `
 .disclaimer-item .disc-action:hover { background: rgba(255,255,255,0.26); }
 .disclaimer-item .disc-action:active { transform: scale(0.96); }
 
+@media (max-width: 767px) {
+  .disclaimer-stack { padding: 0 8px; gap: 4px; }
+  .disclaimer-item {
+    align-items: flex-start;
+    gap: 6px;
+    min-height: 40px;
+    padding: 8px 8px 8px 10px;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+  .disclaimer-item .disc-icon { width: 13px; height: 13px; margin-top: 2px; }
+  .disclaimer-item .disc-body {
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 4px 6px;
+    margin: 0;
+  }
+  .disclaimer-item .disc-text-wrap { display: flex; width: 100%; align-items: flex-start; }
+  .disclaimer-item .disc-text {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    white-space: normal;
+    overflow: hidden;
+  }
+  .disclaimer-item .disc-text.expanded { display: block; overflow: visible; }
+  .disclaimer-item .disc-img { width: 20px; height: 20px; }
+  .disclaimer-item .disc-countdown { order: 6; font-size: 9px; padding: 2px 6px; }
+  .disclaimer-item .disc-cd-dates { width: 100%; font-size: 8px; }
+  .disclaimer-item .disc-actions { order: 5; margin-left: 0; gap: 4px; }
+  .disclaimer-item .disc-action { font-size: 9px; padding: 3px 8px; }
+  .disclaimer-item .disc-close { margin-left: 0; width: 26px; height: 26px; }
+}
+
 @media (min-width: 640px) {
   .disclaimer-item { font-size: 12px; }
 }

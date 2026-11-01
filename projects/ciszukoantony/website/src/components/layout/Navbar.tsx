@@ -303,7 +303,7 @@ export default function Navbar() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`flex items-center justify-between ${floating ? 'h-14' : 'h-16'} gap-3`}>
-            <Link href="/" className="flex items-center gap-2 group shrink-0 active:scale-95 transition-all duration-300">
+            <Link href="/" className="hidden lg:flex items-center gap-2 group shrink-0 active:scale-95 transition-all duration-300">
               <CdnImage
                 src="projects/ciszukoantony/content/logos/images/outline/isotype/gradient/color/ciszuko_logo_isotipo_outline_degradado_zwhite_ccolor.png"
                 alt="Ciszuko" width={28} height={25}
@@ -322,9 +322,9 @@ export default function Navbar() {
               />
             </Link>
 
-            <div className="w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0 hidden md:block" />
+            <div className="hidden lg:block w-px h-7 bg-gradient-to-b from-transparent via-white/20 to-transparent mx-1 shrink-0" />
 
-            <div className="flex items-center gap-1 flex-1 overflow-visible min-w-0">
+            <div className="hidden lg:flex items-center gap-1 flex-1 overflow-visible min-w-0">
                {NAV_MAIN.map((item) => {
                  if ('items' in item) {
                    const group = item as NavGroup;
@@ -395,7 +395,7 @@ export default function Navbar() {
             <div className="flex items-center gap-2 ml-auto shrink-0 min-w-fit">
               {/* Search toggle */}
               <button ref={searchToggleRef} onClick={toggleSearch}
-                className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(61,106,223,0.25)] ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(61,106,223,0.25)] ${
                   searchOpen ? 'bg-neon-blue border-neon-blue text-white' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
                 }`}
                 title="Search">
@@ -404,7 +404,7 @@ export default function Navbar() {
 
               {/* Hamburger contextual toggle (always visible) */}
               <button onClick={() => { setSearchOpen(false); setAccOpen(false); setSidebarView('main'); setIsMenuOpen(!isMenuOpen); }}
-                className={`p-2 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(61,106,223,0.25)] ${
+                className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_10px_rgba(61,106,223,0.25)] ${
                   isMenuOpen ? 'bg-neon-blue border-neon-blue text-white' : 'bg-white/5 border-white/20 text-white hover:border-neon-blue'
                 }`}
                 title="Menu">
@@ -414,7 +414,7 @@ export default function Navbar() {
               {/* Account button + dropdown (CISZU ID auth + preferencias) */}
               <div className="relative" ref={accRef}>
                 <button onClick={toggleAcceder}
-                  className={`flex items-center gap-2 pl-2.5 pr-3 h-10 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] ${
+                  className={`flex items-center gap-2 pl-2.5 pr-3 h-11 lg:h-10 rounded-full border transition-all cursor-pointer shadow-sm active:scale-95 hover:shadow-[0_0_15px_rgba(255,51,204,0.4)] ${
                     accOpen
                       ? 'bg-gradient-to-r from-neon-blue via-[#6600ff] to-neon-pink border-transparent text-white'
                       : 'bg-gradient-to-r from-neon-blue/20 via-[#6600ff]/20 to-neon-pink/20 border-white/20 text-white hover:border-neon-pink opacity-90 hover:opacity-100'
@@ -479,7 +479,7 @@ export default function Navbar() {
       {/* Slide-right contextual menu (sidebar) */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-[100] pointer-events-none">
-          <div className="absolute top-[64px] right-0 w-[320px] max-w-[85vw] h-[calc(100vh-64px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-in-right">
+          <div className="absolute top-[64px] right-0 w-[20rem] max-w-[92vw] h-[calc(100dvh-64px)] bg-[#05050a]/95 backdrop-blur-3xl shadow-[-20px_0_50px_rgba(0,0,0,0.5)] flex flex-col pointer-events-auto animate-slide-in-right">
             {/* Animated left divider to match the header */}
             <div className="absolute left-0 top-0 w-[1px] h-full bg-gradient-to-b from-transparent via-neon-blue/60 to-transparent shadow-[0_0_15px_rgba(61,106,223,0.5)] z-10" />
 

@@ -254,7 +254,7 @@ export default function InstallPdwaButton({
   if (dismissed && !dismissHint) return null;
 
   return (
-    <div style={{ ...vars, ...containerStyle, bottom: stackBottom }} data-pdwa-host="true">
+    <div style={{ ...vars, ...containerStyle, bottom: `calc(${stackBottom}px + env(safe-area-inset-bottom, 0px))` }} data-pdwa-host="true">
       <style>{PDWA_CSS}</style>
       {dismissed && dismissHint && (
         <FabDismissHint

@@ -46,8 +46,8 @@ export function ConnectivityBanner() {
 
   return (
     <div className={`fixed top-[60px] left-0 right-0 z-[60] ${bgColor} transition-all duration-500`}>
-      <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
-        <div className="flex items-center gap-3 text-white text-sm font-bold">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 py-2 flex items-center justify-between gap-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-white text-xs sm:text-sm font-bold">
           {bannerType === 'restored' ? (
             <>
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -69,7 +69,7 @@ export function ConnectivityBanner() {
         </div>
         {bannerType === 'offline' && (
           <button onClick={handleReconnect} disabled={isChecking}
-            className="text-xs font-bold uppercase tracking-wider text-white bg-white/20 hover:bg-white/30 px-4 py-1.5 rounded-lg transition-all disabled:opacity-50"
+            className="shrink-0 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-white bg-white/20 hover:bg-white/30 px-3 sm:px-4 py-1.5 rounded-lg transition-all disabled:opacity-50"
           >
             {isChecking ? 'VERIFICANDO...' : 'RECONECTAR'}
           </button>

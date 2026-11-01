@@ -76,7 +76,7 @@ export default function CopyWithButton({
   };
 
   return (
-    <span className={`inline-flex items-center gap-1.5 ${className}`}>
+    <span className={`inline-flex min-w-0 max-w-full items-center gap-1.5 overflow-hidden ${className}`}>
       {children ?? <span className="break-all">{value}</span>}
       <button
         type="button"
