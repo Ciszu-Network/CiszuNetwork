@@ -9,7 +9,7 @@ import AfterGameAd from '@/components/ads/AfterGameAd';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
 import { trackBanner, trackCover, trackDisc } from '@/utils/musicAssets';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useGameEngine, getComboColor, getKpsColor, getMistakesColor, getAccuracyColor, getScoreGradient, GameNote } from '@/hooks/useGameEngine';
+import { useGameEngine, GAME_CONFIG, getComboColor, getKpsColor, getMistakesColor, getAccuracyColor, getScoreGradient, GameNote } from '@/hooks/useGameEngine';
 import { usePixiGameEngine } from '@/hooks/usePixiGameEngine';
 import { usePhaserGameEngine } from '@/hooks/usePhaserGameEngine';
 import { useAppStore } from '@/store/useAppStore';
@@ -1429,6 +1429,8 @@ function PlayPageContent() {
     visible: { opacity: 1, scale: 1, filter: 'blur(0px)', transition: { duration: 0.5, ease: 'easeOut' } },
     exit: { opacity: 0, scale: 1.05, filter: 'blur(10px)', transition: { duration: 0.3, ease: 'easeIn' } }
   };
+
+  const touchLaneColor = (lane: number) => GAME_CONFIG.laneColors[lane] ?? currentLevel?.config.colors.primary ?? '#22d3ee';
 
   if (isBooting || phase === 'loading') {
     return (
@@ -5645,7 +5647,7 @@ function PlayPageContent() {
                 type="button"
                 aria-label={`Lane ${3}`}
                 onPointerDown={(e) => { e.preventDefault(); activeHandleInput(3); }}
-                style={{ width: touchSize, height: touchSize, borderColor: currentLevel?.config.colors.primary ?? '#22d3ee', boxShadow: `0 0 18px ${currentLevel?.config.colors.primary ?? '#22d3ee'}44` }}
+                style={{ width: touchSize, height: touchSize, borderColor: touchLaneColor(3), boxShadow: `0 0 18px ${touchLaneColor(3)}44` }}
                 className="pointer-events-auto mb-7 rounded-2xl border-2 border-cyan-400/40 bg-black/55 text-white/90 shadow-[0_0_18px_rgba(34,211,238,0.25)] backdrop-blur-md active:scale-95 active:bg-cyan-400/30 select-none touch-none"
               >
                 <span className="text-2xl font-black">←</span>
@@ -5654,7 +5656,7 @@ function PlayPageContent() {
                 type="button"
                 aria-label={`Lane ${1}`}
                 onPointerDown={(e) => { e.preventDefault(); activeHandleInput(1); }}
-                style={{ width: touchSize, height: touchSize, borderColor: currentLevel?.config.colors.primary ?? '#22d3ee', boxShadow: `0 0 18px ${currentLevel?.config.colors.primary ?? '#22d3ee'}44` }}
+                style={{ width: touchSize, height: touchSize, borderColor: touchLaneColor(1), boxShadow: `0 0 18px ${touchLaneColor(1)}44` }}
                 className="pointer-events-auto rounded-2xl border-2 bg-black/55 text-white/90 backdrop-blur-md active:scale-95 active:bg-cyan-400/30 select-none touch-none"
               >
                 <span className="text-2xl font-black">↓</span>
@@ -5665,7 +5667,7 @@ function PlayPageContent() {
                 type="button"
                 aria-label={`Lane ${2}`}
                 onPointerDown={(e) => { e.preventDefault(); activeHandleInput(2); }}
-                style={{ width: touchSize, height: touchSize, borderColor: currentLevel?.config.colors.primary ?? '#22d3ee', boxShadow: `0 0 18px ${currentLevel?.config.colors.primary ?? '#22d3ee'}44` }}
+                style={{ width: touchSize, height: touchSize, borderColor: touchLaneColor(2), boxShadow: `0 0 18px ${touchLaneColor(2)}44` }}
                 className="pointer-events-auto rounded-2xl border-2 bg-black/55 text-white/90 backdrop-blur-md active:scale-95 active:bg-cyan-400/30 select-none touch-none"
               >
                 <span className="text-2xl font-black">↑</span>
@@ -5674,7 +5676,7 @@ function PlayPageContent() {
                 type="button"
                 aria-label={`Lane ${0}`}
                 onPointerDown={(e) => { e.preventDefault(); activeHandleInput(0); }}
-                style={{ width: touchSize, height: touchSize, borderColor: currentLevel?.config.colors.primary ?? '#22d3ee', boxShadow: `0 0 18px ${currentLevel?.config.colors.primary ?? '#22d3ee'}44` }}
+                style={{ width: touchSize, height: touchSize, borderColor: touchLaneColor(0), boxShadow: `0 0 18px ${touchLaneColor(0)}44` }}
                 className="pointer-events-auto mb-7 rounded-2xl border-2 bg-black/55 text-white/90 backdrop-blur-md active:scale-95 active:bg-cyan-400/30 select-none touch-none"
               >
                 <span className="text-2xl font-black">→</span>

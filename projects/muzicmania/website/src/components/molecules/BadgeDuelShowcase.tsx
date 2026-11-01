@@ -42,13 +42,10 @@ const EMBLEM: Record<string, string> = {
 function chooseBadges(payload: BadgesPayload): DuelBadge[] {
   const badges = (payload.badges ?? []).filter((badge) => badge.level > 0);
   const byId = new Map(badges.map((badge) => [badge.id, badge]));
-  const favoriteIds = (payload.favorites ?? []).filter((id) => byId.has(id));
-  const chosen = favoriteIds.length
-    ? favoriteIds.map((id) => byId.get(id)).filter((badge): badge is DuelBadge => Boolean(badge))
-    : [...badges]
-        .sort((a, b) => b.level / Math.max(1, b.maxLevel) - a.level / Math.max(1, a.maxLevel) || a.percent - b.percent)
-        .slice(0, 3);
-  return chosen.slice(0, 3);
+  return (payload.favorites ?? [])
+    .map((id) => byId.get(id))
+    .filter((badge): badge is DuelBadge => Boolean(badge))
+    .slice(0, 3);
 }
 
 async function fetchBadges(userId: string): Promise<DuelBadge[]> {
