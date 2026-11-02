@@ -22,6 +22,7 @@ import { ArrowSkinId, LevelConfig, LevelEvent } from '@/types/level';
 import MainLayout from '@/components/templates/MainLayout';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import BadgeDuelShowcase from '@/components/molecules/BadgeDuelShowcase';
+import LevelStudio, { type CustomLevelDetail } from '@/components/play/LevelStudio';
 import { extractAccentColor } from '@/lib/colorUtils';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { Button } from '@/components/atoms/Button';
@@ -127,7 +128,7 @@ const I = {
    shield: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
 };
 
-type PlayPhase = 'loading' | 'welcome' | 'disclaimer' | 'intro' | 'hub' | 'solo' | 'multijugador' | 'tienda' | 'eventos' | 'historia' | 'config' | 'inventario' | 'game' | 'results' | 'gameover';
+type PlayPhase = 'loading' | 'welcome' | 'disclaimer' | 'intro' | 'hub' | 'solo' | 'multijugador' | 'crear' | 'tienda' | 'eventos' | 'historia' | 'config' | 'inventario' | 'game' | 'results' | 'gameover';
 
 const formatTime = (time: number) => {
   const m = Math.floor(time / 60);
@@ -151,6 +152,7 @@ function PlayPageContent() {
   const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const gameFinishedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const gameActiveRef = useRef(false);
+  const customPlayRef = useRef(false);
   const titleTrack = TRACKS_DATA[3]; // Cyber Beat - tema principal del menú
   const [hubHoveredMode, setHubHoveredMode] = useState<string | null>(null);
   const [hubError, setHubError] = useState<{title:string,desc:string} | null>(null);
@@ -654,7 +656,7 @@ function PlayPageContent() {
       return;
     }
 
-    const introPhases = ['welcome', 'disclaimer', 'intro', 'hub', 'solo', 'multijugador', 'tienda', 'eventos', 'historia', 'config', 'inventario'];
+    const introPhases = ['welcome', 'disclaimer', 'intro', 'hub', 'solo', 'multijugador', 'crear', 'tienda', 'eventos', 'historia', 'config', 'inventario'];
     if (!introPhases.includes(phase)) {
       if (isMusicPlaying) pauseGlobalMusic();
     } else {
@@ -820,9 +822,10 @@ function PlayPageContent() {
 
   const [retryKey, setRetryKey] = useState(0);
 
-  const handleStartGame = (trackOverride?: Track | null) => {
+  const handleStartGame = (trackOverride?: Track | null, levelOverride?: LoadedLevel | null) => {
     const track = trackOverride || selectedTrack;
     if (!track) return;
+    customPlayRef.current = Boolean(levelOverride);
     
     // Clear any stale timers from previous games
     if (loadingTimeoutRef.current) { clearTimeout(loadingTimeoutRef.current); loadingTimeoutRef.current = null; }
@@ -833,7 +836,7 @@ function PlayPageContent() {
     gameActiveRef.current = true;
     setSelectedTrack(track);
     setLoadError(null);
-    const level = getLevel(track.id);
+    const level = levelOverride ?? getLevel(track.id);
     if (!level) {
       setLoadError('No se pudo cargar el nivel. Es posible que los archivos de datos estén corruptos o faltantes.');
       setPhase('game');
@@ -872,6 +875,42 @@ function PlayPageContent() {
       setIsLoading(false);
       setResumeCountdown(3);
     }, 800);
+  };
+
+  const handleStartCustomLevel = (level: CustomLevelDetail) => {
+    const track = TRACKS_DATA.find((item) => item.id === level.track_id);
+    const base = track ? getLevel(track.id) : null;
+    if (!track || !base) {
+      toast('La canción de este nivel ya no está disponible.', 'error');
+      return;
+    }
+    const custom: LoadedLevel = {
+      config: {
+        ...base.config,
+        id: `custom_${level.id}`,
+        title: level.title,
+        artist: track.artist,
+        album: 'Comunidad',
+        uploadedBy: 'Comunidad',
+        uploadedById: level.user_id,
+        verified: false,
+        description: level.description,
+        difficulty: level.difficulty,
+        bpm: Number(level.bpm),
+        offset: Number(level.chart_offset ?? 0),
+        durationSec: track.duration_sec,
+        stats: { plays: Number(level.plays ?? 0), downloads: 0, likes: Number(level.likes ?? 0), globalRecordScore: 0, globalRecordUser: '' },
+        colors: { ...base.config.colors },
+        files: { ...base.config.files },
+      },
+      chart: {
+        formatVersion: level.chart?.formatVersion ?? '1.0',
+        offset: Number(level.chart_offset ?? level.chart?.offset ?? 0),
+        notes: Array.isArray(level.chart?.notes) ? level.chart.notes : [],
+      },
+      events: base.events,
+    };
+    handleStartGame(track, custom);
   };
 
   const handleResume = useCallback(() => {
@@ -969,6 +1008,12 @@ function PlayPageContent() {
     gameActiveRef.current = false;
     activeStopGame();
     if (!selectedTrack) return;
+    if (customPlayRef.current) {
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+      endActivity('game');
+      setPhase('results');
+      return;
+    }
     const isFail = activeGameState.life <= 0;
 
     const saveScore = async () => {
@@ -2036,7 +2081,7 @@ function PlayPageContent() {
                       { id: 'historia', label: t.pages.play.storyMode, icon: I.book, desc: 'Descubre la historia de MuzicMania', locked: true, lockReason: 'beta', pronto: true, soon: false },
                       { id: 'solo', label: 'MODO SOLO', icon: I.music, desc: 'Juega partidas individuales con 4 dificultades y canciones variadas', soon: false },
                       { id: 'multijugador', label: 'MULTIJUGADOR', icon: I.radio, desc: 'Vista previa 1v1 con badges favoritos', soon: false },
-                      { id: 'crear', label: 'CREAR', icon: I.customize, desc: 'Crea y comparte tus propios niveles', locked: true, lockReason: 'account', soon: false },
+                      { id: 'crear', label: 'CREAR', icon: I.customize, desc: 'Crea y comparte tus propios niveles', soon: false },
                       { id: 'eventos', label: 'EVENTOS', icon: I.trophy, desc: 'Eventos por tiempo limitado', locked: true, lockReason: 'beta', pronto: true, soon: false },
                       { id: 'tienda', label: 'TIENDA', icon: I.store, desc: 'Consigue nuevos ítems y skins', locked: true, lockReason: 'account', soon: false },
                     ].map(mode => (
@@ -2458,7 +2503,18 @@ function PlayPageContent() {
             </motion.div>
           )}
 
-          {/* --- TIENDA PHASE --- */}
+          {/* --- CREAR PHASE --- */}
+          {phase === 'crear' && (
+            <motion.div key="crear" initial="hidden" animate="visible" exit="exit" variants={sectionVariants} className="w-full h-full overflow-y-auto px-4 py-5">
+              <LevelStudio
+                userId={user?.id ?? null}
+                onPlay={handleStartCustomLevel}
+                onBack={() => setPhase('hub')}
+              />
+            </motion.div>
+          )}
+
+          {/* --- TIENDA PHASE ---}
           {phase === 'tienda' && (
             <motion.div key="tienda" initial="hidden" animate="visible" exit="exit" variants={sectionVariants}
               className="flex-1 w-full h-full flex flex-col items-center justify-center relative overflow-hidden px-6 bg-black"
