@@ -69,7 +69,7 @@ export default function MultiplayerLobby({
   onBack,
 }: {
   userId: string | null;
-  onPlay: (payload: { level?: CustomLevelDetail; trackId?: string }) => void;
+  onPlay: (payload: { level?: CustomLevelDetail; trackId?: string; roomId: string }) => void;
   onBack: () => void;
 }) {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -192,11 +192,11 @@ export default function MultiplayerLobby({
     if (!song) return;
     startedRef.current = room.id;
     if (song.kind === 'static') {
-      onPlay({ trackId: song.trackId });
+      onPlay({ trackId: song.trackId, roomId: room.id });
     } else {
       apiFetch(`/api/levels/${song.id}`, { cache: 'no-store' })
         .then((response) => (response.ok ? response.json() : null))
-        .then((data: { level?: CustomLevelDetail } | null) => { if (data?.level) onPlay({ level: data.level }); })
+        .then((data: { level?: CustomLevelDetail } | null) => { if (data?.level) onPlay({ level: data.level, roomId: room.id }); })
         .catch(() => undefined);
     }
   }, [onPlay, room?.id, room?.status]);
@@ -386,7 +386,7 @@ export default function MultiplayerLobby({
                 <span className="grid h-8 w-8 place-items-center rounded-full bg-white/5 text-[10px] font-black text-white/60">{player.profile?.display_name?.charAt(0) || player.profile?.username?.charAt(0) || '?'}</span>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-[10px] font-bold text-white">{player.profile?.display_name || player.profile?.username || player.user_id.slice(0, 8)}</p>
-                  <p className="text-[8px] font-black uppercase tracking-widest text-white/30">{room.mode === '1v1' ? (player.user_id === room.host_id ? 'HOST' : 'RIVAL') : `EQUIPO ${player.team + 1}`}{player.user_id === userId ? ' · TÚ' : ''}</p>
+                  <p className="text-[8px] font-black uppercase tracking-widest text-white/30">{room.mode === '1v1' ? (player.user_id === room.host_id ? 'HOST' : 'RIVAL') : `EQUIPO ${player.team + 1}`}{player.user_id === userId ? ' · TÚ' : ''}{room.status !== 'waiting' ? ` · ${Number(player.score ?? 0).toLocaleString('es-VE')} PTS` : ''}</p>
                 </div>
                 <span className={`text-[8px] font-black uppercase tracking-widest ${player.ready ? 'text-emerald-300' : 'text-white/25'}`}>{player.ready ? 'LISTO' : 'ESPERA'}</span>
               </div>
@@ -408,6 +408,7 @@ export default function MultiplayerLobby({
               </button>
             )}
             {room.status === 'playing' && <span className="text-[9px] font-black uppercase tracking-widest text-emerald-300">Partida en curso…</span>}
+            {room.status === 'finished' && <span className="text-[9px] font-black uppercase tracking-widest text-amber-300">Resultados de la sala listos</span>}
           </div>
           {error && <p className="mt-2 text-[10px] text-red-300">{error}</p>}
         </div>

@@ -155,6 +155,7 @@ function PlayPageContent() {
   const gameActiveRef = useRef(false);
   const customPlayRef = useRef(false);
   const officialOverridesRef = useRef<Record<string, LoadedLevel>>({});
+  const multiplayerRoomRef = useRef<string | null>(null);
   const titleTrack = TRACKS_DATA[3]; // Cyber Beat - tema principal del menú
   const [hubHoveredMode, setHubHoveredMode] = useState<string | null>(null);
   const [hubError, setHubError] = useState<{title:string,desc:string} | null>(null);
@@ -872,6 +873,7 @@ function PlayPageContent() {
   const handleStartGame = (trackOverride?: Track | null, levelOverride?: LoadedLevel | null) => {
     const track = trackOverride || selectedTrack;
     if (!track) return;
+    multiplayerRoomRef.current = null;
     customPlayRef.current = Boolean(levelOverride);
     
     // Clear any stale timers from previous games
@@ -925,10 +927,13 @@ function PlayPageContent() {
     }, 800);
   };
 
-  const handleMultiplayerPlay = (payload: { level?: CustomLevelDetail; trackId?: string }) => {
-    if (payload.level) { handleStartCustomLevel(payload.level); return; }
-    const track = TRACKS_DATA.find((item) => item.id === payload.trackId);
-    if (track) handleStartGame(track);
+  const handleMultiplayerPlay = (payload: { level?: CustomLevelDetail; trackId?: string; roomId: string }) => {
+    if (payload.level) handleStartCustomLevel(payload.level);
+    else {
+      const track = TRACKS_DATA.find((item) => item.id === payload.trackId);
+      if (track) handleStartGame(track);
+    }
+    multiplayerRoomRef.current = payload.roomId;
   };
 
   const handleStartCustomLevel = (level: CustomLevelDetail) => {
@@ -1066,6 +1071,24 @@ function PlayPageContent() {
     gameActiveRef.current = false;
     activeStopGame();
     if (!selectedTrack) return;
+    const multiplayerRoomId = multiplayerRoomRef.current;
+    if (multiplayerRoomId) {
+      multiplayerRoomRef.current = null;
+      void (async () => {
+        try {
+          const { data } = await supabase.auth.getSession();
+          const token = data.session?.access_token;
+          if (!token) return;
+          await fetch(`/api/multiplayer/rooms/${multiplayerRoomId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ action: 'finish', score: activeGameState.score }),
+          });
+        } catch {
+          /* la partida no debe romperse si falla el reporte online */
+        }
+      })();
+    }
     if (customPlayRef.current) {
       if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
       endActivity('game');

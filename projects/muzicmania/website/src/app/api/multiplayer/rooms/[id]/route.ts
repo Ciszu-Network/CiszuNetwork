@@ -118,10 +118,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       await admin.schema('muzicmania').from('multiplayer_rooms').update({ status: 'playing', started_at: new Date().toISOString() }).eq('id', id);
     } else if (action === 'finish') {
       if (!member) return NextResponse.json({ error: 'not_in_room' }, { status: 403 });
-      if (parsed.data.score !== undefined) {
-        await admin.schema('muzicmania').from('multiplayer_room_players').update({ score: parsed.data.score }).eq('room_id', id).eq('user_id', user.userId);
+      await admin.schema('muzicmania').from('multiplayer_room_players').update({
+        ...(parsed.data.score !== undefined ? { score: parsed.data.score } : {}),
+        finished: true,
+      }).eq('room_id', id).eq('user_id', user.userId);
+      const { data: progress } = await admin.schema('muzicmania').from('multiplayer_room_players').select('finished').eq('room_id', id);
+      if ((progress ?? []).length > 0 && (progress ?? []).every((player: Row) => player.finished === true)) {
+        await admin.schema('muzicmania').from('multiplayer_rooms').update({ status: 'finished' }).eq('id', id);
       }
-      if (isHost) await admin.schema('muzicmania').from('multiplayer_rooms').update({ status: 'finished' }).eq('id', id);
     }
 
     return NextResponse.json({ room: await detail(admin, id) });
