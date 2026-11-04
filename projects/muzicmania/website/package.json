@@ -24,6 +24,7 @@
     "@ciszu/ui": "workspace:*",
     "@ciszunetwork/cdn": "workspace:*",
     "@ciszunetwork/db": "workspace:^",
+    "@ciszunetwork/payments": "workspace:*",
     "@ciszunetwork/utils": "workspace:*",
     "@plasmicapp/loader-nextjs": "^2.0.27",
     "@puckeditor/cloud-client": "^0.8.2",

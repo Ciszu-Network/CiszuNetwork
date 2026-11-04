@@ -929,6 +929,9 @@ importers:
       '@ciszunetwork/db':
         specifier: workspace:^
         version: link:../../../packages/db
+      '@ciszunetwork/payments':
+        specifier: workspace:*
+        version: link:../../../packages/payments
       '@ciszunetwork/utils':
         specifier: workspace:*
         version: link:../../../packages/utils
