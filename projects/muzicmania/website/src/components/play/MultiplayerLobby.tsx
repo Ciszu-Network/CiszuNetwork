@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Icon } from '@ciszu/ui';
+import { Icon, useDebugMode } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { TRACKS_DATA } from '@/data/tracks';
 import type { CustomLevelDetail, CustomLevelSummary } from './LevelStudio';
@@ -45,6 +45,7 @@ interface ChatMessage {
   content: string;
   created_at: string;
   sender?: { username: string | null; display_name: string | null } | null;
+  placeholder?: boolean;
 }
 
 const MODES: { id: Mode; label: string; players: number; hint: string }[] = [
@@ -85,6 +86,15 @@ export default function MultiplayerLobby({
   const [globalMessages, setGlobalMessages] = useState<ChatMessage[]>([]);
   const startedRef = useRef<string | null>(null);
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const debug = useDebugMode();
+  const placeholderMessages = useMemo<ChatMessage[]>(() => {
+    if (!debug.features.placeholders) return [];
+    const now = new Date().toISOString();
+    return [
+      { id: 'debug-chat-1', sender_id: 'debug-bot', content: 'Sala de prueba activa. Este mensaje solo lo ves con debug.', created_at: now, placeholder: true, sender: { username: 'ciszubot', display_name: 'CiszukoBot' } },
+      { id: 'debug-chat-2', sender_id: 'debug-rival', content: '¿Listos para el duelo? GG.', created_at: now, placeholder: true, sender: { username: 'rival_bot', display_name: 'RivalBot' } },
+    ];
+  }, [debug.features.placeholders]);
 
   const loadRooms = useCallback(async () => {
     if (!userId) return;
@@ -408,9 +418,9 @@ export default function MultiplayerLobby({
             <button type="button" onClick={() => setChatTab('global')} className={`rounded-lg px-2.5 py-1.5 text-[8px] font-black uppercase tracking-widest ${chatTab === 'global' ? 'bg-neon-cyan/15 text-neon-cyan' : 'text-white/35'}`}>Global</button>
           </div>
           <div className="flex-1 space-y-2 overflow-y-auto p-2.5">
-            {((chatTab === 'match' ? messages : globalMessages) ?? []).map((message) => {
+            {[...placeholderMessages, ...(chatTab === 'match' ? messages : globalMessages ?? [])].map((message) => {
               const mine = message.sender_id === userId;
-              return <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[90%] rounded-xl px-2.5 py-1.5 text-[10px] ${mine ? 'bg-neon-cyan/15 text-white' : 'bg-white/[0.06] text-white/80'}`}>{!mine && <p className="text-[7px] font-black uppercase tracking-widest text-neon-cyan/70">{message.sender?.display_name || message.sender?.username || 'Jugador'}</p>}<p className="break-words">{message.content}</p></div></div>;
+              return <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[90%] rounded-xl px-2.5 py-1.5 text-[10px] ${mine ? 'bg-neon-cyan/15 text-white' : 'bg-white/[0.06] text-white/80'}`}>{!mine && <p className="text-[7px] font-black uppercase tracking-widest text-neon-cyan/70">{message.sender?.display_name || message.sender?.username || 'Jugador'}{message.placeholder && <span className="ml-1 text-[6px] text-amber-300">BOT</span>}</p>}<p className="break-words">{message.content}</p></div></div>;
             })}
             <div ref={chatEndRef} />
           </div>

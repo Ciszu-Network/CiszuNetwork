@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Icon } from '@ciszu/ui';
+import { Icon, useDebugMode } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 
 type ChatScope = 'global' | 'dm';
@@ -20,6 +20,7 @@ interface ChatMessage {
   content: string;
   created_at: string;
   sender: SenderProfile | null;
+  placeholder?: boolean;
 }
 async function apiFetch(input: string, init: RequestInit = {}) {
   const { data } = await supabase.auth.getSession();
@@ -51,6 +52,16 @@ export default function SocialHub({ userId }: { userId: string | null }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const endRef = useRef<HTMLDivElement | null>(null);
+  const debug = useDebugMode();
+  const placeholderMessages = useMemo<ChatMessage[]>(() => {
+    if (!debug.features.placeholders) return [];
+    const now = new Date().toISOString();
+    return [
+      { id: 'debug-social-1', scope: 'global', room_id: null, sender_id: 'debug-bot', recipient_id: null, content: 'Chat global de prueba. Visible solo con debug.', created_at: now, placeholder: true, sender: { id: 'debug-bot', username: 'ciszubot', display_name: 'CiszukoBot', avatar_url: null } },
+      { id: 'debug-social-2', scope: 'global', room_id: null, sender_id: 'debug-player', recipient_id: null, content: 'Nos vemos en la sala 1v1.', created_at: now, placeholder: true, sender: { id: 'debug-player', username: 'player_bot', display_name: 'PlayerBot', avatar_url: null } },
+    ];
+  }, [debug.features.placeholders]);
+  const displayMessages = scope === 'global' ? [...placeholderMessages, ...messages] : messages;
 
   const conversationKey = scope === 'dm' && dmUser ? `dm:${dmUser.id}` : 'global';
 
@@ -219,14 +230,14 @@ export default function SocialHub({ userId }: { userId: string | null }) {
               </div>
 
               <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-3">
-                {loading ? <p className="py-8 text-center text-[9px] uppercase tracking-widest text-white/30">Cargando…</p> : messages.length === 0 ? (
+                {loading ? <p className="py-8 text-center text-[9px] uppercase tracking-widest text-white/30">Cargando…</p> : displayMessages.length === 0 ? (
                   <p className="py-8 text-center text-[10px] uppercase tracking-widest text-white/25">Sin mensajes. Rompe el hielo.</p>
-                ) : messages.map((message) => {
+                ) : displayMessages.map((message) => {
                   const mine = message.sender_id === userId;
                   return (
                     <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
                       <div className={`max-w-[85%] rounded-2xl px-3 py-2 ${mine ? 'bg-neon-cyan/15 text-white' : 'bg-white/[0.06] text-white/85'}`}>
-                        {!mine && <button type="button" onClick={() => { if (message.sender) { setScope('dm'); setDmUser(message.sender); } }} className="mb-0.5 text-left text-[8px] font-black uppercase tracking-widest text-neon-cyan/80 hover:text-neon-cyan">{message.sender?.display_name || message.sender?.username || 'Usuario'}</button>}
+                        {!mine && (message.placeholder ? <span className="mb-0.5 block text-left text-[8px] font-black uppercase tracking-widest text-neon-cyan/80">{message.sender?.display_name || message.sender?.username || 'Usuario'} <span className="text-[6px] text-amber-300">BOT</span></span> : <button type="button" onClick={() => { if (message.sender) { setScope('dm'); setDmUser(message.sender); } }} className="mb-0.5 text-left text-[8px] font-black uppercase tracking-widest text-neon-cyan/80 hover:text-neon-cyan">{message.sender?.display_name || message.sender?.username || 'Usuario'}</button>)}
                         <p className="break-words text-[11px] leading-relaxed">{message.content}</p>
                         <p className="mt-1 text-right text-[7px] text-white/30">{timeLabel(message.created_at)}</p>
                       </div>
