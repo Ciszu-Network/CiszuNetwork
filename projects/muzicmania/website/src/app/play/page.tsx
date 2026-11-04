@@ -18,7 +18,7 @@ import { TRACKS_DATA, Track } from '@/data/tracks';
 import { getSkinList, ArrowSkinColorType } from '@/lib/arrowSkins';
 import { getParticleSkinList, ParticleSkinColorType, getParticleSkin } from '@/lib/particleSkins';
 import { getGrade, GradeRank } from '@/lib/grades';
-import { ArrowSkinId, LevelConfig, LevelEvent } from '@/types/level';
+import { ArrowSkinId, ChartNote, LevelConfig, LevelDifficulty, LevelEvent } from '@/types/level';
 import MainLayout from '@/components/templates/MainLayout';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import BadgeDuelShowcase from '@/components/molecules/BadgeDuelShowcase';
@@ -35,7 +35,7 @@ import { usePageTitle } from '@/lib/usePageTitle';
 import { useT } from '@/hooks/useT';
 import { getGuestId, getGuestName } from '@/lib/guest';
 import { updatePreferences, isLangAvailable, reloadAfterPrefChange } from '@/lib/preferences';
-import { useToast, useActivityGuard, LANGUAGE_OPTIONS } from '@ciszu/ui';
+import { useToast, useActivityGuard, useDebugMode, LANGUAGE_OPTIONS } from '@ciszu/ui';
 // --- Icons Library ---
 const I = {
   play: <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
@@ -139,6 +139,7 @@ const formatTime = (time: number) => {
 function PlayPageContent() {
   const router = useRouter();
   const [trackParam] = useQueryState('track');
+  const [studioParam] = useQueryState('studio');
   const initialTrackParam = trackParam;
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const pixiContainerRef = useRef<HTMLDivElement | null>(null);
@@ -153,6 +154,7 @@ function PlayPageContent() {
   const gameFinishedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const gameActiveRef = useRef(false);
   const customPlayRef = useRef(false);
+  const officialOverridesRef = useRef<Record<string, LoadedLevel>>({});
   const titleTrack = TRACKS_DATA[3]; // Cyber Beat - tema principal del menú
   const [hubHoveredMode, setHubHoveredMode] = useState<string | null>(null);
   const [hubError, setHubError] = useState<{title:string,desc:string} | null>(null);
@@ -194,6 +196,7 @@ function PlayPageContent() {
     setDarkMode
   } = useAppStore();
   const t = useT();
+  const debugMode = useDebugMode();
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
   const [accentColors, setAccentColors] = useState<Record<string, string>>({});
   const [countdown, setCountdown] = useState<number | null>(null);
@@ -246,6 +249,43 @@ function PlayPageContent() {
       setAccentColors(prev => ({ ...prev, [selectedTrack.id]: color }));
     });
   }, [selectedTrack?.id]);
+
+  // Overrides oficiales publicados desde el editor de staff. Se cargan una vez
+  // y se aplican al iniciar cualquier canción oficial; si falla, queda el chart
+  // estático como fallback.
+  useEffect(() => {
+    let alive = true;
+    fetch('/api/levels/official', { cache: 'no-store' })
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: { levels?: Record<string, { chart?: { formatVersion?: string; offset?: number; notes?: ChartNote[] }; chart_offset?: number; bpm?: number; difficulty?: LevelDifficulty; title?: string; description?: string }> } | null) => {
+        if (!alive || !data?.levels) return;
+        const overrides: Record<string, LoadedLevel> = {};
+        for (const [slot, row] of Object.entries(data.levels)) {
+          const base = getLevel(slot);
+          if (!base) continue;
+          overrides[slot] = {
+            config: {
+              ...base.config,
+              title: row.title || base.config.title,
+              description: row.description || base.config.description,
+              difficulty: row.difficulty || base.config.difficulty,
+              bpm: Number(row.bpm ?? base.config.bpm),
+              offset: Number(row.chart_offset ?? 0),
+              verified: true,
+            },
+            chart: {
+              formatVersion: row.chart?.formatVersion ?? '1.0',
+              offset: Number(row.chart_offset ?? row.chart?.offset ?? 0),
+              notes: Array.isArray(row.chart?.notes) && row.chart.notes.length > 0 ? row.chart.notes : base.chart.notes,
+            },
+            events: base.events,
+          };
+        }
+        officialOverridesRef.current = overrides;
+      })
+      .catch(() => undefined);
+    return () => { alive = false; };
+  }, []);
 
   const [isConfigOpen, setIsConfigOpen] = useState(false);
   const [configTab, setConfigTab] = useState<'general' | 'audio' | 'controls' | 'visuals' | 'offset' | 'accessibility' | 'debug'>('general');
@@ -390,7 +430,7 @@ function PlayPageContent() {
   const [micVolume, setMicVolume] = useState(() => { if (typeof window !== 'undefined') return Number(localStorage.getItem('audio_mic_vol')) || 80; return 80; });
   const [renderer, setRenderer] = useState<'canvas2d' | 'pixi' | 'phaser'>(() => { if (typeof window !== 'undefined') return (localStorage.getItem('renderer') as any) || 'canvas2d'; return 'canvas2d'; });
 
-  const { gameState, startGame, stopGame, togglePause, handleInput, setShowHitZones, setShowEarlyLate: setShowEarlyLateEngine, setMsPrecision, setArrowSkin, setParticleSkin, setScrollSpeed, setAudioOffset } = useGameEngine(
+  const { gameState, startGame, stopGame, togglePause, handleInput, setShowHitZones, setShowEarlyLate: setShowEarlyLateEngine, setMsPrecision, setArrowSkin, setParticleSkin, setScrollSpeed, setAudioOffset, setInvincible } = useGameEngine(
     canvasRef,
     currentLevel?.config ?? null,
     currentLevel?.chart ?? null,
@@ -424,6 +464,7 @@ function PlayPageContent() {
   const activeSetParticleSkin = renderer === 'pixi' ? pixiGame.setParticleSkin : renderer === 'phaser' ? phaserGame.setParticleSkin : setParticleSkin;
   const activeSetScrollSpeed = renderer === 'pixi' ? pixiGame.setScrollSpeed : renderer === 'phaser' ? phaserGame.setScrollSpeed : setScrollSpeed;
   const activeSetAudioOffset = renderer === 'pixi' ? pixiGame.setAudioOffset : renderer === 'phaser' ? phaserGame.setAudioOffset : setAudioOffset;
+  const activeSetInvincible = setInvincible;
 
   // Guard de actividad no recuperable: jugando un nivel no se puede navegar
   // sin aviso (ActivityGuard rojo). begin al empezar partida, end al terminar.
@@ -455,6 +496,7 @@ function PlayPageContent() {
   const [disableBgEffects, setDisableBgEffects] = useState(() => { if (typeof window !== 'undefined') return localStorage.getItem('graphics_disable_bg') === 'true'; return false; });
   const [disableFloatingIcons, setDisableFloatingIcons] = useState(() => { if (typeof window !== 'undefined') return localStorage.getItem('graphics_disable_floating') === 'true'; return false; });
   const [showDebug, setShowDebug] = useState(() => { if (typeof window !== 'undefined') return localStorage.getItem('debug_enabled') === 'true'; return false; });
+  const [debugInvincible, setDebugInvincible] = useState(false);
   const [debugShowFps, setDebugShowFps] = useState(() => { if (typeof window !== 'undefined') return localStorage.getItem('debug_show_fps') === 'true'; return true; });
   const [debugShowPing, setDebugShowPing] = useState(() => { if (typeof window !== 'undefined') return localStorage.getItem('debug_show_ping') === 'true'; return true; });
   const [debugShowLatency, setDebugShowLatency] = useState(() => { if (typeof window !== 'undefined') return localStorage.getItem('debug_show_latency') === 'true'; return true; });
@@ -637,6 +679,11 @@ function PlayPageContent() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Abrir el editor oficial desde el panel debug (`?studio=official`).
+  useEffect(() => {
+    if (studioParam === 'official') setPhase('crear');
+  }, [studioParam]);
 
   // Handle track selection from URL param (e.g., from library "{t.pages.play.playNow}")
   useEffect(() => {
@@ -836,7 +883,8 @@ function PlayPageContent() {
     gameActiveRef.current = true;
     setSelectedTrack(track);
     setLoadError(null);
-    const level = levelOverride ?? getLevel(track.id);
+    const baseLevel = getLevel(track.id);
+    const level = levelOverride ?? (baseLevel ? officialOverridesRef.current[track.id] : null) ?? baseLevel;
     if (!level) {
       setLoadError('No se pudo cargar el nivel. Es posible que los archivos de datos estén corruptos o faltantes.');
       setPhase('game');
@@ -936,6 +984,10 @@ function PlayPageContent() {
   const resumeCountdownCancelRef = useRef(false);
   const countdownPurposeRef = useRef<'start' | 'resume'>('start');
   const pendingGameDataRef = useRef<{ notes: GameNote[]; level: LoadedLevel } | null>(null);
+  useEffect(() => {
+    activeSetInvincible(debugMode.features.cheats && debugInvincible);
+  }, [activeSetInvincible, debugMode.features.cheats, debugInvincible]);
+
   const activeStartGameRef = useRef(activeStartGame);
   activeStartGameRef.current = activeStartGame;
 
@@ -1097,6 +1149,12 @@ function PlayPageContent() {
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
     endActivity('game');
     setPhase('results');
+  };
+
+  const handleDebugSkip = () => {
+    if (phase !== 'game' || !debugMode.features.cheats) return;
+    customPlayRef.current = true;
+    handleGameFinished();
   };
 
   const getRecord = (trackId: string) => {
@@ -2508,6 +2566,7 @@ function PlayPageContent() {
             <motion.div key="crear" initial="hidden" animate="visible" exit="exit" variants={sectionVariants} className="w-full h-full overflow-y-auto px-4 py-5">
               <LevelStudio
                 userId={user?.id ?? null}
+                initialTab={studioParam === 'official' ? 'official' : 'mine'}
                 onPlay={handleStartCustomLevel}
                 onBack={() => setPhase('hub')}
               />
@@ -5740,6 +5799,17 @@ function PlayPageContent() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {phase === 'game' && debugMode.features.cheats && (
+        <div className="fixed left-1/2 top-20 z-[220] flex -translate-x-1/2 flex-wrap items-center justify-center gap-2 rounded-2xl border border-emerald-400/30 bg-black/75 px-3 py-2 backdrop-blur-xl">
+          <span className="text-[8px] font-black uppercase tracking-widest text-emerald-300">DEBUG CHEATS</span>
+          <button type="button" onClick={() => setDebugInvincible((value) => !value)} className={`rounded-lg border px-2.5 py-1 text-[8px] font-black uppercase tracking-widest ${debugInvincible ? 'border-emerald-400/60 bg-emerald-400/20 text-emerald-300' : 'border-white/15 bg-white/5 text-white/45'}`}>
+            Vida ∞ {debugInvincible ? 'ON' : 'OFF'}
+          </button>
+          <button type="button" onClick={handleDebugSkip} className="rounded-lg border border-amber-400/40 bg-amber-400/10 px-2.5 py-1 text-[8px] font-black uppercase tracking-widest text-amber-300">
+            Skip nivel
+          </button>
         </div>
       )}
       <AuthWarningModal isOpen={isAuthWarningOpen} onClose={() => setIsAuthWarningOpen(false)} />

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { buildSeoMetadata, seoJsonLdString } from "@ciszunetwork/utils/seo";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -110,6 +110,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <GoogleScripts />
       </head>
       <body className="min-h-screen font-sans flex flex-col">
+        <DebugProvider site="ciszukoantony">
         <I18nProvider lang={lang}>
         <AuthProvider>
           <DisclaimerProvider>
@@ -151,6 +152,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <script defer type="module" data-cookie-consent="optional" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}
         </I18nProvider>
+        <DebugDock />
+        </DebugProvider>
       </body>
     </html>
   );

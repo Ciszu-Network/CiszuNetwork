@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
-import { adminClient, authenticate } from '../auth/2fa/_lib';
+import { buildDebugStatus } from '@ciszu/ui/server';
+import { adminClient, authenticate, verifyStaffElevation } from '../auth/2fa/_lib';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,8 @@ const createSchema = z.object({
   bpm: z.number().min(40).max(400),
   chart_offset: z.number().min(-30).max(30).optional(),
   chart: chartSchema,
+  official: z.boolean().optional(),
+  official_slot: z.string().trim().max(80).optional(),
 });
 
 type Row = Record<string, any>;
@@ -66,7 +69,8 @@ export async function GET(req: NextRequest) {
   }
 
   const url = new URL(req.url);
-  const scope = url.searchParams.get('scope') === 'mine' ? 'mine' : 'public';
+  const scopeParam = url.searchParams.get('scope');
+  const scope = scopeParam === 'mine' ? 'mine' : scopeParam === 'official' ? 'official' : scopeParam === 'admin' ? 'admin' : 'public';
   const q = safeQuery(url.searchParams.get('q'));
   const difficulty = url.searchParams.get('difficulty');
   const track = safeQuery(url.searchParams.get('track'));
@@ -75,13 +79,29 @@ export async function GET(req: NextRequest) {
   let query = sb
     .schema('muzicmania')
     .from('custom_levels')
-    .select('id,user_id,title,description,track_id,difficulty,bpm,chart_offset,status,archived,plays,likes,created_at,updated_at,published_at');
+    .select('id,user_id,title,description,track_id,difficulty,bpm,chart_offset,status,archived,official,official_slot,plays,likes,created_at,updated_at,published_at');
 
-  if (scope === 'mine') {
+  if (scope === 'admin') {
+    const user = await authenticate(req);
+    if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+    const debug = await buildDebugStatus({
+      admin: sb,
+      user,
+      site: 'muzicmania',
+      elevationToken: req.headers.get('x-staff-elevation'),
+      verifyElevation: verifyStaffElevation,
+    });
+    if (!debug.authorized || !debug.features.officialEditor || (debug.staff?.role !== 'owner' && debug.staff?.role !== 'admin')) {
+      return NextResponse.json({ error: 'forbidden' }, { status: 403 });
+    }
+    query = query.order('updated_at', { ascending: false });
+  } else if (scope === 'mine') {
     const user = await authenticate(req);
     if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
     query = query.eq('user_id', user.userId).order('updated_at', { ascending: false });
     if (!includeArchived) query = query.eq('archived', false);
+  } else if (scope === 'official') {
+    query = query.eq('official', true).eq('status', 'published').eq('archived', false).order('updated_at', { ascending: false });
   } else {
     query = query.eq('status', 'published').eq('archived', false).order('published_at', { ascending: false });
   }
@@ -109,6 +129,21 @@ export async function POST(req: NextRequest) {
   const chart = normalizeChart(parsed.data.chart, parsed.data.chart_offset ?? 0);
   if (!chart) return NextResponse.json({ error: 'invalid_chart' }, { status: 400 });
 
+  const wantsOfficial = parsed.data.official === true;
+  if (wantsOfficial) {
+    if (!parsed.data.official_slot) return NextResponse.json({ error: 'official_slot_required' }, { status: 400 });
+    const debug = await buildDebugStatus({
+      admin: adminClient() as any,
+      user,
+      site: 'muzicmania',
+      elevationToken: req.headers.get('x-staff-elevation'),
+      verifyElevation: verifyStaffElevation,
+    });
+    if (!debug.authorized || !debug.features.officialEditor) {
+      return NextResponse.json({ error: 'forbidden_official_editor' }, { status: 403 });
+    }
+  }
+
   try {
     const sb = adminClient() as any;
     const { data, error } = await sb
@@ -125,6 +160,8 @@ export async function POST(req: NextRequest) {
         chart,
         status: 'draft',
         archived: false,
+        official: wantsOfficial,
+        official_slot: wantsOfficial ? parsed.data.official_slot : null,
       })
       .select('id')
       .single();

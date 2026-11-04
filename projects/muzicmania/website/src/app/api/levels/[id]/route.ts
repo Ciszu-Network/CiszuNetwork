@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
-import { adminClient, authenticate } from '../../auth/2fa/_lib';
+import { buildDebugStatus } from '@ciszu/ui/server';
+import { adminClient, authenticate, verifyStaffElevation } from '../../auth/2fa/_lib';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -32,6 +33,8 @@ const patchSchema = z
     chart: chartSchema.optional(),
     status: z.enum(['draft', 'published']).optional(),
     archived: z.boolean().optional(),
+    official: z.boolean().optional(),
+    official_slot: z.string().trim().max(80).optional(),
   })
   .refine((value) => Object.keys(value).length > 0, { message: 'empty_update' });
 
@@ -76,8 +79,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const publicLevel = row.status === 'published' && !row.archived;
     if (!publicLevel) {
       const user = await authenticate(req);
-      if (!user || user.userId !== row.user_id) {
-        return NextResponse.json({ error: 'not_found' }, { status: 404 });
+      if (!user) return NextResponse.json({ error: 'not_found' }, { status: 404 });
+      if (user.userId !== row.user_id) {
+        const debug = await buildDebugStatus({
+          admin: sb,
+          user,
+          site: 'muzicmania',
+          elevationToken: req.headers.get('x-staff-elevation'),
+          verifyElevation: verifyStaffElevation,
+        });
+        const adminEditor = debug.authorized
+          && (debug.staff?.role === 'owner' || debug.staff?.role === 'admin')
+          && debug.features.officialEditor;
+        if (!adminEditor) return NextResponse.json({ error: 'not_found' }, { status: 404 });
       }
     } else {
       void sb
@@ -117,8 +131,28 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       .eq('id', id)
       .maybeSingle();
     if (readError) throw new Error(readError.message);
-    if (!current || current.user_id !== user.userId) {
-      return NextResponse.json({ error: 'not_found' }, { status: 404 });
+    if (!current) return NextResponse.json({ error: 'not_found' }, { status: 404 });
+
+    const isOwner = current.user_id === user.userId;
+    const needsOfficialAccess = current.official === true || parsed.data.official === true || parsed.data.official_slot !== undefined;
+    let adminEditor = false;
+    if (!isOwner || needsOfficialAccess) {
+      const debug = await buildDebugStatus({
+        admin: sb,
+        user,
+        site: 'muzicmania',
+        elevationToken: req.headers.get('x-staff-elevation'),
+        verifyElevation: verifyStaffElevation,
+      });
+      adminEditor = debug.authorized
+        && (debug.staff?.role === 'owner' || debug.staff?.role === 'admin')
+        && debug.features.officialEditor;
+      if (!isOwner && !adminEditor) {
+        return NextResponse.json({ error: 'not_found' }, { status: 404 });
+      }
+      if (needsOfficialAccess && !adminEditor) {
+        return NextResponse.json({ error: 'forbidden_official_editor' }, { status: 403 });
+      }
     }
 
     const update: Row = {};
@@ -127,6 +161,8 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (parsed.data.difficulty !== undefined) update.difficulty = parsed.data.difficulty;
     if (parsed.data.bpm !== undefined) update.bpm = parsed.data.bpm;
     if (parsed.data.archived !== undefined) update.archived = parsed.data.archived;
+    if (needsOfficialAccess && parsed.data.official !== undefined) update.official = parsed.data.official;
+    if (needsOfficialAccess && parsed.data.official_slot !== undefined) update.official_slot = parsed.data.official_slot;
 
     if (parsed.data.chart !== undefined || parsed.data.chart_offset !== undefined) {
       const chart = normalizeChart(parsed.data.chart ?? current.chart, parsed.data.chart_offset ?? current.chart_offset);
@@ -149,13 +185,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
     if (parsed.data.status !== undefined) update.status = parsed.data.status;
 
-    const { data, error } = await sb
+    let updateQuery = sb
       .schema('muzicmania')
       .from('custom_levels')
       .update(update)
-      .eq('id', id)
-      .eq('user_id', user.userId)
-      .select('id,title,description,track_id,difficulty,bpm,chart_offset,status,archived,plays,likes,created_at,updated_at,published_at')
+      .eq('id', id);
+    if (!adminEditor) updateQuery = updateQuery.eq('user_id', user.userId);
+    const { data, error } = await updateQuery
+      .select('id,title,description,track_id,difficulty,bpm,chart_offset,status,archived,official,official_slot,plays,likes,created_at,updated_at,published_at')
       .single();
     if (error) throw new Error(error.message);
     return NextResponse.json({ level: data });
@@ -176,12 +213,36 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
   try {
     const sb = adminClient() as any;
-    const { error } = await sb
+    const { data: current } = await sb
+      .schema('muzicmania')
+      .from('custom_levels')
+      .select('user_id,official')
+      .eq('id', id)
+      .maybeSingle();
+    if (!current) return NextResponse.json({ error: 'not_found' }, { status: 404 });
+    const isOwner = current.user_id === user.userId;
+    let adminEditor = false;
+    if (!isOwner || current.official === true) {
+      const debug = await buildDebugStatus({
+        admin: sb,
+        user,
+        site: 'muzicmania',
+        elevationToken: req.headers.get('x-staff-elevation'),
+        verifyElevation: verifyStaffElevation,
+      });
+      adminEditor = debug.authorized
+        && (debug.staff?.role === 'owner' || debug.staff?.role === 'admin')
+        && debug.features.officialEditor;
+      if (!isOwner && !adminEditor) return NextResponse.json({ error: 'not_found' }, { status: 404 });
+      if (current.official === true && !adminEditor) return NextResponse.json({ error: 'forbidden_official_editor' }, { status: 403 });
+    }
+    let deleteQuery = sb
       .schema('muzicmania')
       .from('custom_levels')
       .delete()
-      .eq('id', id)
-      .eq('user_id', user.userId);
+      .eq('id', id);
+    if (!adminEditor) deleteQuery = deleteQuery.eq('user_id', user.userId);
+    const { error } = await deleteQuery;
     if (error) throw new Error(error.message);
     return NextResponse.json({ success: true });
   } catch (error) {

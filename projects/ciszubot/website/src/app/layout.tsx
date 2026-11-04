@@ -11,7 +11,7 @@ import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { LOGO_ISOTIPO_CIRCLE } from "@/lib/i18n";
 import { COMMANDS } from "@/data/commands";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import QueryProvider from "@/components/layout/QueryProvider";
 import BotOfflineDisclaimer from "@/components/status/BotOfflineDisclaimer";
@@ -101,6 +101,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <GoogleScripts />
       </head>
       <body className="bg-bg text-ink min-h-screen font-sans flex flex-col">
+        <DebugProvider site="ciszubot">
         <QueryProvider>
            {/* Gate de Cloudflare DESACTIVADO en ciszubot (sin siteKey ⇒ degradación
                segura, nunca bloquea): el overlay cubría los FABs (feedback/PDWA)
@@ -145,6 +146,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <PostHogAnalytics app="ciszubot" />
           <GoogleAnalytics app="ciszubot" />
         </QueryProvider>
+        <DebugDock />
+        </DebugProvider>
       </body>
     </html>
   );

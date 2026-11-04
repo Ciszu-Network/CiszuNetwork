@@ -7,6 +7,7 @@ import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import { Button } from '@/components/atoms/Button';
 import { supabase } from '@/config/supabase';
+import { DebugTag, useDebugMode } from '@ciszu/ui';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
@@ -31,6 +32,7 @@ const I = {
 
 export default function StatsPage() {
   const t = useT();
+  const debug = useDebugMode();
   usePageTitle('STATS');
   const [search, setSearch] = useState('');
   const [selectedUser, setSelectedUser] = useState<any>(null);
@@ -43,6 +45,12 @@ export default function StatsPage() {
   const [serverHealth, setServerHealth] = useState<any[]>([]);
   const [chartData, setChartData] = useState<number[]>([]);
   const [globalCounts, setGlobalCounts] = useState({ users: 0, tracks: 0, scores: 0, changes: 0 });
+  const displayCounts = useMemo(() => ({
+    ...globalCounts,
+    users: debug.simulatedNumber(globalCounts.users, 1),
+    tracks: debug.simulatedNumber(globalCounts.tracks, 2),
+    scores: debug.simulatedNumber(globalCounts.scores, 3),
+  }), [globalCounts, debug]);
 
   useEffect(() => {
     fetchGlobalCounts();
@@ -57,7 +65,7 @@ export default function StatsPage() {
       users: users || 0,
       tracks: 4, 
       scores: scores || 0,
-      changes: 3 
+      changes: 0 
     });
 
     const { data: trendData } = await supabase
@@ -76,9 +84,12 @@ export default function StatsPage() {
   };
 
   const fetchServerHealth = async () => {
-    setServerHealth([
-      { region: 'Latin America', status: 'online', load_percent: 12, latency_ms: 32, id: 'srv-latam-node-01' }
-    ]);
+    const { data } = await supabase
+      .from('server_health')
+      .select('id,region,status,load_percent,latency_ms,updated_at')
+      .order('updated_at', { ascending: false })
+      .limit(12);
+    setServerHealth(Array.isArray(data) ? data : []);
   };
 
   const handleSearch = async () => {
@@ -125,6 +136,7 @@ export default function StatsPage() {
              <p className="text-neon-blue font-black tracking-[0.5em] uppercase text-[10px] md:text-xs">
                {t.pages.stats.regionalSync}
              </p>
+             {debug.features.simulatedAnalytics && <DebugTag label="SIMULADO" />}
           </div>
         </motion.header>
 
@@ -282,13 +294,13 @@ export default function StatsPage() {
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                          {[
                            { label: 'Jugadores Activos', value: '0', color: 'green' },
-                           { label: 'Canciones Hoy', value: globalCounts.scores.toString(), color: 'blue' },
-                           { label: 'Cambios Log', value: globalCounts.changes.toString(), color: 'green' },
+                           { label: 'Canciones Hoy', value: displayCounts.scores.toString(), color: 'blue' },
+                           { label: 'Cambios Log', value: displayCounts.changes.toString(), color: 'green' },
                            { label: 'Multiplicador', value: 'x1.0', color: 'blue' },
-                           { label: 'Cuentas Totales', value: globalCounts.users.toString(), color: 'green' },
-                           { label: 'Récords Máximos', value: globalCounts.scores.toString(), color: 'blue' },
+                           { label: 'Cuentas Totales', value: displayCounts.users.toString(), color: 'green' },
+                           { label: 'Récords Máximos', value: displayCounts.scores.toString(), color: 'blue' },
                            { label: 'Tiempo Total', value: '0h', color: 'green' },
-                           { label: 'Tracks en Red', value: globalCounts.tracks.toString(), color: 'blue' },
+                           { label: 'Tracks en Red', value: displayCounts.tracks.toString(), color: 'blue' },
                          ].map((m, i) => (
                            <div key={i} className={`bg-doc-dark border border-white/5 p-6 rounded-3xl text-center space-y-2 hover:border-neon-${m.color}/40 transition-all shadow-xl`}>
                               <p className="text-[8px] font-black text-gray-600 uppercase tracking-widest">{m.label}</p>
@@ -306,7 +318,12 @@ export default function StatsPage() {
                           <p className="text-neon-green font-black uppercase text-[10px] tracking-[0.5em] opacity-40">{t.pages.stats.singleInstance}</p>
                        </div>
                        
-                       <div className="flex justify-center">
+                       <div className="flex flex-col items-center justify-center gap-4">
+                          {serverHealth.length === 0 && (
+                            <p className="rounded-2xl border border-white/10 bg-white/[0.02] px-6 py-8 text-center text-sm text-white/40">
+                              Sin datos reales de nodos. No se muestran métricas simuladas.
+                            </p>
+                          )}
                           {serverHealth.map((srv, i) => (
                             <div key={i} className="max-w-xl w-full bg-doc-dark border-4 border-neon-blue/20 p-12 rounded-[4rem] space-y-10 relative overflow-hidden group">
                                <div className={`absolute top-0 right-0 w-3 h-full bg-neon-green animate-pulse shadow-[0_0_20px_rgba(0,255,0,0.3)]`} />

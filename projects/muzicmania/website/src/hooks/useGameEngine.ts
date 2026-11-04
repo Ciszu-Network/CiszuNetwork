@@ -287,6 +287,7 @@ export const useGameEngine = (
   const msPrecisionRef = useRef(false);
   const scrollSpeedRef = useRef(GAME_CONFIG.scrollSpeed);
   const audioOffsetRef = useRef(0);
+  const invincibleRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioDurationRef = useRef<number>(0);
   const elapsedAtLastFrameRef = useRef(0);
@@ -412,7 +413,9 @@ export const useGameEngine = (
         if (judg !== 'miss') hitCountInGroup++;
       });
 
-      const newLife = Math.max(0, Math.min(100, prev.life + lifeDelta));
+      const newLife = invincibleRef.current
+        ? Math.max(1, Math.min(100, prev.life + Math.max(0, lifeDelta)) )
+        : Math.max(0, Math.min(100, prev.life + lifeDelta));
       const newDeaths = newLife <= 0 && prev.life > 0 ? prev.deaths + 1 : prev.deaths;
 
       const newCombo = hasComboBreak ? 0 : prev.combo + hitCount;
@@ -1070,6 +1073,10 @@ export const useGameEngine = (
     scrollSpeedRef.current = Math.max(100, Math.min(1200, speed));
   }, []);
 
+  const setInvincible = useCallback((value: boolean) => {
+    invincibleRef.current = value;
+  }, []);
+
   const setAudioOffset = useCallback((offsetMs: number) => {
     audioOffsetRef.current = Math.max(-500, Math.min(500, offsetMs));
   }, []);
@@ -1078,5 +1085,5 @@ export const useGameEngine = (
     msPrecisionRef.current = show;
   }, []);
 
-  return { gameState, startGame, stopGame, togglePause, handleInput, setShowHitZones, setShowEarlyLate, setMsPrecision, setArrowSkin, setParticleSkin, setScrollSpeed, setAudioOffset };
+  return { gameState, startGame, stopGame, togglePause, handleInput, setShowHitZones, setShowEarlyLate, setMsPrecision, setArrowSkin, setParticleSkin, setScrollSpeed, setAudioOffset, setInvincible };
 };

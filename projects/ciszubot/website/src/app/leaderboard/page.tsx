@@ -10,6 +10,7 @@ import PageReveal from '@/components/layout/PageReveal';
 import { INFO_THEME as THEME } from '@/components/layout/pageTheme';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useClientI18n } from '@/hooks/useClientI18n';
+import { DebugTag, useDebugMode } from '@ciszu/ui';
 
 interface LeaderboardEntry {
   userId: string;
@@ -45,6 +46,7 @@ const Section = ({ children, className = '' }: { children: React.ReactNode; clas
 
 export default function LeaderboardPage() {
   const { dict } = useClientI18n();
+  const debug = useDebugMode();
   const t = dict.leaderboardPage;
   usePageTitle('LEADERBOARD');
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
@@ -55,6 +57,19 @@ export default function LeaderboardPage() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
   const [totalPages, setTotalPages] = useState(1);
   const pageSize = 10;
+  const displayEntries = useMemo(() => {
+    if (!debug.features.placeholders) return entries;
+    const local = debug.placeholders.map((placeholder) => ({
+      userId: placeholder.id,
+      username: placeholder.username,
+      displayName: placeholder.name,
+      avatarUrl: null,
+      balance: placeholder.balance,
+      bank: placeholder.bank,
+      total: placeholder.balance + placeholder.bank,
+    }));
+    return [...local, ...entries];
+  }, [debug.features.placeholders, debug.placeholders, entries]);
 
   const fetchLeaderboard = async () => {
     setLoading(true);
@@ -153,7 +168,7 @@ export default function LeaderboardPage() {
           {loading ? (
             <div className="text-center py-20 text-muted">{t.loading}</div>
           ) :
-          entries.length === 0 ? (
+          displayEntries.length === 0 ? (
             <div className="text-center py-20 text-muted">{t.noResults}</div>
           ) : (
             <div className="space-y-4">
@@ -166,7 +181,8 @@ export default function LeaderboardPage() {
                 <div className="col-span-2 text-right cursor-pointer" onClick={() => handleSort('total')}>TOTAL</div>
               </div>
 
-              {entries.map((entry, index) => {
+              {displayEntries.map((entry, index) => {
+                const isPlaceholder = entry.userId.startsWith('ph_');
                 const globalIndex = (page - 1) * pageSize + index;
                 const isTop3 = globalIndex < 3;
                 const rankDisplay = (globalIndex + 1).toString().padStart(2, '0');
@@ -200,8 +216,8 @@ export default function LeaderboardPage() {
                         )}
                       </div>
                       <div className="min-w-0">
-                        <h4 className="text-lg font-header font-black text-white uppercase italic truncate">
-                          {entry.displayName || entry.username}
+                        <h4 className="flex items-center gap-2 text-lg font-header font-black text-white uppercase italic truncate">
+                          {entry.displayName || entry.username}{isPlaceholder && <DebugTag />}
                         </h4>
                         <p className="text-[10px] text-muted font-black uppercase tracking-[0.4em] truncate">
                           @{entry.username}

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Icon, useToast } from '@ciszu/ui';
+import { Icon, useDebugMode, useToast } from '@ciszu/ui';
 import { supabase } from '@/config/supabase';
 import { TRACKS_DATA, type Track } from '@/data/tracks';
 import { trackCover } from '@/utils/musicAssets';
@@ -24,6 +24,8 @@ export interface CustomLevelSummary {
   created_at: string;
   updated_at: string;
   published_at: string | null;
+  official?: boolean;
+  official_slot?: string | null;
 }
 
 export interface CustomLevelDetail extends CustomLevelSummary {
@@ -32,11 +34,12 @@ export interface CustomLevelDetail extends CustomLevelSummary {
 
 interface LevelStudioProps {
   userId: string | null;
+  initialTab?: Tab;
   onPlay: (level: CustomLevelDetail) => void;
   onBack: () => void;
 }
 
-type Tab = 'mine' | 'explore';
+type Tab = 'mine' | 'explore' | 'official' | 'admin';
 type EditorMode = 'tap' | 'hold' | 'mine';
 
 const DIFFICULTIES: LevelDifficulty[] = ['Easy', 'Normal', 'Hard', 'Expert'];
@@ -93,6 +96,11 @@ function LevelStatus({ level }: { level: CustomLevelSummary }) {
       }`}>
         {STATUS_LABEL[level.status]}
       </span>
+      {level.official && (
+        <span className="rounded-full border border-neon-purple/30 bg-neon-purple/10 px-2 py-0.5 text-[7px] font-black uppercase tracking-widest text-neon-purple">
+          OFICIAL
+        </span>
+      )}
       {level.archived && (
         <span className="rounded-full border border-white/15 bg-white/5 px-2 py-0.5 text-[7px] font-black uppercase tracking-widest text-white/40">
           ARCHIVADO
@@ -125,9 +133,14 @@ function TrackThumb({ trackId, size = 'h-12 w-12' }: { trackId: string; size?: s
   );
 }
 
-export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps) {
+export default function LevelStudio({ userId, initialTab = 'mine', onPlay, onBack }: LevelStudioProps) {
   const { toast } = useToast();
-  const [tab, setTab] = useState<Tab>('mine');
+  const debug = useDebugMode();
+  const canOfficial = debug.features.officialEditor && Boolean(userId);
+  const canAdmin = canOfficial && (debug.staff?.role === 'owner' || debug.staff?.role === 'admin');
+  const [tab, setTab] = useState<Tab>(initialTab);
+  const [isOfficial, setIsOfficial] = useState(false);
+
   const [levels, setLevels] = useState<CustomLevelSummary[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -158,17 +171,17 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
   }, [notes]);
 
   const loadLevels = useCallback(async () => {
-    if (tab === 'mine' && !userId) {
+    if ((tab === 'mine' && !userId) || (tab === 'official' && !canOfficial) || (tab === 'admin' && !canAdmin)) {
       setLevels([]);
       return;
     }
     setLoading(true);
     setError('');
     try {
-      const params = new URLSearchParams({ scope: tab === 'mine' ? 'mine' : 'public' });
+      const params = new URLSearchParams({ scope: tab });
       if (tab === 'explore' && query.trim()) params.set('q', query.trim());
       if (difficulty !== 'all') params.set('difficulty', difficulty);
-      if (tab === 'mine' && showArchived) params.set('archived', '1');
+      if ((tab === 'mine' || tab === 'admin') && showArchived) params.set('archived', '1');
       const response = await (tab === 'mine' ? authedFetch(`/api/levels?${params}`) : fetch(`/api/levels?${params}`));
       if (!response.ok) throw new Error(await readError(response));
       const data = (await response.json()) as { levels?: CustomLevelSummary[] };
@@ -179,7 +192,7 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
     } finally {
       setLoading(false);
     }
-  }, [tab, userId, query, difficulty, showArchived]);
+  }, [tab, userId, canOfficial, canAdmin, query, difficulty, showArchived]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => { void loadLevels(); }, tab === 'explore' ? 300 : 0);
@@ -201,6 +214,7 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
     }
     const track = TRACKS_DATA[0];
     setEditingId(null);
+    setIsOfficial(false);
     setTitle('Mi nivel');
     setDescription('');
     setTrackId(track?.id ?? '');
@@ -212,11 +226,27 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
     setEditorOpen(true);
   };
 
+  const openNewOfficial = (track: Track) => {
+    if (!canOfficial) return;
+    setEditingId(null);
+    setIsOfficial(true);
+    setTitle(track.name);
+    setDescription(`Nivel oficial de ${track.name}.`);
+    setTrackId(track.id);
+    setLevelDifficulty(track.difficulty);
+    setBpm(track.bpm);
+    setChartOffset(0);
+    setNotes([]);
+    setMode('tap');
+    setEditorOpen(true);
+  };
+
   const openEdit = async (id: string) => {
     setSaving(true);
     try {
       const level = await fetchDetail(id);
       setEditingId(level.id);
+      setIsOfficial(Boolean(level.official));
       setTitle(level.title);
       setDescription(level.description ?? '');
       setTrackId(level.track_id);
@@ -253,17 +283,19 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
 
   const saveLevel = async (publish: boolean) => {
     if (!userId) return;
+    const publishNow = publish || isOfficial;
     if (!title.trim()) {
       toast('Ponle un título a tu nivel.', 'error');
       return;
     }
-    if (publish && notes.length === 0) {
+    if (publishNow && notes.length === 0) {
       toast('Añade al menos una nota antes de publicar.', 'error');
       return;
     }
     setSaving(true);
     try {
       const payload = {
+        ...(isOfficial ? { official: true, official_slot: trackId } : {}),
         title: title.trim(),
         description: description.trim(),
         track_id: trackId,
@@ -277,7 +309,7 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
         const response = await authedFetch(`/api/levels/${id}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...payload, status: publish ? 'published' : 'draft' }),
+          body: JSON.stringify({ ...payload, status: publishNow ? 'published' : 'draft' }),
         });
         if (!response.ok) throw new Error(await readError(response));
       } else {
@@ -290,7 +322,7 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
         const data = (await response.json()) as { id?: string };
         id = data.id ?? null;
         if (!id) throw new Error('No se pudo crear el nivel.');
-        if (publish) {
+        if (publishNow) {
           const publishResponse = await authedFetch(`/api/levels/${id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
@@ -299,9 +331,10 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
           if (!publishResponse.ok) throw new Error(await readError(publishResponse));
         }
       }
-      toast(publish ? 'Nivel publicado.' : 'Borrador guardado.', 'success');
+      toast(publishNow ? 'Nivel publicado.' : 'Borrador guardado.', 'success');
       setEditorOpen(false);
       setEditingId(null);
+      setIsOfficial(false);
       await loadLevels();
     } catch (cause) {
       toast(cause instanceof Error ? cause.message : 'No se pudo guardar el nivel.', 'error');
@@ -387,6 +420,11 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
 
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_18rem]">
           <div className="space-y-4">
+            {isOfficial && (
+              <div className="rounded-xl border border-neon-purple/35 bg-neon-purple/10 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-neon-purple">
+                Nivel oficial de MuzicMania · guardado verificado en DB
+              </div>
+            )}
             <div className="rounded-2xl border border-emerald-400/15 bg-black/40 p-4 backdrop-blur-xl">
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="sm:col-span-2">
@@ -396,6 +434,7 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
                 <label>
                   <span className="mb-1 block text-[8px] font-black uppercase tracking-widest text-white/35">Canción base</span>
                   <select
+                    disabled={isOfficial}
                     value={trackId}
                     onChange={(event) => {
                       const next = trackOf(event.target.value);
@@ -537,9 +576,9 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
           <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/35">Crea, publica y descubre charts de la comunidad.</p>
         </div>
         <div className="flex rounded-xl border border-white/10 bg-black/35 p-1">
-          {(['mine', 'explore'] as Tab[]).map((item) => (
+          {(['mine', 'explore', ...(canOfficial ? ['official'] : []), ...(canAdmin ? ['admin'] : [])] as Tab[]).map((item) => (
             <button key={item} type="button" onClick={() => setTab(item)} className={`rounded-lg px-3 py-1.5 text-[8px] font-black uppercase tracking-widest transition ${tab === item ? 'bg-white/10 text-white' : 'text-white/35 hover:text-white'}`}>
-              {item === 'mine' ? 'MIS CREACIONES' : 'EXPLORAR ONLINE'}
+              {item === 'mine' ? 'MIS CREACIONES' : item === 'explore' ? 'EXPLORAR ONLINE' : item === 'official' ? 'OFICIALES' : 'ADMIN'}
             </button>
           ))}
         </div>
@@ -552,11 +591,13 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar por título o descripción…" className="min-w-0 flex-1 bg-transparent text-xs text-white outline-none placeholder:text-white/25" />
           </label>
         )}
-        <select value={difficulty} onChange={(event) => setDifficulty(event.target.value as typeof difficulty)} className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-white/60 outline-none">
-          <option value="all">Todas las dificultades</option>
-          {DIFFICULTIES.map((item) => <option key={item} value={item}>{item}</option>)}
-        </select>
-        {tab === 'mine' && userId && (
+        {tab !== 'official' && (
+          <select value={difficulty} onChange={(event) => setDifficulty(event.target.value as typeof difficulty)} className="rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-[8px] font-black uppercase tracking-widest text-white/60 outline-none">
+            <option value="all">Todas las dificultades</option>
+            {DIFFICULTIES.map((item) => <option key={item} value={item}>{item}</option>)}
+          </select>
+        )}
+        {(tab === 'mine' || tab === 'admin') && userId && (
           <button type="button" onClick={() => setShowArchived((value) => !value)} className={`rounded-xl border px-3 py-2 text-[8px] font-black uppercase tracking-widest transition ${showArchived ? 'border-amber-400/40 bg-amber-400/10 text-amber-300' : 'border-white/10 bg-black/35 text-white/40 hover:text-white'}`}>
             {showArchived ? 'Ocultar archivados' : 'Ver archivados'}
           </button>
@@ -574,6 +615,38 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
       ) : loading ? (
         <div className="grid gap-2 sm:grid-cols-2">
           {[0, 1, 2, 3].map((item) => <div key={item} className="h-24 animate-pulse rounded-2xl border border-white/10 bg-white/[0.04]" />)}
+        </div>
+      ) : tab === 'official' ? (
+        <div className="grid gap-2 sm:grid-cols-2">
+          {TRACKS_DATA.map((track) => {
+            const level = levels.find((row) => row.official_slot === track.id);
+            return (
+              <article key={track.id} className="rounded-2xl border border-neon-purple/20 bg-black/40 p-3">
+                <div className="flex gap-3">
+                  <TrackThumb trackId={track.id} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <h3 className="truncate font-header text-sm font-black uppercase text-white">{track.name}</h3>
+                        <p className="truncate text-[9px] font-bold uppercase tracking-widest text-white/35">Nivel oficial · {level ? `${level.bpm} BPM` : 'chart base'}</p>
+                      </div>
+                      <span className="rounded-full border border-neon-purple/30 bg-neon-purple/10 px-2 py-0.5 text-[7px] font-black uppercase tracking-widest text-neon-purple">OFICIAL</span>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {level ? (
+                        <>
+                          <button type="button" disabled={saving} onClick={() => void openEdit(level.id)} className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[7px] font-black uppercase tracking-widest text-white/60 hover:text-white disabled:opacity-40">Editar</button>
+                          <button type="button" disabled={saving} onClick={() => void playLevel(level)} className="rounded-lg border border-neon-cyan/30 bg-neon-cyan/10 px-2.5 py-1 text-[7px] font-black uppercase tracking-widest text-neon-cyan disabled:opacity-40">Probar</button>
+                        </>
+                      ) : (
+                        <button type="button" onClick={() => openNewOfficial(track)} className="rounded-lg border border-neon-purple/35 bg-neon-purple/10 px-2.5 py-1 text-[7px] font-black uppercase tracking-widest text-neon-purple">Crear override oficial</button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
       ) : levels.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-8 text-center">
@@ -595,14 +668,14 @@ export default function LevelStudio({ userId, onPlay, onBack }: LevelStudioProps
                         <h3 className="truncate font-header text-sm font-black uppercase text-white">{level.title}</h3>
                         <p className="truncate text-[9px] font-bold uppercase tracking-widest text-white/35">{track?.name ?? level.track_id} · {level.bpm} BPM · {level.plays} plays</p>
                       </div>
-                      {tab === 'mine' && <LevelStatus level={level} />}
+                      {tab !== 'explore' && <LevelStatus level={level} />}
                     </div>
                     <p className="mt-1 line-clamp-2 text-[10px] leading-relaxed text-white/40">{level.description || 'Sin descripción.'}</p>
                     <div className="mt-2 flex flex-wrap items-center gap-1.5">
                       <button type="button" disabled={saving} onClick={() => void playLevel(level)} className="rounded-lg border border-neon-cyan/30 bg-neon-cyan/10 px-2.5 py-1 text-[7px] font-black uppercase tracking-widest text-neon-cyan disabled:opacity-40">
                         <Icon name="play" size={9} className="mr-1 inline" /> Probar
                       </button>
-                      {tab === 'mine' && (
+                      {(tab === 'mine' || tab === 'admin') && (
                         <>
                           <button type="button" disabled={saving} onClick={() => void openEdit(level.id)} className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[7px] font-black uppercase tracking-widest text-white/55 hover:text-white disabled:opacity-40">Editar</button>
                           <button type="button" disabled={saving} onClick={() => void patchLevel(level.id, { status: level.status === 'published' ? 'draft' : 'published' }, level.status === 'published' ? 'Nivel despublicado.' : 'Nivel publicado.')} className="rounded-lg border border-emerald-400/25 bg-emerald-400/5 px-2.5 py-1 text-[7px] font-black uppercase tracking-widest text-emerald-300/80 hover:bg-emerald-400/10 disabled:opacity-40">

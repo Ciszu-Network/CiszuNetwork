@@ -7,6 +7,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
+import { DebugTag, useDebugMode } from '@ciszu/ui';
 import { useT } from '@/hooks/useT';
 
 // --- Icons ---
@@ -35,6 +36,7 @@ interface LeaderboardEntry {
 
 export default function LeaderboardPage() {
   const t = useT();
+  const debug = useDebugMode();
   usePageTitle('LEADERBOARD');
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,6 +47,21 @@ export default function LeaderboardPage() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   const pageSize = 10;
+  const displayEntries = useMemo(() => {
+    if (!debug.features.placeholders) return entries;
+    const local = debug.placeholders.map((placeholder) => ({
+      id: placeholder.id,
+      username: placeholder.username,
+      display_name: placeholder.name,
+      avatar_url: '',
+      highest_score: placeholder.score,
+      max_multiplier: 100 + Math.round(placeholder.rating * 20),
+      accuracy: Math.min(100, 90 + placeholder.rating),
+      total_playtime_minutes: 60 + Math.round(placeholder.balance / 100),
+      tracks_created: 0,
+    })) as LeaderboardEntry[];
+    return [...local, ...entries];
+  }, [debug.features.placeholders, debug.placeholders, entries]);
 
   useEffect(() => {
     fetchLeaderboard();
@@ -184,12 +201,13 @@ export default function LeaderboardPage() {
                     Array.from({ length: 5 }).map((_, i) => (
                       <div key={i} className="h-28 bg-doc-dark/40 border border-white/5 rounded-[2.5rem] animate-pulse" />
                     ))
-                 ) : entries.map((entry, index) => {
+                 ) : displayEntries.map((entry, index) => {
+                    const isPlaceholder = entry.id.startsWith('ph_');
                     const rankColor = getRankColor(index);
                     const isTop3 = (page - 1) * pageSize + index < 3;
                     
                     return (
-                      <Link href={`/user/${entry.username}`} key={entry.id}>
+                      <Link href={isPlaceholder ? '/leaderboard' : `/user/${entry.username}`} key={entry.id}>
                         <motion.div 
                           layout
                           initial={{ opacity: 0, x: -20 }}
@@ -215,7 +233,7 @@ export default function LeaderboardPage() {
                                  )}
                               </div>
                               <div>
-                                 <h4 className="text-2xl font-header font-black text-white uppercase italic tracking-tighter group-hover:text-neon-cyan transition-colors">{entry.display_name}</h4>
+                                 <h4 className="flex items-center gap-2 text-2xl font-header font-black text-white uppercase italic tracking-tighter group-hover:text-neon-cyan transition-colors">{entry.display_name}{isPlaceholder && <DebugTag />}</h4>
                                  <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.4em]">@{entry.username}</p>
                               </div>
                            </div>

@@ -9,7 +9,7 @@ import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import HideOnEdit from "@/components/layout/HideOnEdit";
 import SiteMain from "@/components/layout/SiteMain";
 
@@ -104,6 +104,7 @@ export default function RootLayout({
         <GoogleScripts />
       </head>
       <body className="min-h-screen font-sans flex flex-col">
+        <DebugProvider site="muzicmania">
         {/* AuthProvider: hidrata el store global con la sesión de Supabase en cada carga */}
         <AuthProvider>
           <ToastProvider>
@@ -149,6 +150,8 @@ export default function RootLayout({
         {process.env.NODE_ENV === 'production' && (
           <script defer type="module" data-cookie-consent="optional" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "2fcf0eab8bf94fe7ad6495160673ab3d"}' />
         )}
+        <DebugDock />
+        </DebugProvider>
       </body>
     </html>
   );

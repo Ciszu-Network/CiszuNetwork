@@ -3,3 +3,6 @@
 // path desde componentes 'use client' (rompería el límite cliente/servidor).
 export { default as GlobalAdvisorConfirm } from './server/GlobalAdvisorConfirm';
 export type { AdvisorSite } from './server/GlobalAdvisorConfirm';
+export { buildDebugStatus } from './server/debugStatus';
+
+export { listDebugWhitelist, upsertDebugWhitelist, removeDebugWhitelist } from './server/debugWhitelist';

@@ -63,6 +63,19 @@ export type { CiszugamensLogoProps } from './CiszugamensLogo';
 // GlobalAdvisor: sistema de mensajes globales del admin (GLOBAL_ADVISOR_SYSTEM, TODO #3)
 export { default as GlobalAdvisor } from './GlobalAdvisor';
 export type { GlobalAdvisorProps, Announcement } from './GlobalAdvisor';
+
+// Debug/beta testing por whitelist (local-only placeholders, analytics, cheats)
+export { DebugProvider, useDebugMode } from './debug/DebugProvider';
+export { DebugDock, DebugTag } from './debug/DebugDock';
+export type {
+  DebugSite,
+  DebugFeature,
+  DebugRole,
+  DebugStaff,
+  DebugAccountLink,
+  DebugPlaceholder,
+  DebugStatus,
+} from './debug/types';
 // Consentimiento de cookies: helpers + hook reactivo + guard script para layouts
 export {
   getCookieConsent,
