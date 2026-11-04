@@ -21,7 +21,7 @@ import { getGrade, GradeRank } from '@/lib/grades';
 import { ArrowSkinId, ChartNote, LevelConfig, LevelDifficulty, LevelEvent } from '@/types/level';
 import MainLayout from '@/components/templates/MainLayout';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
-import BadgeDuelShowcase from '@/components/molecules/BadgeDuelShowcase';
+import MultiplayerLobby from '@/components/play/MultiplayerLobby';
 import LevelStudio, { type CustomLevelDetail } from '@/components/play/LevelStudio';
 import { extractAccentColor } from '@/lib/colorUtils';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
@@ -923,6 +923,12 @@ function PlayPageContent() {
       setIsLoading(false);
       setResumeCountdown(3);
     }, 800);
+  };
+
+  const handleMultiplayerPlay = (payload: { level?: CustomLevelDetail; trackId?: string }) => {
+    if (payload.level) { handleStartCustomLevel(payload.level); return; }
+    const track = TRACKS_DATA.find((item) => item.id === payload.trackId);
+    if (track) handleStartGame(track);
   };
 
   const handleStartCustomLevel = (level: CustomLevelDetail) => {
@@ -2138,7 +2144,7 @@ function PlayPageContent() {
                     {[
                       { id: 'historia', label: t.pages.play.storyMode, icon: I.book, desc: 'Descubre la historia de MuzicMania', locked: true, lockReason: 'beta', pronto: true, soon: false },
                       { id: 'solo', label: 'MODO SOLO', icon: I.music, desc: 'Juega partidas individuales con 4 dificultades y canciones variadas', soon: false },
-                      { id: 'multijugador', label: 'MULTIJUGADOR', icon: I.radio, desc: 'Vista previa 1v1 con badges favoritos', soon: false },
+                      { id: 'multijugador', label: 'MULTIJUGADOR', icon: I.radio, desc: 'Salas online, chat y modos 1v1/duos/tríos', soon: false },
                       { id: 'crear', label: 'CREAR', icon: I.customize, desc: 'Crea y comparte tus propios niveles', soon: false },
                       { id: 'eventos', label: 'EVENTOS', icon: I.trophy, desc: 'Eventos por tiempo limitado', locked: true, lockReason: 'beta', pronto: true, soon: false },
                       { id: 'tienda', label: 'TIENDA', icon: I.store, desc: 'Consigue nuevos ítems y skins', locked: true, lockReason: 'account', soon: false },
@@ -2175,7 +2181,7 @@ function PlayPageContent() {
                           <div className="flex items-center gap-2">
                             <span className="text-[10px] font-black uppercase tracking-wider text-white/90 group-hover:text-white transition-colors">{mode.label}</span>
                             {(mode.soon || mode.pronto) && <span className="text-[6px] font-black uppercase tracking-widest px-1 py-0.5 rounded bg-neon-pink/20 text-neon-pink">PRONTO</span>}
-                            {mode.id === 'multijugador' && <span className="text-[6px] font-black uppercase tracking-widest px-1 py-0.5 rounded bg-neon-pink/20 text-neon-pink">PREVIEW</span>}
+                            {mode.id === 'multijugador' && <span className="text-[6px] font-black uppercase tracking-widest px-1 py-0.5 rounded bg-emerald-400/20 text-emerald-300">ONLINE</span>}
                             {(mode.locked || mode.soon) && <div className="w-2.5 h-2.5 text-gray-600">{I.lock}</div>}
                           </div>
                           <p className="text-[7px] text-gray-600 font-bold mt-0.5">{mode.desc}</p>
@@ -2329,7 +2335,7 @@ function PlayPageContent() {
                       const previews: Record<string,{icon:React.ReactNode,title:string,color:string,bg:string,desc:string,stats:{label:string,value:string}[]}> = {
                         historia: {icon:I.book,title: t.pages.play.storyMode,color:'from-gray-500 via-white to-gray-600',bg:'from-white/5 to-white/5',desc:'Sumérgete en la historia de MuzicMania. Descubre secretos, desbloquea canciones y avanza por capítulos.',stats:[{label:'CAPÍTULOS',value:'Sin definir'},{label:'SECRETOS',value:'Por descubrir'},{label:'CANON',value:'Historia principal'}]},
                         solo: {icon:I.music,title:'MODO SOLO',color:'from-neon-cyan via-white to-neon-blue',bg:'from-neon-cyan/20 to-neon-blue/20',desc:'Demuestra tu habilidad rítmica en partidas individuales. Elige entre 4 dificultades y completa cada canción al ritmo perfecto.',stats:[{label:'ESTILO',value:'Individual'},{label:'PRECISIÓN',value:'Descripción'},{label:'SUPERVIVENCIA',value:'Descripción'}]},
-                        multijugador: {icon:I.radio,title:'MULTIJUGADOR',color:'from-neon-pink via-white to-neon-purple',bg:'from-neon-pink/20 to-neon-purple/20',desc:'Compite en tiempo real contra otros jugadores. Sube en el ranking global y conviértete en leyenda.',stats:[{label:'ESTILO',value:'Competitivo'},{label:'MULTI-OPCIONES',value:'Próximamente'},{label:'ESTADO',value:'Próximamente'}]},
+                        multijugador: {icon:I.radio,title:'MULTIJUGADOR',color:'from-neon-pink via-white to-neon-purple',bg:'from-neon-pink/20 to-neon-purple/20',desc:'Compite en tiempo real contra otros jugadores. Sube en el ranking global y conviértete en leyenda.',stats:[{label:'ESTILO',value:'Competitivo'},{label:'MODOS',value:'1v1 · Duos · Tríos'},{label:'ESTADO',value:'ONLINE'}]},
                         crear: {icon:I.customize,title:'CREAR',color:'from-emerald-500 via-white to-teal-500',bg:'from-emerald-500/20 to-teal-500/20',desc:'Diseña tus propios niveles con nuestro editor integrado. Comparte tus creaciones con la comunidad.',stats:[{label:'EDITOR',value:'Editor visual de niveles'},{label:'PUBLICAR',value:'Comparte con la comunidad'},{label:'SELECTORES',value:'Aparece en selectores'}]},
                         eventos: {icon:I.trophy,title:'EVENTOS',color:'from-orange-500 via-white to-red-500',bg:'from-orange-500/20 to-red-500/20',desc:'Participa en eventos por tiempo limitado. Consigue recompensas exclusivas y compite por el podio.',stats:[{label:'RECOMPENSAS',value:'Por definir'},{label:'DURACIÓN',value:'Tiempo limitado'},{label:'PODIO',value:'Próximamente'}]},
                         tienda: {icon:I.store,title:'TIENDA',color:'from-yellow-500 via-white to-purple-500',bg:'from-yellow-500/20 to-purple-500/20',desc:'Consigue nuevos ítems y skins exclusivos. Personaliza tu experiencia al máximo.',stats:[{label:'SKINS',value:'Próximamente'},{label:'CANCIONES',value:'Próximamente'},{label:'OFERTAS',value:'Próximamente'}]},
@@ -2546,18 +2552,7 @@ function PlayPageContent() {
           {/* --- MULTIJUGADOR PHASE --- */}
           {phase === 'multijugador' && (
             <motion.div key="multijugador" initial="hidden" animate="visible" exit="exit" variants={sectionVariants} className="w-full h-full flex flex-col items-center justify-center relative overflow-y-auto px-4 py-5">
-              <div className="mb-3 flex w-full max-w-5xl items-center justify-between gap-2">
-                <button onClick={() => setPhase('hub')}
-                  className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-white/60 transition hover:bg-white/10 hover:text-white"
-                >
-                  <div className="h-3.5 w-3.5">{I.arrowLeft}</div>
-                  {t.pages.play.backToMenu}
-                </button>
-                <span className="rounded-full border border-neon-pink/25 bg-neon-pink/10 px-3 py-1 text-[7px] font-black uppercase tracking-[0.25em] text-neon-pink">
-                  BETA · PREVIEW
-                </span>
-              </div>
-              <BadgeDuelShowcase userId={user?.id ?? null} />
+              <MultiplayerLobby userId={user?.id ?? null} onPlay={handleMultiplayerPlay} onBack={() => setPhase('hub')} />
             </motion.div>
           )}
 

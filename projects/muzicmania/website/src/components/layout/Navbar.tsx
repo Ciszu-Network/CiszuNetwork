@@ -22,6 +22,7 @@ import {  getGuestName } from '@/lib/guest';
 import {  loadPreferences, applyZoom, setMuteTab, updatePreferences, consumeReloadToastMsg, reloadAfterPrefChange } from '@/lib/preferences';
 import {  fill, getDict, parseLang, readCookieLang } from '@/lib/i18n';
 import PreferencesPanel from '@/components/molecules/PreferencesPanel';
+import SocialHub from '@/components/social/SocialHub';
 import {  LANGUAGE_OPTIONS, isLangAvailable } from '@ciszu/ui';
 import type { SearchUserItem } from '@ciszu/ui';
 
@@ -380,6 +381,7 @@ export const NavbarContent = () => {
 
             {/* Right actions */}
             <div className="flex items-center gap-2 ml-auto shrink-0 min-w-fit">
+              <SocialHub userId={user?.id ?? null} />
               {/* Search icon toggle */}
               <button
                 ref={searchToggleRef}
