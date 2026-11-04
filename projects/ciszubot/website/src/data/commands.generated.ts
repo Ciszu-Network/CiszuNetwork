@@ -650,7 +650,7 @@ export const COMMANDS: CommandInfo[] = [
     name: 'bump',
     description: 'Bumpea y promociona el servidor en las listas de Discord',
     aliases: ["bumpear","promocionar","boost","topgg"],
-    usage: 'cz!bump',
+    usage: 'cz!bump [config|setname|setlink|setdisboard|settopgg|setdbl|on|off|reset]',
     category: 'Utilidad',
     icon: 'settings',
     premium: false,

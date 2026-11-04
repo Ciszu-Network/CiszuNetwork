@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Script from 'next/script';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
+import { DebugTag, useDebugMode } from '@ciszu/ui';
 import { useAppStore } from '@/store';
 import { supabase } from '@/config/supabase';
 import { useDict } from '@/lib/useDict';
@@ -321,6 +322,7 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 export default function ReviewsPage() {
   const t = useDict();
+  const debug = useDebugMode();
   const storeUser = useAppStore((state: { user?: unknown }) => state.user) as unknown as SessionUser;
   const userId = storeUser?.id && UUID_RE.test(storeUser.id) ? storeUser.id : null;
 
@@ -462,14 +464,32 @@ export default function ReviewsPage() {
 
   /* ---------------- filtros / orden / paginación ---------------- */
 
+  const allReviews = useMemo(() => {
+    if (!debug.features.placeholders) return reviews;
+    const local: ReviewRecord[] = debug.placeholders.map((placeholder) => ({
+      id: placeholder.id,
+      user_id: placeholder.id,
+      rating: placeholder.rating,
+      comment: placeholder.comment,
+      is_anonymous: false,
+      is_verified: false,
+      likes_count: 0,
+      is_edited: false,
+      created_at: placeholder.createdAt,
+      updated_at: null,
+      user_profile: { display_name: placeholder.name, username: placeholder.username, avatar_url: null },
+    }));
+    return [...local, ...reviews];
+  }, [debug.features.placeholders, debug.placeholders, reviews]);
+
   const filtered = useMemo(
     () =>
       filterReviews(
-        reviews,
+        allReviews,
         { query, tags, minRating, maxRating, onlyWithLikes: onlyLikes, onlyMine },
         { userId, now },
       ),
-    [reviews, query, tags, minRating, maxRating, onlyLikes, onlyMine, userId, now],
+    [allReviews, query, tags, minRating, maxRating, onlyLikes, onlyMine, userId, now],
   );
 
   const sorted = useMemo(() => sortReviews(filtered, sortKey, sortOrder, now), [filtered, sortKey, sortOrder, now]);
@@ -880,7 +900,7 @@ export default function ReviewsPage() {
                       )}
                       <div className="text-center">
                         <div className="flex items-center justify-center gap-1.5">
-                          <h3 className="font-header text-sm font-black uppercase tracking-widest text-white">{name}</h3>
+                          <h3 className="font-header text-sm font-black uppercase tracking-widest text-white">{name}{review.id.startsWith('ph_') && <DebugTag className="ml-1.5 align-middle" />}</h3>
                           {(review.is_verified || reviewTags.includes('verified')) && (
                             <span
                               title={t.reviewsPage.verifiedTag}

@@ -348,6 +348,12 @@ interface GuildConfig {
   private_vc_hub_id?: string | null;
   history_enabled?: boolean;
   history_channel_id?: string | null;
+  bump_enabled?: boolean;
+  bump_server_name?: string;
+  bump_server_link?: string;
+  bump_disboard_url?: string;
+  bump_topgg_url?: string;
+  bump_dbl_url?: string;
   afk_role_id?: string | null;
   afk_prefix_enabled?: boolean;
   afk_auto_minutes?: number;
@@ -559,8 +565,8 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
   }
 
   const allowed: Record<string, unknown> = {};
-  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id', 'nsfw_autopost_channel_id', 'confess_channel_id', 'trivia_channel_id', 'news_rss_url', 'news_rss_channel_id', 'poll_style'];
-  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed', 'autoposts_enabled', 'news_enabled', 'social_enabled', 'confess_allow_anonymous', 'confess_allow_public', 'nsfw_bot_preferences_enabled', 'nsfw_general_enabled', 'nsfw_enabled', 'nsfw_autopost_enabled', 'nsfw_commands_enabled'];
+  const stringFields: Array<keyof GuildConfig> = ['prefix', 'lang', 'level_channel_id', 'welcome_channel_id', 'welcome_message', 'goodbye_channel_id', 'goodbye_message', 'logs_channel_id', 'tickets_category_id', 'tickets_role_id', 'private_category_id', 'music_channel_id', 'mute_role_id', 'coin_emoji', 'coin_name', 'staff_role_id', 'level_message', 'starboard_channel_id', 'starboard_emoji', 'private_vc_hub_id', 'history_channel_id', 'bump_server_name', 'bump_server_link', 'bump_disboard_url', 'bump_topgg_url', 'bump_dbl_url', 'afk_role_id', 'counting_channel_id', 'counting_style', 'counting_authenticity', 'suggestions_channel_id', 'nsfw_channel_id', 'nsfw_autopost_channel_id', 'confess_channel_id', 'trivia_channel_id', 'news_rss_url', 'news_rss_channel_id', 'poll_style'];
+  const boolFields: Array<keyof GuildConfig> = ['leveling_enabled', 'tickets_enabled', 'private_channels', 'automod_enabled', 'nitro_repost_enabled', 'history_enabled', 'afk_prefix_enabled', 'marriage_enabled', 'marriage_allow_admin_pairs', 'counting_enabled', 'counting_allow_repeat', 'suggestions_enabled', 'polls_enabled', 'trivia_enabled', 'trivia_timed', 'autoposts_enabled', 'news_enabled', 'social_enabled', 'confess_allow_anonymous', 'confess_allow_public', 'nsfw_bot_preferences_enabled', 'nsfw_general_enabled', 'nsfw_enabled', 'nsfw_autopost_enabled', 'nsfw_commands_enabled', 'bump_enabled'];
 
   for (const key of stringFields) {
     if (body[key] !== undefined) allowed[key] = body[key] === null ? null : String(body[key]);
@@ -871,6 +877,12 @@ const parsed = await parseJsonBody(req, guildConfigPatchSchema);
     private_vc_hub_id: 'privateVcHubId',
     history_enabled: 'historyEnabled',
     history_channel_id: 'historyChannelId',
+    bump_enabled: 'bumpEnabled',
+    bump_server_name: 'bumpServerName',
+    bump_server_link: 'bumpServerLink',
+    bump_disboard_url: 'bumpDisboardUrl',
+    bump_topgg_url: 'bumpTopggUrl',
+    bump_dbl_url: 'bumpDblUrl',
     afk_role_id: 'afkRoleId',
     afk_prefix_enabled: 'afkPrefixEnabled',
     afk_auto_minutes: 'afkAutoMinutes',

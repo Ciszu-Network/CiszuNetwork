@@ -464,7 +464,7 @@ function PlayPageContent() {
   const activeSetParticleSkin = renderer === 'pixi' ? pixiGame.setParticleSkin : renderer === 'phaser' ? phaserGame.setParticleSkin : setParticleSkin;
   const activeSetScrollSpeed = renderer === 'pixi' ? pixiGame.setScrollSpeed : renderer === 'phaser' ? phaserGame.setScrollSpeed : setScrollSpeed;
   const activeSetAudioOffset = renderer === 'pixi' ? pixiGame.setAudioOffset : renderer === 'phaser' ? phaserGame.setAudioOffset : setAudioOffset;
-  const activeSetInvincible = setInvincible;
+  const activeSetInvincible = renderer === 'pixi' ? pixiGame.setInvincible : setInvincible;
 
   // Guard de actividad no recuperable: jugando un nivel no se puede navegar
   // sin aviso (ActivityGuard rojo). begin al empezar partida, end al terminar.

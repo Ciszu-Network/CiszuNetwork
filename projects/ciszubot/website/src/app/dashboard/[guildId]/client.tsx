@@ -71,6 +71,12 @@ interface GuildConfig {
   invite_message?: string;
   history_enabled?: boolean;
   history_channel_id?: string | null;
+  bump_enabled?: boolean;
+  bump_server_name?: string;
+  bump_server_link?: string;
+  bump_disboard_url?: string;
+  bump_topgg_url?: string;
+  bump_dbl_url?: string;
   afk_role_id?: string | null;
   afk_prefix_enabled?: boolean;
   afk_auto_minutes?: number;
@@ -224,7 +230,7 @@ const SUB_TOGGLES: Record<string, { slug: string; labelKey: keyof Dict['guildPag
   ],
 };
 
-const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'news' | 'socialfeeds' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history', (keyof GuildConfig)[]> = {
+const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'goodbye' | 'economy' | 'starboard' | 'nitro' | 'staff' | 'invites' | 'vcs' | 'counting' | 'suggestions' | 'polls' | 'trivia' | 'autoposts' | 'news' | 'socialfeeds' | 'nsfw' | 'confessions' | 'customcmd' | 'automod' | 'alliance' | 'tickets' | 'stats' | 'history' | 'bump', (keyof GuildConfig)[]> = {
   general: ['prefix', 'lang', 'staff_role_id', 'owner_role_ids', 'admin_role_ids', 'mod_role_ids', 'bot_role_ids', 'mute_role_id', 'nsfw_general_enabled'],
   messages: [],
   levels: ['leveling_enabled', 'level_channel_id', 'xp_rate', 'level_message', 'level_roles'],
@@ -251,6 +257,7 @@ const SECTION_KEYS: Record<'general' | 'messages' | 'levels' | 'welcome' | 'good
   alliance: ['alliance_config'],
   tickets: ['ticket_config', 'tickets_enabled', 'tickets_category_id', 'tickets_role_id', 'music_channel_id', 'mute_role_id', 'logs_channel_id'],
   stats: ['counters'],
+  bump: ['bump_enabled', 'bump_server_name', 'bump_server_link', 'bump_disboard_url', 'bump_topgg_url', 'bump_dbl_url'],
 };
 
 const ALL_KEYS: (keyof GuildConfig)[] = Object.values(SECTION_KEYS).flat();
@@ -272,6 +279,7 @@ const FEATURE_ROWS: { slug: string; icon: string; labelKey: keyof Dict['guildPag
   { slug: 'embeds', icon: 'message-square', labelKey: 'featEmbeds', descKey: 'featEmbedsDesc', premium: true, colorClass: 'text-purple-400' },
   { slug: 'misc', icon: 'box-archive', labelKey: 'featMisc', descKey: 'featMiscDesc', colorClass: 'text-orange-300' },
   { slug: 'utility', icon: 'ri-code-s-slash', labelKey: 'featUtility', descKey: 'featUtilityDesc', colorClass: 'text-teal-300' },
+  { slug: 'bump', icon: 'bullhorn', labelKey: 'featBump', descKey: 'featBumpDesc', colorClass: 'text-indigo-300' },
   { slug: 'moderation', icon: 'gavel', labelKey: 'featModeration', descKey: 'featModerationDesc', colorClass: 'text-red-400' },
   { slug: 'social', icon: 'users', labelKey: 'featSocial', descKey: 'featSocialDesc', colorClass: 'text-pink-300' },
 ];
@@ -840,6 +848,9 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
   const activeFeature = view.startsWith('feat:')
     ? (FEATURE_ROWS.find((f) => `feat:${f.slug}` === view) ?? null)
     : null;
+  const activeFeatureEnabled = activeFeature?.slug === 'bump'
+    ? config?.bump_enabled !== false
+    : config?.features?.[activeFeature?.slug ?? ''] !== false;
 
   const searchUi = dict.dashboardPage.searchUi;
   const visibleSubnav = SUBNAV.filter((item) => {
@@ -1220,6 +1231,12 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
           cfg?.invite_message ?? '🎉 {user} se unió invitado por {inviter}. Total: **{count}** invitaciones.',
         history_enabled: cfg?.history_enabled ?? true,
         history_channel_id: cfg?.history_channel_id ?? null,
+        bump_enabled: cfg?.bump_enabled ?? true,
+        bump_server_name: cfg?.bump_server_name ?? 'Ciszugamens',
+        bump_server_link: cfg?.bump_server_link ?? 'https://discord.gg/W3kMtMMj6E',
+        bump_disboard_url: cfg?.bump_disboard_url ?? 'https://disboard.org/es/server/1215544133142450187',
+        bump_topgg_url: cfg?.bump_topgg_url ?? 'https://top.gg/es/discord/servers/871620279188504576',
+        bump_dbl_url: cfg?.bump_dbl_url ?? 'https://discordbotlist.com/servers/ciszugamens',
         afk_role_id: cfg?.afk_role_id ?? null,
         afk_prefix_enabled: cfg?.afk_prefix_enabled ?? false,
         afk_auto_minutes: cfg?.afk_auto_minutes ?? 0,
@@ -2295,7 +2312,7 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
             <div className="flex flex-wrap items-center gap-4 rounded-xl border border-white/10 bg-black/20 px-4 py-4">
               <span
                 className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 ${
-                  config.features?.[activeFeature.slug] !== false ? 'text-emerald-400' : 'text-white/30'
+                  activeFeatureEnabled ? 'text-emerald-400' : 'text-white/30'
                 }`}
               >
                 <Icon name={activeFeature.icon} size={20} className={activeFeature.colorClass} />
@@ -2307,25 +2324,27 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
               <button
                 type="button"
                 role="switch"
-                aria-checked={config.features?.[activeFeature.slug] !== false}
+                aria-checked={activeFeatureEnabled}
                 aria-label={t[activeFeature.labelKey]}
                 onClick={() =>
-                  update({
-                    features: {
-                      ...(config.features ?? {}),
-                      [activeFeature.slug]: config.features?.[activeFeature.slug] === false,
-                    },
-                  })
+                  activeFeature.slug === 'bump'
+                    ? update({ bump_enabled: !activeFeatureEnabled })
+                    : update({
+                        features: {
+                          ...(config.features ?? {}),
+                          [activeFeature.slug]: config.features?.[activeFeature.slug] === false,
+                        },
+                      })
                 }
                 className={`relative h-6 w-11 shrink-0 rounded-full transition ${
-                  config.features?.[activeFeature.slug] !== false
+                  activeFeatureEnabled
                     ? 'bg-gradient-to-r from-emerald-500 to-green-600'
                     : 'bg-white/15'
                 }`}
               >
                 <span
                   className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${
-                    config.features?.[activeFeature.slug] !== false ? 'left-[22px]' : 'left-0.5'
+                    activeFeatureEnabled ? 'left-[22px]' : 'left-0.5'
                   }`}
                 />
               </button>
@@ -2356,6 +2375,46 @@ export default function DashboardGuildClient({ guildId, guildName, guildIcon, us
             )}
 
 
+
+            {activeFeature.slug === 'bump' && (
+              <div className="mt-4 grid gap-3 rounded-2xl border border-white/10 bg-black/20 p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-bold text-white/85">Comando bump activo</p>
+                    <p className="text-[10px] text-white/40">Si se desactiva, `cz!bump` no responde en este servidor.</p>
+                  </div>
+                  <Toggle on={config.bump_enabled !== false} onChange={(v) => update({ bump_enabled: v })} />
+                </div>
+                <label className="block">
+                  <span className="mb-1 block text-[9px] font-black uppercase tracking-widest text-white/40">Nombre del servidor (variable)</span>
+                  <input className={inputCls} value={config.bump_server_name ?? ''} onChange={(e) => update({ bump_server_name: e.target.value })} placeholder="Ciszugamens" />
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[9px] font-black uppercase tracking-widest text-white/40">Enlace de invitación del servidor</span>
+                  <input className={inputCls} value={config.bump_server_link ?? ''} onChange={(e) => update({ bump_server_link: e.target.value })} placeholder="https://discord.gg/..." />
+                </label>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <label className="block">
+                    <span className="mb-1 block text-[9px] font-black uppercase tracking-widest text-white/40">Disboard</span>
+                    <input className={inputCls} value={config.bump_disboard_url ?? ''} onChange={(e) => update({ bump_disboard_url: e.target.value })} placeholder="https://disboard.org/..." />
+                  </label>
+                  <label className="block">
+                    <span className="mb-1 block text-[9px] font-black uppercase tracking-widest text-white/40">Top.gg</span>
+                    <input className={inputCls} value={config.bump_topgg_url ?? ''} onChange={(e) => update({ bump_topgg_url: e.target.value })} placeholder="https://top.gg/..." />
+                  </label>
+                  <label className="block">
+                    <span className="mb-1 block text-[9px] font-black uppercase tracking-widest text-white/40">Discord Bot List</span>
+                    <input className={inputCls} value={config.bump_dbl_url ?? ''} onChange={(e) => update({ bump_dbl_url: e.target.value })} placeholder="https://discordbotlist.com/..." />
+                  </label>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" onClick={() => update({ bump_server_name: 'Ciszugamens', bump_server_link: 'https://discord.gg/W3kMtMMj6E', bump_disboard_url: 'https://disboard.org/es/server/1215544133142450187', bump_topgg_url: 'https://top.gg/es/discord/servers/871620279188504576', bump_dbl_url: 'https://discordbotlist.com/servers/ciszugamens', bump_enabled: true })} className="rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white/60 hover:text-white">
+                    Restaurar Ciszugamens
+                  </button>
+                  <span className="self-center text-[9px] text-white/30">El nombre se sustituye automáticamente en el embed y los botones.</span>
+                </div>
+              </div>
+            )}
 
             {/* Manager de giveaways: lista en tiempo real + acciones + creación */}
             {activeFeature.slug === 'giveaways' && (

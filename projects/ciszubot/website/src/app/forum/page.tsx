@@ -27,10 +27,10 @@ export default function ForumPage() {
   const t = dict.forumPage;
   usePageTitle('FORUM');
   const categories = [
-    { title: 'General', desc: 'Charlas generales sobre CiszuBot y el ecosistema.', count: 124, icon: I.messageSquare, color: 'blue' },
-    { title: 'Soporte Técnico', desc: 'Ayuda con comandos, bots y servicios.', count: 42, icon: I.users, color: 'pink' },
-    { title: 'Ideas', desc: 'Propuestas para futuras versiones.', count: 67, icon: I.star, color: 'cyan' },
-    { title: 'Off-Topic', desc: 'Temas libres fuera del ecosistema.', count: 31, icon: I.zap, color: 'purple' },
+    { title: 'General', desc: 'Charlas generales sobre CiszuBot y el ecosistema.', count: 0, icon: I.messageSquare, color: 'blue' },
+    { title: 'Soporte Técnico', desc: 'Ayuda con comandos, bots y servicios.', count: 0, icon: I.users, color: 'pink' },
+    { title: 'Ideas', desc: 'Propuestas para futuras versiones.', count: 0, icon: I.star, color: 'cyan' },
+    { title: 'Off-Topic', desc: 'Temas libres fuera del ecosistema.', count: 0, icon: I.zap, color: 'purple' },
   ];
 
   return (

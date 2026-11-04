@@ -307,6 +307,12 @@ export interface GuildConfig {
   bot_role_ids: string[];
   alliance_config: AllianceConfig;
   ticket_config: TicketConfig;
+  bump_enabled: boolean;
+  bump_server_name: string;
+  bump_server_link: string;
+  bump_disboard_url: string;
+  bump_topgg_url: string;
+  bump_dbl_url: string;
 }
 
 const DEFAULT_AUTOMOD: AutomodConfig = { links: false, invites: false, caps: false, spam: false, flood: false, words: [], cooldown_seconds: 0, excluded_role_ids: [], excluded_channel_ids: [] };
@@ -436,6 +442,12 @@ const DEFAULTS: Omit<GuildConfig, 'guild_id'> = {
   bot_role_ids: [],
   alliance_config: DEFAULT_ALLIANCE,
   ticket_config: DEFAULT_TICKETS,
+  bump_enabled: true,
+  bump_server_name: 'Ciszugamens',
+  bump_server_link: 'https://discord.gg/W3kMtMMj6E',
+  bump_disboard_url: 'https://disboard.org/es/server/1215544133142450187',
+  bump_topgg_url: 'https://top.gg/es/discord/servers/871620279188504576',
+  bump_dbl_url: 'https://discordbotlist.com/servers/ciszugamens',
 };
 
 const cache = new Map<string, GuildConfig>();
@@ -615,6 +627,12 @@ export async function getGuildConfig(guildId: string): Promise<GuildConfig> {
         history_channel_id: data.historyChannelId ?? DEFAULTS.history_channel_id,
         alliance_config: asObject(data.allianceConfig, DEFAULT_ALLIANCE),
         ticket_config: asObject(data.ticketConfig, DEFAULT_TICKETS),
+        bump_enabled: data.bumpEnabled ?? DEFAULTS.bump_enabled,
+        bump_server_name: data.bumpServerName ?? DEFAULTS.bump_server_name,
+        bump_server_link: data.bumpServerLink ?? DEFAULTS.bump_server_link,
+        bump_disboard_url: data.bumpDisboardUrl ?? DEFAULTS.bump_disboard_url,
+        bump_topgg_url: data.bumpTopggUrl ?? DEFAULTS.bump_topgg_url,
+        bump_dbl_url: data.bumpDblUrl ?? DEFAULTS.bump_dbl_url,
       };
       cacheSet(guildId, cfg);
       return cfg;
@@ -744,6 +762,12 @@ export async function updateGuildConfig(
     historyChannelId: merged.history_channel_id,
     allianceConfig: merged.alliance_config,
     ticketConfig: merged.ticket_config,
+    bumpEnabled: merged.bump_enabled,
+    bumpServerName: merged.bump_server_name,
+    bumpServerLink: merged.bump_server_link,
+    bumpDisboardUrl: merged.bump_disboard_url,
+    bumpTopggUrl: merged.bump_topgg_url,
+    bumpDblUrl: merged.bump_dbl_url,
   };
   try {
     const guildConfigs = ciszubotSchema.guildConfigs;
