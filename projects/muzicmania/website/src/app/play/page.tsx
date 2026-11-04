@@ -199,6 +199,7 @@ function PlayPageContent() {
   const t = useT();
   const debugMode = useDebugMode();
   const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
+  const [multiplayerStandings, setMultiplayerStandings] = useState<{ status: string; players: { user_id: string; score: number; finished: boolean; profile?: { username: string | null; display_name: string | null } | null }[] } | null>(null);
   const [accentColors, setAccentColors] = useState<Record<string, string>>({});
   const [countdown, setCountdown] = useState<number | null>(null);
   const [globalRecord, setGlobalRecord] = useState<{ score: number; user: string } | null>(null);
@@ -874,6 +875,7 @@ function PlayPageContent() {
     const track = trackOverride || selectedTrack;
     if (!track) return;
     multiplayerRoomRef.current = null;
+    setMultiplayerStandings(null);
     customPlayRef.current = Boolean(levelOverride);
     
     // Clear any stale timers from previous games
@@ -1079,11 +1081,15 @@ function PlayPageContent() {
           const { data } = await supabase.auth.getSession();
           const token = data.session?.access_token;
           if (!token) return;
-          await fetch(`/api/multiplayer/rooms/${multiplayerRoomId}`, {
+          const response = await fetch(`/api/multiplayer/rooms/${multiplayerRoomId}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify({ action: 'finish', score: activeGameState.score }),
           });
+          if (response.ok) {
+            const data = (await response.json().catch(() => null)) as { room?: { status: string; players: { user_id: string; score: number; finished: boolean; profile?: { username: string | null; display_name: string | null } | null }[] } } | null;
+            if (data?.room) setMultiplayerStandings(data.room);
+          }
         } catch {
           /* la partida no debe romperse si falla el reporte online */
         }
@@ -4093,6 +4099,23 @@ function PlayPageContent() {
                      </div>
                    </motion.div>
                  </div>
+
+                 {multiplayerStandings && (
+                   <div className="mt-4 rounded-2xl border border-neon-cyan/20 bg-neon-cyan/5 p-3">
+                     <div className="mb-2 flex items-center justify-between gap-2">
+                       <p className="text-[8px] font-black uppercase tracking-widest text-neon-cyan">Sala online</p>
+                       <p className="text-[7px] font-black uppercase tracking-widest text-white/35">{multiplayerStandings.status === 'finished' ? 'Resultados finales' : 'Esperando rivales'}</p>
+                     </div>
+                     <div className="space-y-1">
+                       {[...multiplayerStandings.players].sort((a, b) => b.score - a.score).map((player) => (
+                         <div key={player.user_id} className="flex items-center justify-between gap-2 rounded-lg bg-black/30 px-2 py-1.5">
+                           <span className="truncate text-[9px] font-bold text-white/75">{player.profile?.display_name || player.profile?.username || player.user_id.slice(0, 8)}</span>
+                           <span className="shrink-0 text-[9px] font-black text-neon-cyan">{Number(player.score).toLocaleString('es-VE')} PTS</span>
+                         </div>
+                       ))}
+                     </div>
+                   </div>
+                 )}
 
                  {/* Hits Breakdown + Buttons Row */}
                  <div className="flex flex-col md:flex-row items-center gap-3 mt-4 relative z-10">
