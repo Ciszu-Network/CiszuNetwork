@@ -86,9 +86,9 @@ export default function SocialHub({ userId }: { userId: string | null }) {
   }, [dmUser, scope, userId]);
 
   useEffect(() => {
-    if (!open || !userId) return;
+    if (!userId) return;
     void loadThreads();
-  }, [open, userId, loadThreads]);
+  }, [userId, loadThreads]);
 
   useEffect(() => {
     if (!open || !userId) return;
