@@ -24,7 +24,11 @@
     "NOWPAYMENTS_POS_URL",
     "WALLET_BINANCE_URL",
     "DONATE_ETH",
-    "DONATE_USDT_ERC20"
+    "DONATE_USDT_ERC20",
+    "PAYMENTS_CRYPTO_ENABLED",
+    "PAYMENTS_CARD_ENABLED",
+    "PAYMENTS_PAYPAL_ENABLED",
+    "MUZICMANIA_PUBLIC_URL"
   ],
   "tasks": {
     "build": {
@@ -51,7 +55,11 @@
         "NOWPAYMENTS_POS_URL",
         "WALLET_BINANCE_URL",
         "DONATE_ETH",
-        "DONATE_USDT_ERC20"
+        "DONATE_USDT_ERC20",
+        "PAYMENTS_CRYPTO_ENABLED",
+        "PAYMENTS_CARD_ENABLED",
+        "PAYMENTS_PAYPAL_ENABLED",
+        "MUZICMANIA_PUBLIC_URL"
       ]
     },
     "lint": {},
