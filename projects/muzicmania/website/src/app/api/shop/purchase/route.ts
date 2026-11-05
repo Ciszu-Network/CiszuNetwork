@@ -1,0 +1,30 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
+import { adminClient, authenticate } from '../../auth/2fa/_lib';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+const limiter = createRateLimiter({ windowMs: 60_000, max: 30 });
+const schema = z.object({ item_id: z.string().uuid() });
+
+export async function POST(req: NextRequest) {
+  const user = await authenticate(req);
+  if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  if (!limiter.allow(ip).allowed) return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
+  const parsed = await parseJsonBody(req, schema);
+  if (!parsed.success) return NextResponse.json({ error: 'invalid_body', issue: firstZodMessage(parsed.error) }, { status: 400 });
+
+  const admin = adminClient() as any;
+  const { data, error } = await admin.schema('muzicmania').rpc('purchase_item', {
+    p_user_id: user.userId,
+    p_item_id: parsed.data.item_id,
+    p_idempotency_key: `shop:${user.userId}:${parsed.data.item_id}`,
+  });
+  if (error) {
+    const message = error.message.includes('insufficient_points') ? 'insufficient_points' : error.message;
+    return NextResponse.json({ error: message }, { status: 409 });
+  }
+  return NextResponse.json({ points: Number(data ?? 0) });
+}
