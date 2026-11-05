@@ -23,6 +23,7 @@ import MainLayout from '@/components/templates/MainLayout';
 import AuthWarningModal from '@/components/shared/AuthWarningModal';
 import MultiplayerLobby from '@/components/play/MultiplayerLobby';
 import LevelStudio, { type CustomLevelDetail } from '@/components/play/LevelStudio';
+import StorePanel from '@/components/shop/StorePanel';
 import { extractAccentColor } from '@/lib/colorUtils';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { Button } from '@/components/atoms/Button';
@@ -2207,7 +2208,7 @@ function PlayPageContent() {
                       { id: 'multijugador', label: 'MULTIJUGADOR', icon: I.radio, desc: 'Salas online, chat y modos 1v1/duos/tríos', soon: false },
                       { id: 'crear', label: 'CREAR', icon: I.customize, desc: 'Crea y comparte tus propios niveles', soon: false },
                       { id: 'eventos', label: 'EVENTOS', icon: I.trophy, desc: 'Eventos por tiempo limitado', locked: true, lockReason: 'beta', pronto: true, soon: false },
-                      { id: 'tienda', label: 'TIENDA', icon: I.store, desc: 'Consigue nuevos ítems y skins', locked: true, lockReason: 'account', soon: false },
+                      { id: 'tienda', label: 'TIENDA', icon: I.store, desc: 'MuziPoints, skins e inventario', soon: false },
                     ].map(mode => (
                       <button
                         key={mode.id}
@@ -2628,22 +2629,18 @@ function PlayPageContent() {
             </motion.div>
           )}
 
-          {/* --- TIENDA PHASE ---}
+          {/* --- TIENDA PHASE --- */}
           {phase === 'tienda' && (
-            <motion.div key="tienda" initial="hidden" animate="visible" exit="exit" variants={sectionVariants}
-              className="flex-1 w-full h-full flex flex-col items-center justify-center relative overflow-hidden px-6 bg-black"
-            >
-              <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/5 via-transparent to-purple-500/5 pointer-events-none" />
-              <div className="text-center relative z-10">
-                <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
-                  <div className="w-12 h-12 text-yellow-500">{I.store}</div>
-                </div>
-                <h2 className="text-4xl font-header font-black uppercase tracking-tighter bg-gradient-to-r from-yellow-500 via-white to-purple-500 bg-clip-text text-transparent mb-4">TIENDA</h2>
-                <p className="text-xs text-gray-500 font-bold uppercase tracking-[0.3em] mb-8">{t.pages.play.customizePrompt}</p>
-                <button onClick={() => setPhase('hub')}
-                  className="px-8 py-3 bg-white/10 border border-white/20 rounded-2xl text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/20 transition-all"
-                >{t.pages.play.backToMenu}</button>
-              </div>
+            <motion.div key="tienda" initial="hidden" animate="visible" exit="exit" variants={sectionVariants} className="w-full max-w-6xl">
+              <StorePanel
+                userId={user?.id ?? null}
+                onBack={() => setPhase('hub')}
+                onEquipArrow={(assetKey) => {
+                  setCurrentArrowSkin(assetKey);
+                  setOwnedSkinKeys((keys) => (keys.includes(assetKey) ? keys : [...keys, assetKey]));
+                  activeSetArrowSkin(assetKey);
+                }}
+              />
             </motion.div>
           )}
 
