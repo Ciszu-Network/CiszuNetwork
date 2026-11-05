@@ -472,7 +472,9 @@ function PlayPageContent() {
   const activeSetInvincible = renderer === 'pixi' ? pixiGame.setInvincible : setInvincible;
 
   useEffect(() => {
-    if (!user?.id) { setOwnedSkinKeys([]); setEconomyLoaded(true); return; }
+    setOwnedSkinKeys([]);
+    setEconomyLoaded(false);
+    if (!user?.id) { setEconomyLoaded(true); return; }
     let alive = true;
     fetchEconomy()
       .then((snapshot) => {
@@ -482,7 +484,7 @@ function PlayPageContent() {
           .filter((key: unknown): key is string => typeof key === 'string');
         setOwnedSkinKeys(keys);
       })
-      .catch(() => undefined)
+      .catch(() => { if (alive) setOwnedSkinKeys([]); })
       .finally(() => { if (alive) setEconomyLoaded(true); });
     return () => { alive = false; };
   }, [user?.id]);
@@ -495,7 +497,7 @@ function PlayPageContent() {
     }
   }, [activeSetArrowSkin, currentArrowSkin, economyLoaded, ownedSkinKeys]);
 
-  const visibleSkins = getSkinList().filter((skin) => !user || isArrowSkinOwned(skin.id, ownedSkinKeys));
+  const visibleSkins = getSkinList().filter((skin) => (user ? isArrowSkinOwned(skin.id, ownedSkinKeys) : skin.id === 'default'));
 
   // Guard de actividad no recuperable: jugando un nivel no se puede navegar
   // sin aviso (ActivityGuard rojo). begin al empezar partida, end al terminar.
