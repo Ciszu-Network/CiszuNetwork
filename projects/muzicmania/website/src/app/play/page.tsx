@@ -15,7 +15,7 @@ import { usePhaserGameEngine } from '@/hooks/usePhaserGameEngine';
 import { useAppStore } from '@/store/useAppStore';
 import { getLevel, LoadedLevel } from '@/data/levels';
 import { TRACKS_DATA, Track } from '@/data/tracks';
-import { getSkinList, ArrowSkinColorType } from '@/lib/arrowSkins';
+import { getSkinList, isArrowSkinOwned, ArrowSkinColorType } from '@/lib/arrowSkins';
 import { getParticleSkinList, ParticleSkinColorType, getParticleSkin } from '@/lib/particleSkins';
 import { getGrade, GradeRank } from '@/lib/grades';
 import { ArrowSkinId, ChartNote, LevelConfig, LevelDifficulty, LevelEvent } from '@/types/level';
@@ -34,6 +34,7 @@ import { TAG_CONFIG as CHANGELOG_TAGS, I as CHANGELOG_I } from '@/config/changel
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useT } from '@/hooks/useT';
 import { getGuestId, getGuestName } from '@/lib/guest';
+import { fetchEconomy } from '@/lib/economy/client';
 import { updatePreferences, isLangAvailable, reloadAfterPrefChange } from '@/lib/preferences';
 import { useToast, useActivityGuard, useDebugMode, LANGUAGE_OPTIONS } from '@ciszu/ui';
 // --- Icons Library ---
@@ -398,6 +399,8 @@ function PlayPageContent() {
   const [currentLevel, setCurrentLevel] = useState<LoadedLevel | null>(null);
   const [currentArrowSkin, setCurrentArrowSkin] = useState<ArrowSkinId>('default');
   const [currentParticleSkin, setCurrentParticleSkin] = useState<string>('default');
+  const [ownedSkinKeys, setOwnedSkinKeys] = useState<string[]>([]);
+  const [economyLoaded, setEconomyLoaded] = useState(false);
   const [scrollSpeed, activeSetScrollSpeedState] = useState(() => {
     if (typeof window === 'undefined') return 480;
     const saved = localStorage.getItem('display_scroll_speed');
@@ -467,6 +470,32 @@ function PlayPageContent() {
   const activeSetScrollSpeed = renderer === 'pixi' ? pixiGame.setScrollSpeed : renderer === 'phaser' ? phaserGame.setScrollSpeed : setScrollSpeed;
   const activeSetAudioOffset = renderer === 'pixi' ? pixiGame.setAudioOffset : renderer === 'phaser' ? phaserGame.setAudioOffset : setAudioOffset;
   const activeSetInvincible = renderer === 'pixi' ? pixiGame.setInvincible : setInvincible;
+
+  useEffect(() => {
+    if (!user?.id) { setOwnedSkinKeys([]); setEconomyLoaded(true); return; }
+    let alive = true;
+    fetchEconomy()
+      .then((snapshot) => {
+        if (!alive) return;
+        const keys = snapshot.inventory
+          .map((row: any) => row.shop_items?.category === 'arrow_skin' ? row.shop_items?.asset_key : null)
+          .filter((key: unknown): key is string => typeof key === 'string');
+        setOwnedSkinKeys(keys);
+      })
+      .catch(() => undefined)
+      .finally(() => { if (alive) setEconomyLoaded(true); });
+    return () => { alive = false; };
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!economyLoaded) return;
+    if (currentArrowSkin !== 'default' && !isArrowSkinOwned(currentArrowSkin, ownedSkinKeys)) {
+      setCurrentArrowSkin('default');
+      activeSetArrowSkin('default');
+    }
+  }, [activeSetArrowSkin, currentArrowSkin, economyLoaded, ownedSkinKeys]);
+
+  const visibleSkins = getSkinList().filter((skin) => !user || isArrowSkinOwned(skin.id, ownedSkinKeys));
 
   // Guard de actividad no recuperable: jugando un nivel no se puede navegar
   // sin aviso (ActivityGuard rojo). begin al empezar partida, end al terminar.
@@ -5544,7 +5573,7 @@ function PlayPageContent() {
                         <span>{t.pages.play.arrowSkin}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
-                        {(user ? getSkinList() : getSkinList().filter(s => s.id === 'default')).map(skin => (
+                        {visibleSkins.map(skin => (
                           <button key={skin.id}
                             onClick={() => { setCurrentArrowSkin(skin.id); activeSetArrowSkin(skin.id); }}
                             className={`py-3 text-xs font-bold uppercase rounded-xl border transition-all ${

@@ -364,6 +364,37 @@ function drawShinyHoldTrail(
   ctx.restore();
 }
 
+function drawStoreArrow(primary: string, secondary: string, glow: string) {
+  return (ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number, direction: number, _color: string, state: ArrowState) => {
+    const rotations = [-Math.PI / 2, Math.PI, 0, Math.PI / 2];
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rotations[direction]);
+    const alpha = state === 'fail' ? 0.35 : 1;
+    ctx.globalAlpha = alpha;
+    ctx.shadowBlur = state === 'press' ? 38 : 18;
+    ctx.shadowColor = glow;
+    const grad = ctx.createLinearGradient(-size, -size, size, size);
+    grad.addColorStop(0, primary);
+    grad.addColorStop(1, secondary);
+    ctx.beginPath();
+    ctx.moveTo(0, -size);
+    ctx.lineTo(size * 0.62, size * 0.32);
+    ctx.lineTo(size * 0.22, size * 0.16);
+    ctx.lineTo(size * 0.22, size);
+    ctx.lineTo(-size * 0.22, size);
+    ctx.lineTo(-size * 0.22, size * 0.16);
+    ctx.lineTo(-size * 0.62, size * 0.32);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.strokeStyle = state === 'press' ? '#ffffff' : glow;
+    ctx.lineWidth = state === 'press' ? 3 : 2;
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  };
+}
+
 export const ARROW_SKINS: Record<ArrowSkinId, ArrowSkin> = {
   default: {
     id: 'default',
@@ -443,7 +474,43 @@ export const ARROW_SKINS: Record<ArrowSkinId, ArrowSkin> = {
     drawArrow: drawMinimalArrow,
     drawHoldTrail: drawDefaultHoldTrail,
   },
+  prism: {
+    id: 'prism',
+    name: 'Prisma',
+    author: 'MuzicMania',
+    description: 'Degradado prismático premium',
+    colorType: 'direct',
+    hasTrail: true,
+    drawArrow: drawStoreArrow('#67e8f9', '#f0abfc', '#22d3ee'),
+    drawHoldTrail: drawDefaultHoldTrail,
+  },
+  ember: {
+    id: 'ember',
+    name: 'Brasa',
+    author: 'MuzicMania',
+    description: 'Núcleo incandescente premium',
+    colorType: 'direct',
+    hasTrail: true,
+    drawArrow: drawStoreArrow('#fb923c', '#ef4444', '#f97316'),
+    drawHoldTrail: drawDefaultHoldTrail,
+  },
+  void: {
+    id: 'void',
+    name: 'Vacío',
+    author: 'MuzicMania',
+    description: 'Borde violeta premium',
+    colorType: 'direct',
+    hasTrail: true,
+    drawArrow: drawStoreArrow('#4c1d95', '#111827', '#a855f7'),
+    drawHoldTrail: drawDefaultHoldTrail,
+  },
 };
+
+export const FREE_ARROW_SKINS = new Set<ArrowSkinId>(['default', 'shiny', 'minimal']);
+
+export function isArrowSkinOwned(id: ArrowSkinId, owned: Iterable<string>): boolean {
+  return FREE_ARROW_SKINS.has(id) || new Set(owned).has(id);
+}
 
 export const DEFAULT_ARROW_SKIN: ArrowSkinId = 'default';
 
