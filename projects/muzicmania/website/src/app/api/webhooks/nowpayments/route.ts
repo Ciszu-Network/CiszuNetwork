@@ -6,6 +6,16 @@ import { adminClient } from '../../auth/2fa/_lib';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 const limiter = createRateLimiter({ windowMs: 60_000, max: 30 });
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const TERMINAL_STATUSES = new Set(['failed', 'refunded', 'expired']);
+
+function logFailure(stage: string, details: Record<string, string>) {
+  console.error(`[nowpayments] ${stage}`, details);
+}
+
+function errorMessage(error: { message?: string } | null): string {
+  return typeof error?.message === 'string' ? error.message.slice(0, 200) : 'unknown';
+}
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
@@ -16,37 +26,74 @@ export async function POST(req: NextRequest) {
   const event = await provider.verifyWebhook(raw, req.headers);
   if (!event) return NextResponse.json({ error: 'invalid_signature' }, { status: 401 });
 
-  const payload = event.raw as Record<string, any>;
+  const payload = event.raw as Record<string, unknown>;
   const orderId = typeof payload.order_id === 'string' ? payload.order_id : '';
-  const eventId = `${payload.payment_id ?? 'unknown'}:${payload.payment_status ?? 'unknown'}`;
+  const paymentId = payload.payment_id != null ? String(payload.payment_id) : '';
   if (!orderId) return NextResponse.json({ error: 'missing_order' }, { status: 400 });
+  if (!UUID.test(orderId)) return NextResponse.json({ error: 'invalid_order_id' }, { status: 400 });
+  if (!paymentId) return NextResponse.json({ error: 'missing_payment_id' }, { status: 400 });
+
+  const eventId = `${paymentId}:${payload.payment_status ?? 'unknown'}`;
 
   const admin = adminClient() as any;
   const existing = await admin.schema('pagos').from('webhook_events').select('processed_at').eq('provider', event.provider).eq('event_id', eventId).maybeSingle();
+  if (existing.error) {
+    logFailure('webhook event lookup failed', { eventId, message: errorMessage(existing.error) });
+    return NextResponse.json({ error: 'audit_failed' }, { status: 500 });
+  }
   if (existing.data?.processed_at) return NextResponse.json({ ok: true, duplicate: true });
 
-  await admin.schema('pagos').from('webhook_events').upsert({
+  const stored = await admin.schema('pagos').from('webhook_events').upsert({
     provider: event.provider,
     event_id: eventId,
     payload,
     signature_valid: true,
   }, { onConflict: 'provider,event_id', ignoreDuplicates: true });
+  if (stored.error) {
+    logFailure('webhook event upsert failed', { eventId, message: errorMessage(stored.error) });
+    return NextResponse.json({ error: 'audit_failed' }, { status: 500 });
+  }
 
-  if (event.status !== 'confirmed') return NextResponse.json({ ok: true, status: event.status });
+  if (event.status !== 'confirmed') {
+    if (TERMINAL_STATUSES.has(event.status)) {
+      const processed = await admin.schema('pagos').from('webhook_events').update({ processed_at: new Date().toISOString() }).eq('provider', event.provider).eq('event_id', eventId);
+      if (processed.error) {
+        logFailure('webhook event update failed', { eventId, message: errorMessage(processed.error) });
+        return NextResponse.json({ error: 'audit_failed' }, { status: 500 });
+      }
+    }
+    return NextResponse.json({ ok: true, status: event.status });
+  }
 
-  const priceCents = Math.round(Number(payload.price_amount ?? 0) * 100);
+  const amount = Number(payload.price_amount);
+  if (!Number.isFinite(amount)) {
+    logFailure('invalid price_amount', { eventId, orderId });
+    return NextResponse.json({ error: 'invalid_amount' }, { status: 400 });
+  }
+  const priceCents = Math.round(amount * 100);
   const currency = String(payload.price_currency ?? 'usd');
   const { error } = await admin.schema('muzicmania').rpc('fulfill_points_order', {
     p_order_id: orderId,
-    p_provider_payment_id: String(payload.payment_id ?? ''),
+    p_provider_payment_id: paymentId,
     p_price_cents: priceCents,
     p_currency: currency,
   });
 
   if (error) {
-    await admin.schema('pagos').from('webhook_events').update({ processed_at: null }).eq('provider', event.provider).eq('event_id', eventId);
-    return NextResponse.json({ error: error.message }, { status: 409 });
+    const message = errorMessage(error);
+    const code = message.includes('amount_mismatch')
+      ? 'amount_mismatch'
+      : message.includes('currency_mismatch')
+        ? 'currency_mismatch'
+        : 'fulfillment_failed';
+    logFailure('fulfillment failed', { eventId, orderId, code, message });
+    return NextResponse.json({ error: code }, { status: 409 });
   }
-  await admin.schema('pagos').from('webhook_events').update({ processed_at: new Date().toISOString() }).eq('provider', event.provider).eq('event_id', eventId);
+
+  const processed = await admin.schema('pagos').from('webhook_events').update({ processed_at: new Date().toISOString() }).eq('provider', event.provider).eq('event_id', eventId);
+  if (processed.error) {
+    logFailure('webhook event update failed', { eventId, message: errorMessage(processed.error) });
+    return NextResponse.json({ error: 'audit_failed' }, { status: 500 });
+  }
   return NextResponse.json({ ok: true });
 }
