@@ -11,7 +11,7 @@ describe('economy server helpers', () => {
   });
 
   it('reads flags as booleans', () => {
-    const flags = readPaymentFlags({ PAYMENTS_CRYPTO_ENABLED: 'true', PAYMENTS_CARD_ENABLED: 'false' } as NodeJS.ProcessEnv);
+    const flags = readPaymentFlags({ PAYMENTS_CRYPTO_ENABLED: 'true', PAYMENTS_CARD_ENABLED: 'false' } as unknown as NodeJS.ProcessEnv);
     expect(flags).toEqual({ crypto: true, card: false, paypal: false });
   });
 });
