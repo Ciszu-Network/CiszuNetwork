@@ -132,6 +132,11 @@ const I = {
 
 type PlayPhase = 'loading' | 'welcome' | 'disclaimer' | 'intro' | 'hub' | 'solo' | 'multijugador' | 'crear' | 'tienda' | 'eventos' | 'historia' | 'config' | 'inventario' | 'game' | 'results' | 'gameover';
 
+type InventoryRow = {
+  equipped_slot?: string | null;
+  shop_items?: { category?: string | null; asset_key?: string | null } | null;
+};
+
 const formatTime = (time: number) => {
   const m = Math.floor(time / 60);
   const s = Math.floor(time % 60);
@@ -475,15 +480,24 @@ function PlayPageContent() {
   useEffect(() => {
     setOwnedSkinKeys([]);
     setEconomyLoaded(false);
+    setCurrentArrowSkin('default');
+    activeSetArrowSkin('default');
     if (!user?.id) { setEconomyLoaded(true); return; }
     let alive = true;
     fetchEconomy()
       .then((snapshot) => {
         if (!alive) return;
-        const keys = snapshot.inventory
-          .map((row: any) => row.shop_items?.category === 'arrow_skin' ? row.shop_items?.asset_key : null)
-          .filter((key: unknown): key is string => typeof key === 'string');
+        const rows = snapshot.inventory as InventoryRow[];
+        const keys = rows
+          .map((row) => row.shop_items?.category === 'arrow_skin' ? row.shop_items?.asset_key : null)
+          .filter((key): key is string => typeof key === 'string');
         setOwnedSkinKeys(keys);
+        const equipped = rows.find((row) => Boolean(row.equipped_slot) && row.shop_items?.category === 'arrow_skin');
+        const equippedKey = equipped?.shop_items?.asset_key;
+        if (typeof equippedKey === 'string' && equippedKey.length > 0) {
+          setCurrentArrowSkin(equippedKey);
+          activeSetArrowSkin(equippedKey);
+        }
       })
       .catch(() => { if (alive) setOwnedSkinKeys([]); })
       .finally(() => { if (alive) setEconomyLoaded(true); });

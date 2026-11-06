@@ -87,10 +87,50 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
         {(['packages', 'cosmetics', 'inventory'] as Tab[]).map((value) => <button key={value} type="button" onClick={() => setTab(value)} className={`rounded-lg px-3 py-2 text-[8px] font-black uppercase tracking-widest ${tab === value ? 'bg-yellow-400/15 text-yellow-300' : 'text-white/35'}`}>{value === 'packages' ? 'Paquetes' : value === 'cosmetics' ? 'Cosméticos' : 'Inventario'}</button>)}
       </div>
       {error && <p className="mb-2 text-[10px] text-red-300">{error}</p>}
-      {tab === 'packages' && <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{packages.map((pkg) => <button key={pkg.id} type="button" disabled={!flags.crypto || busy === pkg.id} onClick={() => void buyPackage(pkg)} className="rounded-2xl border border-white/10 bg-black/40 p-4 text-left disabled:opacity-50"><p className="text-[8px] font-black uppercase tracking-widest text-yellow-300">{pkg.badge ?? 'MZP'}</p><p className="mt-1 font-header text-xl font-black text-white">{formatMzP(pkg.points_base + pkg.bonus_points)}</p><p className="text-[10px] text-white/40">${(pkg.price_cents / 100).toFixed(2)} USD</p>{!flags.crypto && <p className="mt-2 text-[8px] uppercase tracking-widest text-white/30">Cripto desactivado</p>}</button>)}</div>}
-      {tab === 'packages' && <div className="mt-3 flex flex-wrap gap-2 text-[8px] font-black uppercase tracking-widest"><span className="rounded-full border border-emerald-300/30 bg-emerald-300/10 px-3 py-1 text-emerald-300">Cripto disponible</span><span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/30">Tarjeta próximamente</span><span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/30">PayPal próximamente</span></div>}
-      {tab === 'cosmetics' && <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{items.map((item) => <div key={item.id} className="rounded-2xl border border-white/10 bg-black/40 p-4"><p className="font-header text-lg font-black text-white">{item.name}</p><p className="mt-1 text-[10px] text-white/40">{item.description}</p><p className="mt-2 text-[10px] font-black text-yellow-300">{formatMzP(item.price_points)}</p><button type="button" disabled={busy === item.id || item.owned} onClick={() => item.owned ? void equip(item) : void buyItem(item)} className="mt-3 w-full rounded-xl border border-white/10 py-2 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50">{item.owned ? (item.equippedSlot ? 'Equipado' : 'Equipar') : 'Comprar'}</button></div>)}</div>}
-      {tab === 'inventory' && <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{items.filter((item) => item.owned).map((item) => <button key={item.id} type="button" onClick={() => void equip(item)} className="rounded-2xl border border-emerald-300/20 bg-emerald-300/5 p-4 text-left"><p className="font-header text-lg font-black text-white">{item.name}</p><p className="text-[9px] uppercase tracking-widest text-emerald-300">{item.equippedSlot ?? 'Equipar'}</p></button>)}{items.every((item) => !item.owned) && <p className="text-[10px] uppercase tracking-widest text-white/30">Sin ítems todavía.</p>}</div>}
+      {tab === 'packages' && (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {packages.map((pkg) => (
+            <button key={pkg.id} type="button" disabled={!flags.crypto || busy !== null} onClick={() => void buyPackage(pkg)} className="rounded-2xl border border-white/10 bg-black/40 p-4 text-left disabled:opacity-50">
+              <p className="text-[8px] font-black uppercase tracking-widest text-yellow-300">{pkg.badge ?? 'MZP'}</p>
+              <p className="mt-1 font-header text-xl font-black text-white">{formatMzP(pkg.points_base + pkg.bonus_points)}</p>
+              <p className="text-[10px] text-white/40">${(pkg.price_cents / 100).toFixed(2)} USD</p>
+              {!flags.crypto && <p className="mt-2 text-[8px] uppercase tracking-widest text-white/30">Cripto desactivado</p>}
+            </button>
+          ))}
+        </div>
+      )}
+      {tab === 'packages' && (
+        <div className="mt-3 flex flex-wrap gap-2 text-[8px] font-black uppercase tracking-widest">
+          <span className={`rounded-full border px-3 py-1 ${flags.crypto ? 'border-emerald-300/30 bg-emerald-300/10 text-emerald-300' : 'border-white/10 bg-white/5 text-white/30'}`}>{flags.crypto ? 'Cripto disponible' : 'Cripto desactivado'}</span>
+          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/30">Tarjeta próximamente</span>
+          <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-white/30">PayPal próximamente</span>
+        </div>
+      )}
+      {tab === 'cosmetics' && (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((item) => (
+            <div key={item.id} className="rounded-2xl border border-white/10 bg-black/40 p-4">
+              <p className="font-header text-lg font-black text-white">{item.name}</p>
+              <p className="mt-1 text-[10px] text-white/40">{item.description}</p>
+              <p className="mt-2 text-[10px] font-black text-yellow-300">{formatMzP(item.price_points)}</p>
+              <button type="button" disabled={busy === item.id} onClick={() => item.owned ? void equip(item) : void buyItem(item)} className="mt-3 w-full rounded-xl border border-white/10 py-2 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50">
+                {item.owned ? (item.equippedSlot ? 'EQUIPADO' : 'EQUIPAR') : 'COMPRAR'}
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+      {tab === 'inventory' && (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {items.filter((item) => item.owned).map((item) => (
+            <button key={item.id} type="button" onClick={() => void equip(item)} className="rounded-2xl border border-emerald-300/20 bg-emerald-300/5 p-4 text-left">
+              <p className="font-header text-lg font-black text-white">{item.name}</p>
+              <p className="text-[9px] uppercase tracking-widest text-emerald-300">{item.equippedSlot ? 'Equipado' : 'Equipar'}</p>
+            </button>
+          ))}
+          {items.every((item) => !item.owned) && <p className="text-[10px] uppercase tracking-widest text-white/30">Sin ítems todavía.</p>}
+        </div>
+      )}
     </div>
   );
 }
