@@ -104,7 +104,8 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `COMMERCIAL_REGISTRATION_PLAN` · `TAX_PLAN` · `INTERNATIONAL_LLC_PLAN`) ·
   `ORGANIZATIONAL_SCALABILITY_PLAN` · `RAG_VECTORS_PLAN` · `AI_ART_PLAN` · `BRAND_PLAN` · `VPS_PLAN` ·
   `SEO_PLAN` (pipeline automatizado: Screaming Frog CLI + scripts `seo-*`, carpetas `website/seo/`)
-  `TOOLS_EVALUATION_PLAN` (investigación de servicios/herramientas candidatas)
+  `TOOLS_EVALUATION_PLAN` (investigación de servicios/herramientas candidatas) ·
+  `STORE_ECONOMY_PLAN` + `STORE_ECONOMY_PHASE1_IMPLEMENTATION_PLAN` (MuziPoints, tienda, pagos cripto, edad 18+; fases 2–4 pendientes)
 - **Protocolos de contexto**: `GEOGRAPHIC_CONTEXT_PROTOCOLS` · `HISTORICAL_CONTEXT_PROTOCOLS` ·
   `TARGET_AUDIENCE_PROTOCOLS` · `HEALTH_AND_SAFETY_PROTOCOLS` · `SCHEDULE_PROTOCOLS` ·
   `SECURITY_PROTOCOLS` · `CONTACTS_PROTOCOLS` · `IT_GLOSSARY_PROTOCOLS` · `MATERIAL_ICONS_PROTOCOLS`
