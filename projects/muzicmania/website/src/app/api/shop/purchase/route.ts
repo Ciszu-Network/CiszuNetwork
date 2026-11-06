@@ -8,6 +8,10 @@ export const dynamic = 'force-dynamic';
 const limiter = createRateLimiter({ windowMs: 60_000, max: 30 });
 const schema = z.object({ item_id: z.string().uuid() });
 
+function logFailure(stage: string, details: Record<string, string>) {
+  console.error(`[shop/purchase] ${stage}`, details);
+}
+
 export async function POST(req: NextRequest) {
   const user = await authenticate(req);
   if (!user) return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
@@ -23,8 +27,12 @@ export async function POST(req: NextRequest) {
     p_idempotency_key: `shop:${user.userId}:${parsed.data.item_id}`,
   });
   if (error) {
-    const message = error.message.includes('insufficient_points') ? 'insufficient_points' : error.message;
-    return NextResponse.json({ error: message }, { status: 409 });
+    const message = typeof error.message === 'string' ? error.message : '';
+    if (message.includes('insufficient_points')) return NextResponse.json({ error: 'insufficient_points' }, { status: 409 });
+    if (message.includes('item_not_found')) return NextResponse.json({ error: 'item_not_found' }, { status: 404 });
+    if (message.includes('already_owned')) return NextResponse.json({ error: 'already_owned' }, { status: 409 });
+    logFailure('rpc failed', { userId: user.userId, message: message.slice(0, 200) });
+    return NextResponse.json({ error: 'internal_error' }, { status: 500 });
   }
   return NextResponse.json({ points: Number(data ?? 0) });
 }

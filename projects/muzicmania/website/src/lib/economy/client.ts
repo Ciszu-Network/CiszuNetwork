@@ -48,11 +48,12 @@ export async function equipItem(itemId: string) {
   if (!response.ok) throw new Error('equip_failed');
 }
 
-export async function createInvoice(packageId: string) {
+export async function createInvoice(packageId: string, idempotencyKey?: string) {
+  const key = idempotencyKey ?? globalThis.crypto.randomUUID();
   const response = await apiFetch('/api/payments/invoice', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ package_id: packageId }),
+    body: JSON.stringify({ package_id: packageId, idempotency_key: key }),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'invoice_failed');

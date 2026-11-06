@@ -2,12 +2,14 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { formatMzP } from '@/lib/economy/format';
-import { createInvoice, equipItem, fetchEconomy, fetchPackages, fetchShopItems, purchaseItem } from '@/lib/economy/client';
+import { createInvoice, equipItem, fetchEconomy, fetchOrder, fetchPackages, fetchShopItems, purchaseItem } from '@/lib/economy/client';
 import type { EconomySnapshot, PointPackage, ShopItem } from '@/lib/economy/types';
 import { AgeGateModal } from './AgeGateModal';
 import { WalletChip } from './WalletChip';
 
 type Tab = 'packages' | 'cosmetics' | 'inventory';
+
+const TERMINAL_ORDER_STATUSES = new Set(['fulfilled', 'failed', 'expired', 'refunded']);
 
 export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: string | null; onBack: () => void; onEquipArrow: (assetKey: string) => void }) {
   const [tab, setTab] = useState<Tab>('packages');
@@ -17,6 +19,7 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
   const [flags, setFlags] = useState<EconomySnapshot['flags']>({ crypto: false, card: false, paypal: false });
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState('');
+  const [paymentStatus, setPaymentStatus] = useState('');
   const [ageOpen, setAgeOpen] = useState(false);
   const [pendingPackage, setPendingPackage] = useState<string | null>(null);
 
@@ -31,16 +34,103 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
 
   useEffect(() => { void load().catch(() => setError('No se pudo cargar la tienda.')); }, [load]);
 
+  useEffect(() => {
+    if (!userId || typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get('payment');
+    const orderId = params.get('order');
+    if (payment === 'cancel') {
+      setPaymentStatus('Pago cancelado. No se realizó ningún cargo.');
+      return;
+    }
+    if (!orderId) return;
+
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    const deadline = Date.now() + 60_000;
+    setPaymentStatus('Verificando el estado del pago...');
+
+    const poll = async () => {
+      try {
+        const data = await fetchOrder(orderId);
+        if (cancelled) return;
+        const status = data?.order?.status as string | undefined;
+        if (status === 'fulfilled') {
+          setPaymentStatus('Pago confirmado. MuziPoints acreditados.');
+          await load();
+          return;
+        }
+        if (status === 'failed') {
+          setPaymentStatus('El pago falló. No se realizó ningún cargo.');
+          return;
+        }
+        if (status === 'expired') {
+          setPaymentStatus('La factura expiró. Intenta de nuevo.');
+          return;
+        }
+        if (status === 'refunded') {
+          setPaymentStatus('El pago fue reembolsado.');
+          return;
+        }
+        if (status === 'review') {
+          setPaymentStatus('El pago está en revisión. Te avisaremos cuando se confirme.');
+          return;
+        }
+        if (status && TERMINAL_ORDER_STATUSES.has(status)) return;
+      } catch {
+        if (cancelled) return;
+      }
+      if (cancelled) return;
+      if (Date.now() >= deadline) {
+        setPaymentStatus('El pago sigue pendiente. Revisa el estado más tarde.');
+        return;
+      }
+      timer = setTimeout(() => { void poll(); }, 3000);
+    };
+
+    void poll();
+    return () => {
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+    };
+  }, [load, userId]);
+
   const buyPackage = async (pkg: PointPackage) => {
     setPendingPackage(pkg.id);
-    setBusy(pkg.id);
+    setBusy(`invoice:${pkg.id}`);
     setError('');
+    setPaymentStatus('');
     try {
-      const invoice = await createInvoice(pkg.id);
+      const idempotencyKey = globalThis.crypto.randomUUID();
+      const invoice = await createInvoice(pkg.id, idempotencyKey);
+      if (!invoice.checkout_url) {
+        setError('No se pudo iniciar el pago.');
+        return;
+      }
       window.location.href = invoice.checkout_url;
     } catch (cause) {
-      if (cause instanceof Error && cause.message === 'adult_required') { setAgeOpen(true); return; }
-      setError(cause instanceof Error ? cause.message : 'No se pudo iniciar el pago.');
+      const message = cause instanceof Error ? cause.message : 'invoice_failed';
+      if (message === 'minor' || message === 'adult_required') {
+        setAgeOpen(true);
+        return;
+      }
+      if (message === 'email_unverified') {
+        setError('Verifica tu email antes de comprar MuziPoints.');
+        return;
+      }
+      if (message === 'terms_required') {
+        setError('Debes aceptar los términos de compra 18+ antes de continuar.');
+        return;
+      }
+      if (message === 'birth_date_locked') {
+        setError('Tu fecha de nacimiento ya está bloqueada y no coincide.');
+        return;
+      }
+      if (message === 'invoice_pending') {
+        setError('Ya existe una factura pendiente para este intento. Revisa el estado antes de reintentar.');
+        return;
+      }
+      setError('No se pudo iniciar el pago.');
     } finally {
       setBusy(null);
     }
@@ -87,6 +177,7 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
         {(['packages', 'cosmetics', 'inventory'] as Tab[]).map((value) => <button key={value} type="button" onClick={() => setTab(value)} className={`rounded-lg px-3 py-2 text-[8px] font-black uppercase tracking-widest ${tab === value ? 'bg-yellow-400/15 text-yellow-300' : 'text-white/35'}`}>{value === 'packages' ? 'Paquetes' : value === 'cosmetics' ? 'Cosméticos' : 'Inventario'}</button>)}
       </div>
       {error && <p className="mb-2 text-[10px] text-red-300">{error}</p>}
+      {paymentStatus && <p className="mb-2 text-[10px] text-cyan-300">{paymentStatus}</p>}
       {tab === 'packages' && (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {packages.map((pkg) => (

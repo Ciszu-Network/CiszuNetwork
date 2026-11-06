@@ -17,6 +17,13 @@ function errorMessage(error: { message?: string } | null): string {
   return typeof error?.message === 'string' ? error.message.slice(0, 200) : 'unknown';
 }
 
+async function markOrderReview(admin: any, orderId: string): Promise<string | null> {
+  const { error } = await admin.schema('pagos').from('orders')
+    .update({ status: 'review', updated_at: new Date().toISOString() })
+    .eq('id', orderId).neq('status', 'fulfilled');
+  return error ? errorMessage(error) : null;
+}
+
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
   if (!limiter.allow(ip).allowed) return NextResponse.json({ error: 'rate_limited' }, { status: 429 });
@@ -56,10 +63,22 @@ export async function POST(req: NextRequest) {
 
   if (event.status !== 'confirmed') {
     if (TERMINAL_STATUSES.has(event.status)) {
+      const { error: orderError } = await admin.schema('pagos').from('orders')
+        .update({ status: event.status, updated_at: new Date().toISOString() }).eq('id', orderId);
+      if (orderError) {
+        logFailure('terminal order update failed', { eventId, orderId, message: errorMessage(orderError) });
+        return NextResponse.json({ error: 'order_update_failed' }, { status: 500 });
+      }
       const processed = await admin.schema('pagos').from('webhook_events').update({ processed_at: new Date().toISOString() }).eq('provider', event.provider).eq('event_id', eventId);
       if (processed.error) {
         logFailure('webhook event update failed', { eventId, message: errorMessage(processed.error) });
         return NextResponse.json({ error: 'audit_failed' }, { status: 500 });
+      }
+    } else if (event.status === 'partially_paid') {
+      const reviewError = await markOrderReview(admin, orderId);
+      if (reviewError) {
+        logFailure('partial order review failed', { eventId, orderId, message: reviewError });
+        return NextResponse.json({ error: 'order_update_failed' }, { status: 500 });
       }
     }
     return NextResponse.json({ ok: true, status: event.status });
@@ -70,6 +89,19 @@ export async function POST(req: NextRequest) {
     logFailure('invalid price_amount', { eventId, orderId });
     return NextResponse.json({ error: 'invalid_amount' }, { status: 400 });
   }
+
+  const payAmount = Number(payload.pay_amount);
+  const actuallyPaid = Number(payload.actually_paid);
+  if (Number.isFinite(payAmount) && Number.isFinite(actuallyPaid) && actuallyPaid < payAmount * 0.995) {
+    const reviewError = await markOrderReview(admin, orderId);
+    if (reviewError) {
+      logFailure('underpaid order review failed', { eventId, orderId, message: reviewError });
+      return NextResponse.json({ error: 'order_update_failed' }, { status: 500 });
+    }
+    logFailure('underpaid', { eventId, orderId });
+    return NextResponse.json({ error: 'underpaid' }, { status: 409 });
+  }
+
   const priceCents = Math.round(amount * 100);
   const currency = String(payload.price_currency ?? 'usd');
   const { error } = await admin.schema('muzicmania').rpc('fulfill_points_order', {
@@ -87,6 +119,10 @@ export async function POST(req: NextRequest) {
         ? 'currency_mismatch'
         : 'fulfillment_failed';
     logFailure('fulfillment failed', { eventId, orderId, code, message });
+    if (code === 'amount_mismatch' || code === 'currency_mismatch') {
+      const reviewError = await markOrderReview(admin, orderId);
+      if (reviewError) logFailure('mismatch order review failed', { eventId, orderId, message: reviewError });
+    }
     return NextResponse.json({ error: code }, { status: 409 });
   }
 
