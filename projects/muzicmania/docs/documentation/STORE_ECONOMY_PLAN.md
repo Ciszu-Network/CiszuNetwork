@@ -108,20 +108,24 @@ La XP no es gastable y no se mezcla con MZP.
 
 ### 4.1 Fuente de edad
 
-`muzicmania.profiles.birth_date` ya existe y se captura en el registro. El servidor calcula la edad con fecha UTC.
+La edad de compra vive en la tabla privada `muzicmania.purchase_credentials`, separada del perfil público. `muzicmania.profiles.birth_date` sigue existiendo para el perfil social, pero la puerta 18+ no depende de esa columna pública.
 
-Se añaden a `profiles`:
+`purchase_credentials` contiene:
 
+- `user_id` uuid PK.
+- `birth_date` date.
 - `purchase_terms_version` text.
 - `purchase_terms_accepted_at` timestamptz.
 - `birth_date_locked_at` timestamptz.
 - `adult_confirmed_at` timestamptz.
 
+La tabla tiene RLS, sin grants para `anon`/`authenticated`; solo `service_role` la lee y escribe.
+
 ### 4.2 Reglas
 
 1. Comprar MZP, regalar MZP/ítems y activar un código de creador requiere 18+.
-2. La primera compra/regalo registra `adult_confirmed_at`, la versión de términos y bloquea `birth_date`.
-3. Un trigger impide cambiar `birth_date` después de `birth_date_locked_at`.
+2. La primera compra/regalo registra `adult_confirmed_at`, la versión de términos y bloquea `birth_date` en `purchase_credentials`.
+3. La lógica del endpoint rechaza cambiar `birth_date` después de `birth_date_locked_at`; la tabla es privada y solo la toca `service_role`.
 4. Si falta `birth_date`, la UI pide completarla antes de comprar; no se puede inventar una fecha desde el endpoint de pago.
 5. Ser menor no bloquea jugar, ganar MZP, recibir donaciones ni usar la tienda con MZP ganados, salvo que una norma legal exija otra cosa.
 6. Las cuentas 18+ deben tener email verificado para comprar o regalar.
@@ -375,6 +379,7 @@ Flujo de compra de cosmético:
 - `muzicmania.item_gifts`
 - `muzicmania.creator_donations`
 - `muzicmania.custom_level_likes`
+- `muzicmania.purchase_credentials`
 - `muzicmania.creator_profiles`
 - `muzicmania.creator_codes`
 - `muzicmania.creator_code_uses`
@@ -383,7 +388,7 @@ Flujo de compra de cosmético:
 
 ### 10.2 Tablas existentes que se tocan
 
-- `muzicmania.profiles`: columnas de términos, bloqueo de edad y XP.
+- `muzicmania.profiles`: XP y email verificado; la edad de compra vive en `purchase_credentials`.
 - `muzicmania.custom_levels`: contador de likes ya existente; se conecta a `custom_level_likes`.
 - `muzicmania.chat_messages`: no se modifica para regalos; las notificaciones usan un canal separado.
 

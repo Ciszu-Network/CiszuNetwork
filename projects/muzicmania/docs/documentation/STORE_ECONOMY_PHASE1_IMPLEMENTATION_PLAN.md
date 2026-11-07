@@ -10,6 +10,8 @@
 
 **Spec:** `projects/muzicmania/docs/documentation/STORE_ECONOMY_PLAN.md`
 
+> **Estado de ejecución (4 nov 2026):** Fase 1 implementada hasta la task 14. Las migraciones 08 (`purchase_credentials`) y 09 (`fulfill_points_order` acepta `review`) se aplicaron después de las tasks; la edad 18+ se movió a una tabla privada. El flag `PAYMENTS_CRYPTO_ENABLED` sigue desactivado en producción hasta configurar Vercel y validar el flujo de invoice real.
+
 ## Global Constraints
 
 - MuziPoints (MZP) es una moneda virtual cerrada; no se retira ni se convierte en dinero.

@@ -1,8 +1,17 @@
 # Estado del Proyecto MuzicMania 2.0 (Next.js Edition)
 
-**Última actualización:** 10 Septiembre 2026
+**Última actualización:** 4 Noviembre 2026
 **Autor y Propietario:** Ciszuko Antony (Francisco Garcia)
 **Stack:** Next.js 15 + TypeScript + Tailwind CSS v4 + Supabase + Tauri
+
+## Tienda y economía MuziPoints (4 Nov 2026)
+
+- Fase 1 implementada: wallet/ledger, catálogo de cosméticos, compra/equipamiento, paquetes MZP, invoice NOWPayments, webhook firmado, estado de orden y gate 18+.
+- La edad de compra vive en `muzicmania.purchase_credentials` (privada); no se exponen términos ni fecha de nacimiento en el perfil público.
+- La tienda está integrada en `/play` y las skins premium `prism`, `ember` y `void` requieren compra; las skins clásicas siguen gratis.
+- El cobro real está bloqueado por `PAYMENTS_CRYPTO_ENABLED=false` hasta configurar Vercel, aplicar migraciones 05–09 y validar un invoice real.
+- Fases 2–4 pendientes: login diario/rachas/tareas/XP, regalos, donaciones, código de creador, tarjetas/PayPal.
+- Documentación: `STORE_ECONOMY_PLAN.md` y `STORE_ECONOMY_PHASE1_IMPLEMENTATION_PLAN.md`.
 
 ## 🚀 Logros Recientes
 
