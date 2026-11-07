@@ -19,11 +19,17 @@ function logFailure(stage: string, details: Record<string, string>) {
 }
 
 function existingOrderResponse(order: { id: string; status: string; checkout_url: string | null }) {
-  if (order.checkout_url) {
+  if (order.status === 'pending' && order.checkout_url) {
     return NextResponse.json({ order_id: order.id, checkout_url: order.checkout_url });
   }
   if (order.status === 'pending') {
     return NextResponse.json({ error: 'invoice_pending', order_id: order.id }, { status: 409 });
+  }
+  if (order.status === 'fulfilled') {
+    return NextResponse.json({ error: 'already_fulfilled', order_id: order.id }, { status: 409 });
+  }
+  if (order.status === 'review') {
+    return NextResponse.json({ error: 'invoice_review', order_id: order.id }, { status: 409 });
   }
   return NextResponse.json({ error: 'invoice_failed', order_id: order.id }, { status: 409 });
 }

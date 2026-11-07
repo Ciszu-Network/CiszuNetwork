@@ -32,6 +32,11 @@ function clearInvoiceIdempotencyKeys(userId: string) {
   }
 }
 
+function removeInvoiceIdempotencyKey(userId: string, productId: string | null | undefined) {
+  if (!productId) return;
+  window.sessionStorage.removeItem(invoiceIdempotencyStorageKey(userId, productId));
+}
+
 export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: string | null; onBack: () => void; onEquipArrow: (assetKey: string) => void }) {
   const [tab, setTab] = useState<Tab>('packages');
   const [snapshot, setSnapshot] = useState<EconomySnapshot | null>(null);
@@ -76,21 +81,26 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
         const data = await fetchOrder(orderId);
         if (cancelled) return;
         const status = data?.order?.status as string | undefined;
+        const productId = data?.order?.product_id as string | undefined;
         if (status === 'fulfilled') {
-          clearInvoiceIdempotencyKeys(userId);
+          if (productId) removeInvoiceIdempotencyKey(userId, productId);
+          else clearInvoiceIdempotencyKeys(userId);
           setPaymentStatus('Pago confirmado. MuziPoints acreditados.');
           await load();
           return;
         }
         if (status === 'failed') {
+          removeInvoiceIdempotencyKey(userId, productId);
           setPaymentStatus('El pago falló. No se realizó ningún cargo.');
           return;
         }
         if (status === 'expired') {
+          removeInvoiceIdempotencyKey(userId, productId);
           setPaymentStatus('La factura expiró. Intenta de nuevo.');
           return;
         }
         if (status === 'refunded') {
+          removeInvoiceIdempotencyKey(userId, productId);
           setPaymentStatus('El pago fue reembolsado.');
           return;
         }
@@ -150,6 +160,21 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
       }
       if (message === 'birth_date_locked') {
         setError('Tu fecha de nacimiento ya está bloqueada y no coincide.');
+        return;
+      }
+      if (message === 'already_fulfilled') {
+        removeInvoiceIdempotencyKey(userId, pkg.id);
+        setPaymentStatus('Este pago ya se completó. Los MuziPoints ya están acreditados.');
+        await load().catch(() => setError('No se pudo actualizar la tienda.'));
+        return;
+      }
+      if (message === 'invoice_review') {
+        setError('La factura anterior está en revisión. No puedes reintentar hasta que se resuelva.');
+        return;
+      }
+      if (message === 'invoice_failed') {
+        removeInvoiceIdempotencyKey(userId, pkg.id);
+        setError('La factura anterior falló o expiró. Intenta de nuevo.');
         return;
       }
       if (message === 'invoice_pending') {
@@ -230,7 +255,7 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
               <p className="font-header text-lg font-black text-white">{item.name}</p>
               <p className="mt-1 text-[10px] text-white/40">{item.description}</p>
               <p className="mt-2 text-[10px] font-black text-yellow-300">{formatMzP(item.price_points)}</p>
-              <button type="button" disabled={busy === item.id} onClick={() => item.owned ? void equip(item) : void buyItem(item)} className="mt-3 w-full rounded-xl border border-white/10 py-2 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50">
+              <button type="button" disabled={busy !== null} onClick={() => item.owned ? void equip(item) : void buyItem(item)} className="mt-3 w-full rounded-xl border border-white/10 py-2 text-[9px] font-black uppercase tracking-widest text-white disabled:opacity-50">
                 {item.owned ? (item.equippedSlot ? 'EQUIPADO' : 'EQUIPAR') : 'COMPRAR'}
               </button>
             </div>
@@ -240,7 +265,7 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
       {tab === 'inventory' && (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {items.filter((item) => item.owned).map((item) => (
-            <button key={item.id} type="button" onClick={() => void equip(item)} className="rounded-2xl border border-emerald-300/20 bg-emerald-300/5 p-4 text-left">
+            <button key={item.id} type="button" disabled={busy !== null} onClick={() => void equip(item)} className="rounded-2xl border border-emerald-300/20 bg-emerald-300/5 p-4 text-left disabled:opacity-50">
               <p className="font-header text-lg font-black text-white">{item.name}</p>
               <p className="text-[9px] uppercase tracking-widest text-emerald-300">{item.equippedSlot ? 'Equipado' : 'Equipar'}</p>
             </button>

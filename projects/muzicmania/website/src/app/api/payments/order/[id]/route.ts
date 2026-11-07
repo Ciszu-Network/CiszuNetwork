@@ -12,7 +12,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
   if (!UUID.test(id)) return NextResponse.json({ error: 'invalid_order_id' }, { status: 400 });
   const admin = adminClient() as any;
   const { data, error } = await admin.schema('pagos').from('orders')
-    .select('id,status,product_type,points_base,points_bonus,amount_cents,currency,checkout_url,created_at,fulfilled_at')
+    .select('id,status,product_type,product_id,points_base,points_bonus,amount_cents,currency,checkout_url,created_at,fulfilled_at')
     .eq('id', id).eq('user_id', user.userId).maybeSingle();
   if (error) {
     console.error('[payments/order] lookup failed', {
