@@ -1,6 +1,6 @@
 {
   "name": "@ciszunetwork/db",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Capa de datos compartida con Drizzle ORM (server-side): schemas de los esquemas ciszubot, muzicmania, ciszunetwork y ciszu + cliente Postgres. El navegador NUNCA importa este paquete (usa @supabase/supabase-js + PostgREST + RLS).",
   "main": "./index.ts",
   "types": "./index.ts",
