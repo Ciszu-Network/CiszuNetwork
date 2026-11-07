@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 /**
  * ADS — Sistema de anuncios de Ciszu Network (compartido para las 4 webs).
@@ -459,14 +459,24 @@ function isAdBlockContinue(): boolean {
 }
 
 // ---------- Registro de impresión en DB (telemetría del sistema ADS) ----------
-const ADS_IMPRESSION_URL = 'https://ciszunetwork.vercel.app/api/ads/impression';
+// Se inserta directamente en Supabase (RLS permite INSERT a anon/authenticated).
+// No se usa una Vercel Function: las impresiones son frecuentes y no críticas.
+const ADS_IMPRESSION_SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://obwzzmbvkrcscqwptlqo.supabase.co';
+const ADS_IMPRESSION_SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 let adsImpressionBusy = false;
 function recordImpression(site: string, ad: AdConfig, userId?: string | null) {
-  if (typeof window === 'undefined' || adsImpressionBusy) return;
+  if (typeof window === 'undefined' || adsImpressionBusy || !ADS_IMPRESSION_SUPABASE_KEY) return;
   adsImpressionBusy = true;
-  fetch(ADS_IMPRESSION_URL, {
+  fetch(`${ADS_IMPRESSION_SUPABASE_URL}/rest/v1/ads_impressions`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    keepalive: true,
+    headers: {
+      apikey: ADS_IMPRESSION_SUPABASE_KEY,
+      Authorization: `Bearer ${ADS_IMPRESSION_SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Content-Profile': 'ciszunetwork',
+      Prefer: 'return=minimal',
+    },
     body: JSON.stringify({
       site,
       ad_id: ad.id,
@@ -474,7 +484,7 @@ function recordImpression(site: string, ad: AdConfig, userId?: string | null) {
       ad_source: ad.content.source ?? 'external',
       user_id: userId ?? null,
     }),
-  }).then((r) => r.text() /* consumir body: evita ERR_ABORTED en consola */).catch(() => { /* telemetría no bloqueante: ignora fallos de red */ }).finally(() => {
+  }).then((r) => r.text()).catch(() => { /* telemetría no bloqueante */ }).finally(() => {
     adsImpressionBusy = false;
   });
 }
