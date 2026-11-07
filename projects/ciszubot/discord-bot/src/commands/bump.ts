@@ -21,7 +21,31 @@ const command: BotCommand = {
 
   slashCommand: new SlashCommandBuilder()
     .setName('bump')
-    .setDescription('Bumpea y promociona el servidor en las listas de Discord'),
+    .setDescription('Bumpea y promociona el servidor en las listas de Discord')
+    .addSubcommand((sub) => sub.setName('config').setDescription('Muestra la configuración de bump'))
+    .addSubcommand((sub) => sub
+      .setName('setname')
+      .setDescription('Cambia el nombre del servidor mostrado en bump')
+      .addStringOption((opt) => opt.setName('nombre').setDescription('Nombre del servidor').setRequired(true).setMaxLength(80)))
+    .addSubcommand((sub) => sub
+      .setName('setlink')
+      .setDescription('Cambia la invitación del servidor')
+      .addStringOption((opt) => opt.setName('url').setDescription('https://discord.gg/...').setRequired(true).setMaxLength(500)))
+    .addSubcommand((sub) => sub
+      .setName('setdisboard')
+      .setDescription('Cambia el enlace de Disboard')
+      .addStringOption((opt) => opt.setName('url').setDescription('URL de Disboard').setRequired(true).setMaxLength(500)))
+    .addSubcommand((sub) => sub
+      .setName('settopgg')
+      .setDescription('Cambia el enlace de Top.gg')
+      .addStringOption((opt) => opt.setName('url').setDescription('URL de Top.gg').setRequired(true).setMaxLength(500)))
+    .addSubcommand((sub) => sub
+      .setName('setdbl')
+      .setDescription('Cambia el enlace de Discord Bot List')
+      .addStringOption((opt) => opt.setName('url').setDescription('URL de Discord Bot List').setRequired(true).setMaxLength(500)))
+    .addSubcommand((sub) => sub.setName('on').setDescription('Activa el comando bump'))
+    .addSubcommand((sub) => sub.setName('off').setDescription('Desactiva el comando bump'))
+    .addSubcommand((sub) => sub.setName('reset').setDescription('Restaura los valores de Ciszugamens')),
 
   async execute(message, args) {
     const L = await langOf(message);

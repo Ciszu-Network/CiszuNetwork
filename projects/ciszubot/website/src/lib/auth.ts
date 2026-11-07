@@ -10,6 +10,13 @@ const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET ?? '';
 const SESSION_SECRET = process.env.SESSION_SECRET ?? 'ciszubot-dev-secret-no-usar-en-prod';
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
 
+// ─── Auth local de desarrollo (nunca en producción) ───
+export const LOCAL_DEV_AUTH = process.env.NODE_ENV !== 'production' && process.env.LOCAL_DEV_AUTH === 'true';
+export const LOCAL_DEV_USER_ID = process.env.LOCAL_DEV_USER_ID ?? 'local-dev-user';
+export const LOCAL_DEV_USER_NAME = process.env.LOCAL_DEV_USER_NAME ?? 'Ciszuko Local';
+export const LOCAL_DEV_GUILD_ID = process.env.LOCAL_DEV_GUILD_ID ?? '1215544133142450187';
+export const LOCAL_DEV_GUILD_NAME = process.env.LOCAL_DEV_GUILD_NAME ?? 'Ciszugamens';
+
 export const REDIRECT_URI = `${SITE_URL}/api/auth/discord/callback`;
 export const OAUTH_AUTHORIZE_URL = 'https://discord.com/oauth2/authorize';
 export const OAUTH_TOKEN_URL = 'https://discord.com/api/oauth2/token';
@@ -170,6 +177,7 @@ export async function fetchDiscordUser(accessToken: string): Promise<DiscordUser
 
 /** Devuelve el access_token vigente del usuario (refresca si hace falta) */
 export async function getValidUserToken(userId: string): Promise<string | null> {
+  if (LOCAL_DEV_AUTH && userId === LOCAL_DEV_USER_ID) return null;
   const discordUsers = ciszubotSchema.discordUsers;
   const rows = await db
     .select({
@@ -202,6 +210,9 @@ export async function getValidUserToken(userId: string): Promise<string | null> 
 }
 
 export async function getGuildsForUser(userId: string): Promise<DiscordGuild[]> {
+  if (LOCAL_DEV_AUTH && userId === LOCAL_DEV_USER_ID) {
+    return [{ id: LOCAL_DEV_GUILD_ID, name: LOCAL_DEV_GUILD_NAME, icon: null, owner: true, permissions: '8' }];
+  }
   const { cacheStore } = await import('./cacheStore');
   return cacheStore.getOrSet(`discord:guilds:${userId}`, 60_000, async () => {
     const token = await getValidUserToken(userId);
@@ -245,6 +256,7 @@ export interface BotGuildInfo {
  * como no-invitado por un fallo de red.
  */
 export async function getBotGuilds(): Promise<BotGuildInfo[] | null> {
+  if (LOCAL_DEV_AUTH) return [{ id: LOCAL_DEV_GUILD_ID, name: LOCAL_DEV_GUILD_NAME, icon: null }];
   const { cacheStore } = await import('./cacheStore');
   return cacheStore.getOrSet<BotGuildInfo[] | null>('discord:bot-guilds-v2', 60_000, async () => {
     const botToken = process.env.DISCORD_BOT_TOKEN;

@@ -529,6 +529,15 @@ export default function LoginPage() {
                   onSelect={(p) => toast(`${p} estará disponible en la beta soon. Usa Discord o CISZU ID por ahora.`, 'warning')}
                 />
 
+                {process.env.NODE_ENV === 'development' && (
+                  <a
+                    href="/api/auth/dev-login"
+                    className="flex w-full items-center justify-center rounded-xl border border-emerald-400/40 bg-emerald-400/10 px-4 py-3 font-header text-xs font-black uppercase tracking-widest text-emerald-400 transition hover:bg-emerald-400/20"
+                  >
+                    Entrar en modo local (sin Discord)
+                  </a>
+                )}
+
                 <div className="flex items-center gap-3">
                   <span className="h-px flex-1 bg-border" />
                   <span className="text-[9px] font-black uppercase tracking-widest text-faint">{t.orWithCiszuId}</span>

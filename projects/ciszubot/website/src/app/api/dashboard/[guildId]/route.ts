@@ -248,6 +248,12 @@ const guildConfigPatchSchema = z.object({
   admin_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
   mod_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
   bot_role_ids: z.array(z.string().min(1).max(32)).max(20).optional(),
+  bump_enabled: z.boolean().optional(),
+  bump_server_name: z.string().trim().min(1).max(80).optional(),
+  bump_server_link: z.string().trim().max(500).optional(),
+  bump_disboard_url: z.string().trim().max(500).optional(),
+  bump_topgg_url: z.string().trim().max(500).optional(),
+  bump_dbl_url: z.string().trim().max(500).optional(),
 });
 
 /** Funciones configurables por servidor (mismas que los flags globales del bot). */

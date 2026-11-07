@@ -36,6 +36,29 @@ Reglas:
    (`web:dev` → `-p 3000`, `antony:dev` → `-p 3001`, `ciszubot:web:dev` → `-p 3002`,
    `muzicmania:dev` → `-p 3003`).
 
+### 2.1 Auth local del dashboard de CiszuBot
+
+El dashboard de CiszuBot usa Discord OAuth en producción. Para trabajar sin Vercel ni registrar callbacks locales:
+
+1. En `projects/ciszubot/website/.env.local`:
+   ```env
+   LOCAL_DEV_AUTH=true
+   LOCAL_DEV_USER_ID=local-dev-user
+   LOCAL_DEV_USER_NAME=Ciszuko Local
+   LOCAL_DEV_GUILD_ID=1215544133142450187
+   LOCAL_DEV_GUILD_NAME=Ciszugamens
+   ```
+2. Arrancar `ciszubot:web:dev` (puerto 3002).
+3. Abrir `http://localhost:3002/api/auth/dev-login`.
+4. La sesión local redirige a `/dashboard/1215544133142450187` con permisos de owner y el servidor Ciszugamens.
+5. El botón “Entrar en modo local (sin Discord)” también aparece en `/login` cuando `NODE_ENV=development`.
+
+Reglas:
+
+- `LOCAL_DEV_AUTH` **nunca** funciona en producción (`NODE_ENV=production`).
+- No usar este modo para probar OAuth real; para eso registrar `http://localhost:3002/api/auth/discord/callback` en el Developer Portal.
+- Los datos del dashboard se guardan en Supabase remoto; es una sesión local, no una base local.
+
 ## 3. Procedimiento de prueba local
 
 ### 3.1 Antes de tocar código
