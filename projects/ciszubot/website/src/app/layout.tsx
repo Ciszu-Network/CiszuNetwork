@@ -11,7 +11,7 @@ import { CookiesBanner } from "@/components/layout/CookiesBanner";
 import { LOGO_ISOTIPO_CIRCLE } from "@/lib/i18n";
 import { COMMANDS } from "@/data/commands";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, LocalDevDisclaimer, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import QueryProvider from "@/components/layout/QueryProvider";
 import BotOfflineDisclaimer from "@/components/status/BotOfflineDisclaimer";
@@ -148,6 +148,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </QueryProvider>
         <DebugDock />
         </DebugProvider>
+        <LocalDevDisclaimer />
       </body>
     </html>
   );

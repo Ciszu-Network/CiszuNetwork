@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -205,6 +205,7 @@ export default function RegisterPage() {
         email: form.email.trim(),
         password: form.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/login`,
           data: {
             username: form.username.trim().toLowerCase(),
             display_name: form.displayName.trim() || form.username.trim(),

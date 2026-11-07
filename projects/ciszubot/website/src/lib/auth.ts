@@ -8,11 +8,12 @@ export { db, ciszubotSchema };
 export const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? '1395532235872141312';
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET ?? '';
 const SESSION_SECRET = process.env.SESSION_SECRET ?? 'ciszubot-dev-secret-no-usar-en-prod';
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3002';
 
 // ─── Auth local de desarrollo (nunca en producción) ───
-export const LOCAL_DEV_AUTH = process.env.NODE_ENV !== 'production' && process.env.LOCAL_DEV_AUTH === 'true';
-export const LOCAL_DEV_USER_ID = process.env.LOCAL_DEV_USER_ID ?? 'local-dev-user';
+export const LOCAL_DEV_SESSION_ID = process.env.LOCAL_DEV_SESSION_ID ?? '';
+export const LOCAL_DEV_AUTH = process.env.NODE_ENV !== 'production' && process.env.LOCAL_DEV_AUTH === 'true' && LOCAL_DEV_SESSION_ID.length > 0;
+export const LOCAL_DEV_USER_ID = process.env.LOCAL_DEV_USER_ID ?? (LOCAL_DEV_SESSION_ID ? `dev-${LOCAL_DEV_SESSION_ID}` : 'local-dev-user');
 export const LOCAL_DEV_USER_NAME = process.env.LOCAL_DEV_USER_NAME ?? 'Ciszuko Local';
 export const LOCAL_DEV_GUILD_ID = process.env.LOCAL_DEV_GUILD_ID ?? '1215544133142450187';
 export const LOCAL_DEV_GUILD_NAME = process.env.LOCAL_DEV_GUILD_NAME ?? 'Ciszugamens';

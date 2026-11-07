@@ -84,6 +84,11 @@ export async function POST(req: NextRequest) {
     creatorCode = codeRow.code;
   }
 
+  const publicUrl = process.env.MUZICMANIA_PUBLIC_URL || (process.env.NODE_ENV === 'production' ? 'https://muzicmania.vercel.app' : '');
+  if (!publicUrl) {
+    return NextResponse.json({ error: 'payments_local_disabled', detail: 'Configura MUZICMANIA_PUBLIC_URL con un túnel público para probar webhooks en local.' }, { status: 503 });
+  }
+
   const orderId = randomUUID();
   const { error: insertError } = await admin.schema('pagos').from('orders').insert({
     id: orderId,
@@ -110,7 +115,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'internal_error' }, { status: 500 });
   }
 
-  const publicUrl = process.env.MUZICMANIA_PUBLIC_URL || 'https://muzicmania.vercel.app';
   const provider = createNowPaymentsProvider();
 
   try {

@@ -4,7 +4,7 @@ import Script from "next/script";
 import { IBM_Plex_Sans, IBM_Plex_Sans_Condensed } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { buildSeoMetadata, seoJsonLdString } from "@ciszunetwork/utils/seo";
-import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, LocalDevDisclaimer, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -145,6 +145,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <GoogleAnalytics app="ciszunetwork" />
         <DebugDock />
         </DebugProvider>
+        <LocalDevDisclaimer />
       </body>
     </html>
   );

@@ -305,6 +305,7 @@ export default function RegisterPage() {
         email: form.email,
         password: form.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/login`,
           data: {
             username: form.username.trim().toLowerCase(),
             display_name: form.displayName,

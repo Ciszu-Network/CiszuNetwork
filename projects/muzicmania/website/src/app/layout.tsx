@@ -9,7 +9,7 @@ import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { assetResolver } from "@ciszunetwork/cdn";
-import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, LocalDevDisclaimer, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import HideOnEdit from "@/components/layout/HideOnEdit";
 import SiteMain from "@/components/layout/SiteMain";
 
@@ -152,6 +152,7 @@ export default function RootLayout({
         )}
         <DebugDock />
         </DebugProvider>
+        <LocalDevDisclaimer />
       </body>
     </html>
   );

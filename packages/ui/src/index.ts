@@ -66,6 +66,7 @@ export type { GlobalAdvisorProps, Announcement } from './GlobalAdvisor';
 
 // Debug/beta testing por whitelist (local-only placeholders, analytics, cheats)
 export { DebugProvider, useDebugMode } from './debug/DebugProvider';
+export { LocalDevDisclaimer } from './LocalDevDisclaimer';
 export { DebugDock, DebugTag } from './debug/DebugDock';
 export type {
   DebugSite,

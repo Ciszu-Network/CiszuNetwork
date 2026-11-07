@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { Exo_2, Rajdhani } from "next/font/google";
 import { assetResolver } from "@ciszunetwork/cdn";
 import { buildSeoMetadata, seoJsonLdString } from "@ciszunetwork/utils/seo";
-import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
+import { PwaRegister, InstallPdwaButton, DebugProvider, DebugDock, CloudflareGuard, AdBlockerGuard, AdStatusNotice, PostHogAnalytics, GoogleAnalytics, GoogleScripts, AdsProvider, AdFloat, AdPill, FabStackProvider, ZoomWarning, DisclaimerProvider, DisclaimerStack, DisclaimerDebug, GlobalDisclaimer, GlobalAdvisor, LocalDevDisclaimer, ToastProvider, RedirectGuard, ActivityGuardProvider } from "@ciszu/ui";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -154,6 +154,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </I18nProvider>
         <DebugDock />
         </DebugProvider>
+        <LocalDevDisclaimer />
       </body>
     </html>
   );

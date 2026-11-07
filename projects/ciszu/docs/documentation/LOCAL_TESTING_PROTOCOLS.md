@@ -59,6 +59,23 @@ Reglas:
 - No usar este modo para probar OAuth real; para eso registrar `http://localhost:3002/api/auth/discord/callback` en el Developer Portal.
 - Los datos del dashboard se guardan en Supabase remoto; es una sesión local, no una base local.
 
+### 2.2 Sesión devcon, auth normal y aviso local
+
+Al arrancar desde `devcon`, se genera una sesión local efímera:
+
+- `LOCAL_DEV_SESSION_ID`: ID de 10 caracteres para esa ejecución.
+- `LOCAL_DEV_USER_ID`: cuenta de testing `dev-<session>`.
+- `NEXT_PUBLIC_LOCAL_DEV_SESSION_ID` y `NEXT_PUBLIC_LOCAL_DEV_ACTOR`: los lee el aviso global.
+- Archivo de control: `test/website/debug/local-logs/dev-session.json` (gitignored).
+
+El aviso `LOCAL DEV · SESIÓN … · <actor>` aparece automáticamente en las 4 webs cuando corren en `NODE_ENV=development`, independientemente de que se abran desde devcon o con `pnpm dev`. En producción el componente devuelve `null`.
+
+**Auth normal**: login/register de CISZU ID siguen usando Supabase, por lo que funcionan en local sin Vercel. El registro añade `emailRedirectTo` al origen local (`window.location.origin/login`). Si el proyecto de Supabase no tiene ese origen en la lista de redirects, añadirlo en Authentication → URL Configuration.
+
+**Fallback de CiszuBot**: si Discord OAuth no puede completarse en local (callback no registrado), usar `/api/auth/dev-login`. Solo se habilita cuando devcon inyecta `LOCAL_DEV_AUTH=true` y una sesión. Un clon público no recibe esas variables ni las credenciales de `DATABASE_URL`/service role (`.env.local` es gitignored).
+
+**Pagos en local**: crear una invoice real desde local está bloqueado salvo que `MUZICMANIA_PUBLIC_URL` apunte a un túnel público (ngrok/cloudflared). Sin túnel, la API responde `payments_local_disabled`. Los webhooks de NOWPayments no pueden llegar a `localhost`.
+
 ## 3. Procedimiento de prueba local
 
 ### 3.1 Antes de tocar código
