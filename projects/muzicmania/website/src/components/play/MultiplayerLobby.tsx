@@ -118,7 +118,7 @@ export default function MultiplayerLobby({
   useEffect(() => {
     if (!userId) { setLoading(false); return; }
     void loadRooms();
-    const timer = window.setInterval(() => void loadRooms(), 4000);
+    const timer = window.setInterval(() => void loadRooms(), 10000);
     return () => window.clearInterval(timer);
   }, [userId, loadRooms]);
 
@@ -127,7 +127,7 @@ export default function MultiplayerLobby({
     const timer = window.setInterval(async () => {
       const next = await loadRoom(room.id);
       if (next) setRoom(next);
-    }, 2500);
+    }, 5000);
     return () => window.clearInterval(timer);
   }, [room?.id, loadRoom]);
 
@@ -182,7 +182,7 @@ export default function MultiplayerLobby({
     if (chatTab !== 'global') return;
     const load = () => apiFetch('/api/chat?scope=global', { cache: 'no-store' }).then((response) => (response.ok ? response.json() : { messages: [] })).then((data: { messages?: ChatMessage[] }) => setGlobalMessages(data.messages ?? [])).catch(() => undefined);
     void load();
-    const timer = window.setInterval(load, 5000);
+    const timer = window.setInterval(load, 15000);
     return () => window.clearInterval(timer);
   }, [chatTab]);
 

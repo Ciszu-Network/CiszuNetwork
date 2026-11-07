@@ -147,13 +147,17 @@ export function DebugProvider({ site, children }: { site: DebugSite; children: R
     const onStorage = () => void refresh();
     window.addEventListener('focus', onFocus);
     window.addEventListener('storage', onStorage);
-    const timer = window.setInterval(() => void refresh(), 60_000);
     return () => {
       window.removeEventListener('focus', onFocus);
       window.removeEventListener('storage', onStorage);
-      window.clearInterval(timer);
     };
   }, [refresh]);
+
+  useEffect(() => {
+    if (!status?.authorized) return;
+    const timer = window.setInterval(() => void refresh(), 300_000);
+    return () => window.clearInterval(timer);
+  }, [refresh, status?.authorized]);
 
   useEffect(() => {
     if (!status?.authorized) {

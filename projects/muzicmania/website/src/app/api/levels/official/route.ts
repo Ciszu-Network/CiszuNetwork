@@ -19,7 +19,7 @@ export async function GET() {
     for (const row of data ?? []) {
       if (row.official_slot) levels[row.official_slot] = row;
     }
-    return NextResponse.json({ levels }, { headers: { 'Cache-Control': 'no-store' } });
+    return NextResponse.json({ levels }, { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=900' } });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'official_levels_error' }, { status: 500 });
   }

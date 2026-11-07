@@ -4,7 +4,7 @@ import AuthErrorNotice from '@/components/auth/AuthErrorNotice';
 import AuthRequiredModal from '@/components/auth/AuthRequiredModal';
 import type { BotStatus } from '@/lib/botStatus';
 
-export const revalidate = 60;
+export const revalidate = 3600;
 
 /**
  * Estado real del bot desde Supabase (`ciszubot.bot_status`). Si la red o las
@@ -19,7 +19,7 @@ async function getBotStatus(): Promise<BotStatus | null> {
       `${url}/rest/v1/bot_status?select=online,last_seen,started_at,version,guilds,commands_total,prefix&id=eq.1`,
       {
         headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}`, 'Accept-Profile': 'ciszubot' },
-        next: { revalidate: 60 },
+        next: { revalidate: 3600 },
       }
     );
     if (!res.ok) return null;

@@ -25,5 +25,5 @@ export async function GET(req: NextRequest) {
       owned: owned.has(item.id),
       equippedSlot: owned.get(item.id) ?? null,
     })),
-  }, { headers: { 'Cache-Control': 'no-store' } });
+  }, { headers: { 'Cache-Control': user ? 'private, no-store' : 'public, s-maxage=120, stale-while-revalidate=600' } });
 }

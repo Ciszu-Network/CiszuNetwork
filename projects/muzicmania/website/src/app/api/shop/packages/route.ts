@@ -11,5 +11,5 @@ export async function GET() {
     .select('id,slug,name,points_base,bonus_points,price_cents,currency,badge')
     .eq('enabled', true).order('sort_order');
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ packages: data ?? [], flags: readPaymentFlags() }, { headers: { 'Cache-Control': 'no-store' } });
+  return NextResponse.json({ packages: data ?? [], flags: readPaymentFlags() }, { headers: { 'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=900' } });
 }

@@ -112,7 +112,8 @@ export async function GET(req: NextRequest) {
 
   const { data, error } = await query.limit(60);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ levels: (data ?? []) as Row[] }, { headers: { 'Cache-Control': 'no-store' } });
+  const cacheControl = scope === 'public' || scope === 'official' ? 'public, s-maxage=120, stale-while-revalidate=600' : 'private, no-store';
+  return NextResponse.json({ levels: (data ?? []) as Row[] }, { headers: { 'Cache-Control': cacheControl } });
 }
 
 export async function POST(req: NextRequest) {

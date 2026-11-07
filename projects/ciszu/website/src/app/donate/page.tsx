@@ -8,7 +8,7 @@ import DonateContent from "./DonateContent";
  * cliente. `revalidate` corto garantiza que una revalidación en runtime
  * (con las env de producción) refresque la lista si cambia.
  */
-export const revalidate = 300;
+export const revalidate = 3600;
 
 export default function DonatePage() {
   const methods = getDonationMethods();

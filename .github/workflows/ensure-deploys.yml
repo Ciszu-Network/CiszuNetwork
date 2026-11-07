@@ -21,6 +21,7 @@ permissions:
 
 jobs:
   ensure:
+    if: vars.VERCEL_PAUSED != 'true'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
