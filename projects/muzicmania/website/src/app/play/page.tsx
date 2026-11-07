@@ -743,6 +743,12 @@ function PlayPageContent() {
     }
   }, []);
 
+  useEffect(() => {
+    if (isBooting || typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('order') && params.get('payment')) setPhase('tienda');
+  }, [isBooting]);
+
   // --- AUDIO INTRO (GLOBAL SYNC) ---
   useEffect(() => {
     if (!isMounted) return;

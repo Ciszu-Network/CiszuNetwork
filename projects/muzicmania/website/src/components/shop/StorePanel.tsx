@@ -11,6 +11,27 @@ type Tab = 'packages' | 'cosmetics' | 'inventory';
 
 const TERMINAL_ORDER_STATUSES = new Set(['fulfilled', 'failed', 'expired', 'refunded']);
 
+function invoiceIdempotencyStorageKey(userId: string, packageId: string) {
+  return `mz:invoice:${userId}:${packageId}`;
+}
+
+function getInvoiceIdempotencyKey(userId: string, packageId: string) {
+  const storageKey = invoiceIdempotencyStorageKey(userId, packageId);
+  const existing = window.sessionStorage.getItem(storageKey);
+  if (existing) return existing;
+  const generated = globalThis.crypto.randomUUID();
+  window.sessionStorage.setItem(storageKey, generated);
+  return generated;
+}
+
+function clearInvoiceIdempotencyKeys(userId: string) {
+  const prefix = `mz:invoice:${userId}:`;
+  for (let index = window.sessionStorage.length - 1; index >= 0; index -= 1) {
+    const key = window.sessionStorage.key(index);
+    if (key && key.startsWith(prefix)) window.sessionStorage.removeItem(key);
+  }
+}
+
 export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: string | null; onBack: () => void; onEquipArrow: (assetKey: string) => void }) {
   const [tab, setTab] = useState<Tab>('packages');
   const [snapshot, setSnapshot] = useState<EconomySnapshot | null>(null);
@@ -56,6 +77,7 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
         if (cancelled) return;
         const status = data?.order?.status as string | undefined;
         if (status === 'fulfilled') {
+          clearInvoiceIdempotencyKeys(userId);
           setPaymentStatus('Pago confirmado. MuziPoints acreditados.');
           await load();
           return;
@@ -96,12 +118,16 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
   }, [load, userId]);
 
   const buyPackage = async (pkg: PointPackage) => {
+    if (!userId) {
+      setError('Inicia sesión para comprar MuziPoints.');
+      return;
+    }
     setPendingPackage(pkg.id);
     setBusy(`invoice:${pkg.id}`);
     setError('');
     setPaymentStatus('');
     try {
-      const idempotencyKey = globalThis.crypto.randomUUID();
+      const idempotencyKey = getInvoiceIdempotencyKey(userId, pkg.id);
       const invoice = await createInvoice(pkg.id, idempotencyKey);
       if (!invoice.checkout_url) {
         setError('No se pudo iniciar el pago.');

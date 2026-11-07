@@ -63,11 +63,22 @@ export async function POST(req: NextRequest) {
 
   if (event.status !== 'confirmed') {
     if (TERMINAL_STATUSES.has(event.status)) {
-      const { error: orderError } = await admin.schema('pagos').from('orders')
-        .update({ status: event.status, updated_at: new Date().toISOString() }).eq('id', orderId);
+      const { data: updatedOrders, error: orderError } = await admin.schema('pagos').from('orders')
+        .update({ status: event.status, updated_at: new Date().toISOString() })
+        .eq('id', orderId).neq('status', 'fulfilled')
+        .select('id');
       if (orderError) {
         logFailure('terminal order update failed', { eventId, orderId, message: errorMessage(orderError) });
         return NextResponse.json({ error: 'order_update_failed' }, { status: 500 });
+      }
+      if (event.status === 'refunded' && Array.isArray(updatedOrders) && updatedOrders.length === 0) {
+        const { data: currentOrder, error: currentError } = await admin.schema('pagos').from('orders')
+          .select('status').eq('id', orderId).maybeSingle();
+        if (currentError) {
+          logFailure('refund order lookup failed', { eventId, orderId, message: errorMessage(currentError) });
+        } else if (currentOrder?.status === 'fulfilled') {
+          logFailure('refund_after_fulfillment', { eventId, orderId });
+        }
       }
       const processed = await admin.schema('pagos').from('webhook_events').update({ processed_at: new Date().toISOString() }).eq('provider', event.provider).eq('event_id', eventId);
       if (processed.error) {
