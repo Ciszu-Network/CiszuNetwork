@@ -111,6 +111,7 @@ gh workflow run deploy-muzicmania-website.yml -f environment=production
 - `GET /api/shop/items`: caché pública **120s** para anónimos; privada para usuarios con sesión.
 - `GET /api/levels`: caché pública **120s** para exploración; privada para `mine/admin`.
 - `GET /api/levels/official`: caché pública **300s**.
+- Impresiones de anuncios: pasan de la función `/api/ads/impression` a INSERT directo en Supabase (`ciszunetwork.ads_impressions`), eliminando una invocación de Vercel por cada anuncio mostrado.
 
 ## 5. Acción inmediata
 
