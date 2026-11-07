@@ -195,6 +195,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       .select('id,title,description,track_id,difficulty,bpm,chart_offset,status,archived,official,official_slot,plays,likes,created_at,updated_at,published_at')
       .single();
     if (error) throw new Error(error.message);
+    if (nextStatus === 'published') {
+      const { error: rewardError } = await sb.schema('muzicmania').rpc('grant_level_upload_reward', {
+        p_user_id: user.userId,
+        p_level_id: id,
+      });
+      if (rewardError) console.error('[levels/reward]', { levelId: id, message: String(rewardError.message ?? '').slice(0, 200) });
+    }
     return NextResponse.json({ level: data });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : 'update_level_error' }, { status: 500 });

@@ -80,7 +80,10 @@ export async function POST(req: NextRequest) {
           logFailure('refund_after_fulfillment', { eventId, orderId });
         }
       }
-      const processed = await admin.schema('pagos').from('webhook_events').update({ processed_at: new Date().toISOString() }).eq('provider', event.provider).eq('event_id', eventId);
+      const { error: creatorCodeError } = await admin.schema('muzicmania').rpc('credit_creator_code', { p_order_id: orderId });
+  if (creatorCodeError) logFailure('creator code credit failed', { eventId, orderId, message: errorMessage(creatorCodeError) });
+
+  const processed = await admin.schema('pagos').from('webhook_events').update({ processed_at: new Date().toISOString() }).eq('provider', event.provider).eq('event_id', eventId);
       if (processed.error) {
         logFailure('webhook event update failed', { eventId, message: errorMessage(processed.error) });
         return NextResponse.json({ error: 'audit_failed' }, { status: 500 });
@@ -136,6 +139,9 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ error: code }, { status: 409 });
   }
+
+  const { error: creatorCodeError } = await admin.schema('muzicmania').rpc('credit_creator_code', { p_order_id: orderId });
+  if (creatorCodeError) logFailure('creator code credit failed', { eventId, orderId, message: errorMessage(creatorCodeError) });
 
   const processed = await admin.schema('pagos').from('webhook_events').update({ processed_at: new Date().toISOString() }).eq('provider', event.provider).eq('event_id', eventId);
   if (processed.error) {

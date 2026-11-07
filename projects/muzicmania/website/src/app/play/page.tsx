@@ -1231,6 +1231,22 @@ function PlayPageContent() {
     };
 
     saveScore();
+    if (user && activeGameState.score > 0) {
+      void (async () => {
+        try {
+          const { data } = await supabase.auth.getSession();
+          const token = data.session?.access_token;
+          if (!token) return;
+          await fetch('/api/economy/play', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ track_id: selectedTrack.id, reference: `${Date.now()}` }),
+          });
+        } catch {
+          /* la tarea diaria nunca debe romper la partida */
+        }
+      })();
+    }
     // Salir de pantalla completa al terminar la partida: el anuncio tras-acción
     // (modal intrusivo) no debe molestar dentro del fullscreen.
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});

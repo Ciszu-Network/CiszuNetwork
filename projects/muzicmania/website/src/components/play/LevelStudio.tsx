@@ -7,6 +7,7 @@ import { supabase } from '@/config/supabase';
 import { TRACKS_DATA, type Track } from '@/data/tracks';
 import { trackCover } from '@/utils/musicAssets';
 import type { ChartNote, LevelDifficulty, NoteType } from '@/types/level';
+import { donateToCreator } from '@/lib/economy/client';
 
 export interface CustomLevelSummary {
   id: string;
@@ -147,6 +148,7 @@ export default function LevelStudio({ userId, initialTab = 'mine', onPlay, onBac
   const [query, setQuery] = useState('');
   const [difficulty, setDifficulty] = useState<'all' | LevelDifficulty>('all');
   const [showArchived, setShowArchived] = useState(false);
+  const [likedLevels, setLikedLevels] = useState<Set<string>>(new Set());
 
   const [editorOpen, setEditorOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -373,6 +375,48 @@ export default function LevelStudio({ userId, initialTab = 'mine', onPlay, onBac
       toast(cause instanceof Error ? cause.message : 'No se pudo eliminar el nivel.', 'error');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const likeLevel = async (level: CustomLevelSummary) => {
+    if (!userId) {
+      toast('Inicia sesión para dar like y ganar recompensas.', 'error');
+      return;
+    }
+    if (likedLevels.has(level.id)) return;
+    try {
+      const response = await authedFetch(`/api/levels/${level.id}/like`, { method: 'POST' });
+      const data = (await response.json().catch(() => ({}))) as { likes?: number; error?: string };
+      if (!response.ok) {
+        toast(data.error === 'self_like' ? 'No puedes dar like a tu propio nivel.' : 'No se pudo registrar el like.', 'error');
+        return;
+      }
+      setLevels((current) => current.map((row) => row.id === level.id ? { ...row, likes: Number(data.likes ?? row.likes) } : row));
+      setLikedLevels((current) => new Set(current).add(level.id));
+      toast('Like registrado. El creador recibió su recompensa.', 'success');
+    } catch {
+      toast('No se pudo registrar el like.', 'error');
+    }
+  };
+
+  const donateLevel = async (level: CustomLevelSummary) => {
+    if (!userId) {
+      toast('Inicia sesión para apoyar al creador.', 'error');
+      return;
+    }
+    const value = window.prompt('¿Cuántos MZP quieres donar?', '50');
+    if (!value) return;
+    const amount = Number(value);
+    if (!Number.isInteger(amount) || amount < 1) {
+      toast('Cantidad inválida.', 'error');
+      return;
+    }
+    try {
+      await donateToCreator(level.id, amount);
+      toast(`Donaste ${amount} MZP al creador.`, 'success');
+    } catch (cause) {
+      const message = cause instanceof Error ? cause.message : 'donation_failed';
+      toast(message === 'self_donation' ? 'No puedes donar a tu propio nivel.' : message === 'insufficient_points' ? 'No tienes MZP suficientes.' : 'No se pudo completar la donación.', 'error');
     }
   };
 
@@ -675,6 +719,18 @@ export default function LevelStudio({ userId, initialTab = 'mine', onPlay, onBac
                       <button type="button" disabled={saving} onClick={() => void playLevel(level)} className="rounded-lg border border-neon-cyan/30 bg-neon-cyan/10 px-2.5 py-1 text-[7px] font-black uppercase tracking-widest text-neon-cyan disabled:opacity-40">
                         <Icon name="play" size={9} className="mr-1 inline" /> Probar
                       </button>
+                      {tab === 'explore' && (
+                        <>
+                          <button type="button" disabled={likedLevels.has(level.id)} onClick={() => void likeLevel(level)} className="rounded-lg border border-neon-pink/25 bg-neon-pink/10 px-2.5 py-1 text-[7px] font-black uppercase tracking-widest text-neon-pink disabled:opacity-50">
+                            <Icon name="heart" size={9} className="mr-1 inline" /> {level.likes} {likedLevels.has(level.id) ? 'GUSTADO' : 'LIKE'}
+                          </button>
+                          {level.user_id !== userId && (
+                            <button type="button" disabled={saving} onClick={() => void donateLevel(level)} className="rounded-lg border border-yellow-400/25 bg-yellow-400/5 px-2.5 py-1 text-[7px] font-black uppercase tracking-widest text-yellow-300 disabled:opacity-40">
+                              Donar MZP
+                            </button>
+                          )}
+                        </>
+                      )}
                       {(tab === 'mine' || tab === 'admin') && (
                         <>
                           <button type="button" disabled={saving} onClick={() => void openEdit(level.id)} className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[7px] font-black uppercase tracking-widest text-white/55 hover:text-white disabled:opacity-40">Editar</button>

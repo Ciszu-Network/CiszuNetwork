@@ -48,12 +48,12 @@ export async function equipItem(itemId: string) {
   if (!response.ok) throw new Error('equip_failed');
 }
 
-export async function createInvoice(packageId: string, idempotencyKey?: string) {
+export async function createInvoice(packageId: string, idempotencyKey?: string, creatorCode?: string) {
   const key = idempotencyKey ?? globalThis.crypto.randomUUID();
   const response = await apiFetch('/api/payments/invoice', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ package_id: packageId, idempotency_key: key }),
+    body: JSON.stringify({ package_id: packageId, idempotency_key: key, ...(creatorCode ? { creator_code: creatorCode } : {}) }),
   });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'invoice_failed');
@@ -66,6 +66,35 @@ export async function fetchOrder(id: string) {
   return response.json();
 }
 
+export async function giftPoints(recipientUsername: string, amount: number, message = '') {
+  const response = await apiFetch('/api/economy/gift', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recipient_username: recipientUsername, amount, message }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error ?? 'gift_failed');
+  return data;
+}
+
+export async function donateToCreator(levelId: string, amount: number, message = '') {
+  const response = await apiFetch('/api/economy/donate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ level_id: levelId, amount, message }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error ?? 'donation_failed');
+  return data;
+}
+
+export async function fetchCreatorCode() {
+  const response = await apiFetch('/api/creators/code', { cache: 'no-store' });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error ?? 'creator_code_failed');
+  return data;
+}
+
 export async function declareAdult(birthDate: string, termsVersion: string) {
   const response = await apiFetch('/api/economy/adult', {
     method: 'POST',
@@ -75,4 +104,38 @@ export async function declareAdult(birthDate: string, termsVersion: string) {
   const data = await response.json();
   if (!response.ok) throw new Error(data.error ?? 'adult_failed');
   return data as { adult: boolean };
+}
+
+export async function fetchDaily() {
+  const response = await apiFetch('/api/economy/daily', { cache: 'no-store' });
+  if (!response.ok) throw new Error('daily_load_failed');
+  return response.json();
+}
+
+export async function claimDaily() {
+  const response = await apiFetch('/api/economy/daily', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'claim' }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error ?? 'daily_claim_failed');
+  return data;
+}
+
+export async function fetchTasks() {
+  const response = await apiFetch('/api/economy/tasks', { cache: 'no-store' });
+  if (!response.ok) throw new Error('tasks_load_failed');
+  return response.json();
+}
+
+export async function claimTask(taskKey: string) {
+  const response = await apiFetch('/api/economy/tasks', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ task_key: taskKey }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error ?? 'task_claim_failed');
+  return data;
 }

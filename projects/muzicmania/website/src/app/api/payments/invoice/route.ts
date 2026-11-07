@@ -12,6 +12,7 @@ const limiter = createRateLimiter({ windowMs: 60_000, max: 10 });
 const schema = z.object({
   package_id: z.string().uuid(),
   idempotency_key: z.string().trim().min(16).max(100),
+  creator_code: z.string().trim().max(20).optional(),
 });
 
 function logFailure(stage: string, details: Record<string, string>) {
@@ -74,6 +75,15 @@ export async function POST(req: NextRequest) {
   }
   if (!pkg) return NextResponse.json({ error: 'package_not_found' }, { status: 404 });
 
+  let creatorCode: string | null = null;
+  if (parsed.data.creator_code) {
+    const { data: codeRow, error: codeError } = await admin.schema('muzicmania').from('creator_codes')
+      .select('code,active').eq('code', parsed.data.creator_code.toUpperCase()).maybeSingle();
+    if (codeError) return NextResponse.json({ error: 'internal_error' }, { status: 500 });
+    if (!codeRow || !codeRow.active) return NextResponse.json({ error: 'creator_code_invalid' }, { status: 400 });
+    creatorCode = codeRow.code;
+  }
+
   const orderId = randomUUID();
   const { error: insertError } = await admin.schema('pagos').from('orders').insert({
     id: orderId,
@@ -87,6 +97,7 @@ export async function POST(req: NextRequest) {
     points_bonus: pkg.bonus_points,
     status: 'pending',
     idempotency_key: idempotencyKey,
+    creator_code: creatorCode,
   });
   if (insertError) {
     if (insertError.code === '23505') {
