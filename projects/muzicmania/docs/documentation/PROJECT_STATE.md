@@ -10,7 +10,8 @@
 - La edad de compra vive en `muzicmania.purchase_credentials` (privada); no se exponen términos ni fecha de nacimiento en el perfil público.
 - La tienda está integrada en `/play` y las skins premium `prism`, `ember` y `void` requieren compra; las skins clásicas siguen gratis.
 - NOWPayments cripto está activo en producción (`PAYMENTS_CRYPTO_ENABLED=true`); se validó invoice real e idempotencia. Tarjetas y PayPal siguen bloqueados.
-- Fases 2–4 pendientes: login diario/rachas/tareas/XP, regalos, donaciones, código de creador, tarjetas/PayPal.
+- Fases 2–3 implementadas: login diario, rachas, tareas, XP, recompensas por publicar niveles/likes, regalos de MZP, donaciones a creadores y código de creador (5% de MZP base).
+- Fase 4 pendiente por bloqueo externo: tarjetas/PayPal requieren proveedor MoR aprobado y mayoría de edad; la UI muestra “próximamente” y los flags están en false.
 - Documentación: `STORE_ECONOMY_PLAN.md` y `STORE_ECONOMY_PHASE1_IMPLEMENTATION_PLAN.md`.
 
 ## 🚀 Logros Recientes

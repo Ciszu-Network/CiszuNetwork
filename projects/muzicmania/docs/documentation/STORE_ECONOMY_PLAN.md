@@ -543,4 +543,4 @@ Todas las mutaciones requieren autenticación, rate limit y body validado con Zo
 
 ---
 
-_Última revisión: 4 de noviembre de 2026. Diseño aprobado; Fase 1 implementada y desplegada; fases 2–4 pendientes._
+_Última revisión: 4 de noviembre de 2026. Fases 1–3 implementadas y desplegadas; fase 4 (tarjetas/PayPal) bloqueada por proveedor y mayoría de edad._
