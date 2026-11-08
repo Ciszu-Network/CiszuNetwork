@@ -1,6 +1,6 @@
 [package]
 name = "muzicmania"
-version = "2.0.0"
+version = "2.0.1"
 description = "MuzicMania 2.0 - Ecosistema Rítmico de Alto Rendimiento | Ciszu Network"
 authors = ["Ciszu Network <fplayersoffcial@gmail.com>"]
 license = "Proprietary"

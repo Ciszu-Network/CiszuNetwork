@@ -1,6 +1,6 @@
 # Estado del Proyecto MuzicMania 2.0 (Next.js Edition)
 
-**Última actualización:** 4 Noviembre 2026
+**Última actualización:** 8 Noviembre 2026
 **Autor y Propietario:** Ciszuko Antony (Francisco Garcia)
 **Stack:** Next.js 15 + TypeScript + Tailwind CSS v4 + Supabase + Tauri
 
@@ -75,10 +75,13 @@
 - ✅ **Fix UI Logotipo (`/information`):** Se corrigió el desbordamiento del branding limitando el Logotipo a `w-64` en vez de `w-full` en la vista desktop (`xl:flex-row`), evitando que el texto se salga de la pantalla con zoom.
 
 ### 📦 Instaladores (Tauri & NSIS)
-- ✅ **Bloqueo de Atajos:** Bloqueados teclas del navegador (F3, F5, Ctrl+P) en el instalador y launcher mediante JS global.
-- ✅ **Offline Screen:** Pantalla de error mejorada con botón para jugar en `Modo Offline` local y botón de salir.
-- ✅ **Update Checker:** Simulación de progreso de descarga tipo Discord/Steam añadida al launcher.
-- ✅ **Ventana de Launcher:** Establecida con `always_on_top` en Windows.
+- ✅ **Instalador custom real:** NSIS 2.0.1 con UI WebView2, 18 idiomas, licencia, ruta, progreso, cancelación con rollback, atajos y desinstalador. Artefacto final de ~1.6 MB (ya no placeholders de 971 bytes).
+- ✅ **Build reproducible:** `launcher/build-installer.ps1` compila, parchea, copia a `website/public/downloads/` y `launcher/downloads/` y verifica tamaño.
+- ✅ **Descarga online:** Release `muzicmania-v2.0.1` con assets para Windows 10/11; el API route redirige al release si no existe el archivo local.
+- ✅ **Primer inicio:** muestra versión, sistema, arquitectura y ruta real de instalación.
+- ✅ **Bloqueo de Atajos:** Bloqueados teclas del navegador (F3, F5, F11, Ctrl+P, Ctrl+R, DevTools, etc.) en instalador y launcher.
+- ✅ **Offline Screen:** Pantalla de error con botón para jugar en `Modo Offline` local y botón de salir.
+- ✅ **Ventana de Launcher:** `always_on_top` y tamaño ampliado para el primer inicio.
 
 ### 🆕 Nuevas Páginas y Características (10 Sep 2026)
 - ✅ **Stats**: Página `/stats` leyendo métricas reales desde `muzicmania_stats` (Supabase).

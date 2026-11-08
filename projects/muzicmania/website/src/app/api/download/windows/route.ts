@@ -4,6 +4,10 @@ import path from 'path';
 
 const APP_VERSION = '2.0.1';
 const INSTALLER_VERSION = '2.1.3';
+const RELEASE_BASE = (
+  process.env.MUZICMANIA_INSTALLER_RELEASE_URL ||
+  'https://github.com/Ciszu-Network/CiszuNetwork/releases/download/muzicmania-v2.0.1'
+).replace(/\/$/, '');
 
 const AVAILABLE: Record<string, string[]> = {
   w10: ['x64'],
@@ -86,10 +90,8 @@ export async function GET(request: Request) {
       }
     }
 
-    return NextResponse.json({
-      error: 'Instalador no disponible. Compila con pnpm tauri:build o añade el archivo en public/downloads/',
-      available: AVAILABLE,
-    }, { status: 404 });
+    const releaseFilename = filename.replace(/[()]/g, '.');
+    return NextResponse.redirect(`${RELEASE_BASE}/${encodeURIComponent(releaseFilename)}`, 307);
   } catch (error) {
     return NextResponse.json({ error: 'No se pudo procesar la descarga' }, { status: 500 });
   }

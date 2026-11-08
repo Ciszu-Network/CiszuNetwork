@@ -1,251 +1,318 @@
-﻿param([string]$NsisDir = "")
+param([string]$NsisDir = "")
+
+$ErrorActionPreference = "Stop"
+$ProjectRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path))
 
 if (-not $NsisDir) {
-    $ProjectRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-    $NsisDir = "$ProjectRoot\src-tauri\target\release\nsis\x64"
+    $candidates = @(
+        "$ProjectRoot\launcher\src-tauri\target\x86_64-pc-windows-msvc\release\nsis\x64",
+        "$ProjectRoot\launcher\src-tauri\target\release\nsis\x64"
+    )
+    $NsisDir = $candidates | Where-Object { Test-Path (Join-Path $_ "installer.nsi") } | Select-Object -First 1
 }
 
-$NsiFile = "$NsisDir\installer.nsi"
-$OutputExe = "$NsisDir\nsis-output.exe"
-$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$JsonFile = "$ScriptDir\lang-strings.json"
+if (-not $NsisDir -or -not (Test-Path (Join-Path $NsisDir "installer.nsi"))) {
+    throw "No se encontro installer.nsi. Compila Tauri primero."
+}
 
-if (-not (Test-Path $NsiFile)) {
-    Write-Host "ERROR: NSIS script not found at $NsiFile" -ForegroundColor Red
-    exit 1
+$NsiFile = Join-Path $NsisDir "installer.nsi"
+$OutputExe = Join-Path $NsisDir "nsis-output.exe"
+$Makensis = Join-Path $env:LOCALAPPDATA "tauri\NSIS\makensis.exe"
+
+if (-not (Test-Path $Makensis)) {
+    throw "makensis.exe no encontrado en $Makensis"
 }
 
 $content = Get-Content $NsiFile -Raw
 
-if ($content -match 'CustomUIMode') {
-    Write-Host "Already patched, skipping." -ForegroundColor Yellow
-    exit 0
+if ($content -match "Var CustomUIMode") {
+    throw "installer.nsi ya esta parcheado. Regenera el bundle con tauri build."
 }
 
-$translations = Get-Content $JsonFile -Raw -Encoding UTF8 | ConvertFrom-Json
-$cr = "`r`n"
+$content = $content.Replace("Var OldMainBinaryName`r`n", "Var OldMainBinaryName`r`nVar CustomUIMode`r`n")
 
-# ── Step 0: Force admin mode ──
-$content = $content.Replace('RequestExecutionLevel user', 'RequestExecutionLevel admin')
-$content = $content.Replace('MULTIUSER_EXECUTIONLEVEL Highest', 'MULTIUSER_EXECUTIONLEVEL Admin')
-Write-Host "[0/11] Admin mode forced" -ForegroundColor Green
-
-# ── Step 1: LangStrings + Author info ──
-# Add CompanyName (other VI keys already exist via Tauri template)
-$content = $content.Replace('VIAddVersionKey "ProductVersion" "${VERSION}"', 'VIAddVersionKey "ProductVersion" "${VERSION}"' + "${cr}VIAddVersionKey CompanyName `"Ciszu Network`"")
-
-$ls = ""
-foreach ($t in $translations) { $ls += "LangString versionInfo `${$($t.lang)} `"$($t.versionInfo)`"$cr" }
-foreach ($t in $translations) {
-    $ls += "LangString viewChangelog `${$($t.lang)} `"$($t.changelog)`"$cr"
-    $ls += "LangString thankYou `${$($t.lang)} `"$($t.thanks)`"$cr"
-    $ls += "LangString uninstallDone `${$($t.lang)} `"$($t.uninstallQ)`"$cr"
-}
-$content = $content -replace '(Function \.onInit)', "${ls}`$1"
-Write-Host "[1/11] LangStrings + CompanyName added" -ForegroundColor Green
-
-# ── Step 2: CustomUIMode var ──
-$content = $content.Replace('Var OldMainBinaryName', "Var OldMainBinaryName${cr}Var CustomUIMode")
-Write-Host "[2/11] CustomUIMode var added" -ForegroundColor Green
-
-# ── Step 3: Helper functions ──
-$hf = @"
-; --- Custom UI helpers ---
+$helpers = @'
 Function WriteProgress
-  Pop `$0
-  FileOpen `$1 "`$TEMP\muzicmania-ipc\progress.txt" w
-  FileWrite `$1 `$0
-  FileClose `$1
+  Pop $0
+  FileOpen $1 "$TEMP\muzicmania-ipc\progress.txt" w
+  FileWrite $1 $0
+  FileClose $1
 FunctionEnd
+
 Function WriteLog
-  Pop `$0
-  FileOpen `$1 "`$TEMP\muzicmania-ipc\log.txt" a
-  FileWrite `$1 "`$0$\r$\n"
-  FileClose `$1
-FunctionEnd
-Function SkipIfCustomUI
-  `${If} `$PassiveMode = 1
-    Abort
-  `${EndIf}
-  `${If} `$CustomUIMode = 1
-    Abort
-  `${EndIf}
+  Pop $0
+  FileOpen $1 "$TEMP\muzicmania-ipc\log.txt" a
+  FileWrite $1 "$0$\r$\n"
+  FileClose $1
 FunctionEnd
 
-"@
-$content = $content.Replace('Function .onInit', "${hf}Function .onInit")
-Write-Host "[3/11] Helpers added" -ForegroundColor Green
+'@
 
-# ── Step 4: Custom UI added to .onInit ──
-$cu = @"
-  `${IfNot} `$PassiveMode = 1
-  `${AndIfNot} `$UpdateMode = 1
-    StrCpy `$CustomUIMode 1
-    StrCpy `$R8 `$INSTDIR
-    RMDir /r "`$TEMP\muzicmania-ipc"
-    CreateDirectory "`$TEMP\muzicmania-ipc"
-    FileOpen `$0 "`$TEMP\muzicmania-ipc\default_dir.txt" w
-    FileWrite `$0 `$INSTDIR
-    FileClose `$0
-    FileOpen `$0 "`$TEMP\muzicmania-ipc\status.txt" w
-    FileWrite `$0 "READY"
-    FileClose `$0
+$content = $content.Replace("Function .onInit", $helpers + "Function .onInit")
+
+$customInit = @'
+  ${If} ${Silent}
+    StrCpy $PassiveMode 1
+  ${EndIf}
+  ${IfNot} $PassiveMode = 1
+  ${AndIfNot} $UpdateMode = 1
+    StrCpy $CustomUIMode 1
+    RMDir /r "$TEMP\muzicmania-ipc"
+    CreateDirectory "$TEMP\muzicmania-ipc"
+    FileOpen $0 "$TEMP\muzicmania-ipc\status.txt" w
+    FileWrite $0 "READY"
+    FileClose $0
+    FileOpen $0 "$TEMP\muzicmania-ipc\progress.txt" w
+    FileWrite $0 "5"
+    FileClose $0
+    FileOpen $0 "$TEMP\muzicmania-ipc\default_dir.txt" w
+    FileWrite $0 "$INSTDIR"
+    FileClose $0
+    FileOpen $0 "$TEMP\muzicmania-ipc\cmd.txt" w
+    FileWrite $0 "WAIT"
+    FileClose $0
+
+    ${If} ${RunningX64}
+      ReadRegStr $4 HKLM "SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\${WEBVIEW2APPGUID}" "pv"
+    ${Else}
+      ReadRegStr $4 HKLM "SOFTWARE\Microsoft\EdgeUpdate\Clients\${WEBVIEW2APPGUID}" "pv"
+    ${EndIf}
+    ${If} $4 == ""
+      ReadRegStr $4 HKCU "SOFTWARE\Microsoft\EdgeUpdate\Clients\${WEBVIEW2APPGUID}" "pv"
+    ${EndIf}
+    ${If} $4 == ""
+      Delete "$TEMP\MicrosoftEdgeWebview2Setup.exe"
+      NSISdl::download "https://go.microsoft.com/fwlink/p/?LinkId=2124703" "$TEMP\MicrosoftEdgeWebview2Setup.exe"
+      Pop $0
+      ${If} $0 != "success"
+        MessageBox MB_ICONSTOP "No se pudo descargar WebView2. Verifica tu conexion a internet."
+        Quit
+      ${EndIf}
+      ExecWait '"$TEMP\MicrosoftEdgeWebview2Setup.exe" /silent /install' $1
+      Delete "$TEMP\MicrosoftEdgeWebview2Setup.exe"
+      ${If} $1 != 0
+        MessageBox MB_ICONSTOP "No se pudo instalar WebView2."
+        Quit
+      ${EndIf}
+    ${EndIf}
+
     InitPluginsDir
-    SetOutPath `$PLUGINSDIR
-    File "`${MAINBINARYSRCPATH}"
-    Exec '"`$PLUGINSDIR\`${MAINBINARYNAME}.exe" --installer'
+    SetOutPath "$PLUGINSDIR"
+    File "${MAINBINARYSRCPATH}"
+    Exec '"$PLUGINSDIR\${MAINBINARYNAME}.exe" --installer'
     HideWindow
-    StrCpy `$R9 0
-    WaitForCmd:
-    IntOp `$R9 `$R9 + 1
-    `${If} `$R9 > 240
-      Quit
-    `${EndIf}
-    Sleep 500
-    IfFileExists "`$TEMP\muzicmania-ipc\cmd.txt" CmdExists
-    Goto WaitForCmd
-    CmdExists:
-  `${EndIf}
+    StrCpy $R9 0
 
-"@
-$fnOnInitIdx = $content.IndexOf('Function .onInit')
-$fnEndIdx = $content.IndexOf('FunctionEnd', $fnOnInitIdx)
-$content = $content.Substring(0, $fnEndIdx) + $cr + $cu + $content.Substring($fnEndIdx)
-Write-Host "[4/11] Custom UI added to .onInit" -ForegroundColor Green
+    WaitForCustomCmd:
+      IntOp $R9 $R9 + 1
+      ${If} $R9 > 3600
+        RMDir /r "$TEMP\muzicmania-ipc"
+        Quit
+      ${EndIf}
+      Sleep 500
+      IfFileExists "$TEMP\muzicmania-ipc\cmd.txt" CustomCmdExists
+      Goto WaitForCustomCmd
 
-# ── Step 5: Remove NSIS lang dialog entirely, keep only custom ──
-# Delete the whole MUI_LANGDLL_DISPLAY block and set selector to false
-$muiIdx = $content.IndexOf('MUI_LANGDLL_DISPLAY')
-if ($muiIdx -ge 0) {
-    $blockStart = $content.LastIndexOf('!if', $muiIdx)
-    $blockEnd = $content.IndexOf('!endif', $muiIdx) + 6
-    if ($blockStart -ge 0 -and $blockEnd -gt $blockStart) {
-        $content = $content.Substring(0, $blockStart) + $content.Substring($blockEnd)
-        Write-Host "[5/11] NSIS lang dialog removed" -ForegroundColor Green
-    } else {
-        Write-Host "[5/11] Could not find !if/!endif around MUI_LANGDLL_DISPLAY" -ForegroundColor Yellow
-    }
-} else {
-    Write-Host "[5/11] MUI_LANGDLL_DISPLAY not found" -ForegroundColor Yellow
+    CustomCmdExists:
+      FileOpen $0 "$TEMP\muzicmania-ipc\cmd.txt" r
+      FileRead $0 $2
+      FileClose $0
+      ${If} $2 == "ABORT"
+        RMDir /r "$TEMP\muzicmania-ipc"
+        Quit
+      ${EndIf}
+      ${If} $2 != "INSTALL"
+        Delete "$TEMP\muzicmania-ipc\cmd.txt"
+        Goto WaitForCustomCmd
+      ${EndIf}
+      Delete "$TEMP\muzicmania-ipc\cmd.txt"
+
+    IfFileExists "$TEMP\muzicmania-ipc\dir.txt" 0 CustomDirDone
+      FileOpen $0 "$TEMP\muzicmania-ipc\dir.txt" r
+      FileRead $0 $1
+      FileClose $0
+      ${If} $1 != ""
+        StrCpy $INSTDIR $1
+      ${EndIf}
+    CustomDirDone:
+
+    IfFileExists "$TEMP\muzicmania-ipc\lang.txt" 0 CustomLangDone
+      FileOpen $0 "$TEMP\muzicmania-ipc\lang.txt" r
+      FileRead $0 $1
+      FileClose $0
+      ${If} $1 != ""
+        StrCpy $LANGUAGE $1
+      ${EndIf}
+    CustomLangDone:
+
+    FileOpen $0 "$TEMP\muzicmania-ipc\progress.txt" w
+    FileWrite $0 "10"
+    FileClose $0
+    Push "Preparing installation..."
+    Call WriteLog
+  ${EndIf}
+
+'@
+
+$onInitStart = $content.IndexOf("Function .onInit")
+if ($onInitStart -lt 0) { throw "Function .onInit no encontrada" }
+$onInitEnd = $content.IndexOf("FunctionEnd", $onInitStart)
+if ($onInitEnd -lt 0) { throw "FunctionEnd de .onInit no encontrado" }
+$content = $content.Substring(0, $onInitEnd) + $customInit + $content.Substring($onInitEnd)
+
+$content = $content -replace '(?m)^\s*!insertmacro MUI_LANGDLL_DISPLAY\s*$', ""
+
+$content = $content.Replace(
+    'VIAddVersionKey "ProductVersion" "${VERSION}"',
+    "VIAddVersionKey `"ProductVersion`" `"`${VERSION}`"`r`nVIAddVersionKey `"CompanyName`" `"Ciszu Network`""
+)
+
+$swedishFile = Join-Path $NsisDir "Swedish.nsh"
+if (Test-Path $swedishFile) {
+    $swedish = Get-Content $swedishFile -Raw
+    $swedish = $swedish.Replace('${LANG_SWEDISH}}', '${LANG_SWEDISH}')
+    Set-Content $swedishFile $swedish -Encoding UTF8 -NoNewline
 }
-# Also set DISPLAYLANGUAGESELECTOR to "false" to prevent any lang handling
-$content = $content.Replace('!define DISPLAYLANGUAGESELECTOR "true"', '!define DISPLAYLANGUAGESELECTOR "false"')
-Write-Host "[5b/11] DISPLAYLANGUAGESELECTOR set to false" -ForegroundColor Green
 
-# ── Step 6: Page pre-functions ──
-$content = $content -replace '(!define MUI_PAGE_CUSTOMFUNCTION_PRE )SkipIfPassive', '${1}SkipIfCustomUI'
-Write-Host "[6/11] Page pre-functions updated" -ForegroundColor Green
+$reinstallGuard = @'
+Function PageReinstall
+  ${If} $CustomUIMode = 1
+    Abort
+  ${EndIf}
+'@
+$content = $content.Replace("Function PageReinstall`r`n", $reinstallGuard + "`r`n")
 
-# ── Step 7: MainSection progress ──
-$msIdx = $content.IndexOf('Section Install')
-if ($msIdx -ge 0) {
-    $meIdx = $content.IndexOf('SectionEnd', $msIdx)
-    $soIdx = $content.IndexOf('SetOutPath $INSTDIR', $msIdx, $meIdx - $msIdx)
-    if ($soIdx -ge 0) {
-        $leIdx = $content.IndexOf($cr, $soIdx)
-        $at = $leIdx + 2
-        $progStart = "  Push 10${cr}  Call WriteProgress${cr}  Push `"Extracting application files...`"${cr}  Call WriteLog${cr}"
-        $content = $content.Substring(0, $at) + $cr + $progStart + $content.Substring($at)
-    }
-    $meIdx = $content.IndexOf('SectionEnd', $msIdx)
-    $beIdx = $content.LastIndexOf($cr, $meIdx - 1)
-    if ($beIdx -ge 0) {
-        $progEnd = "  Push 90${cr}  Call WriteProgress${cr}  Push `"Finalizing installation...`"${cr}  Call WriteLog${cr}"
-        $content = $content.Substring(0, $beIdx + 2) + $progEnd + $content.Substring($beIdx + 2)
-    }
-    Write-Host "[7/11] MainSection progress added" -ForegroundColor Green
+$content = $content.Replace(
+    "Function SkipIfPassive`r`n  `${IfThen} `$PassiveMode = 1  `${|} Abort `${|}`r`nFunctionEnd",
+    "Function SkipIfPassive`r`n  `${IfThen} `$PassiveMode = 1  `${|} Abort `${|}`r`n  `${IfThen} `$CustomUIMode = 1  `${|} Abort `${|}`r`nFunctionEnd"
+)
+
+$checkRunning = @'
+  ${If} $CustomUIMode != 1
+    !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"
+  ${EndIf}
+'@
+$runningLine = '  !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"'
+$runningIndex = $content.IndexOf($runningLine)
+if ($runningIndex -ge 0) {
+    $content = $content.Substring(0, $runningIndex) + $checkRunning + $content.Substring($runningIndex + $runningLine.Length)
 }
 
-# ── Step 8: .onInstSuccess ──
-$sIdx = $content.IndexOf('Function .onInstSuccess')
-if ($sIdx -ge 0) {
-    $eIdx = $content.IndexOf('FunctionEnd', $sIdx)
-    if ($eIdx -ge 0) {
-        $eIdx += 'FunctionEnd'.Length
-        if ($content.Substring($eIdx, 2) -eq $cr) { $eIdx += 2 }
-        $newOnInst = @"
-Function .onInstSuccess
-  `${If} `$CustomUIMode = 1
+$installProgress = @'
+  ${If} $CustomUIMode = 1
+    Push 20
+    Call WriteProgress
+    Push "Copying application files..."
+    Call WriteLog
+  ${EndIf}
+
+'@
+$content = $content.Replace("Section Install`r`n  SetOutPath `$INSTDIR`r`n", "Section Install`r`n  SetOutPath `$INSTDIR`r`n`r`n" + $installProgress)
+
+$content = $content.Replace(
+    "  File `"`${MAINBINARYSRCPATH}`"`r`n",
+    "  File `"`${MAINBINARYSRCPATH}`"`r`n`r`n  `${If} `$CustomUIMode = 1`r`n    Push 55`r`n    Call WriteProgress`r`n  `${EndIf}`r`n"
+)
+
+$content = $content.Replace(
+    "  WriteUninstaller `"`$INSTDIR\uninstall.exe`"`r`n",
+    "  WriteUninstaller `"`$INSTDIR\uninstall.exe`"`r`n`r`n  `${If} `$CustomUIMode = 1`r`n    Push 75`r`n    Call WriteProgress`r`n    Push `"Creating uninstaller...`"`r`n    Call WriteLog`r`n  `${EndIf}`r`n"
+)
+
+$autoClose = @'
+  ${If} $CustomUIMode = 1
+    Push 90
+    Call WriteProgress
+    Push "Finalizing installation..."
+    Call WriteLog
+    SetAutoClose true
+  ${EndIf}
+
+'@
+$content = $content.Replace("  ; Auto close this page for passive mode`r`n", $autoClose + "  ; Auto close this page for passive mode`r`n")
+
+$onInstSuccess = @'
+  ${If} $CustomUIMode = 1
     Push 100
     Call WriteProgress
     Push "Installation completed successfully"
     Call WriteLog
-    FileOpen `$0 "`$TEMP\muzicmania-ipc\status.txt" w
-    FileWrite `$0 "DONE"
-    FileClose `$0
-    StrCpy `$R9 0
+    FileOpen $0 "$TEMP\muzicmania-ipc\status.txt" w
+    FileWrite $0 "DONE"
+    FileClose $0
+    StrCpy $R9 0
+
     WaitFinishCmd:
-    IntOp `$R9 `$R9 + 1
-    `${If} `$R9 > 240
-      RMDir /r "`$TEMP\muzicmania-ipc"
-      Quit
-    `${EndIf}
-    Sleep 500
-    IfFileExists "`$TEMP\muzicmania-ipc\cmd.txt" FinishCmdExists
-    Goto WaitFinishCmd
+      IntOp $R9 $R9 + 1
+      ${If} $R9 > 240
+        Goto CustomFinishCleanup
+      ${EndIf}
+      Sleep 500
+      IfFileExists "$TEMP\muzicmania-ipc\cmd.txt" FinishCmdExists
+      Goto WaitFinishCmd
+
     FinishCmdExists:
-    FileOpen `$0 "`$TEMP\muzicmania-ipc\cmd.txt" r
-    FileRead `$0 `$1
-    FileClose `$0
-    Delete "`$TEMP\muzicmania-ipc\cmd.txt"
-    RMDir /r "`$TEMP\muzicmania-ipc"
-    `${If} `$1 == "LAUNCH"
-      Exec '"`$INSTDIR\`${MAINBINARYNAME}.exe"'
-    `${EndIf}
-  `${EndIf}
+      FileOpen $0 "$TEMP\muzicmania-ipc\cmd.txt" r
+      FileRead $0 $1
+      FileClose $0
+      Delete "$TEMP\muzicmania-ipc\cmd.txt"
+      ${If} $1 == "ABORT"
+        HideWindow
+        ExecWait '"$INSTDIR\uninstall.exe" /S _?=$INSTDIR'
+        Goto CustomFinishCleanup
+      ${EndIf}
+      ${If} $1 == "LAUNCH"
+        Sleep 1500
+        nsis_tauri_utils::RunAsUser "$INSTDIR\${MAINBINARYNAME}.exe" ""
+      ${EndIf}
+
+    CustomFinishCleanup:
+      RMDir /r "$TEMP\muzicmania-ipc"
+    Return
+  ${EndIf}
+
+'@
+$content = $content.Replace("Function .onInstSuccess`r`n", "Function .onInstSuccess`r`n" + $onInstSuccess)
+
+$onInstFailed = @'
+
+Function .onInstFailed
+  ${If} $CustomUIMode = 1
+    FileOpen $0 "$TEMP\muzicmania-ipc\status.txt" w
+    FileWrite $0 "ERROR"
+    FileClose $0
+    Push "Installation failed"
+    Call WriteLog
+  ${EndIf}
 FunctionEnd
-"@
-        $content = $content.Substring(0, $sIdx) + $newOnInst + $content.Substring($eIdx)
-        Write-Host "[8/11] .onInstSuccess replaced" -ForegroundColor Green
-    }
-}
+'@
+$content = $content.Replace("Function RestorePreviousInstallLocation`r`n", $onInstFailed + "`r`nFunction RestorePreviousInstallLocation`r`n")
 
-# ── Step 9: Remove RunMainBinary ──
-$content = $content.Replace("${cr}!define MUI_FINISHPAGE_RUN_FUNCTION RunMainBinary", "")
-Write-Host "[9/11] RunMainBinary removed" -ForegroundColor Green
-
-# ── Step 10: Uninstall loop ──
-$unstFix = "  `${If} `$0 = 0${cr}  `${AndIfNot} `${FileExists} `"`$INSTDIR\`${MAINBINARYNAME}.exe`"${cr}    MessageBox MB_YESNO|MB_ICONQUESTION `"`$(uninstallDone)`" /SD IDYES IDYES reinst_done${cr}    Quit${cr}  `${EndIf}${cr}${cr}"
-$content = $content.Replace("reinst_done:${cr}FunctionEnd", "${unstFix}reinst_done:${cr}FunctionEnd")
-Write-Host "[10/11] Uninstall loop fixed" -ForegroundColor Green
-
-# ── Step 11: Skip CheckIfAppIsRunning ──
-$appIdx = $content.IndexOf('!insertmacro CheckIfAppIsRunning')
-if ($appIdx -ge 0) {
-    $lStart = $content.LastIndexOf($cr, $appIdx - 1) + 2
-    $lEnd = $content.IndexOf($cr, $appIdx)
-    if ($lEnd -lt 0) { $lEnd = $content.Length }
-    $origLine = $content.Substring($lStart, $lEnd - $lStart)
-    $wrapper = "  `${If} `$CustomUIMode = 1${cr}    Goto SkipAppCheck${cr}  `${EndIf}${cr}"
-    $after = "${cr}  SkipAppCheck:"
-    $content = $content.Substring(0, $lStart) + $wrapper + $origLine + $after + $content.Substring($lEnd)
-    Write-Host "[11/11] CheckIfAppIsRunning wrapped" -ForegroundColor Green
-} else {
-    Write-Host "[11/11] CheckIfAppIsRunning not found, skipping" -ForegroundColor Yellow
-}
-
-# ── Write & recompile ──
 Set-Content $NsiFile $content -Encoding UTF8
-Write-Host "Patched installer.nsi written" -ForegroundColor Green
 
-$makensis = "$env:LOCALAPPDATA\tauri\NSIS\makensis.exe"
-if (-not (Test-Path $makensis)) {
-    Write-Host "ERROR: makensis.exe not found" -ForegroundColor Red
-    exit 1
+Push-Location $NsisDir
+try {
+    & $Makensis $NsiFile
+    if ($LASTEXITCODE -ne 0) { throw "makensis fallo con codigo $LASTEXITCODE" }
+} finally {
+    Pop-Location
 }
-Write-Host "Recompiling..." -ForegroundColor Yellow
-& $makensis $NsiFile
 
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "OK: $OutputExe" -ForegroundColor Green
-    $bundleDir = Resolve-Path "$NsisDir\..\..\bundle\nsis" -ErrorAction SilentlyContinue
-    if ($bundleDir) {
-        Get-ChildItem "$bundleDir\*.exe" | ForEach-Object {
-            Copy-Item $OutputExe $_.FullName -Force
-            Write-Host "Copied to $($_.FullName)" -ForegroundColor Green
-        }
+if (-not (Test-Path $OutputExe)) {
+    throw "No se genero $OutputExe"
+}
+
+$bundleDir = Split-Path -Parent (Split-Path -Parent $NsisDir)
+$bundleDir = Join-Path $bundleDir "bundle\nsis"
+if (Test-Path $bundleDir) {
+    Get-ChildItem (Join-Path $bundleDir "*.exe") | ForEach-Object {
+        Copy-Item $OutputExe $_.FullName -Force
     }
-} else {
-    Write-Host "ERROR: makensis failed (exit $LASTEXITCODE)" -ForegroundColor Red
-    exit 1
 }
+
+$size = (Get-Item $OutputExe).Length
+if ($size -lt 1000000) {
+    throw "El instalador generado es demasiado pequeno: $size bytes"
+}
+
+Write-Host "Instalador custom generado: $OutputExe ($size bytes)" -ForegroundColor Green

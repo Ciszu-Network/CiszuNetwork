@@ -204,7 +204,7 @@ export default function DownloadPage() {
 
   const archRows: { arch: string; label: string; size: string }[] = [
     { arch: 'x86', label: 'x86 (32 bits)', size: '~ 2.8 MB' },
-    { arch: 'x64', label: 'x64 (64 bits)', size: '~ 3.5 MB' },
+    { arch: 'x64', label: 'x64 (64 bits)', size: '~ 1.6 MB' },
     { arch: 'arm', label: 'ARM64', size: '~ 3.2 MB' },
   ];
 

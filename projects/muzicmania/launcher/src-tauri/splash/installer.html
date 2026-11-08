@@ -23,6 +23,10 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", system-ui, sans-serif; user-select: none; }
   body { background: var(--bg-main); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+  body.rtl { direction: rtl; }
+  body.rtl .view { text-align: right; }
+  body.rtl .btn-row { flex-direction: row-reverse; }
+  body.rtl .progress-details { flex-direction: row-reverse; }
   .bg-glow {
     position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
     background: radial-gradient(circle at 50% 50%, rgba(108, 92, 231, 0.1) 0%, transparent 40%),
@@ -63,8 +67,8 @@
   .btn-secondary:hover:not(:disabled) { background: var(--secondary-hover); }
   .btn-danger { background: var(--danger); color: #fff; }
   .btn-danger:hover:not(:disabled) { background: var(--danger-hover); box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4); transform: translateY(-2px); }
-  .checkbox-wrapper { display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 12px; }
-  .checkbox-wrapper input { display: none; }
+  .checkbox-wrapper { display: flex; align-items: center; gap: 12px; cursor: pointer; margin-bottom: 12px; position: relative; }
+  .checkbox-wrapper input { position: absolute; opacity: 0; width: 20px; height: 20px; margin: 0; cursor: pointer; }
   .checkmark {
     width: 20px; height: 20px; background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-light);
     border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
@@ -119,18 +123,22 @@
       <select id="sel-lang">
         <option value="1034">Español</option>
         <option value="1033">English</option>
+        <option value="2052">简体中文</option>
+        <option value="1028">繁體中文</option>
         <option value="1046">Português (Brasil)</option>
+        <option value="1051">Русский</option>
+        <option value="1041">日本語</option>
+        <option value="1050">한국어</option>
         <option value="1036">Français</option>
         <option value="1031">Deutsch</option>
         <option value="1040">Italiano</option>
         <option value="1043">Nederlands</option>
         <option value="1045">Polski</option>
-        <option value="1051">Русский</option>
+        <option value="1025">العربية</option>
+        <option value="1055">Türkçe</option>
+        <option value="1029">Čeština</option>
         <option value="1038">Magyar</option>
-        <option value="1050">한국어</option>
-        <option value="2052">中文</option>
-        <option value="1041">日本語</option>
-        <option value="1035">Suomi</option>
+        <option value="1053">Svenska</option>
       </select>
     </div>
   </div>
@@ -147,7 +155,7 @@
       <div class="form-label" style="margin-bottom:8px;" id="lbl-system-detect">SISTEMA DETECTADO</div>
       <div class="flex-row">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary)"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-        <div style="font-weight:600;" id="sys-info">MuzicMania v2.0.0 (Windows x64)</div>
+        <div style="font-weight:600;" id="sys-info">MuzicMania v2.0.1 (Windows x64)</div>
       </div>
     </div>
   </div>
@@ -192,7 +200,7 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
         <input type="text" id="install-dir" readonly value="C:\Program Files\MuzicMania">
         <button class="btn btn-secondary" id="btn-browse">Examinar</button>
       </div>
-      <span style="font-size:11px; color:var(--text-muted); margin-top:8px;" id="lbl-space">Espacio requerido: ~250 MB</span>
+      <span style="font-size:11px; color:var(--text-muted); margin-top:8px;" id="lbl-space">Espacio requerido: ~10 MB</span>
     </div>
   </div>
   <div class="btn-row">
@@ -217,7 +225,8 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
   <div class="glass-panel" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
     <div class="finish-icon">✓</div>
     <h2 id="lbl-finish-title" style="text-align:center;">¡Instalación Completada!</h2>
-    <p id="lbl-finish-desc" style="text-align:center; margin-bottom:24px;">MuzicMania está listo para usarse.</p>
+    <p id="lbl-finish-desc" style="text-align:center; margin-bottom:8px;">MuzicMania está listo para usarse.</p>
+    <div id="finish-path" style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:20px; word-break:break-all;"></div>
     <div style="display:flex; flex-direction:column; gap:8px; margin:0 auto; width:fit-content;">
       <label class="checkbox-wrapper"><input type="checkbox" id="chk-run" checked><div class="checkmark"></div><span id="lbl-run">Ejecutar MuzicMania ahora</span></label>
       <label class="checkbox-wrapper"><input type="checkbox" id="chk-desktop" checked><div class="checkmark"></div><span id="lbl-desktop">Crear acceso directo en el escritorio</span></label>

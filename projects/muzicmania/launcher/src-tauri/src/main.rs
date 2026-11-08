@@ -152,23 +152,46 @@ struct InstallerInfo {
     version: String,
     os: String,
     arch: String,
+    dir: String,
     install_path: String,
 }
 
 fn default_install_path() -> String {
-    let pf = std::env::var("PROGRAMFILES")
-        .or_else(|_| std::env::var("ProgramFiles"))
-        .unwrap_or_else(|_| "C:\\Program Files".to_string());
-    format!("{}\\MuzicMania", pf)
+    let local = std::env::var("LOCALAPPDATA")
+        .or_else(|_| std::env::var("LocalAppData"))
+        .unwrap_or_else(|_| "C:\\Users\\Public".to_string());
+    format!("{}\\MuzicMania", local)
+}
+
+fn installer_default_path() -> String {
+    std::fs::read_to_string(ipc_dir().join("default_dir.txt"))
+        .ok()
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(default_install_path)
+}
+
+fn current_install_path() -> String {
+    std::env::current_exe()
+        .ok()
+        .and_then(|p| p.parent().map(|d| d.to_string_lossy().to_string()))
+        .unwrap_or_else(default_install_path)
 }
 
 #[tauri::command]
 fn installer_info() -> InstallerInfo {
+    let installer_mode = std::env::args().any(|a| a == "--installer");
+    let dir = if installer_mode {
+        installer_default_path()
+    } else {
+        current_install_path()
+    };
     InstallerInfo {
-        version: "2.0.1".to_string(),
+        version: env!("CARGO_PKG_VERSION").to_string(),
         os: detect_windows_version(),
         arch: detect_architecture(),
-        install_path: default_install_path(),
+        dir: dir.clone(),
+        install_path: dir,
     }
 }
 
@@ -183,7 +206,16 @@ fn installer_set_lang(lang: u32) {
 fn installer_set_dir(dir: String) {
     let dir_path = ipc_dir();
     let _ = std::fs::create_dir_all(&dir_path);
-    let _ = std::fs::write(dir_path.join("dir.txt"), &dir);
+    let clean = dir
+        .trim()
+        .trim_end_matches(|c| c == '\\' || c == '/')
+        .to_string();
+    let value = if clean.is_empty() {
+        default_install_path()
+    } else {
+        clean
+    };
+    let _ = std::fs::write(dir_path.join("dir.txt"), value);
 }
 
 #[tauri::command]
@@ -196,7 +228,11 @@ fn installer_start_install() {
 #[tauri::command]
 fn installer_read_progress() -> String {
     let path = ipc_dir().join("progress.txt");
-    std::fs::read_to_string(&path).unwrap_or_default()
+    std::fs::read_to_string(&path)
+        .ok()
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| "0".to_string())
 }
 
 #[tauri::command]
@@ -229,6 +265,14 @@ if ($r -eq [System.Windows.Forms.DialogResult]::OK) { $d.SelectedPath }
 
 #[tauri::command]
 fn installer_force_close(app: tauri::AppHandle) {
+    installer_cancel(app);
+}
+
+#[tauri::command]
+fn installer_cancel(app: tauri::AppHandle) {
+    let dir = ipc_dir();
+    let _ = std::fs::create_dir_all(&dir);
+    let _ = std::fs::write(dir.join("cmd.txt"), "ABORT");
     INSTALLER_FORCE_CLOSE.store(true, Ordering::SeqCst);
     if let Some(win) = app.get_webview_window("installer") {
         let _ = win.close();
@@ -239,41 +283,62 @@ fn ipc_dir() -> std::path::PathBuf {
     std::env::temp_dir().join("muzicmania-ipc")
 }
 
+fn ps_quote(value: &str) -> String {
+    value.replace('\'', "''")
+}
+
 #[tauri::command]
-fn installer_finish(run: bool, desktop: bool, taskbar: bool, changelog: bool) {
+fn installer_finish(app: tauri::AppHandle, run: bool, desktop: bool, taskbar: bool, changelog: bool) {
     let dir_path = ipc_dir();
-    let install_dir = std::fs::read_to_string(dir_path.join("dir.txt")).unwrap_or_else(|_| default_install_path());
+    let install_dir = std::fs::read_to_string(dir_path.join("dir.txt"))
+        .ok()
+        .map(|s| s.trim().trim_end_matches(|c| c == '\\' || c == '/').to_string())
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(default_install_path);
     let exe_path = format!("{}\\muzicmania.exe", install_dir);
+    let exe_quoted = ps_quote(&exe_path);
+    let dir_quoted = ps_quote(&install_dir);
 
     if desktop {
         let ps = format!(
             "$WshShell = New-Object -comObject WScript.Shell; \
              $Shortcut = $WshShell.CreateShortcut(\"$([Environment]::GetFolderPath('Desktop'))\\MuzicMania.lnk\"); \
-             $Shortcut.TargetPath = \"{}\"; \
+             $Shortcut.TargetPath = '{}'; \
+             $Shortcut.WorkingDirectory = '{}'; \
+             $Shortcut.IconLocation = '{}'; \
              $Shortcut.Save()",
-            exe_path
+            exe_quoted, dir_quoted, exe_quoted
         );
-        let _ = std::process::Command::new("powershell").args(["-NoProfile", "-Command", &ps]).output();
+        let _ = std::process::Command::new("powershell")
+            .args(["-NoProfile", "-NonInteractive", "-Command", &ps])
+            .output();
     }
 
     if taskbar {
         let ps = format!(
             "$Shell = New-Object -ComObject Shell.Application; \
-             $Folder = $Shell.NameSpace(\"{}\"); \
-             $File = $Folder.ParseName(\"muzicmania.exe\"); \
-             $Verb = $File.Verbs() | Where-Object {{ $_.Name -match 'taskbar' -or $_.Name -match 'barra de tareas' }}; \
-             if ($Verb) {{ $Verb.DoIt() }}",
-            install_dir
+             $Folder = $Shell.NameSpace('{}'); \
+             $File = $Folder.ParseName('muzicmania.exe'); \
+             if ($File) {{ $Verb = $File.Verbs() | Where-Object {{ $_.Name -match 'taskbar' -or $_.Name -match 'barra de tareas' }}; if ($Verb) {{ $Verb.DoIt() }} }}",
+            dir_quoted
         );
-        let _ = std::process::Command::new("powershell").args(["-NoProfile", "-Command", &ps]).output();
+        let _ = std::process::Command::new("powershell")
+            .args(["-NoProfile", "-NonInteractive", "-Command", &ps])
+            .output();
     }
 
     if changelog {
-        let _ = std::process::Command::new("cmd").args(["/c", "start", "https://muzicmania.vercel.app/changelog"]).output();
+        let _ = std::process::Command::new("cmd")
+            .args(["/c", "start", "https://muzicmania.vercel.app/changelog"])
+            .output();
     }
 
     let cmd = if run { "LAUNCH" } else { "DONE" };
     let _ = std::fs::write(dir_path.join("cmd.txt"), cmd);
+    INSTALLER_FORCE_CLOSE.store(true, Ordering::SeqCst);
+    if let Some(win) = app.get_webview_window("installer") {
+        let _ = win.close();
+    }
 }
 
 #[tauri::command]
@@ -291,7 +356,11 @@ fn installer_write_cmd(cmd: String) {
 #[tauri::command]
 fn installer_read_status() -> String {
     let path = ipc_dir().join("status.txt");
-    std::fs::read_to_string(&path).unwrap_or_default()
+    std::fs::read_to_string(&path)
+        .ok()
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| "READY".to_string())
 }
 
 fn detect_windows_version() -> String {
@@ -364,12 +433,13 @@ fn main() {
                     "installer",
                     WebviewUrl::App("installer.html".into()),
                 )
-                .inner_size(520.0, 480.0)
+                .inner_size(620.0, 620.0)
                 .center()
                 .resizable(false)
                 .maximizable(false)
                 .title("MuzicMania — Instalación")
                 .decorations(true)
+                .data_directory(std::env::temp_dir().join("muzicmania-installer-webview"))
                 .build()
                 .expect("Failed to create installer window");
 
@@ -402,7 +472,7 @@ fn main() {
                 "launcher",
                 WebviewUrl::App("index.html".into()),
             )
-            .inner_size(440.0, 400.0)
+            .inner_size(520.0, 560.0)
             .center()
             .resizable(false)
             .maximizable(false)
@@ -448,6 +518,7 @@ fn main() {
             installer_read_log,
             installer_pick_dir,
             installer_force_close,
+            installer_cancel,
             installer_finish,
             is_first_run,
             mark_first_run_done,

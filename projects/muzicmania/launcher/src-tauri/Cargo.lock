@@ -2125,7 +2125,7 @@ dependencies = [
 
 [[package]]
 name = "muzicmania"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "sea-orm",
  "serde",

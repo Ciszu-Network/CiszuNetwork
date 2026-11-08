@@ -1,0 +1,26 @@
+MUZICMANIA SOFTWARE LICENSE AGREEMENT
+
+Copyright (c) 2026 Ciszu Network — Ciszuko Antony (Francisco Garcia). All rights reserved.
+
+1. GRANT OF LICENSE
+   This software is provided for personal, non-commercial use only.
+   You may install and use one copy of the software on a single device.
+
+2. RESTRICTIONS
+   You may not modify, reverse engineer, decompile, or disassemble
+   this software. Redistribution without explicit permission is prohibited.
+
+3. OWNERSHIP
+   All title, ownership rights, and intellectual property rights to
+   this software belong exclusively to Ciszu Network y Ciszuko Antony.
+
+4. TERMINATION
+   This license is effective until terminated. It will terminate
+   automatically without notice if you fail to comply with its terms.
+
+5. DISCLAIMER OF WARRANTY
+   This software is provided "AS IS" without warranty of any kind.
+   The author is not liable for any damages arising from its use.
+
+MuzicMania by Ciszu Network — Música, neón y precisión competitiva.
+https://muzicmania.vercel.app

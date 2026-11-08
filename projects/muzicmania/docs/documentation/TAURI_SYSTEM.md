@@ -41,10 +41,11 @@ Este documento es la fuente de verdad técnica de la integración desktop del ju
 | `src-tauri/src/main.rs` | Listo | Tauri v2 builder con `.setup()` |
 | `src-tauri/build.rs` | Listo | `tauri_build::build()` |
 | `src-tauri/icons/` | Listo | 32x32, 128x128, 128x128@2x, icon.ico, icon.icns, PNG de Windows Store |
-| `@tauri-apps/cli v2.11.2` | Instalado | En devDependencies del workspace |
-| Scripts npm (`tauri:build`) | Listos | `pnpm tauri:build` |
-| Página `/download` | Lista | `src/app/download/page.tsx` con link a GitHub Releases |
-| Rust / Cargo / rustup | PENDIENTE | Único prerequisito faltante en la máquina de build |
+| `@tauri-apps/cli v2.11.4` | Instalado | En devDependencies del workspace |
+| Script de build | Listo | `launcher/build-installer.ps1` compila NSIS y publica el artefacto |
+| Instalador custom NSIS | Listo | UI WebView2 multiidioma, progreso, licencia, ruta, atajos y desinstalador |
+| Página `/download` | Lista | `src/app/download/page.tsx`; fallback a GitHub Releases |
+| Rust / Cargo / rustup | Listo | Rust 1.96.1; compilación release verificada |
 
 > La carpeta `src-tauri/` vive actualmente en **`launcher/src-tauri/`** dentro del proyecto
 > (código del launcher de escritorio), con `splash/`, `nsis-lang/`, `templates/` y los iconos
@@ -77,7 +78,7 @@ Para encapsular Next.js 15 en Tauri se analizaron dos enfoques arquitectónicos.
   - **Actualizaciones inmediatas**: cualquier cambio en la web (Next.js en Vercel) se refleja
     al instante en la app de escritorio, sin re-descargar el `.exe`.
   - **Soporte dinámico total**: conserva SSR, APIs, Server Actions y Supabase Auth/cookies.
-  - **Binario ultra-ligero**: instalador final de ~3–4 MB porque no empaqueta assets estáticos.
+  - **Binario ultra-ligero**: instalador final de ~1.6 MB porque no empaqueta assets estáticos.
   - **Rendimiento**: WebView2 (Chromium) con aceleración por hardware por defecto, ideal para
     un juego rítmico.
 
@@ -113,16 +114,16 @@ Define el paquete Rust, las dependencias de Tauri y las características habilit
 ```toml
 [package]
 name = "muzicmania"
-version = "2.0.0"
+version = "2.0.1"
 description = "MuzicMania 2.0 - Ecosistema Rítmico de Alto Rendimiento"
 authors = ["Ciszuko Antony"]
 edition = "2021"
 
 [build-dependencies]
-tauri-build = { version = "2.0.0", features = [] }
+tauri-build = { version = "2.0.1", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0", features = ["devtools"] }
+tauri = { version = "2.0.1", features = ["devtools"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 ```
@@ -159,7 +160,7 @@ La ventana es redimensionable, centrada y con tema oscuro; el CSP se deja a carg
   },
   "bundle": {
     "active": true,
-    "targets": ["nsis", "msi"],
+    "targets": ["nsis"],
     "identifier": "com.ciszunetwork.muzicmania",
     "icon": [
       "icons/32x32.png",
@@ -210,52 +211,63 @@ fn main() {
 
 ### 5.2 Compilar
 
-```bash
-# Opción 1: script automático (recomendado)
-powershell -ExecutionPolicy Bypass -File scripts/tauri-setup.ps1
+```powershell
+# Compila NSIS, aplica el parche de UI custom y copia a descargas
+powershell -ExecutionPolicy Bypass -File launcher/build-installer.ps1
 
-# Opción 2: comando directo del workspace
-pnpm tauri:build
-
-# Build solo NSIS + parche de idiomas
-pnpm tauri:build:nsis
+# Alternativa desde el launcher
+launcher\src-tauri\BUILD.bat
 ```
+
+El script usa el CLI de Tauri del workspace (`@tauri-apps/cli 2.11.4`), el target
+`x86_64-pc-windows-msvc`, `NSIS` y `--no-sign`. El parche se aplica con
+`website/scripts/patch-nsis-lang.ps1`.
 
 ### 5.3 Output esperado
 
 ```
-launcher/src-tauri/target/release/bundle/
-├── msi/MuzicMania_2.0.0_x64_en-US.msi   # Instalador MSI (recomendado)
-└── nsis/MuzicMania_2.0.0_x64-setup.exe  # Instalador NSIS
+launcher/src-tauri/target/x86_64-pc-windows-msvc/release/
+├── muzicmania.exe
+├── bundle/nsis/MuzicMania_2.0.1_x64-setup.exe
+└── nsis/x64/nsis-output.exe
 ```
+
+El artefacto final pesa ~1.6 MB comprimido. `build-installer.ps1` lo publica en
+`website/public/downloads/` y `launcher/downloads/` con los nombres
+`MuzicMania(v2.0.1)_InstallerSetup(v2.1.3)_Windows10/11_x64.exe`.
 
 ## 6. Instaladores: MSI y NSIS
 
-| Instalador | Ventaja | Uso |
+| Instalador | Estado | Uso |
 |---|---|---|
-| **MSI** | Instalación a nivel de sistema, Windows Installer nativo | Recomendado para distribución general |
-| **NSIS** | Personalizable (splash, idiomas, extras), compresión potente | Alternativa con branding propio |
+| **MSI** | No compilado | No se distribuye actualmente |
+| **NSIS** | Activo | Instalador custom multiidioma para Windows 10/11 x64 |
 
-El flujo NSIS de MuzicMania se complementa con scripts de post-proceso:
+El NSIS usa `installMode: currentUser` y una UI WebView2 embebida
+(`splash/installer.html` + `installer.js`) con 18 idiomas, licencia, selección de
+directorio, progreso, desinstalador y post-acciones. El flujo oculto de NSIS copia los
+archivos; la UI escribe `dir.txt` y recibe estado por `%TEMP%\muzicmania-ipc`.
 
 | Script | Función |
 |---|---|
-| `scripts/patch-nsis-lang.ps1` | Parchea el instalador NSIS para inyectar idiomas (`nsis-lang/`) |
-| `scripts/patch-nsis-fix.ps1` | Correcciones de configuración del instalador NSIS |
-| `scripts/patch-simple.ps1` | Variante de parcheo para builds simples |
+| `website/scripts/patch-nsis-lang.ps1` | Parchea `installer.nsi`, inyecta la UI custom y recompila con `makensis` |
+| `launcher/build-installer.ps1` | Build completo, parche y copia del instalador final |
 
-El bundle NSIS puede incluir splash screens (`splash/index.html`, `splash/installer.html`) y
-plantillas en `templates/`. Ver las reglas globales de packaging en
-`` `INSTALLERS_SYSTEM.md` `` (ver ciszu).
+Los splash y plantillas viven en `launcher/src-tauri/splash/`. Ver las reglas globales de
+packaging en `` `INSTALLERS_SYSTEM.md` `` (ver ciszu).
 
 ## 7. Distribución vía GitHub Releases
 
-1. Crear un nuevo Release en GitHub: `v2.0.0`.
-2. Subir el `.msi` como asset con el nombre exacto: **`MuzicMania_x64_en-US.msi`**.
-3. La página `/download` ya tiene el link configurado a ese nombre.
+Release activo: `muzicmania-v2.0.1` en
+`Ciszu-Network/CiszuNetwork`. GitHub normaliza los paréntesis del nombre a puntos
+(`MuzicMania.v2.0.1._InstallerSetup.v2.1.3._Windows10_x64.exe`). El API route
+`/api/download/windows` sirve el archivo local si existe y, si no, redirige al asset del
+release con esa normalización. Se puede cambiar la base con
+`MUZICMANIA_INSTALLER_RELEASE_URL`.
 
-> Alternativa de referencia: la carpeta `launcher/downloads/` almacena builds locales
-> (`MuzicMania(v2.0.1)_InstallerSetup(v2.1.3)_Windows10_x64.exe`), ignorados por git.
+> `website/public/downloads/` y `launcher/downloads/` están ignorados por git. En Vercel se
+> usa el redirect al release; para pruebas locales el archivo real queda en ambas carpetas.
+> El instalador no está firmado: SmartScreen puede pedir confirmación.
 
 ## 8. Implementación frontend
 
@@ -304,10 +316,10 @@ Con la estrategia de webview shell, no de forma completa: requiere red para carg
 consultar Supabase. Es un trade-off aceptado por el modelo de actualizaciones instantáneas.
 
 **¿Cuánto pesa el instalador?**
-~3–4 MB, porque no incluye los assets del juego (se sirven desde la web/CDN).
+~1.6 MB comprimido, porque no incluye los assets del juego (se sirven desde la web/CDN).
 
 **¿Soporta macOS o Linux?**
-La configuración actual apunta a `nsis`/`msi` (Windows). Tauri v2 es multiplataforma, así que
+La configuración actual apunta a `nsis` (Windows). Tauri v2 es multiplataforma, así que
 los targets macOS/Linux podrían añadirse ajustando `bundle.targets` y generando iconos
 adicionales.
 
@@ -320,4 +332,4 @@ En `launcher/src-tauri/` dentro del proyecto MuzicMania.
 - `` `INSTALLERS_SYSTEM.md` `` (ver ciszu) — packaging e instaladores corporativos.
 - `` `DOC_EXPORT_PROTOCOLS.md` `` — exportación de la documentación oficial del juego.
 - `launcher/src-tauri/` — código fuente de la integración.
-- `scripts/tauri-setup.ps1` — script de setup de Tauri.
+- `launcher/build-installer.ps1` — build y publicación del instalador.
