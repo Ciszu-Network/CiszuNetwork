@@ -13,6 +13,13 @@ interface ProfileRow {
   username: string | null;
   display_name: string | null;
   avatar_url: string | null;
+  banner_url?: string | null;
+  bio?: string | null;
+  country?: string | null;
+  languages?: string[] | null;
+  role?: string | null;
+  created_at?: string | null;
+  email_verified?: boolean | null;
 }
 
 export default function ProfilePage() {
@@ -43,7 +50,7 @@ export default function ProfilePage() {
       decoded = raw;
     }
 
-    const query = supabase.from('profiles').select('id, username, display_name, avatar_url');
+    const query = supabase.from('profiles').select('id, username, display_name, avatar_url, banner_url, bio, country, languages, role, created_at, email_verified');
     const request = decoded.startsWith('@')
       ? query.ilike('username', decoded.slice(1).toLowerCase())
       : query.eq('id', decoded);
@@ -60,6 +67,13 @@ export default function ProfilePage() {
           username: row.username,
           displayName: row.display_name,
           avatarUrl: row.avatar_url,
+          bannerUrl: row.banner_url,
+          bio: row.bio,
+          country: row.country,
+          languages: row.languages,
+          role: row.role,
+          createdAt: row.created_at,
+          emailVerified: row.email_verified,
         });
         setNotFound(false);
       }

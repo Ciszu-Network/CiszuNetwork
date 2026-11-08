@@ -32,6 +32,10 @@ export default function AvatarUploadModal({ isOpen, onClose, userId, onUploadSuc
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       
+      if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        setError('Formato no permitido. Usa JPG, PNG o WebP.');
+        return;
+      }
       // Limit size to 5MB
       if (file.size > 5 * 1024 * 1024) {
         setError('La imagen es muy pesada. Límite: 5MB.');
@@ -95,31 +99,17 @@ export default function AvatarUploadModal({ isOpen, onClose, userId, onUploadSuc
       const blob = await createCroppedImage();
       if (!blob) throw new Error('Error al procesar la imagen.');
 
-      // Nota sobre Moderación: Aquí se podría llamar a una API de moderación (Sightengine, AWS Rekognition)
-      // para validar si la imagen es +18 o gore antes de subirla al bucket.
-
-      const fileExt = 'jpeg';
-      const fileName = `${userId}_${Date.now()}.${fileExt}`;
-      const filePath = `${userId}/${fileName}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, blob, { contentType: 'image/jpeg', upsert: true });
-
-      if (uploadError) {
-        throw new Error('Error al subir la imagen. Verifica que el bucket "avatars" exista y tenga permisos.');
-      }
-
-      const { data: { publicUrl } } = supabase.storage.from('avatars').getPublicUrl(filePath);
-
-      // Actualizar perfil
-      const { error: dbError } = await supabase
-        .from('profiles')
-        .update({ avatar_url: publicUrl })
-        .eq('id', userId);
-
-      if (dbError) throw dbError;
-
+      const form = new FormData();
+      form.append('file', blob, `${userId}_${Date.now()}.jpeg`);
+      const { data: session } = await supabase.auth.getSession();
+      const response = await fetch('/api/profile/avatar', {
+        method: 'POST',
+        headers: { ...(session.session?.access_token ? { Authorization: `Bearer ${session.session.access_token}` } : {}) },
+        body: form,
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok || !data.avatar_url) throw new Error(data.error || 'No se pudo subir el avatar.');
+      const publicUrl = String(data.avatar_url);
       onUploadSuccess(publicUrl);
       onClose();
     } catch (err: any) {

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Icon, useDebugMode } from '@ciszu/ui';
+import RoomBadgeLineup from './RoomBadgeLineup';
 import { supabase } from '@/config/supabase';
 import { TRACKS_DATA } from '@/data/tracks';
 import type { CustomLevelDetail, CustomLevelSummary } from './LevelStudio';
@@ -378,6 +379,10 @@ export default function MultiplayerLobby({
                 {songs.map((song) => <option key={song.kind === 'static' ? `s:${song.trackId}` : `c:${song.id}`} value={song.kind === 'static' ? `static:${song.trackId}` : `custom:${song.id}`}>{song.title}</option>)}
               </select>
             )}
+          </div>
+
+          <div className="mt-3">
+            <RoomBadgeLineup players={room.players} currentUserId={userId} />
           </div>
 
           <div className="mt-4 grid gap-2 sm:grid-cols-2">

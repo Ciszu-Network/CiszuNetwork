@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useMemo, useState } from 'react';
 import { Icon, Modal, useToast } from '@ciszu/ui';
@@ -81,7 +81,7 @@ export default function BadgesSection({ userId, isOwnProfile }: { userId: string
       .then((res) => (res.ok ? res.json() : null))
       .then((data: { badges?: BadgeItem[]; favorites?: string[] } | null) => {
         if (!alive) return;
-        setBadges(Array.isArray(data?.badges) ? data.badges.filter((badge) => badge.level > 0) : []);
+        setBadges(Array.isArray(data?.badges) ? data.badges : []);
         setFavorites(Array.isArray(data?.favorites) ? data.favorites : []);
       })
       .catch(() => undefined)
@@ -116,7 +116,7 @@ export default function BadgesSection({ userId, isOwnProfile }: { userId: string
   }, [badges, query, category, rarity, sort]);
 
   const toggleFavorite = async (badge: BadgeItem) => {
-    if (!isOwnProfile || saving) return;
+    if (!isOwnProfile || saving || badge.level <= 0) return;
     const active = favorites.includes(badge.id);
     if (!active && favorites.length >= 3) {
       toast(t.favoriteLimit, 'error');
@@ -210,7 +210,7 @@ export default function BadgesSection({ userId, isOwnProfile }: { userId: string
                 title={`${badge.owners} ${t.owners} · ${badge.percent.toFixed(2)}%`}
                 className={`relative rounded-3xl border p-5 text-left transition hover:-translate-y-1 ${RARITY[badge.rarity.key] ?? RARITY.common}`}
               >
-                {isOwnProfile && (
+                {isOwnProfile && badge.level > 0 && (
                   <span
                     role="button"
                     tabIndex={0}

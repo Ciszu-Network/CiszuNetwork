@@ -1,4 +1,4 @@
-﻿import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createRateLimiter, parseJsonBody, firstZodMessage } from '@ciszunetwork/utils';
 import { adminClient, authenticate } from '../../auth/2fa/_lib';
@@ -56,7 +56,8 @@ async function fetchBadgeData(userId: string) {
       const level = Number(progress?.level ?? 0);
       const levels = Array.isArray(definition.levels) ? (definition.levels as Row[]) : [];
       const thresholds = Array.isArray(definition.thresholds) ? (definition.thresholds as number[]) : [];
-      const nextThreshold = level < thresholds.length ? thresholds[level] : null;
+      const rawNextThreshold = level < thresholds.length ? thresholds[level] : null;
+      const nextThreshold = level === 0 && rawNextThreshold === 0 && thresholds.length > 1 ? thresholds[1] : rawNextThreshold;
       const current = levels[Math.max(0, level - 1)] ?? levels[0] ?? {};
       return {
         id: definition.id,

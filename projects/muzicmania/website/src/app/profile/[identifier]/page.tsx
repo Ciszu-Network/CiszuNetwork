@@ -43,7 +43,7 @@ export default function DynamicProfilePage() {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        let query = supabase.from('profiles').select('*');
+        let query = supabase.from('profiles').select('id,username,display_name,avatar_url,banner_url,bio,country,languages,role,created_at,updated_at,email_verified,high_score,games_played,accuracy,rank');
         const idStr = decodeURIComponent(Array.isArray(identifier) ? identifier[0] : identifier);
 
         if (idStr.startsWith('@')) {
@@ -114,6 +114,16 @@ export default function DynamicProfilePage() {
   }, [identifier, currentUser?.id]);
 
   const isOwnProfile = currentUser?.id === profile?.id;
+  const isNewAccount = Boolean(profile?.created_at) && Date.now() - Date.parse(profile.created_at) < 3 * 24 * 60 * 60 * 1000;
+  const roleKey = (userRole || profile?.role || '').toLowerCase();
+  const roleStyles: Record<string, string> = {
+    owner: 'border-amber-300/50 bg-amber-400/10 text-amber-200',
+    admin: 'border-fuchsia-400/50 bg-fuchsia-400/10 text-fuchsia-200',
+    mod: 'border-orange-400/50 bg-orange-400/10 text-orange-200',
+    modder: 'border-orange-400/50 bg-orange-400/10 text-orange-200',
+    bot: 'border-violet-400/50 bg-violet-400/10 text-violet-200',
+    staff: 'border-cyan-400/50 bg-cyan-400/10 text-cyan-200',
+  };
 
   // Privacidad: 'friends' y 'private' limitan los datos detallados (records,
   // historial, logros, amistades, comentarios). El sistema de amigos aún no
@@ -204,6 +214,7 @@ export default function DynamicProfilePage() {
         
         {/* Profile Header Card */}
         <section className="relative p-8 md:p-12 rounded-[3.5rem] border border-white/10 bg-white/5 overflow-hidden backdrop-blur-xl mb-12 shadow-2xl">
+          {profile.banner_url && <img src={profile.banner_url} alt="" className="absolute inset-0 h-full w-full object-cover opacity-30" />}
           <div className="absolute top-0 right-0 w-96 h-96 bg-neon-blue/10 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/2" />
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-neon-purple/10 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/2" />
 
@@ -245,18 +256,36 @@ export default function DynamicProfilePage() {
                       Baneado por {banInfo.actor}
                     </span>
                   )}
-                  {userRole && (
-                    <>
-                      <span className="rounded-full border border-neon-cyan/40 bg-neon-cyan/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-cyan">
-                        {userRole}
-                      </span>
-                      {['owner', 'admin', 'mod'].includes(userRole) && (
-                        <span className="rounded-full border border-neon-pink/40 bg-neon-pink/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-pink">
-                          STAFF
-                        </span>
-                      )}
-                    </>
+                  {['owner', 'admin', 'mod', 'bot'].includes(roleKey) && (
+                    <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${roleStyles[roleKey] ?? roleStyles.staff}`}>
+                      {roleKey.toUpperCase()}
+                    </span>
                   )}
+                  {['owner', 'admin', 'mod'].includes(roleKey) && (
+                    <span className="rounded-full border border-cyan-400/40 bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-cyan-200">
+                      STAFF
+                    </span>
+                  )}
+                  {profile.email_verified && (
+                    <span className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-300">
+                      VERIFICADO
+                    </span>
+                  )}
+                  {isNewAccount && (
+                    <span className="rounded-full border border-lime-400/40 bg-lime-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-lime-300">
+                      NUEVO
+                    </span>
+                  )}
+                  {profile.country && (
+                    <span className="rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-white/60">
+                      {profile.country}
+                    </span>
+                  )}
+                  {(Array.isArray(profile.languages) ? profile.languages : []).map((language: string) => (
+                    <span key={language} className="rounded-full border border-neon-purple/30 bg-neon-purple/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-neon-purple">
+                      {language}
+                    </span>
+                  ))}
                 </div>
                 {accountStatus ? (
                   <p className="text-gray-500 font-bold text-sm max-w-md leading-relaxed mt-4 bg-white/5 p-4 rounded-xl border border-white/10">
@@ -273,7 +302,7 @@ export default function DynamicProfilePage() {
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest">
                 <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5">
                   <Icon name="calendar" size={16} className="text-neon-blue" />
-                  MIEMBRO DESDE {profile.updated_at ? new Date(profile.updated_at).getFullYear() : '-'}
+                  MIEMBRO DESDE {profile.created_at ? new Date(profile.created_at).getFullYear() : '-'}
                 </div>
                 <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/5">
                   <Icon name="shield-check" size={16} className="text-neon-green" />

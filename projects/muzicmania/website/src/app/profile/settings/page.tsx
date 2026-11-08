@@ -12,6 +12,16 @@ import AvatarUploadModal from '@/components/profile/AvatarUploadModal';
 import Image from 'next/image';
 import { usePageTitle } from '@/lib/usePageTitle';
 import { useT } from '@/hooks/useT';
+import { COUNTRIES } from '@/utils/countries';
+
+const LANGUAGES = [
+  { code: 'es', label: 'Español' }, { code: 'en', label: 'English' },
+  { code: 'pt', label: 'Português' }, { code: 'fr', label: 'Français' },
+  { code: 'de', label: 'Deutsch' }, { code: 'it', label: 'Italiano' },
+  { code: 'ja', label: '日本語' }, { code: 'ko', label: '한국어' },
+  { code: 'zh', label: '中文' }, { code: 'ru', label: 'Русский' },
+  { code: 'ar', label: 'العربية' }, { code: 'hi', label: 'हिन्दी' },
+] as const;
 
 
 export default function ProfileSettingsPage() {
@@ -26,6 +36,11 @@ export default function ProfileSettingsPage() {
   const [isAvatarModalOpen, setIsAvatarModalOpen] = useState(false);
   const [bio, setBio] = useState('');
   const [isSavingBio, setIsSavingBio] = useState(false);
+  const [displayName, setDisplayName] = useState('');
+  const [bannerUrl, setBannerUrl] = useState('');
+  const [country, setCountry] = useState('');
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
 
   useEffect(() => {
     if (isHydrated && !user) {
@@ -40,6 +55,10 @@ export default function ProfileSettingsPage() {
         if (data) {
           setProfileData(data);
           setBio(data.bio || '');
+          setDisplayName(data.display_name || '');
+          setBannerUrl(data.banner_url || '');
+          setCountry((data.country || '').toUpperCase());
+          setLanguages(Array.isArray(data.languages) ? data.languages : []);
         }
       }
     };
@@ -57,6 +76,28 @@ export default function ProfileSettingsPage() {
     { id: 'danger', label: 'Zona de Peligro', icon: <Icon name="warning" size={16} />, color: 'text-red-400' },
     { id: 'help', label: 'Ayuda / FAQ', icon: <Icon name="help" size={16} /> },
   ];
+
+  const saveProfile = async (patch: Record<string, unknown>, message: string) => {
+    setIsSavingProfile(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const response = await fetch('/api/profile/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', ...(session.session?.access_token ? { Authorization: `Bearer ${session.session.access_token}` } : {}) },
+        body: JSON.stringify(patch),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.issue || data.error || 'No se pudo guardar.');
+      setProfileData((current: any) => ({ ...current, ...(data.profile ?? patch) }));
+      if (patch.display_name && user) setUser({ ...user, display_name: String(patch.display_name) });
+      toast(message, 'success');
+    } catch (cause) {
+      toast(cause instanceof Error ? cause.message : 'No se pudo guardar.', 'error');
+      throw cause;
+    } finally {
+      setIsSavingProfile(false);
+    }
+  };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -134,15 +175,50 @@ export default function ProfileSettingsPage() {
                     disabled={isSavingBio || bio === (profileData.bio || '')}
                     onClick={async () => {
                       setIsSavingBio(true);
-                      await supabase.from('profiles').update({ bio }).eq('id', user.id);
-                      setProfileData({ ...profileData, bio });
-                      setIsSavingBio(false);
-                      toast('[SISTEMA]: {t.pages.profileSettings.bioLabel} actualizada.', 'success');
+                      try {
+                        await saveProfile({ bio }, 'Biografía actualizada.');
+                      } finally {
+                        setIsSavingBio(false);
+                      }
                     }}
                     className="px-6 py-2 bg-neon-blue/20 text-neon-blue font-bold text-xs uppercase rounded-lg border border-neon-blue/30 hover:bg-neon-blue hover:text-black transition-all disabled:opacity-50 flex items-center gap-2"
                   >
                     <Icon name="check" size={16} /> {isSavingBio ? 'Guardando' : 'Guardar {t.pages.profileSettings.bioLabel}'}
                   </button>
+                </div>
+              </div>
+
+              <div className="bg-white/5 p-6 rounded-2xl border border-white/10 space-y-4">
+                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Perfil público</label>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">
+                    Nombre visible
+                    <input value={displayName} onChange={(event) => setDisplayName(event.target.value)} maxLength={40} className="mt-1 w-full bg-black/80 border border-white/10 rounded-xl px-4 py-3 text-white font-bold" />
+                  </label>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">
+                    País
+                    <select value={country} onChange={(event) => setCountry(event.target.value)} className="mt-1 w-full bg-black/80 border border-white/10 rounded-xl px-4 py-3 text-white font-bold">
+                      <option value="">Sin país</option>
+                      {COUNTRIES.map((entry) => <option key={entry.code} value={entry.code.toUpperCase()}>{entry.name}</option>)}
+                    </select>
+                  </label>
+                </div>
+                <label className="block text-[9px] font-black uppercase tracking-widest text-gray-500">
+                  Banner (URL https)
+                  <input value={bannerUrl} onChange={(event) => setBannerUrl(event.target.value)} maxLength={500} placeholder="https://..." className="mt-1 w-full bg-black/80 border border-white/10 rounded-xl px-4 py-3 text-white font-bold" />
+                </label>
+                {bannerUrl && <div className="h-24 overflow-hidden rounded-xl border border-white/10 bg-black/40"><img src={bannerUrl} alt="" className="h-full w-full object-cover" /></div>}
+                <div>
+                  <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">Idiomas</p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {LANGUAGES.map((entry) => {
+                      const active = languages.includes(entry.code);
+                      return <button key={entry.code} type="button" onClick={() => setLanguages((current) => active ? current.filter((code) => code !== entry.code) : [...current, entry.code])} className={`rounded-full border px-3 py-1 text-[9px] font-black uppercase tracking-widest ${active ? 'border-neon-cyan/50 bg-neon-cyan/10 text-neon-cyan' : 'border-white/10 text-white/40'}`}>{entry.label}</button>;
+                    })}
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <button type="button" disabled={isSavingProfile || displayName.trim().length === 0} onClick={() => void saveProfile({ display_name: displayName.trim(), banner_url: bannerUrl || null, country: country || null, languages }, 'Perfil público actualizado.').catch(() => undefined)} className="px-6 py-2 bg-neon-cyan/20 text-neon-cyan font-bold text-xs uppercase rounded-lg border border-neon-cyan/30 hover:bg-neon-cyan hover:text-black transition-all disabled:opacity-50">{isSavingProfile ? 'Guardando...' : 'Guardar perfil'}</button>
                 </div>
               </div>
 
