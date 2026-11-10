@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MuzicMania - Offline</title>
+<style>
+  :root { --bg:#07070d; --panel:rgba(20,22,32,.78); --cyan:#0f9eff; --purple:#b026ff; --pink:#ff20bf; --green:#2ED573; --text:#f3f5ff; --muted:#9ba1b8; --border:rgba(255,255,255,.09); }
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,sans-serif;overflow:hidden;user-select:none}
+  *{box-sizing:border-box}
+  body{display:flex;flex-direction:column}
+  .glow{position:fixed;inset:-20%;background:radial-gradient(circle at 20% 20%,rgba(15,158,255,.12),transparent 40%),radial-gradient(circle at 80% 80%,rgba(176,38,255,.12),transparent 42%);pointer-events:none}
+  .top{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--border);position:relative;z-index:4}
+  .brand{font-weight:900;font-size:22px;letter-spacing:-1px;background:linear-gradient(135deg,var(--cyan),var(--purple) 65%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .badge{font-size:10px;letter-spacing:2px;text-transform:uppercase;border:1px solid var(--border);border-radius:999px;padding:6px 10px;color:var(--muted)}
+  .close{background:transparent;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;transition:all .2s}
+  .close:hover{color:#ff6b7a;border-color:#ff6b7a}
+  main{flex:1;min-height:0;position:relative;z-index:2;display:flex;flex-direction:column;overflow:auto}
+  #menu{width:min(980px,94vw);margin:auto;padding:28px 0;display:flex;flex-direction:column;gap:16px}
+  .kicker{font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(--cyan);font-weight:700;display:flex;align-items:center;gap:8px}
+  h1{font-size:clamp(26px,4vw,48px);line-height:1;letter-spacing:-2px;margin:4px 0 2px;background:linear-gradient(120deg,#fff,#a9d9ff 40%,#d7a8ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{font-size:13px;color:var(--muted);max-width:680px;line-height:1.6}
+  .difficulty{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+  .diff{border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--muted);padding:8px 14px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all .18s}
+  .diff:hover{color:#fff;border-color:var(--cyan);transform:translateY(-1px)}
+  .diff.active{border-color:var(--purple);background:rgba(176,38,255,.15);color:#fff}
+  #track-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .track{position:relative;display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;text-align:left;border:1px solid var(--border);background:var(--panel);border-radius:12px;padding:14px;color:var(--text);cursor:pointer;transition:all .2s;overflow:hidden}
+  .track:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,#0f9eff)}
+  .track:hover{transform:translateY(-2px);border-color:var(--accent,#0f9eff);box-shadow:0 12px 30px rgba(0,0,0,.25)}
+  .track.selected{border-color:var(--accent);background:rgba(255,255,255,.06)}
+  .cover{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#12131c);display:flex;align-items:center;justify-content:center;font-size:19px}
+  .tname{display:block;font-size:13px;font-weight:700;margin-bottom:3px}
+  .tmeta{display:block;font-size:10px;color:var(--muted);letter-spacing:.4px}
+  .best{font-size:10px;color:var(--muted);text-align:right;line-height:1.5}
+  .best strong{display:block;color:#fff;font-size:11px}
+  .start-row{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:4px}
+  .hint{font-size:11px;color:var(--muted)}
+  .primary{background:linear-gradient(135deg,var(--cyan),var(--purple));border:0;color:#fff;border-radius:9px;padding:12px 28px;font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;box-shadow:0 8px 24px rgba(15,158,255,.18)}
+  .primary:hover{transform:translateY(-1px);box-shadow:0 12px 30px rgba(15,158,255,.3)}
+  .primary:disabled{opacity:.35;cursor:not-allowed}
+  #game{position:fixed;inset:58px 0 0;display:none;background:#03040a;z-index:3;flex-direction:column}
+  #game.active{display:flex}
+  .hud{height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--border);gap:16px}
+  .hud-group{display:flex;gap:20px;align-items:center;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+  .hud strong{color:#fff;font-size:18px;letter-spacing:-.5px;display:block;font-variant-numeric:tabular-nums}
+  .hud .combo strong{color:var(--cyan)}
+  #canvas-wrap{flex:1;position:relative;min-height:0}
+  #game-canvas{width:100%;height:100%;display:block}
+  .judgement{position:absolute;left:50%;top:26%;transform:translate(-50%,-50%);font-weight:900;font-size:28px;letter-spacing:2px;opacity:0;pointer-events:none;text-shadow:0 0 24px currentColor}
+  .judgement.show{animation:judge .45s ease both}
+  @keyframes judge{0%{opacity:0;transform:translate(-50%,-30%) scale(.8)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}100%{opacity:0;transform:translate(-50%,-70%) scale(1)}}
+  .keys{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:7px;color:rgba(255,255,255,.35);font-size:10px;letter-spacing:2px}
+  .key{border:1px solid var(--border);padding:4px 9px;border-radius:5px;background:rgba(0,0,0,.35)}
+  #results{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,4,10,.86);z-index:5}
+  #results.active{display:flex}
+  .result-card{width:min(430px,90vw);background:#10121d;border:1px solid var(--border);border-radius:16px;padding:28px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+  .result-grade{font-size:58px;font-weight:900;line-height:1;background:linear-gradient(135deg,var(--cyan),var(--purple),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;margin:8px 0 4px}
+  .result-title{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--muted)}
+  .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:18px 0}
+  .result-row{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:9px;text-align:left;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+  .result-row strong{display:block;color:#fff;font-size:16px;margin-top:3px;letter-spacing:0}
+  .result-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .secondary{background:rgba(255,255,255,.05);border:1px solid var(--border);color:#fff;border-radius:8px;padding:11px 18px;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer}
+  .secondary:hover{border-color:var(--cyan)}
+  footer{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;color:var(--muted);font-size:9px;border-top:1px solid var(--border);z-index:6;background:var(--bg)}
+  @media(max-width:700px){#track-list{grid-template-columns:1fr}.hud-group{gap:10px}.hud strong{font-size:14px}.best{display:none}}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="top">
+  <div class="brand">MuzicMania</div>
+  <div style="display:flex;gap:8px;align-items:center"><span class="badge">Offline · Local levels</span><button class="close" id="close-app" title="Close">×</button></div>
+</div>
+<main>
+  <section id="menu">
+    <div class="kicker">■ Local session</div>
+    <h1>Play offline.</h1>
+    <p class="sub">The complete launcher pages need the network. This local mode includes the four official Genesis Neon tracks, generated charts and local best scores. No account, no leaderboard, no network required.</p>
+    <div class="difficulty" id="difficulty">
+      <button class="diff" data-diff="Easy">Easy</button>
+      <button class="diff active" data-diff="Normal">Normal</button>
+      <button class="diff" data-diff="Hard">Hard</button>
+      <button class="diff" data-diff="Expert">Expert</button>
+    </div>
+    <div id="track-list"></div>
+    <div class="start-row">
+      <span class="hint">Controls: D F J K or ← ↓ ↑ → · Esc pauses</span>
+      <button class="primary" id="start-btn">Start</button>
+    </div>
+  </section>
+</main>
+<section id="game">
+  <div class="hud">
+    <div class="hud-group"><span>Score<strong id="hud-score">0</strong></span><span class="combo">Combo<strong id="hud-combo">0</strong></span></div>
+    <div class="hud-group"><span>Accuracy<strong id="hud-acc">100%</strong></span><span>Misses<strong id="hud-miss">0</strong></span></div>
+    <button class="secondary" id="pause-btn">Pause</button>
+  </div>
+  <div id="canvas-wrap"><canvas id="game-canvas"></canvas><div class="judgement" id="judgement"></div><div class="keys"><span class="key">D</span><span class="key">F</span><span class="key">J</span><span class="key">K</span></div></div>
+  <div id="results"><div class="result-card"><div class="result-title" id="result-track">Track</div><div class="result-grade" id="result-grade">S</div><div class="result-title">Final score</div><div class="result-grid"><div class="result-row">Score<strong id="result-score">0</strong></div><div class="result-row">Accuracy<strong id="result-acc">100%</strong></div><div class="result-row">Max combo<strong id="result-combo">0</strong></div><div class="result-row">Misses<strong id="result-miss">0</strong></div></div><div class="result-actions"><button class="secondary" id="retry-btn">Replay</button><button class="secondary" id="back-btn">Track list</button></div></div></div>
+</section>
+<footer><span>© 2026 Ciszu Network · MuzicMania Offline</span><span>Local tracks · No network</span></footer>
+<script src="offline-game.js"></script>
+</body>
+</html>

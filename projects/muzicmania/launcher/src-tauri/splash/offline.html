@@ -61,9 +61,10 @@ document.addEventListener('keydown', e => {
 
 async function launchOffline() {
   try {
-    await window.__TAURI_INTERNALS__.invoke('launcher_ready');
+    await window.__TAURI_INTERNALS__.invoke('launcher_offline_game');
+    window.location.href = 'offline-game.html';
   } catch(e) {
-    alert("Error al iniciar modo offline. Asegúrate de iniciar desde el Launcher de Tauri.");
+    alert("Error al iniciar el juego offline.");
   }
 }
 </script>

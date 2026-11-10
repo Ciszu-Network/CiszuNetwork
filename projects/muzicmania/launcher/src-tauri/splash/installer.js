@@ -862,16 +862,27 @@ var FALLBACK = {
   "status-cancelled": "Installation cancelled",
   "status-completed": "Completed",
   "error-connection": "Could not connect to the installation service.",
-  "error-generic": "The installation could not be completed."
+  "error-generic": "The installation could not be completed.",
+  "maint-title": "MuzicMania is already installed",
+  "maint-desc": "An existing installation was found on this computer.",
+  "maint-version-label": "Installed version",
+  "maint-path-label": "Location",
+  "maint-note": "Updating or reinstalling keeps your account and local settings. Uninstall opens the official uninstaller.",
+  "btn-maint-close": "Close",
+  "btn-maint-uninstall": "Uninstall",
+  "btn-maint-update": "Update / Reinstall",
+  "maint-uninstall-warn": "The official uninstaller will open. Your account data is not affected; you can choose whether to keep or delete local app data."
 };
 
 var I18N = (window.INSTALLER_I18N && typeof window.INSTALLER_I18N === "object") ? window.INSTALLER_I18N : { "1033": FALLBACK };
 if (!I18N["1033"]) I18N["1033"] = FALLBACK;
-var currentLang = "1034";
+var currentLang = "1033";
 var isFinished = false;
 var isInstalling = false;
 var logConsumed = 0;
 var selectedDir = "";
+var installedInfo = null;
+var appInfo = null;
 var targetPct = 0;
 var shownPct = 0;
 var progressTimer = null;
@@ -887,56 +898,130 @@ function T(key) {
   return dict[key] || FALLBACK[key] || key;
 }
 
-function guessLang() {
-  var raw = (navigator.language || "es").toLowerCase();
-  if (raw.indexOf("es") === 0) return "1034";
-  if (raw.indexOf("pt") === 0) return "1046";
-  if (raw.indexOf("zh-tw") === 0 || raw.indexOf("zh-hk") === 0) return "1028";
-  if (raw.indexOf("zh") === 0) return "2052";
-  if (raw.indexOf("ru") === 0) return "1051";
-  if (raw.indexOf("ja") === 0) return "1041";
-  if (raw.indexOf("ko") === 0) return "1050";
-  if (raw.indexOf("fr") === 0) return "1036";
-  if (raw.indexOf("de") === 0) return "1031";
-  if (raw.indexOf("it") === 0) return "1040";
-  if (raw.indexOf("nl") === 0) return "1043";
-  if (raw.indexOf("pl") === 0) return "1045";
-  if (raw.indexOf("ar") === 0) return "1025";
-  if (raw.indexOf("tr") === 0) return "1055";
-  if (raw.indexOf("cs") === 0) return "1029";
-  if (raw.indexOf("hu") === 0) return "1038";
-  if (raw.indexOf("sv") === 0) return "1053";
-  return "1033";
-}
-
 function applyLang(lang) {
   if (!I18N[lang]) lang = "1033";
   currentLang = lang;
-  var base = I18N["1033"] || FALLBACK;
+  var base = FALLBACK;
   for (var key in base) {
     if (Object.prototype.hasOwnProperty.call(base, key)) setText(key, T(key));
   }
   document.documentElement.lang = lang === "2052" ? "zh-CN" : lang === "1028" ? "zh-TW" : lang === "1034" ? "es" : lang === "1033" ? "en" : "und";
   document.body.classList.toggle("rtl", lang === "1025");
-  var sel = $("sel-lang");
-  if (sel) sel.value = lang;
+  var options = document.querySelectorAll(".lang-option");
+  for (var i = 0; i < options.length; i++) {
+    var isCurrent = options[i].getAttribute("data-lang") === lang;
+    options[i].classList.toggle("selected", isCurrent);
+    options[i].setAttribute("aria-selected", isCurrent ? "true" : "false");
+    if (isCurrent) {
+      var flag = options[i].getAttribute("data-flag");
+      var label = options[i].querySelector("span");
+      var currentFlag = $("lang-current-flag");
+      var currentLabel = $("lang-current-label");
+      if (currentFlag) currentFlag.src = "flags/" + flag + ".svg";
+      if (currentLabel) currentLabel.textContent = label ? label.textContent : "";
+      var footerFlag = $("footer-lang-flag");
+      var footerLabel = $("footer-lang-label");
+      if (footerFlag) footerFlag.src = "flags/" + flag + ".svg";
+      if (footerLabel) footerLabel.textContent = label ? label.textContent : "";
+    }
+  }
+  decorateIcons();
   try { localStorage.setItem("muzicmania-installer-lang-v2", lang); } catch (e) {}
   tauriInvoke("installer_set_lang", { lang: parseInt(lang, 10) });
 }
 
-function goView(id) {
-  var views = document.querySelectorAll(".view");
-  for (var i = 0; i < views.length; i++) views[i].classList.remove("active");
+function decorateIcons() {
+  var icons = {
+    "lbl-lang-title": "i-globe",
+    "lbl-welcome-title": "i-sparkles",
+    "lbl-license-title": "i-shield",
+    "lbl-dir-title": "i-folder",
+    "lbl-inst-title": "i-download",
+    "lbl-finish-title": "i-check",
+    "lbl-finish-desc": "i-info",
+    "lbl-system-detect": "i-monitor",
+    "lbl-space": "i-disk",
+    "lbl-modal-title": "i-warning",
+    "maint-title": "i-warning",
+    "maint-desc": "i-info",
+    "maint-note": "i-shield",
+    "lbl-accept": "i-lock",
+    "lbl-run": "i-play",
+    "lbl-desktop": "i-monitor",
+    "lbl-taskbar": "i-pin",
+    "lbl-changelog": "i-file",
+    "btn-lang-next": "i-arrow-right",
+    "btn-welcome-back": "i-arrow-left",
+    "btn-welcome-next": "i-arrow-right",
+    "btn-license-back": "i-arrow-left",
+    "btn-license-next": "i-shield",
+    "btn-browse": "i-folder",
+    "btn-dir-back": "i-arrow-left",
+    "btn-dir-install": "i-download",
+    "btn-finish": "i-check",
+    "btn-maint-close": "i-x",
+    "btn-maint-uninstall": "i-trash",
+    "btn-maint-update": "i-refresh",
+    "btn-modal-no": "i-arrow-left",
+    "btn-modal-yes": "i-x"
+  };
+  for (var id in icons) {
+    if (!Object.prototype.hasOwnProperty.call(icons, id)) continue;
+    var el = $(id);
+    if (!el) continue;
+    var old = el.querySelector(".icon");
+    if (old) old.remove();
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "icon");
+    svg.setAttribute("aria-hidden", "true");
+    var use = document.createElementNS("http://www.w3.org/2000/svg", "use");
+    use.setAttribute("href", "#" + icons[id]);
+    svg.appendChild(use);
+    el.insertBefore(svg, el.firstChild);
+  }
+}
+
+function setLangMenu(open) {
+  var select = $("lang-select");
+  var trigger = $("lang-trigger");
+  var menu = $("lang-menu");
+  if (!select || !trigger || !menu) return;
+  if (open) {
+    menu.classList.remove("closing");
+    select.classList.add("open");
+  } else if (select.classList.contains("open")) {
+    menu.classList.add("closing");
+    setTimeout(function() {
+      menu.classList.remove("closing");
+      select.classList.remove("open");
+    }, 160);
+  }
+  trigger.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function goView(id, back) {
+  var host = $("stage-host");
   var view = $(id);
-  if (view) view.classList.add("active");
+  if (!view) return;
+  if (host) host.setAttribute("data-dir", back ? "back" : "forward");
+  var leaving = document.querySelectorAll(".view.leaving");
+  for (var j = 0; j < leaving.length; j++) leaving[j].classList.remove("leaving");
+  var active = document.querySelector(".view.active");
+  if (active && active.id === id) return;
+  if (active) {
+    active.classList.remove("active");
+    active.classList.add("leaving");
+    setTimeout(function() { active.classList.remove("leaving"); }, 240);
+  }
+  view.classList.add("active");
 }
 
 function goBack() {
   var active = document.querySelector(".view.active");
   if (!active) return;
-  if (active.id === "v-welcome") goView("v-lang");
-  else if (active.id === "v-license") goView("v-welcome");
-  else if (active.id === "v-dir") goView("v-license");
+  if (active.id === "v-welcome") goView("v-lang", true);
+  else if (active.id === "v-license") goView("v-welcome", true);
+  else if (active.id === "v-dir") goView("v-license", true);
 }
 
 function onLicenseCheck() {
@@ -949,8 +1034,42 @@ function onBrowse() {
     if (dir) {
       selectedDir = dir;
       $("install-dir").value = dir;
+      updateDiskInfo(dir);
     }
   });
+}
+
+function formatBytes(bytes) {
+  if (!bytes || bytes <= 0) return "Unavailable";
+  var units = ["B", "KB", "MB", "GB", "TB"];
+  var index = Math.floor(Math.log(bytes) / Math.log(1024));
+  index = Math.max(0, Math.min(index, units.length - 1));
+  return (bytes / Math.pow(1024, index)).toFixed(index > 2 ? 1 : 0) + " " + units[index];
+}
+
+function updateDiskInfo(path) {
+  if (!path) return;
+  tauriInvoke("installer_disk_info", { path: path }).then(function(info) {
+    if (!info || !info.total_bytes) {
+      setText("req-disk", "Unavailable");
+      setText("dir-free", "Unavailable");
+      return;
+    }
+    var free = formatBytes(info.free_bytes);
+    var total = formatBytes(info.total_bytes);
+    var required = 100 * 1024 * 1024;
+    setText("req-disk", free + " free of " + total);
+    setText("dir-drive", info.drive || "—");
+    setText("dir-free", free + " free of " + total);
+    var warning = $("dir-warning");
+    var install = $("btn-dir-install");
+    var low = info.free_bytes > 0 && info.free_bytes < required;
+    if (warning) {
+      if (low) warning.textContent = "Not enough free space for a safe installation. Choose another folder or free up disk space.";
+      warning.style.display = low ? "flex" : "none";
+    }
+    if (install) install.disabled = low;
+  }).catch(function() {});
 }
 
 function log(msg, type) {
@@ -1018,6 +1137,8 @@ function readProgressAndLog() {
         var line = parts[i].trim();
         if (line) log(line, "ok");
       }
+      var full = $("inst-full-log");
+      if (full) full.textContent = logText;
     }
   });
 }
@@ -1027,11 +1148,23 @@ function validateDir(dir) {
   if (/^[a-zA-Z]:[\\\/]?$/.test(dir)) return false;
   if (/^\\\\[^\\]+\\?$/.test(dir)) return false;
   if (dir.indexOf("\n") !== -1 || dir.indexOf("\r") !== -1) return false;
+  var lower = dir.toLowerCase();
+  if (lower.indexOf("\\windows") !== -1) return false;
   return true;
+}
+
+function showDirError(message) {
+  var warning = $("dir-warning");
+  if (warning) {
+    warning.textContent = message;
+    warning.style.display = "flex";
+  }
+  window.MuzicRoadmap.setError("dir");
 }
 
 function failInstall(message) {
   isInstalling = false;
+  window.MuzicRoadmap.setAllError("install");
   if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
   if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
   setProgress(shownPct, T("status-error"));
@@ -1041,12 +1174,16 @@ function failInstall(message) {
 }
 
 function startInstall() {
+  if (isInstalling || !allowAction("install", 900)) return;
   var dir = $("install-dir").value.trim();
   if (!validateDir(dir)) {
-    log(T("error-generic"), "info");
+    showDirError("Choose a valid folder. Do not use a drive root or a Windows system directory.");
     return;
   }
+  var warning = $("dir-warning");
+  if (warning) warning.style.display = "none";
   selectedDir = dir;
+  window.MuzicRoadmap.complete("dir");
   goView("v-installing");
   resetProgress();
   isInstalling = true;
@@ -1100,14 +1237,17 @@ function finishInstall() {
   targetPct = 100;
   shownPct = 100;
   renderProgress();
+  window.MuzicRoadmap.setDone("install");
+  window.MuzicRoadmap.setDone("finish");
   setText("inst-status", T("status-done"));
   log(T("status-done"), "ok");
   if (selectedDir) setText("finish-path", selectedDir);
+  if (appInfo) setText("finish-meta", "MuzicMania v" + appInfo.version + " · " + appInfo.arch + " · Administrator install");
   setTimeout(function() { goView("v-finish"); }, 650);
 }
 
 function onFinish() {
-  if (!isFinished) return;
+  if (!isFinished || !allowAction("finish", 900)) return;
   var btn = $("btn-finish");
   if (btn) btn.disabled = true;
   tauriInvoke("installer_finish", {
@@ -1130,13 +1270,72 @@ window.showCloseModal = function() {
   if (modal) modal.classList.add("active");
 };
 
+var STAGES_NORMAL = [
+  { id: "lang", label: "Language", icon: "i-globe", viewId: "v-lang" },
+  { id: "welcome", label: "Welcome", icon: "i-sparkles", viewId: "v-welcome" },
+  { id: "license", label: "License", icon: "i-shield", viewId: "v-license" },
+  { id: "dir", label: "Directory", icon: "i-folder", viewId: "v-dir" },
+  { id: "install", label: "Install", icon: "i-download", viewId: "" },
+  { id: "finish", label: "Finish", icon: "i-check", viewId: "" }
+];
+var STAGES_INSTALLED = [
+  { id: "lang", label: "Language", icon: "i-globe", viewId: "v-lang" },
+  { id: "maintenance", label: "Maintenance", icon: "i-refresh", viewId: "v-maintenance" },
+  { id: "install", label: "Install", icon: "i-download", viewId: "" },
+  { id: "finish", label: "Finish", icon: "i-check", viewId: "" }
+];
+var actionLocks = {};
+
+function allowAction(key, ms) {
+  var now = Date.now();
+  if (actionLocks[key] && now - actionLocks[key] < ms) return false;
+  actionLocks[key] = now;
+  return true;
+}
+
+function roadmapNavigate(viewId) {
+  if (isInstalling || isFinished) {
+    window.MuzicRoadmap.setActive(isFinished ? "finish" : "install");
+    return;
+  }
+  goView(viewId, true);
+}
+
+function initRoadmap(installed) {
+  window.MuzicRoadmap.init("roadmap", installed ? STAGES_INSTALLED : STAGES_NORMAL, "lang", roadmapNavigate);
+}
+var eggClicks = 0;
+var eggTimer = null;
+
+function bindEasterEgg() {
+  var logo = $("brand-logo");
+  var cat = $("easter-cat");
+  if (!logo) return;
+  logo.addEventListener("click", function() {
+    if (document.body.classList.contains("easter-egg")) {
+      document.body.classList.remove("easter-egg");
+      eggClicks = 0;
+      return;
+    }
+    eggClicks += 1;
+    clearTimeout(eggTimer);
+    eggTimer = setTimeout(function() { eggClicks = 0; }, 1400);
+    if (eggClicks >= 5) document.body.classList.add("easter-egg");
+  });
+  if (cat) cat.addEventListener("click", function() { document.body.classList.remove("easter-egg"); eggClicks = 0; });
+}
+
 function init() {
+  bindEasterEgg();
   var saved = null;
   try { saved = localStorage.getItem("muzicmania-installer-lang-v2"); } catch (e) {}
-  if (!saved) saved = "1034";
+  if (!saved) saved = "1033";
   applyLang(saved);
+  initRoadmap(false);
 
   tauriInvoke("installer_info").then(function(info) {
+    installedInfo = info || null;
+    appInfo = info || null;
     if (info && info.dir) {
       selectedDir = info.dir;
       $("install-dir").value = info.dir;
@@ -1144,6 +1343,14 @@ function init() {
     if (info && info.version && info.os && info.arch) {
       $("sys-info").textContent = "MuzicMania v" + info.version + " (" + info.os + " " + info.arch + ")";
       setText("installer-version", "v" + info.version);
+      setText("req-os", info.os + " · " + info.arch);
+      if (info.webview2) setText("req-webview", "v" + info.webview2);
+    }
+    if (info && info.dir) updateDiskInfo(info.dir);
+    if (info && info.installed) {
+      initRoadmap(true);
+      setText("maint-version", info.installed_version || "—");
+      setText("maint-path", info.installed_path || info.dir || "—");
     }
   });
 
@@ -1152,22 +1359,68 @@ function init() {
     .then(function(text) { if (text) $("license-text").textContent = text; })
     .catch(function() {});
 
-  $("sel-lang").addEventListener("change", function() { applyLang(this.value); });
+  $("lang-trigger").addEventListener("click", function(event) {
+    event.stopPropagation();
+    setLangMenu(!$("lang-select").classList.contains("open"));
+  });
+  var langOptions = document.querySelectorAll(".lang-option");
+  for (var i = 0; i < langOptions.length; i++) {
+    langOptions[i].addEventListener("click", function(event) {
+      event.stopPropagation();
+      applyLang(this.getAttribute("data-lang"));
+      setLangMenu(false);
+    });
+  }
+  document.addEventListener("click", function() { setLangMenu(false); });
+  document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") setLangMenu(false);
+  });
   $("chk-license").addEventListener("change", onLicenseCheck);
-  $("btn-lang-next").addEventListener("click", function() { goView("v-welcome"); });
-  $("btn-welcome-back").addEventListener("click", function() { goView("v-lang"); });
-  $("btn-welcome-next").addEventListener("click", function() { goView("v-license"); });
-  $("btn-license-back").addEventListener("click", function() { goView("v-welcome"); });
-  $("btn-license-next").addEventListener("click", function() { goView("v-dir"); });
-  $("btn-dir-back").addEventListener("click", function() { goView("v-license"); });
+  $("btn-lang-next").addEventListener("click", function() {
+    if (!allowAction("lang-next", 500)) return;
+    window.MuzicRoadmap.complete("lang");
+    goView(installedInfo && installedInfo.installed ? "v-maintenance" : "v-welcome");
+  });
+  $("btn-maint-update").addEventListener("click", function() {
+    if (installedInfo && installedInfo.installed_path) {
+      selectedDir = installedInfo.installed_path;
+      $("install-dir").value = installedInfo.installed_path;
+      updateDiskInfo(installedInfo.installed_path);
+    }
+    window.MuzicRoadmap.reset(STAGES_NORMAL, "welcome", roadmapNavigate);
+    goView("v-welcome");
+  });
+  $("btn-maint-uninstall").addEventListener("click", function() {
+    if (!allowAction("maint-uninstall", 1200)) return;
+    if (!installedInfo || !installedInfo.installed_path) return;
+    if (!window.confirm(T("maint-uninstall-warn"))) return;
+    tauriInvoke("installer_run_uninstaller", { path: installedInfo.installed_path }).catch(function() {
+      window.alert(T("error-generic"));
+    });
+  });
+  $("btn-maint-close").addEventListener("click", function() {
+    if (!allowAction("maint-close", 700)) return;
+    tauriInvoke("installer_cancel").then(function() { window.close(); });
+  });
+  $("footer-lang").addEventListener("click", function() { if (!isInstalling && !isFinished) { window.MuzicRoadmap.setActive("lang"); goView("v-lang", true); } });
+  $("btn-welcome-back").addEventListener("click", function() { window.MuzicRoadmap.setActive("lang"); goView("v-lang", true); });
+  $("btn-welcome-next").addEventListener("click", function() { if (!allowAction("welcome-next", 500)) return; window.MuzicRoadmap.complete("welcome"); goView("v-license"); });
+  $("btn-license-back").addEventListener("click", function() { window.MuzicRoadmap.setActive("welcome"); goView("v-welcome", true); });
+  $("btn-license-next").addEventListener("click", function() { if (!allowAction("license-next", 500)) return; window.MuzicRoadmap.complete("license"); goView("v-dir"); });
+  $("btn-dir-back").addEventListener("click", function() { window.MuzicRoadmap.setActive("license"); goView("v-license", true); });
   $("btn-dir-install").addEventListener("click", startInstall);
   $("btn-browse").addEventListener("click", onBrowse);
   $("btn-finish").addEventListener("click", onFinish);
+  $("btn-install-cancel").addEventListener("click", function() { if (window.showCloseModal) window.showCloseModal(); });
   $("btn-modal-no").addEventListener("click", function() { $("close-modal").classList.remove("active"); });
   $("btn-modal-yes").addEventListener("click", function() {
     tauriInvoke("installer_cancel").then(function() { window.close(); });
   });
 
+  document.addEventListener("click", function(event) {
+    var link = event.target.closest && event.target.closest("a[data-external]");
+    if (link) { event.preventDefault(); tauriInvoke("open_url", { url: link.href }); }
+  });
   document.addEventListener("contextmenu", function(e) { e.preventDefault(); });
   document.addEventListener("keydown", function(e) {
     var k = (e.key || "").toLowerCase();

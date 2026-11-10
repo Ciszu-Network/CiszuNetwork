@@ -136,10 +136,13 @@ export default function LoginPage() {
   const [recovery, setRecovery] = useState<{ token: string; email: string } | null>(null);
 
   useEffect(() => {
-    // Si ya hay usuario logeado, mandarlo a su perfil o pedirle que cierre sesión.
-    if (user) {
-      router.push(`/profile/@${user.username}`);
+    // Si ya hay usuario logeado, mandarlo a su perfil salvo en el launcher,
+    // donde la sesión debe volver al host mediante el callback interceptado.
+    if (!user) return;
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('launcher') === '1') {
+      return;
     }
+    router.push(`/profile/@${user.username}`);
   }, [user, router]);
 
   const sectionVariants = {
@@ -171,6 +174,75 @@ export default function LoginPage() {
     setForm(prev => ({ ...prev, [name]: value }));
     validateField(name, value);
   };
+
+  const handleOAuth = async (provider: string) => {
+    const normalized = String(provider).toLowerCase();
+    const providerId = normalized.includes('microsoft')
+      ? 'azure'
+      : normalized.includes('discord')
+        ? 'discord'
+        : normalized.includes('apple')
+          ? 'apple'
+          : 'google';
+    const redirectTo = `${window.location.origin}/login${isLauncherLogin() ? '?launcher=1' : ''}`;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: providerId as 'google' | 'apple' | 'azure' | 'discord',
+      options: { redirectTo },
+    });
+    if (error) toast(error.message, 'error');
+  };
+
+  // Launcher de escritorio: reutiliza exactamente este login y devuelve la
+  // sesión a Tauri mediante una navegación interceptada por el host.
+  const isLauncherLogin = () =>
+    typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('launcher') === '1';
+
+  const returnToLauncher = (session: any, user: any, profile: any) => {
+    if (!isLauncherLogin() || !session) return false;
+    const payload = {
+      guest: false,
+      user_id: user?.id || session.user?.id || '',
+      email: user?.email || session.user?.email || '',
+      username: profile?.username || session.user?.email?.split('@')[0] || 'user',
+      display_name: profile?.display_name || session.user?.email || 'MuzicMania',
+      avatar_url: profile?.avatar_url || '',
+      role: profile?.role || 'user',
+      access_token: session.access_token || '',
+      refresh_token: session.refresh_token || '',
+    };
+    window.location.href = `/launcher-auth?session=${encodeURIComponent(JSON.stringify(payload))}`;
+    return true;
+  };
+
+  const finishLauncherFromSession = async () => {
+    const { data } = await supabase.auth.getSession();
+    const session = data.session;
+    if (!session) return;
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', session.user.id)
+      .maybeSingle();
+    returnToLauncher(session, session.user, profile);
+  };
+
+  useEffect(() => {
+    if (!isLauncherLogin()) return;
+    document.body.classList.add('launcher-auth');
+    const style = document.createElement('style');
+    style.textContent =
+      'body.launcher-auth a[href="/register"], body.launcher-auth [data-register] { display:none !important; }';
+    document.head.appendChild(style);
+    return () => {
+      document.body.classList.remove('launcher-auth');
+      style.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isLauncherLogin() || !user) return;
+    void finishLauncherFromSession();
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -294,6 +366,8 @@ export default function LoginPage() {
             settings_theme: darkMode ? 'dark' : 'light'
           })
           .eq('id', data.user.id);
+
+        if (returnToLauncher(data.session, data.user, profile)) return;
 
         setFeedback({ 
           isVisible: true, 
@@ -450,7 +524,13 @@ export default function LoginPage() {
               accessToken={twoFactor.token}
               email={twoFactor.email}
               siteName="MuzicMania"
-              onVerified={() => router.push('/')}
+              onVerified={() => {
+                if (isLauncherLogin()) {
+                  void finishLauncherFromSession();
+                  return;
+                }
+                router.push('/');
+              }}
               onCancel={() => {
                 setTwoFactor(null);
                 void supabase.auth.signOut();
@@ -563,9 +643,7 @@ export default function LoginPage() {
 
             {!isForgotPassword && (
               <>
-                <SharedOAuthProviders
-                  onSelect={(p) => toast(`OAuth de ${p} disponible en futura versión beta`, 'warning')}
-                />
+                <SharedOAuthProviders onSelect={handleOAuth} />
                 <AuthSecondaryActions
                   mode="login"
                   onForgotPassword={() => setIsForgotPassword(true)}

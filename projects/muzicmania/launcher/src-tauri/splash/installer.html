@@ -21,6 +21,7 @@
     --success: #2ED573;
     --border-light: rgba(255, 255, 255, 0.08);
   }
+  html { overflow: hidden; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", system-ui, sans-serif; user-select: none; }
   body { background: var(--bg-main); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; position: relative; }
   body.rtl { direction: rtl; }
@@ -36,7 +37,7 @@
   @keyframes slow-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   .window-frame { flex: 1; display: flex; flex-direction: column; z-index: 1; padding: 24px; position: relative; }
   .header { display: flex; justify-content: center; align-items: center; margin-bottom: 24px; animation: fade-down 0.8s ease-out; }
-  .header svg { max-width: 200px; height: auto; filter: drop-shadow(0 0 10px rgba(108,92,231,0.4)); }
+  .header svg, .header .brand-logo { max-width: 200px; width: auto; height: auto; display: block; filter: drop-shadow(0 0 10px rgba(108,92,231,0.4)); cursor: pointer; }
   .view { display: none; flex-direction: column; flex: 1; animation: fade-in 0.4s ease-out forwards; opacity: 0; }
   .view.active { display: flex; }
   @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -92,58 +93,202 @@
   .modal-overlay.active { display: flex; }
   .modal-content { background: var(--bg-panel); border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 16px 48px rgba(0,0,0,0.4); animation: fade-down 0.3s ease-out; }
   .finish-icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(46, 213, 115, 0.1); border: 2px solid var(--success); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; box-shadow: 0 0 20px rgba(46, 213, 115, 0.3); }
+  #v-finish .glass-panel { padding: 14px 18px; }
+  #v-finish .finish-icon { width: 48px; height: 48px; font-size: 24px; margin-bottom: 8px; }
+  #v-finish h2 { margin-bottom: 2px; }
+  #v-finish .checkbox-wrapper { margin-bottom: 6px; }
+  #v-finish .log-details { margin-top: 4px; }
   .center-content { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; flex: 1; }
   .flex-row { display: flex; gap: 12px; align-items: center; }
+  .lang-select { position: relative; width: 100%; }
+  .lang-trigger { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: rgba(0,0,0,.3); border: 1px solid var(--border-light); color: #fff; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all .2s; }
+  .lang-trigger:hover, .lang-select.open .lang-trigger { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-glow); }
+  .lang-trigger img, .lang-option img { width: 22px; height: 16px; object-fit: cover; border-radius: 2px; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(255,255,255,.15); }
+  .lang-trigger .chevron { margin-left: auto; color: var(--text-muted); font-size: 12px; transition: transform .2s; }
+  .lang-select.open .chevron { transform: rotate(180deg); }
+  .lang-menu { display: none; position: absolute; top: calc(100% + 6px); left: 0; right: 0; max-height: 240px; overflow-y: auto; background: #11131d; border: 1px solid var(--border-light); border-radius: 8px; padding: 6px; box-shadow: 0 16px 48px rgba(0,0,0,.5); z-index: 60; }
+  .lang-select.open .lang-menu { display: block; }
+  .lang-menu.closing { display: block; animation: menuOut .16s ease both; }
+  .modal-overlay.active .modal-content { animation: modalIn .22s cubic-bezier(.2,.8,.2,1) both; }
+  .modal-overlay.active { animation: fadeIn .16s ease both; }
+  .lang-option { width: 100%; display: flex; align-items: center; gap: 10px; padding: 9px 10px; border: 0; border-radius: 6px; background: transparent; color: var(--text-main); cursor: pointer; font-size: 13px; text-align: left; }
+  .lang-option:hover, .lang-option.selected { background: rgba(108,92,231,.18); }
+  .lang-option.selected::after { content: "✓"; margin-left: auto; color: var(--success); font-weight: 700; }
+  body.rtl .lang-option { text-align: right; }
+  body.rtl .lang-trigger .chevron { margin-left: 0; margin-right: auto; }
+  .svg-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
+  .icon { width: 1.05em; height: 1.05em; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; vertical-align: -0.18em; flex-shrink: 0; }
+  h1 .icon, h2 .icon, h3 .icon { margin-inline-end: 8px; }
+  .btn .icon { margin: 0; }
+  .btn { transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease; }
+  .btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .btn:active:not(:disabled) { transform: translateY(1px) scale(.985); }
+  .checkbox-wrapper { transition: color .18s ease, transform .18s ease; }
+  .checkbox-wrapper:hover { color: #fff; transform: translateX(2px); }
+  .checkbox-wrapper:active { transform: scale(.99); }
+  .checkmark { transition: transform .18s ease, background .18s ease, border-color .18s ease; }
+  .checkbox-wrapper:hover .checkmark { border-color: var(--primary); }
+  .lang-trigger:active { transform: scale(.995); }
+  .lang-option { transition: background .16s ease, transform .16s ease, color .16s ease; }
+  .lang-option:hover { transform: translateX(3px); }
+  .lang-option:active { transform: scale(.985); }
+  .lang-select.open .lang-menu { animation: menuIn .18s cubic-bezier(.2,.8,.2,1) both; }
+  .stage-host { position: relative; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+  .view { display: none; flex: 1; flex-direction: column; position: relative; animation: none; opacity: 1; }
+  .view.active { display: flex; animation: stageIn .32s cubic-bezier(.2,.8,.2,1) both; }
+  .view.leaving { display: flex; position: absolute; inset: 0; pointer-events: none; animation: stageOut .22s ease both; }
+  .stage-host[data-dir="back"] .view.active { animation-name: stageInBack; }
+  .stage-host[data-dir="back"] .view.leaving { animation-name: stageOutBack; }
+  .app-footer { flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 24px 12px; color: var(--text-muted); font-size: 10px; letter-spacing: .02em; z-index: 2; }
+  .footer-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .footer-lang { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; background: rgba(255,255,255,.04); border: 1px solid var(--border-light); border-radius: 999px; color: var(--text-main); cursor: pointer; font-size: 10px; transition: all .18s ease; }
+  .footer-lang:hover { border-color: var(--primary); color: #fff; transform: translateY(-1px); }
+  .footer-lang img { width: 18px; height: 13px; object-fit: cover; border-radius: 2px; }
+  .footer-lang .icon { width: 12px; height: 12px; }
+  .info-list { display: flex; flex-direction: column; gap: 7px; margin: 14px 0 0; }
+  .info-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; font-size: 12px; color: var(--text-muted); padding: 7px 9px; border-radius: 6px; background: rgba(255,255,255,.025); }
+  .info-row strong { color: var(--text-main); font-weight: 600; text-align: right; }
+  .info-row .icon { color: var(--primary); }
+  .info-row.warn .icon, .info-row.warn strong { color: #ffb020; }
+  .req-panel { margin-top: 14px; padding: 12px 14px; background: rgba(0,0,0,.22); border: 1px solid var(--border-light); border-radius: 8px; }
+  .req-title { display: flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; }
+  .req-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; font-size: 11px; color: var(--text-muted); }
+  .req-grid span { display: flex; align-items: center; gap: 6px; }
+  .req-grid .icon { color: #0f9eff; }
+  .pkg-list { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 12px; margin-top: 10px; font-size: 11px; color: var(--text-muted); }
+  .pkg-list span { display: flex; align-items: center; gap: 6px; }
+  .pkg-list .icon { color: var(--success); }
+  .log-tools { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; font-size: 10px; color: var(--text-muted); }
+  .log-details { margin-top: 8px; font-size: 11px; color: var(--text-muted); }
+  .log-details summary { cursor: pointer; color: #0f9eff; }
+  .full-log { max-height: 130px; overflow: auto; margin-top: 6px; padding: 9px; background: #000; border: 1px solid var(--border-light); border-radius: 6px; font: 10px/1.45 Consolas, monospace; color: #9adfbe; white-space: pre-wrap; }
+  *::-webkit-scrollbar { width: 8px; height: 8px; }
+  *::-webkit-scrollbar-track { background: rgba(255,255,255,.035); border-radius: 6px; }
+  *::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgba(108,92,231,.7), rgba(15,158,255,.55)); border-radius: 6px; }
+  *::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, rgba(138,125,242,.95), rgba(15,158,255,.85)); }
+  *::-webkit-scrollbar-corner { background: transparent; }
+  @keyframes stageIn { from { opacity: 0; transform: translateX(28px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes stageOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-24px); } }
+  @keyframes stageInBack { from { opacity: 0; transform: translateX(-28px); } to { opacity: 1; transform: translateX(0); } }
+  @keyframes stageOutBack { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(24px); } }
+  @keyframes menuIn { from { opacity: 0; transform: translateY(-6px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes menuOut { from { opacity: 1; transform: translateY(0) scale(1); } to { opacity: 0; transform: translateY(-5px) scale(.985); } }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @media (max-width: 640px), (max-height: 620px) {
+    .window-frame { padding: 14px 16px 6px; }
+    .header { margin-bottom: 12px; }
+    .header svg, .header .brand-logo { max-width: 160px; }
+    .glass-panel { padding: 14px; }
+    h2 { font-size: 18px; }
+    .btn-row { gap: 8px; flex-wrap: wrap; }
+    .btn { padding: 9px 14px; font-size: 12px; }
+    .app-footer { padding: 0 16px 8px; font-size: 9px; }
+    .req-grid, .pkg-list { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  }
 </style>
+<link rel="stylesheet" href="roadmap.css">
 </head>
 <body>
+<svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.5 3.6 5.5 3.6 9S14.4 18.5 12 21c-2.4-2.5-3.6-5.5-3.6-9S9.6 5.5 12 3Z"/></symbol>
+  <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3 1.4 4.6L18 9l-4.6 1.4L12 15l-1.4-4.6L6 9l4.6-1.4L12 3Z"/><path d="m19 15 .7 2.3L22 18l-2.3.7L19 21l-.7-2.3L16 18l2.3-.7L19 15Z"/><path d="m5 15 .7 2.3L8 18l-2.3.7L5 21l-.7-2.3L2 18l2.3-.7L5 15Z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6l8-3Z"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v7A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5v-9Z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.6 2.6L16 9"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="m15 4 5 5-3 1-4 4-1 3-3-3-4 4-1-1 4-4-3-3 3-1 4-4 1-3Z"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.9-4M4 4v5h5"/><path d="M4 13a8 8 0 0 0 14.9 4M20 20v-5h-5"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-warning" viewBox="0 0 24 24"><path d="M12 3 22 20H2L12 3Z"/><path d="M12 9v5M12 17.5v.1"/></symbol>
+  <symbol id="i-copyright" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9.5a4 4 0 1 0 0 5"/></symbol>
+  <symbol id="i-disk" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+  <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3"/></symbol>
+  <symbol id="i-package" viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M20 12H4M10 6l-6 6 6 6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.1"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5H5V6h5"/></symbol>
+  <symbol id="i-discord" viewBox="0 0 24 24"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3c-.2.4-.4.9-.6 1.3a18.3 18.3 0 0 0-5.5 0C9 3.9 8.8 3.4 8.6 3a19.8 19.8 0 0 0-4.9 1.4C.5 9-.3 13.6.1 18.1a19.9 19.9 0 0 0 6 3c.5-.7.9-1.4 1.2-2a13 13 0 0 1-1.9-.9l.5-.4a14.2 14.2 0 0 0 12.1 0l.5.4c-.6.3-1.2.6-1.9.9.3.7.7 1.4 1.2 2a19.9 19.9 0 0 0 6-3c.5-5.2-.8-9.7-3.5-13.7ZM8 15.3c-1.2 0-2.2-1.1-2.2-2.4S6.7 10.5 8 10.5s2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Z"/></symbol>
+  <symbol id="i-youtube" viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.5 15.6V8.4L15.8 12l-6.3 3.6Z"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-tiktok" viewBox="0 0 24 24"><path d="M14.5 3c.3 2.1 1.5 3.4 3.7 3.8v2.9c-1.4.1-2.6-.3-3.8-1v5.6a5.8 5.8 0 1 1-5.8-5.8c.3 0 .7 0 1 .1v3a2.8 2.8 0 1 0 1.9 2.6V3h3Z"/></symbol>
+  <symbol id="i-social-x" viewBox="0 0 24 24"><path d="M18.2 2.3h3.3l-7.2 8.3 8.5 11.1h-6.6l-5.2-6.8-5.9 6.8H1.8l7.7-8.9L1.3 2.3h6.8l4.7 6.2 5.4-6.2Zm-1.2 17.5h1.8L6.9 4.1H5Z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.2 19.4c.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.4 9.4 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .3.3.6.9.6 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></symbol>
+  <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.5 3.5A11.8 11.8 0 0 0 1.9 17.7L.5 23.5l5.9-1.4A11.8 11.8 0 0 0 20.5 3.5Zm-8.4 18a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.5.9.9-3.4-.2-.4a9.8 9.8 0 1 1 8.2 4.5Zm5.4-7.3c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.2l-.9 1.1c-.2.2-.4.2-.7.1a8 8 0 0 1-2.3-1.4 8.8 8.8 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.6.3-.6c.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/></symbol>
+</svg>
 <div class="bg-glow"></div>
 <div class="window-frame">
 <div class="header">
-<svg id="MuzicMania_Logotipo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 120">
-      <defs>
-        <style>
-          .lg0{fill:#0f9eff}.lg1{fill:url(#g1103)}.lg2{fill:url(#g240)}.lg3{fill:#723eff}.lg4{fill:url(#g714)}.lg5{isolation:isolate}.lg6{fill:url(#g601)}.lg7{fill:url(#g832)}
-        </style>
-        <linearGradient id="g1103" x1="60.86" y1="6.95" x2="60.86" y2="99.84" gradientUnits="userSpaceOnUse"><stop offset=".01" stop-color="#d33eff"/><stop offset="1" stop-color="#3932ff"/></linearGradient>
-        <linearGradient id="g240" x1="6.65" y1="53.4" x2="285.97" y2="53.4" gradientTransform="translate(6)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="aqua"/><stop offset="1" stop-color="#1b36ff"/></linearGradient>
-        <linearGradient id="g601" x1="292.17" y1="53.4" x2="570.45" y2="53.4" gradientTransform="translate(6)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#4322ff"/><stop offset=".59" stop-color="#7a23ff"/><stop offset="1" stop-color="#a424ff"/></linearGradient>
-        <linearGradient id="g714" x1="227.73" y1="223.8" x2="371.27" y2="-24.81" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#ff20bf"/><stop offset=".52" stop-color="#4f20bf"/><stop offset="1" stop-color="#00d4ff"/></linearGradient>
-        <linearGradient id="g832" x1="446.78" y1="246.78" x2="152.22" y2="-47.78" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#9a20bf"/><stop offset=".42" stop-color="#5c20bf"/><stop offset="1" stop-color="aqua"/></linearGradient>
-      </defs>
-      <g class="lg5"><g><path class="lg0" d="M114.39,69.5c-.06-6.99-.1-17.6-.01-23.41-.04-3.79,4.82-2.6,7.55-2.82,5.33-.02,6.44.15,6.12,6.41.18,5.33-.5,11.25.49,16.39,1.4,5.69,8.7,5.69,10.22.08,1.22-6.01.19-14.33.56-19.84-.17-3.55,3.89-3.01,6.53-3.05,2.35.24,7.45-.93,7.12,2.37.04,5.9,0,24.18.01,32.36-.04,1.28.16,2.74-.79,3.68-1.25,1.06-3.31.78-5.77.84-2.25-.02-4.57.14-5.76-.79-.75-.51-1.25-1.48-1.97-1.97-1.36-.77-2.88.82-4.16,1.45-8.94,5.48-20.42-1.38-20.15-11.5v-.19Z"/><path class="lg0" d="M161.63,81.94c-.38-1.68-.07-4.59-.16-6.7.08-1.1-.06-1.57.7-2.28,4.41-3.06,23.65-15.6,27.29-18.08.27-.23.63-.41.15-.52-4.12-.2-20.9.03-25.46-.1-1.75-.06-1.6-.86-1.66-1.95-.01-.99,0-2.44,0-3.85,0-1.42-.01-2.74.01-3.57.04-1.23.23-1.44,1.22-1.45,13.46-.01,48.04-.01,54.42,0,1.61.03,1.22.79,1.35,1.86.01,1.47.02,4.06,0,5.45-.05,1.08-.02,1.69-1.09,2.4-3.29,2.27-21.58,14.04-27.36,18.09-.3.35,1.1.26,4.15.28h1.41c6.71.01,17.75-.02,21.12.02.87,0,1.55.21,1.65.78.31,1.77.05,5,.13,7.49,0,1.15,0,1.88-.2,2.22-.12.22-.33.3-.67.34-8.16.07-50.83.03-56.29,0-.34-.03-.55-.11-.67-.34l-.04-.07Z"/><path class="lg0" d="M228.73,35.83c-2.74-3.74-2.47-9.9.48-13.34,4.1-4.98,12.91-4.67,16.2,1.31,6.16,13.12-9.53,21.19-16.56,12.19l-.12-.16Z"/><path class="lg0" d="M231.51,81.69c-2.07-.69-1.24-6.15-1.41-8.95.06-8.68-.12-19.86.08-26.11.11-3.81,4.75-3.11,7.59-3.22,2.39.13,5.38-.09,5.83,2.57.28,8.38.36,24.53-.02,33.91-.37,1.65-1.46,2.05-3.23,2.29-2.38.22-6.65.41-8.75-.45l-.1-.05Z"/><path class="lg0" d="M254.11,62.85c-.8-17.05,23.23-26.45,35.45-15.52,1.18,1.06,2.71,2.6,1.97,4.14-.67,1.53-3.78,3.61-5.78,4.66-2.03,1.15-4.04,0-5.9-.91-2.22-1.04-4.83-1-6.97.02-7.47,3.08-7.45,12.38-.04,15.45,2.12.99,4.7,1,6.93-.07,1.66-.74,3.29-2.03,5.19-1.44,2.33.85,5.97,3.35,6.83,5.09.71,1.55-.87,3.08-2.06,4.14-12.5,11.08-36.34,1.97-35.63-15.35v-.21Z"/><path class="lg1" d="M17.21,98.32c-4.53-2.42-4.53-9.05-4.54-14.04-.02-16.08-.01-45.25,0-61.57.07-4.33-.06-9.41,2.58-12.65,3.48-3.96,8.38-3.7,13.36-1.64,9.73,3.84,16.81,15.81,23.63,24.03,7.56,9.47,11.79,6.73,18.53-1.83,6.11-7.77,13.06-18.46,21.9-22.07,5.59-2.41,11.15-2.53,14.44,2.62,1.89,3.33,1.75,7.97,1.82,11.99-.4,19.9.85,49.45-.54,68.86-1.43,9.47-14.84,10.19-18.91,2.44-2.05-3.7-2.18-8.46-2.31-12.77-.17-9.3.16-21.65-.29-28.17-.41-6.93-2.69-6.54-6.69-1.96-4.16,4.53-9.07,12.23-14,16.59-5.36,5.1-10.21,1.39-14.29-3.57-3.4-3.94-7.54-9.88-10.82-13.46-4.78-5.45-5.9-2.46-6.23,2.57-.73,8.78.52,24.85-.87,35.62-.92,8.63-9.56,13-16.65,9.07l-.1-.06Z"/></g><g><path class="lg2" d="M114.39,69.5c-.06-6.99-.1-17.6-.01-23.41-.04-3.79,4.82-2.6,7.55-2.82,5.33-.02,6.44.15,6.12,6.41.18,5.33-.5,11.25.49,16.39,1.4,5.69,8.7,5.69,10.22.08,1.22-6.01.19-14.33.56-19.84-.17-3.55,3.89-3.01,6.53-3.05,2.35.24,7.45-.93,7.12,2.37.04,5.9,0,24.18.01,32.36-.04,1.28.16,2.74-.79,3.68-1.25,1.06-3.31.78-5.77.84-2.25-.02-4.57.14-5.76-.79-.75-.51-1.25-1.48-1.97-1.97-1.36-.77-2.88.82-4.16,1.45-8.94,5.48-20.42-1.38-20.15-11.5v-.19Z"/><path class="lg2" d="M161.63,81.94c-.38-1.68-.07-4.59-.16-6.7.08-1.1-.06-1.57.7-2.28,4.41-3.06,23.65-15.6,27.29-18.08.27-.23.63-.41.15-.52-4.12-.2-20.9.03-25.46-.1-1.75-.06-1.6-.86-1.66-1.95-.01-.99,0-2.44,0-3.85,0-1.42-.01-2.74.01-3.57.04-1.23.23-1.44,1.22-1.45,13.46-.01,48.04-.01,54.42,0,1.61.03,1.22.79,1.35,1.86.01,1.47.02,4.06,0,5.45-.05,1.08-.02,1.69-1.09,2.4-3.29,2.27-21.58,14.04-27.36,18.09-.3.35,1.1.26,4.15.28h1.41c6.71.01,17.75-.02,21.12.02.87,0,1.55.21,1.65.78.31,1.77.05,5,.13,7.49,0,1.15,0,1.88-.2,2.22-.12.22-.33.3-.67.34-8.16.07-50.83.03-56.29,0-.34-.03-.55-.11-.67-.34l-.04-.07Z"/><path class="lg2" d="M228.73,35.83c-2.74-3.74-2.47-9.9.48-13.34,4.1-4.98,12.91-4.67,16.2,1.31,6.16,13.12-9.53,21.19-16.56,12.19l-.12-.16Z"/><path class="lg2" d="M231.51,81.69c-2.07-.69-1.24-6.15-1.41-8.95.06-8.68-.12-19.86.08-26.11.11-3.81,4.75-3.11,7.59-3.22,2.39.13,5.38-.09,5.83,2.57.28,8.38.36,24.53-.02,33.91-.37,1.65-1.46,2.05-3.23,2.29-2.38.22-6.65.41-8.75-.45l-.1-.05Z"/><path class="lg2" d="M254.11,62.85c-.8-17.05,23.23-26.45,35.45-15.52,1.18,1.06,2.71,2.6,1.97,4.14-.67,1.53-3.78,3.61-5.78,4.66-2.03,1.15-4.04,0-5.9-.91-2.22-1.04-4.83-1-6.97.02-7.47,3.08-7.45,12.38-.04,15.45,2.12.99,4.7,1,6.93-.07,1.66-.74,3.29-2.03,5.19-1.44,2.33.85,5.97,3.35,6.83,5.09.71,1.55-.87,3.08-2.06,4.14-12.5,11.08-36.34,1.97-35.63-15.35v-.21Z"/><path class="lg2" d="M17.21,98.32c-4.53-2.42-4.53-9.05-4.54-14.04-.02-16.08-.01-45.25,0-61.57.07-4.33-.06-9.41,2.58-12.65,3.48-3.96,8.38-3.7,13.36-1.64,9.73,3.84,16.81,15.81,23.63,24.03,7.56,9.47,11.79,6.73,18.53-1.83,6.11-7.77,13.06-18.46,21.9-22.07,5.59-2.41,11.15-2.53,14.44,2.62,1.89,3.33,1.75,7.97,1.82,11.99-.4,19.9.85,49.45-.54,68.86-1.43,9.47-14.84,10.19-18.91,2.44-2.05-3.7-2.18-8.46-2.31-12.77-.17-9.3.16-21.65-.29-28.17-.41-6.93-2.69-6.54-6.69-1.96-4.16,4.53-9.07,12.23-14,16.59-5.36,5.1-10.21,1.39-14.29-3.57-3.4-3.94-7.54-9.88-10.82-13.46-4.78-5.45-5.9-2.46-6.23,2.57-.73,8.78.52,24.85-.87,35.62-.92,8.63-9.56,13-16.65,9.07l-.1-.06Z"/></g></g><g><g><path class="lg3" d="M504.51,83.59c-2.41.27-6.56.05-9.59.11-1.57-.05-2.24.04-3.26-.49-4.37-3.12-22.31-16.74-25.86-19.31-.32-.19-.58-.45-.74-.1-.28,2.91.04,14.79-.14,18.02-.09,1.24-1.22,1.13-2.79,1.18-1.41.01-3.48,0-5.5,0-2.03,0-3.92,0-5.11-.01-1.77-.03-2.05-.16-2.08-.86-.02-9.52-.02-34,0-38.51.04-1.14,1.13-.87,2.66-.96,2.1,0,5.81-.01,7.8,0,1.54.03,2.41.01,3.43.77,3.25,2.33,20.08,15.27,25.87,19.36.5.21.37-.78.4-2.94v-1c.02-4.75-.03-12.56.03-14.95,0-.61.3-1.1,1.11-1.17,2.53-.22,7.14-.03,10.7-.09,1.65,0,2.69,0,3.17.14.31.09.43.24.48.48.1,5.78.04,35.97,0,39.83-.05.24-.16.39-.49.48l-.1.02Z"/><path class="lg3" d="M515.54,35.81c-2.74-3.74-2.47-9.9.48-13.34,4.1-4.98,12.91-4.67,16.2,1.31,6.16,13.12-9.53,21.19-16.56,12.19l-.12-.16Z"/><path class="lg3" d="M400.88,71.98c-.15-10.97,12.39-13.46,21.88-11.54,1.99.21,2.61-1.27,1.68-2.81-2.23-4.19-9.74-3.5-14.84-2.1-2.36.74-3.28-.91-3.83-2.93-1.18-3.82-2.08-6.27,2.28-7.17,8.82-2.41,20.3-2.83,26.63,3.05,6,6.17,4.28,18.39,4.36,26.41-.08,2.27-.09,4.46-.1,6.12.06,1.28-.51,2.3-1.9,2.36-2.87.16-6.68.18-9.61,0-2.22-.29-1.69-2.56-3.14-2.43-.66.05-1.63.75-2.33,1.14-8.41,5.13-21.56.6-21.08-9.89v-.21ZM414.01,71.4c1.17,8.17,13.47,3.79,11.6-3.97-3.88-1.67-11.63-1.76-11.6,3.97Z"/><path class="lg6" d="M504.51,83.59c-2.41.27-6.56.05-9.59.11-1.57-.05-2.24.04-3.26-.49-4.37-3.12-22.31-16.74-25.86-19.31-.32-.19-.58-.45-.74-.1-.28,2.91.04,14.79-.14,18.02-.09,1.24-1.22,1.13-2.79,1.18-1.41.01-3.48,0-5.5,0-2.03,0-3.92,0-5.11-.01-1.77-.03-2.05-.16-2.08-.86-.02-9.52-.02-34,0-38.51.04-1.14,1.13-.87,2.66-.96,2.1,0,5.81-.01,7.8,0,1.54.03,2.41.01,3.43.77,3.25,2.33,20.08,15.27,25.87,19.36.5.21.37-.78.4-2.94v-1c.02-4.75-.03-12.56.03-14.95,0-.61.3-1.1,1.11-1.17,2.53-.22,7.14-.03,10.7-.09,1.65,0,2.69,0,3.17.14.31.09.43.24.48.48.1,5.78.04,35.97,0,39.83-.05.24-.16.39-.49.48l-.1.02Z"/><path class="lg6" d="M515.54,35.81c-2.74-3.74-2.47-9.9.48-13.34,4.1-4.98,12.91-4.67,16.2,1.31,6.16,13.12-9.53,21.19-16.56,12.19l-.12-.16Z"/><path class="lg6" d="M400.88,71.98c-.15-10.97,12.39-13.46,21.88-11.54,1.99.21,2.61-1.27,1.68-2.81-2.23-4.19-9.74-3.5-14.84-2.1-2.36.74-3.28-.91-3.83-2.93-1.18-3.82-2.08-6.27,2.28-7.17,8.82-2.41,20.3-2.83,26.63,3.05,6,6.17,4.28,18.39,4.36,26.41-.08,2.27-.09,4.46-.1,6.12.06,1.28-.51,2.3-1.9,2.36-2.87.16-6.68.18-9.61,0-2.22-.29-1.69-2.56-3.14-2.43-.66.05-1.63.75-2.33,1.14-8.41,5.13-21.56.6-21.08-9.89v-.21ZM414.01,71.4c1.17,8.17,13.47,3.79,11.6-3.97-3.88-1.67-11.63-1.76-11.6,3.97Z"/></g><g><path class="lg3" d="M518,82.77c-1.65-.45-1.14-4.45-1.22-7.3.04-9.09-.09-21.46.05-28.12.09-3.81,4.85-2.73,7.67-2.94,2.33.14,5.42-.29,5.82,2.32.22,8.08.27,26.35-.02,34.43-.31,1.53-1.27,1.84-2.93,2.06-2.38.17-7.15.41-9.28-.39l-.09-.05Z"/><path class="lg3" d="M538.13,71.97c-.15-11.07,12.55-13.47,22.07-11.51,1.86.18,2.41-1.25,1.6-2.71-2.13-4.34-9.79-3.67-14.96-2.22-2.31.74-3.17-.68-3.74-2.7-1.08-3.73-2.45-6.44,2.01-7.36,9.96-2.64,23.88-3.38,29.11,6.13,3.02,7.06,2.14,15.76,2.07,23.28-.08,2.27-.1,4.46-.1,6.13.07,1.27-.45,2.31-1.85,2.35-2.95.13-6.91.18-9.86-.02-2.01-.28-1.48-2.49-2.8-2.49-.64,0-1.6.72-2.28,1.11-8.39,5.29-21.76.78-21.26-9.8v-.21ZM551.3,71.52c.77,6.85,11.13,4.66,11.76-1.9.07-.7-.04-1.5-.48-2.02-.64-.78-1.9-.92-3.07-1.09-3.41-.49-8.34.5-8.22,4.8v.2Z"/></g><g><path class="lg1" d="M302.73,98.32c-4.53-2.42-4.53-9.05-4.54-14.04-.02-16.08-.01-45.25,0-61.57.07-4.33-.06-9.41,2.58-12.65,3.48-3.96,8.38-3.7,13.36-1.64,9.73,3.84,16.81,15.81,23.63,24.03,7.56,9.47,11.79,6.73,18.53-1.83,6.11-7.77,13.06-18.46,21.9-22.07,5.59-2.41,11.15-2.53,14.44,2.62,1.89,3.33,1.75,7.97,1.82,11.99-.4,19.9.85,49.45-.54,68.86-1.43,9.47-14.84,10.19-18.91,2.44-2.05-3.7-2.18-8.46-2.31-12.77-.17-9.3.16-21.65-.29-28.17-.41-6.93-2.69-6.54-6.69-1.96-4.16,4.53-9.07,12.23-14,16.59-5.36,5.1-10.21,1.39-14.29-3.57-3.4-3.94-7.54-9.88-10.82-13.46-4.78-5.45-5.9-2.46-6.23,2.57-.73,8.78.52,24.85-.87,35.62-.92,8.63-9.56,13-16.65,9.07l-.1-.06Z"/><path class="lg6" d="M302.73,98.32c-4.53-2.42-4.53-9.05-4.54-14.04-.02-16.08-.01-45.25,0-61.57.07-4.33-.06-9.41,2.58-12.65,3.48-3.96,8.38-3.7,13.36-1.64,9.73,3.84,16.81,15.81,23.63,24.03,7.56,9.47,11.79,6.73,18.53-1.83,6.11-7.77,13.06-18.46,21.9-22.07,5.59-2.41,11.15-2.53,14.44,2.62,1.89,3.33,1.75,7.97,1.82,11.99-.4,19.9.85,49.45-.54,68.86-1.43,9.47-14.84,10.19-18.91,2.44-2.05-3.7-2.18-8.46-2.31-12.77-.17-9.3.16-21.65-.29-28.17-.41-6.93-2.69-6.54-6.69-1.96-4.16,4.53-9.07,12.23-14,16.59-5.36,5.1-10.21,1.39-14.29-3.57-3.4-3.94-7.54-9.88-10.82-13.46-4.78-5.45-5.9-2.46-6.23,2.57-.73,8.78.52,24.85-.87,35.62-.92,8.63-9.56,13-16.65,9.07l-.1-.06Z"/></g></g><g><path class="lg4" d="M586.57,99.5H12.43"/><path class="lg7" d="M586.57,100.03c-11.96,1.04-23.92,1.73-35.88,2.29l-8.97.42-8.97.32c-5.98.21-11.96.43-17.94.57-11.96.3-23.92.51-35.88.59-11.96.13-23.92.05-35.88-.29-23.92-.69-47.85-2.39-71.77-2.71-23.92-.34-47.85.19-71.77,1.19l-17.94.71-8.97.35-8.97.28c-11.96.37-23.92.56-35.88.76-11.96.22-23.92.38-35.88.53-11.96.18-23.92.18-35.88.12-11.96-.09-23.92-.24-35.88-.52l-17.94-.41-17.94-.55c-5.98-.17-11.96-.43-17.94-.66-5.98-.22-11.96-.5-17.94-.8-11.96-.58-23.92-1.26-35.88-2.18-.29-.02-.51-.28-.49-.57.02-.26.23-.47.49-.49,11.96-.92,23.92-1.6,35.88-2.18,5.98-.3,11.96-.58,17.94-.8,5.98-.24,11.96-.5,17.94-.66l17.94-.55,17.94-.41c11.96-.28,23.92-.43,35.88-.52,11.96-.06,23.92-.06,35.88.12,11.96.15,23.92.31,35.88.53,11.96.2,23.92.39,35.88.76l8.97.28,8.97.35,17.94.71c23.92,1,47.85,1.53,71.77,1.19,23.92-.32,47.85-2.02,71.77-2.71,11.96-.35,23.92-.42,35.88-.29,11.96.08,23.92.28,35.88.59,5.98.13,11.96.36,17.94.57l8.97.32,8.97.42c11.96.56,23.92,1.25,35.88,2.29.29.03.51.28.48.58-.02.26-.23.46-.48.48Z"/></g>
-    </svg>
+<img id="brand-logo" class="brand-logo" src="logo.svg" alt="MuzicMania">
+<span id="easter-cat" class="easter-cat" aria-hidden="true">🐱</span>
 </div>
+<div id="roadmap" class="roadmap"></div>
+<div class="stage-host" id="stage-host">
 <!-- View: Language -->
 <div id="v-lang" class="view active">
   <div class="glass-panel" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
-    <h2 id="lbl-lang-title">Idioma / Language</h2>
-    <p id="lbl-lang-desc">Selecciona tu idioma preferido para la instalación.</p>
+    <h2 id="lbl-lang-title">Language</h2>
+    <p id="lbl-lang-desc">Select your preferred installation language.</p>
     <div class="form-group">
-      <select id="sel-lang">
-        <option value="1034">Español</option>
-        <option value="1033">English</option>
-        <option value="2052">简体中文</option>
-        <option value="1028">繁體中文</option>
-        <option value="1046">Português (Brasil)</option>
-        <option value="1051">Русский</option>
-        <option value="1041">日本語</option>
-        <option value="1050">한국어</option>
-        <option value="1036">Français</option>
-        <option value="1031">Deutsch</option>
-        <option value="1040">Italiano</option>
-        <option value="1043">Nederlands</option>
-        <option value="1045">Polski</option>
-        <option value="1025">العربية</option>
-        <option value="1055">Türkçe</option>
-        <option value="1029">Čeština</option>
-        <option value="1038">Magyar</option>
-        <option value="1053">Svenska</option>
-      </select>
+      <div class="lang-select" id="lang-select">
+        <button type="button" class="lang-trigger" id="lang-trigger" aria-haspopup="listbox" aria-expanded="false">
+          <img id="lang-current-flag" src="flags/gb.svg" alt="">
+          <span id="lang-current-label">English</span>
+          <span class="chevron" aria-hidden="true">⌄</span>
+        </button>
+        <div class="lang-menu" id="lang-menu" role="listbox" aria-label="Language">
+          <button type="button" class="lang-option" data-lang="1033" data-flag="gb" role="option"><img src="flags/gb.svg" alt=""><span>English</span></button>
+          <button type="button" class="lang-option" data-lang="1034" data-flag="es" role="option"><img src="flags/es.svg" alt=""><span>Español</span></button>
+          <button type="button" class="lang-option" data-lang="2052" data-flag="cn" role="option"><img src="flags/cn.svg" alt=""><span>简体中文</span></button>
+          <button type="button" class="lang-option" data-lang="1028" data-flag="tw" role="option"><img src="flags/tw.svg" alt=""><span>繁體中文</span></button>
+          <button type="button" class="lang-option" data-lang="1046" data-flag="pt" role="option"><img src="flags/pt.svg" alt=""><span>Português (Brasil)</span></button>
+          <button type="button" class="lang-option" data-lang="1051" data-flag="ru" role="option"><img src="flags/ru.svg" alt=""><span>Русский</span></button>
+          <button type="button" class="lang-option" data-lang="1041" data-flag="jp" role="option"><img src="flags/jp.svg" alt=""><span>日本語</span></button>
+          <button type="button" class="lang-option" data-lang="1050" data-flag="kr" role="option"><img src="flags/kr.svg" alt=""><span>한국어</span></button>
+          <button type="button" class="lang-option" data-lang="1036" data-flag="fr" role="option"><img src="flags/fr.svg" alt=""><span>Français</span></button>
+          <button type="button" class="lang-option" data-lang="1031" data-flag="de" role="option"><img src="flags/de.svg" alt=""><span>Deutsch</span></button>
+          <button type="button" class="lang-option" data-lang="1040" data-flag="it" role="option"><img src="flags/it.svg" alt=""><span>Italiano</span></button>
+          <button type="button" class="lang-option" data-lang="1043" data-flag="nl" role="option"><img src="flags/nl.svg" alt=""><span>Nederlands</span></button>
+          <button type="button" class="lang-option" data-lang="1045" data-flag="pl" role="option"><img src="flags/pl.svg" alt=""><span>Polski</span></button>
+          <button type="button" class="lang-option" data-lang="1025" data-flag="sa" role="option"><img src="flags/sa.svg" alt=""><span>العربية</span></button>
+          <button type="button" class="lang-option" data-lang="1055" data-flag="tr" role="option"><img src="flags/tr.svg" alt=""><span>Türkçe</span></button>
+          <button type="button" class="lang-option" data-lang="1029" data-flag="cz" role="option"><img src="flags/cz.svg" alt=""><span>Čeština</span></button>
+          <button type="button" class="lang-option" data-lang="1038" data-flag="hu" role="option"><img src="flags/hu.svg" alt=""><span>Magyar</span></button>
+          <button type="button" class="lang-option" data-lang="1053" data-flag="se" role="option"><img src="flags/se.svg" alt=""><span>Svenska</span></button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="btn-row">
-    <button class="btn btn-primary" id="btn-lang-next">Continuar</button>
+    <button class="btn btn-primary" id="btn-lang-next">Continue</button>
+  </div>
+</div>
+<!-- View: Maintenance -->
+<div id="v-maintenance" class="view">
+  <div class="glass-panel" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+    <h2 id="maint-title">Hola de nuevo, MuzicMania ya está instalado</h2>
+    <p id="maint-desc">An existing installation was found on this computer. Puedes actualizar, reparar o abrir el desinstalador.</p>
+    <div style="background:rgba(0,0,0,0.3); border:1px solid var(--border-light); border-radius:8px; padding:16px; margin:16px 0;">
+      <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-package"></use></svg><span id="maint-version-label">Installed version</span></span><strong id="maint-version">—</strong></div>
+      <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-folder"></use></svg><span id="maint-path-label">Location</span></span><span id="maint-path" style="font-size:12px; color:var(--text-main); word-break:break-all; text-align:right;">—</span></div>
+      <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg><span>Local data</span></span><strong>%APPDATA%\MuzicMania</strong></div>
+    </div>
+    <p id="maint-note" style="font-size:12px; color:var(--text-muted); margin-bottom:0;">Updating or reinstalling keeps your account and local settings. Uninstall opens the official uninstaller.</p>
+    <p style="font-size:11px; color:var(--text-muted); margin-top:10px;"><svg class="icon"><use href="#i-whatsapp"></use></svg> Need help? <a data-external href="https://wa.me/584126858111" style="color:#25D366;text-decoration:none;">WhatsApp support</a> · <a data-external href="https://muzicmania.vercel.app/support" style="color:#0f9eff;text-decoration:none;">Support page</a></p>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-secondary" id="btn-maint-close"><svg class="icon"><use href="#i-x"></use></svg>Close</button>
+    <button class="btn btn-danger" id="btn-maint-uninstall"><svg class="icon"><use href="#i-trash"></use></svg>Uninstall</button>
+    <button class="btn btn-primary" id="btn-maint-update"><svg class="icon"><use href="#i-refresh"></use></svg>Update / Reinstall</button>
   </div>
 </div>
 <!-- View: Welcome -->
@@ -155,9 +300,26 @@
       <div class="form-label" style="margin-bottom:8px;" id="lbl-system-detect">SISTEMA DETECTADO</div>
       <div class="flex-row">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary)"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-        <div style="font-weight:600;" id="sys-info">MuzicMania v2.0.1 (Windows x64)</div>
+        <div style="font-weight:600;" id="sys-info">MuzicMania v2.1.0 (Windows x64)</div>
       </div>
     </div>
+    <div class="req-panel">
+      <div class="req-title"><svg class="icon"><use href="#i-info"></use></svg>Requirements & package</div>
+      <div class="info-list">
+        <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-monitor"></use></svg>System</span><strong id="req-os">Windows 10/11 · 64-bit</strong></div>
+        <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-package"></use></svg>Installed size</span><strong id="req-size">Launcher + uninstaller</strong></div>
+        <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg>Free space</span><strong id="req-disk">Calculating...</strong></div>
+        <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-cpu"></use></svg>Recommended RAM</span><strong id="req-ram">4 GB</strong></div>
+        <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-globe"></use></svg>WebView2</span><strong id="req-webview">Checked automatically</strong></div>
+      </div>
+      <div class="pkg-list">
+        <span><svg class="icon"><use href="#i-check"></use></svg>MuzicMania Launcher</span>
+        <span><svg class="icon"><use href="#i-check"></use></svg>Official uninstaller</span>
+        <span><svg class="icon"><use href="#i-check"></use></svg>Desktop/Start shortcuts</span>
+        <span><svg class="icon"><use href="#i-check"></use></svg>WebView2 check</span>
+      </div>
+    </div>
+    <p style="font-size:10px; color:var(--text-muted); margin-top:12px;"><svg class="icon"><use href="#i-lock"></use></svg> Requires administrator permission. Account data is never modified by the installer.</p>
   </div>
   <div class="btn-row">
     <button class="btn btn-secondary" id="btn-welcome-back">Atrás</button>
@@ -184,6 +346,7 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
       <div class="checkmark"></div>
       <span id="lbl-accept">Acepto los términos de la licencia</span>
     </label>
+    <p id="license-hint" style="font-size:11px; color:#ffb020; margin-top:8px;"><svg class="icon"><use href="#i-warning"></use></svg> Check the license box to unlock the next step.</p>
   </div>
   <div class="btn-row">
     <button class="btn btn-secondary" id="btn-license-back">Atrás</button>
@@ -202,6 +365,15 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
       </div>
       <span style="font-size:11px; color:var(--text-muted); margin-top:8px;" id="lbl-space">Espacio requerido: ~10 MB</span>
     </div>
+    <div class="req-panel">
+      <div class="req-title"><svg class="icon"><use href="#i-disk"></use></svg>Storage capacity</div>
+      <div class="info-list">
+        <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-folder"></use></svg>Target drive</span><strong id="dir-drive">—</strong></div>
+        <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg>Free space</span><strong id="dir-free">Calculating...</strong></div>
+        <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-package"></use></svg>Required</span><strong id="dir-required">~100 MB</strong></div>
+      </div>
+      <p id="dir-warning" style="display:none; margin:9px 0 0; font-size:11px; color:#ffb020;"><svg class="icon"><use href="#i-warning"></use></svg> Not enough free space for a safe installation.</p>
+    </div>
   </div>
   <div class="btn-row">
     <button class="btn btn-secondary" id="btn-dir-back">Atrás</button>
@@ -218,6 +390,12 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
       <div class="progress-details"><span id="inst-status">Extrayendo archivos...</span><span id="inst-pct">0%</span></div>
     </div>
     <div class="console" id="inst-console"></div>
+    <div class="log-tools"><span><svg class="icon"><use href="#i-file"></use></svg>Full installation log</span><span id="inst-log-meta">live</span></div>
+    <details class="log-details"><summary>Show complete log</summary><pre class="full-log" id="inst-full-log"></pre></details>
+    <p style="font-size:10px; color:var(--text-muted); margin-top:8px;"><svg class="icon"><use href="#i-lock"></use></svg> Installation runs with administrator rights. Your account data is never deleted.</p>
+    <div class="btn-row" style="justify-content:center; margin-top:14px;">
+      <button class="btn btn-secondary" id="btn-install-cancel"><svg class="icon"><use href="#i-x"></use></svg>Cancelar instalación</button>
+    </div>
   </div>
 </div>
 <!-- View: Finish -->
@@ -226,19 +404,49 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
     <div class="finish-icon">✓</div>
     <h2 id="lbl-finish-title" style="text-align:center;">¡Instalación Completada!</h2>
     <p id="lbl-finish-desc" style="text-align:center; margin-bottom:8px;">MuzicMania está listo para usarse.</p>
-    <div id="finish-path" style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:20px; word-break:break-all;"></div>
+    <p style="text-align:center; font-size:12px; color:var(--text-muted); max-width:420px; margin:0 auto 12px;">Gracias por elegir Ciszu Network. Esperamos que disfrutes el ritmo. ¡Nos vemos dentro!</p>
+    <div id="finish-path" style="font-size:11px; color:var(--text-muted); text-align:center; margin-bottom:4px; word-break:break-all;"></div>
+    <div id="finish-meta" style="font-size:10px; color:var(--text-muted); text-align:center; margin-bottom:18px;"></div>
     <div style="display:flex; flex-direction:column; gap:8px; margin:0 auto; width:fit-content;">
       <label class="checkbox-wrapper"><input type="checkbox" id="chk-run" checked><div class="checkmark"></div><span id="lbl-run">Ejecutar MuzicMania ahora</span></label>
       <label class="checkbox-wrapper"><input type="checkbox" id="chk-desktop" checked><div class="checkmark"></div><span id="lbl-desktop">Crear acceso directo en el escritorio</span></label>
       <label class="checkbox-wrapper"><input type="checkbox" id="chk-taskbar"><div class="checkmark"></div><span id="lbl-taskbar">Fijar en la barra de tareas</span></label>
       <label class="checkbox-wrapper"><input type="checkbox" id="chk-changelog"><div class="checkmark"></div><span id="lbl-changelog">Ver notas de la versión (Changelog)</span></label>
     </div>
+    <details class="log-details"><summary>Installation log & packages</summary><pre class="full-log" id="finish-full-log"></pre></details>
+    <p style="font-size:10px; color:var(--text-muted); margin-top:8px;">Installed: launcher, uninstaller, shortcuts, WebView2 check. Account data remains untouched.</p>
+    <p style="font-size:11px; color:var(--text-muted); margin-top:8px;"><svg class="icon"><use href="#i-whatsapp"></use></svg> Need help? <a data-external href="https://wa.me/584126858111" style="color:#25D366;text-decoration:none;">Contact support</a> · <a data-external href="https://muzicmania.vercel.app/support" style="color:#0f9eff;text-decoration:none;">Support page</a></p>
   </div>
   <div class="btn-row" style="justify-content:center;">
-    <button class="btn btn-primary" id="btn-finish" style="width:100%; justify-content:center; padding:12px;">Finalizar y Cerrar</button>
+    <button class="btn btn-primary" id="btn-finish" style="width:100%; justify-content:center; padding:12px;">Finish and Close</button>
   </div>
 </div>
 </div>
+</div>
+<footer class="app-footer">
+  <div class="footer-main">
+    <div class="footer-copy">
+      <svg class="icon"><use href="#i-copyright"></use></svg>
+      <span>2026 <a href="https://ciszunetwork.vercel.app" data-external>Ciszu Network</a></span>
+      <span>· <a href="https://muzicmania.vercel.app" data-external>MuzicMania</a> v2.1.0</span>
+      <span>· Installer v2.3.0</span>
+    </div>
+    <div class="footer-group">
+      <button type="button" class="footer-lang" id="footer-lang"><img id="footer-lang-flag" src="flags/gb.svg" alt=""><span id="footer-lang-label">English</span><svg class="icon"><use href="#i-globe"></use></svg></button>
+      <span class="footer-group" style="gap:5px;"><svg class="icon"><use href="#i-info"></use></svg> Admin install</span>
+    </div>
+  </div>
+  <div class="footer-social">
+    <a class="social-link discord" data-external href="https://discord.gg/W3kMtMMj6E" title="Discord"><svg class="icon"><use href="#i-discord"></use></svg></a>
+    <a class="social-link youtube" data-external href="https://www.youtube.com/@CiszuNetwork" title="YouTube"><svg class="icon"><use href="#i-youtube"></use></svg></a>
+    <a class="social-link instagram" data-external href="https://www.instagram.com/ciszunetwork/" title="Instagram"><svg class="icon"><use href="#i-instagram"></use></svg></a>
+    <a class="social-link tiktok" data-external href="https://www.tiktok.com/@ciszunetwork" title="TikTok"><svg class="icon"><use href="#i-tiktok"></use></svg></a>
+    <a class="social-link x" data-external href="https://x.com/CiszukoAntony" title="X"><svg class="icon"><use href="#i-social-x"></use></svg></a>
+    <a class="social-link github" data-external href="https://github.com/Ciszu-Network" title="GitHub"><svg class="icon"><use href="#i-github"></use></svg></a>
+    <a class="social-link whatsapp" data-external href="https://wa.me/584126858111" title="WhatsApp Support"><svg class="icon"><use href="#i-whatsapp"></use></svg></a>
+    <span class="footer-support">Soporte: <a data-external href="https://wa.me/584126858111">+58 412-685-8111</a></span>
+  </div>
+</footer>
 <!-- Modal -->
 <div class="modal-overlay" id="close-modal">
   <div class="modal-content">
@@ -250,5 +458,6 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
     </div>
   </div>
 </div>
+<script src="roadmap.js"></script>
 <script src="installer.js"></script></body>
 </html>

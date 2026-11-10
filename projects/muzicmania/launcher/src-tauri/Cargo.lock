@@ -2125,7 +2125,7 @@ dependencies = [
 
 [[package]]
 name = "muzicmania"
-version = "2.0.1"
+version = "2.1.0"
 dependencies = [
  "sea-orm",
  "serde",
@@ -2133,6 +2133,7 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tokio",
+ "windows",
 ]
 
 [[package]]

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MuzicMania - Uninstall</title>
+<style>
+  :root { --bg:#0B0C10; --panel:rgba(22,24,33,.72); --primary:#6C5CE7; --primary-hover:#8A7DF2; --glow:rgba(108,92,231,.5); --text:#F8F9FA; --muted:#A0A5B5; --danger:#FF4757; --success:#2ED573; --border:rgba(255,255,255,.08); }
+  html { overflow:hidden; }
+  * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",system-ui,sans-serif; user-select:none; }
+  body { background:var(--bg); color:var(--text); height:100vh; overflow:hidden; display:flex; flex-direction:column; }
+  .bg-glow { position:absolute; inset:-20%; background:radial-gradient(circle at 50% 40%, rgba(108,92,231,.13), transparent 42%), radial-gradient(circle at 85% 10%, rgba(255,71,87,.07), transparent 35%); pointer-events:none; }
+  .window-frame { flex:1; display:flex; flex-direction:column; padding:18px 24px 8px; position:relative; z-index:1; min-height:0; }
+  .header { display:flex; justify-content:center; margin-bottom:14px; flex-shrink:0; }
+  .brand-logo { width: 190px; max-width: 60vw; height: auto; display:block; filter:drop-shadow(0 0 10px rgba(108,92,231,.4)); cursor:pointer; }
+  .stage-host { position:relative; flex:1; display:flex; flex-direction:column; min-height:0; overflow-y:auto; overflow-x:hidden; }
+  .view { display:none; flex:1; flex-direction:column; position:relative; }
+  .view.active { display:flex; animation:stageIn .3s cubic-bezier(.2,.8,.2,1) both; }
+  .view.leaving { display:flex; position:absolute; inset:0; pointer-events:none; animation:stageOut .2s ease both; }
+  .panel { background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:14px; backdrop-filter:blur(12px); }
+  h1 { font-size:22px; letter-spacing:-.4px; margin-bottom:6px; display:flex; align-items:center; gap:9px; }
+  p { font-size:13px; color:var(--muted); line-height:1.55; }
+  .hero-warning { font-size:36px; color:#ffb020; margin:4px auto 10px; width:max-content; }
+  .muted { color:var(--muted); }
+  .info-list { display:flex; flex-direction:column; gap:6px; margin-top:12px; }
+  .info-row { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:7px 9px; border-radius:6px; background:rgba(255,255,255,.025); font-size:12px; color:var(--muted); }
+  .info-row strong { color:var(--text); font-weight:600; text-align:right; word-break:break-all; }
+  .info-row .icon { color:var(--primary); }
+  .checkbox-wrapper { display:flex; align-items:center; gap:10px; margin-top:14px; padding:10px; border-radius:8px; background:rgba(255,255,255,.03); border:1px solid var(--border); cursor:pointer; font-size:12px; }
+  .checkbox-wrapper input { width:18px; height:18px; accent-color:var(--primary); cursor:pointer; }
+  .danger-text { color:#ffb020; font-size:11px; margin-top:6px; }
+  .feedback-title { font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); font-weight:700; margin:16px 0 8px; display:flex; align-items:center; gap:7px; }
+  .reason-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .reason { border:1px solid var(--border); background:rgba(0,0,0,.2); color:var(--muted); border-radius:7px; padding:8px 10px; font-size:11px; text-align:left; cursor:pointer; transition:all .18s ease; }
+  .reason:hover { border-color:var(--primary); color:var(--text); transform:translateY(-1px); }
+  .reason.selected { border-color:var(--primary); background:rgba(108,92,231,.18); color:var(--text); }
+  .rating { display:flex; gap:5px; margin-top:8px; }
+  .star { border:0; background:transparent; color:rgba(255,255,255,.2); font-size:24px; cursor:pointer; transition:color .15s,transform .15s; }
+  .star:hover, .star.active { color:#ffd900; transform:scale(1.08); }
+  textarea { width:100%; min-height:68px; resize:vertical; margin-top:8px; padding:10px; border-radius:8px; border:1px solid var(--border); background:rgba(0,0,0,.3); color:var(--text); font-size:12px; outline:none; }
+  textarea:focus { border-color:var(--primary); box-shadow:0 0 0 3px var(--glow); }
+  .btn-row { display:flex; justify-content:flex-end; gap:10px; padding-top:12px; flex-wrap:wrap; }
+  .btn { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:8px; border:0; font-size:13px; font-weight:600; cursor:pointer; transition:all .18s ease; }
+  .btn:hover:not(:disabled) { transform:translateY(-1px); }
+  .btn:active:not(:disabled) { transform:translateY(1px) scale(.985); }
+  .btn:disabled { opacity:.45; cursor:not-allowed; }
+  .btn-primary { background:linear-gradient(135deg,var(--primary),#a29bfe); color:#fff; box-shadow:0 4px 14px var(--glow); }
+  .btn-secondary { background:rgba(255,255,255,.05); border:1px solid var(--border); color:var(--text); }
+  .btn-danger { background:var(--danger); color:#fff; }
+  .progress-wrap { margin-top:16px; }
+  .progress-bar { width:100%; height:8px; background:rgba(255,255,255,.06); border-radius:6px; overflow:hidden; }
+  .progress-fill { height:100%; width:0; background:linear-gradient(90deg,var(--danger),var(--primary)); border-radius:6px; transition:width .3s ease; }
+  .progress-meta { display:flex; justify-content:space-between; margin-top:7px; font-size:11px; color:var(--muted); }
+  .console { height:140px; overflow:auto; background:#000; border:1px solid var(--border); border-radius:8px; padding:10px; margin-top:12px; font:11px/1.55 Consolas,monospace; color:#9adfbe; white-space:pre-wrap; }
+  .finish-icon { width:64px; height:64px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:8px auto 14px; background:rgba(46,213,115,.1); border:2px solid var(--success); color:var(--success); font-size:30px; box-shadow:0 0 24px rgba(46,213,115,.25); }
+  .finish { text-align:center; }
+  .finish h1 { justify-content:center; }
+  .finish .btn { margin-top:8px; }
+  .app-footer { flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 24px 12px; color:var(--muted); font-size:10px; z-index:2; }
+  .footer-group { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .icon { width:1.05em; height:1.05em; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; vertical-align:-.18em; flex-shrink:0; }
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); align-items:center; justify-content:center; z-index:99; }
+  .modal-overlay.active { display:flex; animation:fadeIn .16s ease both; }
+  .modal { width:360px; max-width:90vw; background:#11131d; border:1px solid var(--border); border-radius:12px; padding:24px; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+  .modal h2 { font-size:15px; margin-bottom:8px; color:var(--danger); display:flex; gap:8px; align-items:center; }
+  .modal .btn-row { padding-top:16px; }
+  .svg-sprite { position:absolute; width:0; height:0; overflow:hidden; }
+  *::-webkit-scrollbar { width:8px; height:8px; }
+  *::-webkit-scrollbar-track { background:rgba(255,255,255,.035); border-radius:6px; }
+  *::-webkit-scrollbar-thumb { background:linear-gradient(180deg,rgba(108,92,231,.7),rgba(15,158,255,.55)); border-radius:6px; }
+  *::-webkit-scrollbar-thumb:hover { background:linear-gradient(180deg,rgba(138,125,242,.95),rgba(15,158,255,.85)); }
+  @keyframes stageIn { from { opacity:0; transform:translateX(24px); } to { opacity:1; transform:translateX(0); } }
+  @keyframes stageOut { from { opacity:1; transform:translateX(0); } to { opacity:0; transform:translateX(-20px); } }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  @media (max-width:640px), (max-height:620px) { .window-frame { padding:12px 16px 4px; } .reason-grid { grid-template-columns:1fr; } .app-footer { padding:0 16px 8px; font-size:9px; } }
+  @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+</style>
+<link rel="stylesheet" href="roadmap.css">
+</head>
+<body>
+<svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-warning" viewBox="0 0 24 24"><path d="M12 3 22 20H2L12 3Z"/><path d="M12 9v5M12 17.5v.1"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.6 2.6L16 9"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H10l2 2h6.5A2.5 2.5 0 0 1 21 9.5v7A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5v-9Z"/></symbol>
+  <symbol id="i-package" viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></symbol>
+  <symbol id="i-disk" viewBox="0 0 24 24"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3Z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M4 12h16M14 6l6 6-6 6"/></symbol>
+  <symbol id="i-copyright" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15 9.5a4 4 0 1 0 0 5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.1"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6l8-3Z"/><path d="m8.5 12 2.2 2.2 4.8-4.8"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.9-4M4 4v5h5"/><path d="M4 13a8 8 0 0 0 14.9 4M20 20v-5h-5"/></symbol>
+  <symbol id="i-discord" viewBox="0 0 24 24"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3c-.2.4-.4.9-.6 1.3a18.3 18.3 0 0 0-5.5 0C9 3.9 8.8 3.4 8.6 3a19.8 19.8 0 0 0-4.9 1.4C.5 9-.3 13.6.1 18.1a19.9 19.9 0 0 0 6 3c.5-.7.9-1.4 1.2-2a13 13 0 0 1-1.9-.9l.5-.4a14.2 14.2 0 0 0 12.1 0l.5.4c-.6.3-1.2.6-1.9.9.3.7.7 1.4 1.2 2a19.9 19.9 0 0 0 6-3c.5-5.2-.8-9.7-3.5-13.7ZM8 15.3c-1.2 0-2.2-1.1-2.2-2.4S6.7 10.5 8 10.5s2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Z"/></symbol>
+  <symbol id="i-youtube" viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.5 15.6V8.4L15.8 12l-6.3 3.6Z"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-tiktok" viewBox="0 0 24 24"><path d="M14.5 3c.3 2.1 1.5 3.4 3.7 3.8v2.9c-1.4.1-2.6-.3-3.8-1v5.6a5.8 5.8 0 1 1-5.8-5.8c.3 0 .7 0 1 .1v3a2.8 2.8 0 1 0 1.9 2.6V3h3Z"/></symbol>
+  <symbol id="i-social-x" viewBox="0 0 24 24"><path d="M18.2 2.3h3.3l-7.2 8.3 8.5 11.1h-6.6l-5.2-6.8-5.9 6.8H1.8l7.7-8.9L1.3 2.3h6.8l4.7 6.2 5.4-6.2Zm-1.2 17.5h1.8L6.9 4.1H5Z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.2 19.4c.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.9 1a9.4 9.4 0 0 1 4.9 0c2.1-1.3 2.9-1 2.9-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .3.3.6.9.6 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></symbol>
+  <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.5 3.5A11.8 11.8 0 0 0 1.9 17.7L.5 23.5l5.9-1.4A11.8 11.8 0 0 0 20.5 3.5Zm-8.4 18a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.5.9.9-3.4-.2-.4a9.8 9.8 0 1 1 8.2 4.5Zm5.4-7.3c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.2l-.9 1.1c-.2.2-.4.2-.7.1a8 8 0 0 1-2.3-1.4 8.8 8.8 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.6.3-.6c.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/></symbol>
+</svg>
+<div class="bg-glow"></div>
+<div class="window-frame">
+  <div class="header"><img id="brand-logo" class="brand-logo" src="logo.svg" alt="MuzicMania"><span id="easter-cat" class="easter-cat" aria-hidden="true">🐱</span></div>
+  <div id="roadmap" class="roadmap"></div>
+  <div class="stage-host" id="stage-host">
+    <div id="v-welcome" class="view active">
+      <div class="panel finish">
+        <div class="hero-warning"><svg class="icon" style="width:42px;height:42px"><use href="#i-warning"></use></svg></div>
+        <h1><svg class="icon"><use href="#i-trash"></use></svg>Hasta pronto</h1>
+        <p>Vamos a desinstalar MuzicMania. Lamentamos verte partir; tu cuenta online seguirá segura y podrás volver cuando quieras.</p>
+        <div class="btn-row" style="justify-content:center;margin-top:18px;">
+          <button class="btn btn-secondary" id="btn-welcome-close"><svg class="icon"><use href="#i-x"></use></svg>Cancelar</button>
+          <button class="btn btn-danger" id="btn-welcome-continue"><svg class="icon"><use href="#i-arrow-right"></use></svg>Continuar</button>
+        </div>
+      </div>
+    </div>
+    <div id="v-confirm" class="view">
+      <div class="panel">
+        <div class="hero-warning"><svg class="icon" style="width:42px;height:42px"><use href="#i-warning"></use></svg></div>
+        <h1><svg class="icon"><use href="#i-trash"></use></svg>Uninstall MuzicMania</h1>
+        <p>This will remove the application from your computer. Your MuzicMania account is stored online and will not be deleted.</p>
+        <div class="info-list">
+          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-package"></use></svg>Installed version</span><strong id="u-version">—</strong></div>
+          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-folder"></use></svg>Application</span><strong id="u-path">—</strong></div>
+          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg>Disk used</span><strong id="u-size">—</strong></div>
+          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg>Local data</span><strong id="u-data">—</strong></div>
+        </div>
+        <label class="checkbox-wrapper"><input type="checkbox" id="chk-delete"><svg class="icon"><use href="#i-warning"></use></svg><span>Also delete local settings, cache and offline data</span></label>
+        <p class="danger-text">If unchecked, your local settings and cache will be kept for a future installation. Account data is never affected.</p>
+        <div class="feedback-title"><svg class="icon"><use href="#i-info"></use></svg>Optional feedback</div>
+        <div class="reason-grid" id="reason-grid">
+          <button type="button" class="reason" data-reason="bugs">Too many bugs</button>
+          <button type="button" class="reason" data-reason="performance">Performance</button>
+          <button type="button" class="reason" data-reason="features">Missing features</button>
+          <button type="button" class="reason" data-reason="other">Other reason</button>
+        </div>
+        <div class="rating" id="rating" aria-label="Rating">
+          <button type="button" class="star" data-rating="1">★</button><button type="button" class="star" data-rating="2">★</button><button type="button" class="star" data-rating="3">★</button><button type="button" class="star" data-rating="4">★</button><button type="button" class="star" data-rating="5">★</button>
+        </div>
+        <textarea id="feedback-text" placeholder="Tell us what could be better (optional)"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="btn-cancel"><svg class="icon"><use href="#i-x"></use></svg>Cancel</button>
+        <button class="btn btn-danger" id="btn-uninstall"><svg class="icon"><use href="#i-trash"></use></svg>Uninstall</button>
+      </div>
+    </div>
+    <div id="v-missing" class="view">
+      <div class="panel finish">
+        <div class="hero-warning"><svg class="icon" style="width:42px;height:42px"><use href="#i-warning"></use></svg></div>
+        <h1><svg class="icon"><use href="#i-warning"></use></svg>MuzicMania is not installed</h1>
+        <p>No valid installation was found on this computer. Install MuzicMania again from the official download page.</p>
+        <div class="btn-row" style="justify-content:center;margin-top:18px;">
+          <button class="btn btn-primary" id="btn-redownload"><svg class="icon"><use href="#i-download"></use></svg>Download MuzicMania</button>
+          <button class="btn btn-secondary" id="btn-missing-support"><svg class="icon"><use href="#i-whatsapp"></use></svg>Support</button>
+          <button class="btn btn-secondary" id="btn-missing-close"><svg class="icon"><use href="#i-x"></use></svg>Close</button>
+        </div>
+      </div>
+    </div>
+    <div id="v-progress" class="view">
+      <div class="panel">
+        <h1><svg class="icon"><use href="#i-trash"></use></svg>Uninstalling MuzicMania...</h1>
+        <p id="u-status">Preparing uninstallation...</p>
+        <div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="u-progress"></div></div><div class="progress-meta"><span id="u-detail">Removing files</span><span id="u-pct">0%</span></div></div>
+        <div class="console" id="u-console"></div>
+      </div>
+    </div>
+    <div id="v-done" class="view">
+      <div class="panel finish">
+        <div class="finish-icon">✓</div>
+        <h1><svg class="icon"><use href="#i-check"></use></svg>MuzicMania has been removed</h1>
+        <p id="u-done-note">The application was removed successfully.</p>
+        <p class="muted" style="margin-top:8px; color:var(--muted)">Lamentamos verte partir. Gracias por haber sido parte de MuzicMania; tu cuenta y tus recuerdos siguen aquí. Vuelve cuando quieras.</p>
+        <p class="muted" style="margin-top:8px"><svg class="icon"><use href="#i-shield"></use></svg> Your account data remains safe. Local settings were kept.</p>
+        <p class="muted" style="margin-top:8px"><svg class="icon"><use href="#i-whatsapp"></use></svg> Need help? <a data-external href="https://wa.me/584126858111" style="color:#25D366;text-decoration:none;">WhatsApp support</a> · <a data-external href="https://muzicmania.vercel.app/support" style="color:#0f9eff;text-decoration:none;">Support page</a></p>
+        <button class="btn btn-primary" id="btn-close"><svg class="icon"><use href="#i-check"></use></svg>Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<footer class="app-footer">
+  <div class="footer-main">
+    <div class="footer-copy">
+      <svg class="icon"><use href="#i-copyright"></use></svg>
+      <span>2026 <a href="https://ciszunetwork.vercel.app" data-external>Ciszu Network</a></span>
+      <span>· <a href="https://muzicmania.vercel.app" data-external>MuzicMania</a></span>
+      <span>· Uninstaller v2.1.0</span>
+    </div>
+    <div class="footer-group"><span class="footer-support"><svg class="icon"><use href="#i-shield"></use></svg> Safe uninstall</span></div>
+  </div>
+  <div class="footer-social">
+    <a class="social-link discord" data-external href="https://discord.gg/W3kMtMMj6E" title="Discord"><svg class="icon"><use href="#i-discord"></use></svg></a>
+    <a class="social-link youtube" data-external href="https://www.youtube.com/@CiszuNetwork" title="YouTube"><svg class="icon"><use href="#i-youtube"></use></svg></a>
+    <a class="social-link instagram" data-external href="https://www.instagram.com/ciszunetwork/" title="Instagram"><svg class="icon"><use href="#i-instagram"></use></svg></a>
+    <a class="social-link tiktok" data-external href="https://www.tiktok.com/@ciszunetwork" title="TikTok"><svg class="icon"><use href="#i-tiktok"></use></svg></a>
+    <a class="social-link x" data-external href="https://x.com/CiszukoAntony" title="X"><svg class="icon"><use href="#i-social-x"></use></svg></a>
+    <a class="social-link github" data-external href="https://github.com/Ciszu-Network" title="GitHub"><svg class="icon"><use href="#i-github"></use></svg></a>
+    <a class="social-link whatsapp" data-external href="https://wa.me/584126858111" title="WhatsApp Support"><svg class="icon"><use href="#i-whatsapp"></use></svg></a>
+    <span class="footer-support">Soporte: <a data-external href="https://wa.me/584126858111">+58 412-685-8111</a></span>
+  </div>
+</footer>
+<div class="modal-overlay" id="close-modal">
+  <div class="modal">
+    <h2><svg class="icon"><use href="#i-warning"></use></svg>Cancel uninstallation?</h2>
+    <p>If you close now, MuzicMania will stay installed.</p>
+    <div class="btn-row"><button class="btn btn-secondary" id="modal-no">Keep installed</button><button class="btn btn-danger" id="modal-yes">Cancel uninstall</button></div>
+  </div>
+</div>
+<script src="roadmap.js"></script>
+<script src="uninstaller.js"></script>
+</body>
+</html>

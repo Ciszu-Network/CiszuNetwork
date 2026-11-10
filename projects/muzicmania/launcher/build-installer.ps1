@@ -7,8 +7,8 @@ $TauriCli = Join-Path $WebsiteRoot "node_modules\.bin\tauri.cmd"
 $PatchScript = Join-Path $WebsiteRoot "scripts\patch-nsis-lang.ps1"
 $TargetRoot = Join-Path $LauncherRoot "src-tauri\target\x86_64-pc-windows-msvc\release"
 $Installer = Join-Path $TargetRoot "nsis\x64\nsis-output.exe"
-$AppVersion = "2.0.1"
-$InstallerVersion = "2.1.3"
+$AppVersion = "2.1.0"
+$InstallerVersion = "2.3.0"
 $Names = @(
     "MuzicMania(v$AppVersion)_InstallerSetup(v$InstallerVersion)_Windows10_x64.exe",
     "MuzicMania(v$AppVersion)_InstallerSetup(v$InstallerVersion)_Windows11_x64.exe"

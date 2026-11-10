@@ -163,6 +163,11 @@ $content = $content.Substring(0, $onInitEnd) + $customInit + $content.Substring(
 $content = $content -replace '(?m)^\s*!insertmacro MUI_LANGDLL_DISPLAY\s*$', ""
 
 $content = $content.Replace(
+    '  Delete "$INSTDIR\${MAINBINARYNAME}.exe"',
+    '  Delete "$INSTDIR\${MAINBINARYNAME}.exe"' + "`r`n" + '  Delete "$INSTDIR\version.txt"'
+)
+
+$content = $content.Replace(
     'VIAddVersionKey "ProductVersion" "${VERSION}"',
     "VIAddVersionKey `"ProductVersion`" `"`${VERSION}`"`r`nVIAddVersionKey `"CompanyName`" `"Ciszu Network`""
 )
@@ -199,6 +204,10 @@ if ($runningIndex -ge 0) {
 }
 
 $installProgress = @'
+  FileOpen $0 "$INSTDIR\version.txt" w
+  FileWrite $0 "${VERSION}"
+  FileClose $0
+
   ${If} $CustomUIMode = 1
     Push 20
     Call WriteProgress
@@ -261,6 +270,14 @@ $onInstSuccess = @'
         ExecWait '"$INSTDIR\uninstall.exe" /S _?=$INSTDIR'
         Goto CustomFinishCleanup
       ${EndIf}
+      ${If} $1 == "LAUNCH_PIN"
+        Sleep 1500
+        nsis_tauri_utils::RunAsUser "$INSTDIR\${MAINBINARYNAME}.exe" "--pin-taskbar"
+      ${EndIf}
+      ${If} $1 == "PIN_ONLY"
+        Sleep 1500
+        nsis_tauri_utils::RunAsUser "$INSTDIR\${MAINBINARYNAME}.exe" "--pin-taskbar --pin-only"
+      ${EndIf}
       ${If} $1 == "LAUNCH"
         Sleep 1500
         nsis_tauri_utils::RunAsUser "$INSTDIR\${MAINBINARYNAME}.exe" ""
@@ -287,6 +304,196 @@ Function .onInstFailed
 FunctionEnd
 '@
 $content = $content.Replace("Function RestorePreviousInstallLocation`r`n", $onInstFailed + "`r`nFunction RestorePreviousInstallLocation`r`n")
+
+$unHelpers = @'
+Function un.WriteProgress
+  Pop $0
+  FileOpen $1 "$TEMP\muzicmania-ipc\progress.txt" w
+  FileWrite $1 $0
+  FileClose $1
+FunctionEnd
+
+Function un.WriteLog
+  Pop $0
+  FileOpen $1 "$TEMP\muzicmania-ipc\log.txt" a
+  FileWrite $1 "$0$\r$\n"
+  FileClose $1
+FunctionEnd
+
+'@
+$content = $content.Replace("Function un.onInit", $unHelpers + "Function un.onInit")
+$content = $content.Replace("  !insertmacro MUI_UNGETLANGUAGE`r`n", "")
+
+$unCustomInit = @'
+  ${IfNot} ${Silent}
+  ${AndIfNot} $PassiveMode = 1
+    StrCpy $CustomUIMode 1
+    RMDir /r "$TEMP\muzicmania-ipc"
+    CreateDirectory "$TEMP\muzicmania-ipc"
+    FileOpen $0 "$TEMP\muzicmania-ipc\status.txt" w
+    FileWrite $0 "READY"
+    FileClose $0
+    FileOpen $0 "$TEMP\muzicmania-ipc\progress.txt" w
+    FileWrite $0 "5"
+    FileClose $0
+    FileOpen $0 "$TEMP\muzicmania-ipc\default_dir.txt" w
+    FileWrite $0 "$INSTDIR"
+    FileClose $0
+    FileOpen $0 "$TEMP\muzicmania-ipc\cmd.txt" w
+    FileWrite $0 "WAIT"
+    FileClose $0
+    InitPluginsDir
+    CopyFiles /SILENT "$INSTDIR\${MAINBINARYNAME}.exe" "$PLUGINSDIR\muzicmania-uninstaller.exe"
+    Exec '"$PLUGINSDIR\muzicmania-uninstaller.exe" --uninstaller'
+    HideWindow
+    StrCpy $R9 0
+
+    WaitForUninstallCustomCmd:
+      IntOp $R9 $R9 + 1
+      ${If} $R9 > 3600
+        RMDir /r "$TEMP\muzicmania-ipc"
+        Quit
+      ${EndIf}
+      Sleep 500
+      IfFileExists "$TEMP\muzicmania-ipc\cmd.txt" UninstallCmdExists
+      Goto WaitForUninstallCustomCmd
+
+    UninstallCmdExists:
+      FileOpen $0 "$TEMP\muzicmania-ipc\cmd.txt" r
+      FileRead $0 $2
+      FileClose $0
+      ${If} $2 == "ABORT"
+        RMDir /r "$TEMP\muzicmania-ipc"
+        Quit
+      ${EndIf}
+      ${If} $2 != "UNINSTALL"
+        Delete "$TEMP\muzicmania-ipc\cmd.txt"
+        Goto WaitForUninstallCustomCmd
+      ${EndIf}
+      Delete "$TEMP\muzicmania-ipc\cmd.txt"
+
+    IfFileExists "$TEMP\muzicmania-ipc\delete_data.txt" 0 UninstallDataDone
+      FileOpen $0 "$TEMP\muzicmania-ipc\delete_data.txt" r
+      FileRead $0 $1
+      FileClose $0
+      ${If} $1 == "1"
+        StrCpy $DeleteAppDataCheckboxState 1
+      ${EndIf}
+    UninstallDataDone:
+    Sleep 1500
+  ${EndIf}
+
+'@
+
+$unOnInitStart = $content.IndexOf("Function un.onInit")
+if ($unOnInitStart -lt 0) { throw "Function un.onInit no encontrada" }
+$unOnInitEnd = $content.IndexOf("FunctionEnd", $unOnInitStart)
+if ($unOnInitEnd -lt 0) { throw "FunctionEnd de un.onInit no encontrado" }
+$content = $content.Substring(0, $unOnInitEnd) + $unCustomInit + $content.Substring($unOnInitEnd)
+
+$content = $content.Replace(
+    "Function un.SkipIfPassive`r`n  `${IfThen} `$PassiveMode = 1  `${|} Abort `${|}`r`nFunctionEnd",
+    "Function un.SkipIfPassive`r`n  `${IfThen} `$PassiveMode = 1  `${|} Abort `${|}`r`n  `${IfThen} `$CustomUIMode = 1  `${|} Abort `${|}`r`nFunctionEnd"
+)
+
+$unSuccess = @'
+Function un.onUninstSuccess
+  ${If} $CustomUIMode = 1
+    Push 100
+    Call un.WriteProgress
+    Push "Uninstallation completed successfully"
+    Call un.WriteLog
+    FileOpen $0 "$TEMP\muzicmania-ipc\status.txt" w
+    FileWrite $0 "DONE"
+    FileClose $0
+    StrCpy $R9 0
+
+    WaitUninstallClose:
+      IntOp $R9 $R9 + 1
+      ${If} $R9 > 240
+        Goto UninstallCleanup
+      ${EndIf}
+      Sleep 500
+      IfFileExists "$TEMP\muzicmania-ipc\cmd.txt" UninstallCloseExists
+      Goto WaitUninstallClose
+
+    UninstallCloseExists:
+      FileOpen $0 "$TEMP\muzicmania-ipc\cmd.txt" r
+      FileRead $0 $1
+      FileClose $0
+      Delete "$TEMP\muzicmania-ipc\cmd.txt"
+      ${If} $1 == "ABORT"
+        Goto UninstallCleanup
+      ${EndIf}
+
+    UninstallCleanup:
+      RMDir /r "$TEMP\muzicmania-ipc"
+    Return
+  ${EndIf}
+FunctionEnd
+
+'@
+$content = $content.Replace("Function un.onInit", $unSuccess + "Function un.onInit")
+
+$checkUninstallRunning = @'
+  ${If} $CustomUIMode != 1
+    !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"
+  ${EndIf}
+'@
+$uninstallSectionStart = $content.IndexOf("Section Uninstall")
+$uninstallRunningIndex = $content.IndexOf('  !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"', $uninstallSectionStart)
+$uninstallRunningLine = '  !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"'
+if ($uninstallRunningIndex -ge 0) {
+    $content = $content.Substring(0, $uninstallRunningIndex) + $checkUninstallRunning + $content.Substring($uninstallRunningIndex + $uninstallRunningLine.Length)
+}
+
+$unStartProgress = @'
+  ${If} $CustomUIMode = 1
+    Push 20
+    Call un.WriteProgress
+    Push "Removing application files..."
+    Call un.WriteLog
+  ${EndIf}
+
+'@
+$content = $content.Replace(
+    "Section Uninstall`r`n`r`n  !ifmacrodef NSIS_HOOK_PREUNINSTALL",
+    "Section Uninstall`r`n`r`n" + $unStartProgress + "  !ifmacrodef NSIS_HOOK_PREUNINSTALL"
+)
+
+$unFileProgress = @'
+  ${If} $CustomUIMode = 1
+    Push 50
+    Call un.WriteProgress
+    Push "Application files removed"
+    Call un.WriteLog
+  ${EndIf}
+
+'@
+$content = $content.Replace(
+    '  Delete "$INSTDIR\${MAINBINARYNAME}.exe"' + "`r`n" + '  Delete "$INSTDIR\version.txt"',
+    '  Delete "$INSTDIR\${MAINBINARYNAME}.exe"' + "`r`n" + '  Delete "$INSTDIR\version.txt"' + "`r`n" + $unFileProgress
+)
+
+$unFinishProgress = @'
+  ${If} $CustomUIMode = 1
+    Push 90
+    Call un.WriteProgress
+    Push "Finalizing uninstallation..."
+    Call un.WriteLog
+    SetAutoClose true
+  ${EndIf}
+
+'@
+$content = $content.Replace(
+    "  ; Auto close if passive mode or updating`r`n",
+    $unFinishProgress + "  ; Auto close if passive mode or updating`r`n"
+)
+
+$content = $content.Replace(
+    '    RmDir /r "$LOCALAPPDATA\${BUNDLEID}"',
+    '    RmDir /r "$LOCALAPPDATA\${BUNDLEID}"' + "`r`n" + '    RmDir /r "$APPDATA\MuzicMania"' + "`r`n" + '    RmDir /r "$LOCALAPPDATA\MuzicMania"'
+)
 
 Set-Content $NsiFile $content -Encoding UTF8
 

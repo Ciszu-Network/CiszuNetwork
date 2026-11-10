@@ -75,10 +75,17 @@
 - ✅ **Fix UI Logotipo (`/information`):** Se corrigió el desbordamiento del branding limitando el Logotipo a `w-64` en vez de `w-full` en la vista desktop (`xl:flex-row`), evitando que el texto se salga de la pantalla con zoom.
 
 ### 📦 Instaladores (Tauri & NSIS)
-- ✅ **Instalador custom real:** NSIS 2.0.1 con UI WebView2, 18 idiomas, licencia, ruta, progreso, cancelación con rollback, atajos y desinstalador. Artefacto final de ~1.6 MB (ya no placeholders de 971 bytes).
+- ✅ **Instalador custom real:** NSIS 2.3.0 perMachine con UAC de administrador, UI WebView2, 18 idiomas con banderas y lista custom, inglés por defecto, licencia, ruta, progreso, cancelación con rollback, atajos, bienvenida y despedidas. Artefacto final de ~11.6 MB (ya no placeholders de 971 bytes).
 - ✅ **Build reproducible:** `launcher/build-installer.ps1` compila, parchea, copia a `website/public/downloads/` y `launcher/downloads/` y verifica tamaño.
-- ✅ **Descarga online:** Release `muzicmania-v2.0.1` con assets para Windows 10/11; el API route redirige al release si no existe el archivo local.
-- ✅ **Primer inicio:** muestra versión, sistema, arquitectura y ruta real de instalación.
+- ✅ **Descarga online:** Release `muzicmania-v2.1.0` con assets para Windows 10/11; el API route redirige al release si no existe el archivo local.
+- ✅ **Launcher pre-game:** inicializador, update checker GitHub con descarga progressiva/reintentos/omitir offline, tutorial de primera ejecución, hub maximizado online/offline, invitado local, cuenta CISZU ID, sesión persistente, ajustes, redes y soporte. Ver `MOBILE_LAUNCHER_PLAN.md` para Android/iOS.
+- ✅ **Anclaje a taskbar:** check final que encola `LAUNCH_PIN`/`PIN_ONLY`; Windows 11 usa `TaskbarManager` con diálogo de confirmación y Windows 10 el verbo Shell clásico. Si no está permitido, diálogo nativo topmost con instrucciones y `shell:AppsFolder`; AUMID y shortcut de Menú Inicio sincronizados.
+- ✅ **Desinstalador custom:** UI propia v2.0.0 con versión/ruta/espacio, conservación o borrado de datos locales, feedback opcional, progreso y logs. Integrado en el hub y en el desinstalador de Windows; si no detecta instalación muestra vista "not installed" con descarga y soporte.
+- ✅ **Roadmap visual compartido:** `roadmap.css/js` en instalador (6 etapas) y desinstalador (3 etapas), con completados verdes, bloqueados con candado, error rojo en todo el recorrido y navegación hacia atrás solo por etapas completadas.
+- ✅ **Marca y soporte:** logo real `logo.svg` compartido, footer con copyright, versión, 6 redes sociales, WhatsApp de soporte y selector rápido de idioma; enlaces externos vía `open_url`.
+- ✅ **Pulido UI:** rate limits de 500–1200 ms en acciones, hints de licencia, validación de rutas/espacio, easter egg de 5 clics al logo, botones de error con iconos y colores, y advertencias de red/soporte.
+- ✅ **Modo offline jugable:** ventana local maximizada con las 4 pistas oficiales de Genesis Neon, charts generados, selector de dificultad y récords locales en localStorage.
+- ✅ **Detección de instalación:** si MuzicMania ya existe, el setup muestra versión/ruta y permite actualizar/reinstalar, abrir el desinstalador o cerrar. El arranque normal ya no muestra una pantalla de instalación completada.
 - ✅ **Bloqueo de Atajos:** Bloqueados teclas del navegador (F3, F5, F11, Ctrl+P, Ctrl+R, DevTools, etc.) en instalador y launcher.
 - ✅ **Offline Screen:** Pantalla de error con botón para jugar en `Modo Offline` local y botón de salir.
 - ✅ **Ventana de Launcher:** `always_on_top` y tamaño ampliado para el primer inicio.

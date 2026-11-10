@@ -78,7 +78,7 @@ Para encapsular Next.js 15 en Tauri se analizaron dos enfoques arquitectónicos.
   - **Actualizaciones inmediatas**: cualquier cambio en la web (Next.js en Vercel) se refleja
     al instante en la app de escritorio, sin re-descargar el `.exe`.
   - **Soporte dinámico total**: conserva SSR, APIs, Server Actions y Supabase Auth/cookies.
-  - **Binario ultra-ligero**: instalador final de ~1.6 MB porque no empaqueta assets estáticos.
+  - **Binario ultra-ligero**: instalador final de ~11.6 MB: incluye launcher, UIs custom y 4 pistas offline; el juego online completo se sirve desde la web.
   - **Rendimiento**: WebView2 (Chromium) con aceleración por hardware por defecto, ideal para
     un juego rítmico.
 
@@ -114,16 +114,16 @@ Define el paquete Rust, las dependencias de Tauri y las características habilit
 ```toml
 [package]
 name = "muzicmania"
-version = "2.0.1"
+version = "2.1.0"
 description = "MuzicMania 2.0 - Ecosistema Rítmico de Alto Rendimiento"
 authors = ["Ciszuko Antony"]
 edition = "2021"
 
 [build-dependencies]
-tauri-build = { version = "2.0.1", features = [] }
+tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.1", features = ["devtools"] }
+tauri = { version = "2", features = [] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 ```
@@ -228,13 +228,13 @@ El script usa el CLI de Tauri del workspace (`@tauri-apps/cli 2.11.4`), el targe
 ```
 launcher/src-tauri/target/x86_64-pc-windows-msvc/release/
 ├── muzicmania.exe
-├── bundle/nsis/MuzicMania_2.0.1_x64-setup.exe
+├── bundle/nsis/MuzicMania_2.1.0_x64-setup.exe
 └── nsis/x64/nsis-output.exe
 ```
 
-El artefacto final pesa ~1.6 MB comprimido. `build-installer.ps1` lo publica en
+El artefacto final pesa ~11.6 MB comprimido. `build-installer.ps1` lo publica en
 `website/public/downloads/` y `launcher/downloads/` con los nombres
-`MuzicMania(v2.0.1)_InstallerSetup(v2.1.3)_Windows10/11_x64.exe`.
+`MuzicMania(v2.1.0)_InstallerSetup(v2.3.0)_Windows10/11_x64.exe`.
 
 ## 6. Instaladores: MSI y NSIS
 
@@ -243,10 +243,25 @@ El artefacto final pesa ~1.6 MB comprimido. `build-installer.ps1` lo publica en
 | **MSI** | No compilado | No se distribuye actualmente |
 | **NSIS** | Activo | Instalador custom multiidioma para Windows 10/11 x64 |
 
-El NSIS usa `installMode: currentUser` y una UI WebView2 embebida
-(`splash/installer.html` + `installer.js`) con 18 idiomas, licencia, selección de
+El NSIS usa `installMode: perMachine` (requiere UAC) y una UI WebView2 embebida
+(`splash/installer.html` + `installer.js`) con 18 idiomas (selector custom con banderas, inglés por defecto), licencia, detección de instalación existente, selección de
 directorio, progreso, desinstalador y post-acciones. El flujo oculto de NSIS copia los
 archivos; la UI escribe `dir.txt` y recibe estado por `%TEMP%\muzicmania-ipc`.
+
+El check **Anclar a la barra de tareas** no se ejecuta desde el instalador. `installer_finish`
+escribe `LAUNCH_PIN` o `PIN_ONLY` y el NSIS arranca el launcher como usuario con
+`--pin-taskbar` (y `--pin-only` si no se pidió ejecutar). El proceso establece su AUMID
+(`com.ciszunetwork.muzicmania`), copia el acceso directo del Menú Inicio al perfil del usuario
+y solicita el anclaje desde la app en primer plano:
+
+- **Windows 11:** `TaskbarManager.RequestPinCurrentAppAsync`; Windows muestra su diálogo de
+  confirmación. Si el build es anterior a la API de escritorio o la política/foreground no lo
+  permite, se ofrece el anclaje manual.
+- **Windows 10 y anteriores:** se invoca el verbo clásico `Shell.Application` sobre el acceso
+  directo; si no existe, se muestra un diálogo nativo con instrucciones y acceso a
+  `shell:AppsFolder`.
+- **Fallback:** `MessageBoxW` topmost bilingüe; no se simulan clics ni se usan utilidades
+  externas.
 
 | Script | Función |
 |---|---|
@@ -256,14 +271,46 @@ archivos; la UI escribe `dir.txt` y recibe estado por `%TEMP%\muzicmania-ipc`.
 Los splash y plantillas viven en `launcher/src-tauri/splash/`. Ver las reglas globales de
 packaging en `` `INSTALLERS_SYSTEM.md` `` (ver ciszu).
 
+### 6.4 Launcher pre-game y autenticación
+
+La SPA local `splash/launcher.js` + `launcher.css` reemplaza al antiguo splash que abría
+la web directamente. El flujo es:
+
+1. Splash compacto (estado, versión y progreso).
+2. `launcher_check_update` contra GitHub Releases; descarga el asset Windows10/11
+   adecuado con `curl`, progreso por tamaño, tres reintentos y opción de omitir solo
+   cuando falla la red (fuerza modo offline).
+3. Inicializador y tutorial de primera ejecución.
+4. Login CISZU ID si hay red y no hay sesión; si no hay red o el usuario elige invitado,
+   se crea una sesión local `guest`.
+5. Hub maximizado con cuenta, estado online/offline, jugar online/offline, reinicio
+   online, ajustes, actualización manual, comunidad, soporte y enlaces.
+
+La sesión se guarda en `%APPDATA%\MuzicMania\launcher_session.json`; el invitado usa el
+mismo archivo sin tokens. El login se abre en una ventana CISZU ID real
+(`/login?launcher=1`) y la web devuelve la sesión a `/launcher-auth?session=...`; el
+callback `on_navigation` de Tauri la intercepta, la valida y emite
+`launcher-auth-finished`. El registro queda oculto en ese modo. `launcher_logout` limpia
+la sesión y los datos de navegación del WebView. La planificación Android/iOS está en
+`MOBILE_LAUNCHER_PLAN.md`.
+
+Los comandos principales son `launcher_boot`, `launcher_check_update`,
+`launcher_start_update`, `launcher_update_progress`, `launcher_apply_update`,
+`launcher_open_login`, `launcher_session`, `launcher_guest`, `launcher_logout`,
+`launcher_show_small`, `launcher_show_hub`, `launcher_restart`, `launcher_ready` y
+`launcher_offline_game`.
+
 ## 7. Distribución vía GitHub Releases
 
-Release activo: `muzicmania-v2.0.1` en
+Release activo: `muzicmania-v2.1.0` en
 `Ciszu-Network/CiszuNetwork`. GitHub normaliza los paréntesis del nombre a puntos
-(`MuzicMania.v2.0.1._InstallerSetup.v2.1.3._Windows10_x64.exe`). El API route
+(`MuzicMania.v2.1.0._InstallerSetup.v2.3.0._Windows10_x64.exe`). El API route
 `/api/download/windows` sirve el archivo local si existe y, si no, redirige al asset del
 release con esa normalización. Se puede cambiar la base con
 `MUZICMANIA_INSTALLER_RELEASE_URL`.
+
+Asset final: **11.690.192 bytes** (`11.15 MiB`), SHA256
+`D6EFE74CE086014BCC6AF1076361EB89EC7F5F6E225486D231DD123ABFE5BC36`.
 
 > `website/public/downloads/` y `launcher/downloads/` están ignorados por git. En Vercel se
 > usa el redirect al release; para pruebas locales el archivo real queda en ambas carpetas.
@@ -316,7 +363,7 @@ Con la estrategia de webview shell, no de forma completa: requiere red para carg
 consultar Supabase. Es un trade-off aceptado por el modelo de actualizaciones instantáneas.
 
 **¿Cuánto pesa el instalador?**
-~1.6 MB comprimido, porque no incluye los assets del juego (se sirven desde la web/CDN).
+~11.6 MB comprimido: incluye el launcher, instalador/desinstalador custom y las 4 pistas locales del modo offline. El resto de assets online se sirven desde la web/CDN.
 
 **¿Soporta macOS o Linux?**
 La configuración actual apunta a `nsis` (Windows). Tauri v2 es multiplataforma, así que
