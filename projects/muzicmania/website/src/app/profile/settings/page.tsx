@@ -547,6 +547,13 @@ export default function ProfileSettingsPage() {
             
             <div className="pt-8 mt-4 border-t border-white/5">
               <button
+                onClick={() => router.push('/profile/billing')}
+                className="mb-2 w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-header font-black uppercase tracking-widest text-xs bg-cyan-500/5 text-cyan-300 hover:bg-cyan-500/15 transition-all border border-cyan-500/20"
+              >
+                <Icon name="credit-card" size={16} />
+                Facturación
+              </button>
+              <button
                 onClick={handleLogout}
                 className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-header font-black uppercase tracking-widest text-xs bg-red-500/5 text-red-400 hover:bg-red-500 hover:text-white transition-all shadow-lg active:scale-95 border border-red-500/20"
               >

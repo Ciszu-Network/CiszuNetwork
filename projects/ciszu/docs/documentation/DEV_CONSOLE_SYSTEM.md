@@ -291,6 +291,12 @@ Opciones del submenú:
 es **del sistema** (vault local; en producción, env vars de Vercel), no del
 empleado: sin credencial la devcon solo previsualiza y avisa.
 
+### 4.8 MuzicMania Finanzas
+
+La gestión de reembolsos, retiros y códigos promocionales se movió a **STAFFCON**.
+Consultar `STAFF_SYSTEM.md` §5.3. La devcon conserva solo operación de webs, debug y
+servicios del ecosistema.
+
 ## 5. Modo CLI no interactivo
 
 Pensado para opencode, scripts y automatización:

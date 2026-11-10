@@ -12,6 +12,7 @@ import { useAppStore } from '@/store/useAppStore';
 import Image from 'next/image';
 import { usePageTitle } from '@/lib/usePageTitle';
 import BadgesSection from '@/components/profile/BadgesSection';
+import { nextRankForLevel, rankForLevel } from '@/lib/ranks';
 
 
 
@@ -38,12 +39,14 @@ export default function DynamicProfilePage() {
   const [modHours, setModHours] = useState('24');
   const [modMsg, setModMsg] = useState<string | null>(null);
   const [modBusy, setModBusy] = useState(false);
+  const [friendBusy, setFriendBusy] = useState(false);
+  const [friendStatus, setFriendStatus] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
       setLoading(true);
       try {
-        let query = supabase.from('profiles').select('id,username,display_name,avatar_url,banner_url,bio,country,languages,role,created_at,updated_at,email_verified,high_score,games_played,accuracy,rank');
+        let query = supabase.from('profiles').select('id,username,display_name,avatar_url,banner_url,bio,country,languages,role,created_at,updated_at,email_verified,high_score,games_played,accuracy,rank,level,xp');
         const idStr = decodeURIComponent(Array.isArray(identifier) ? identifier[0] : identifier);
 
         if (idStr.startsWith('@')) {
@@ -114,6 +117,8 @@ export default function DynamicProfilePage() {
   }, [identifier, currentUser?.id]);
 
   const isOwnProfile = currentUser?.id === profile?.id;
+  const accountRank = rankForLevel(profile?.level);
+  const nextAccountRank = nextRankForLevel(profile?.level);
   const isNewAccount = Boolean(profile?.created_at) && Date.now() - Date.parse(profile.created_at) < 3 * 24 * 60 * 60 * 1000;
   const roleKey = (userRole || profile?.role || '').toLowerCase();
   const roleStyles: Record<string, string> = {
@@ -172,6 +177,33 @@ export default function DynamicProfilePage() {
       setModMsg('No pudimos aplicar la acción.');
     } finally {
       setModBusy(false);
+    }
+  };
+
+  const sendFriendRequest = async () => {
+    if (!profile?.username || friendBusy || isOwnProfile || !currentUser) return;
+    setFriendBusy(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      const response = await fetch('/api/friends', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ username: profile.username }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error ?? 'friend_request_failed');
+      setFriendStatus('Solicitud enviada');
+      toast('Solicitud de amistad enviada.', 'success');
+    } catch (cause) {
+      const message = cause instanceof Error ? cause.message : 'No se pudo enviar la solicitud.';
+      setFriendStatus(message);
+      toast(message, 'error');
+    } finally {
+      setFriendBusy(false);
     }
   };
 
@@ -245,6 +277,15 @@ export default function DynamicProfilePage() {
                 <p className="text-neon-cyan font-black tracking-widest text-sm opacity-80 uppercase italic">
                   @{profile.username}
                 </p>
+                <div className="flex flex-wrap items-center justify-center gap-2 md:justify-start">
+<span className={`rounded-full border px-3 py-1 text-[9px] font-black uppercase tracking-widest ${accountRank.border} ${accountRank.color} bg-black/30`}>{accountRank.name} · LV {profile.level || 1}</span>
+                  <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-white/40">{profile.xp || 0} XP{nextAccountRank ? ` · siguiente ${nextAccountRank.name}` : ' · rango máximo'}</span>
+                  {!isOwnProfile && currentUser && (
+                    <button type="button" onClick={() => void sendFriendRequest()} disabled={friendBusy || Boolean(friendStatus)} className="rounded-full border border-neon-cyan/35 bg-neon-cyan/10 px-3 py-1 text-[9px] font-black uppercase tracking-widest text-neon-cyan disabled:opacity-50">
+                      {friendStatus || (friendBusy ? 'Enviando…' : 'Añadir amigo')}
+                    </button>
+                  )}
+                </div>
                 <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 pt-2">
                   {accountStatus && (
                     <span className="rounded-full border border-red-500/40 bg-red-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-red-400">

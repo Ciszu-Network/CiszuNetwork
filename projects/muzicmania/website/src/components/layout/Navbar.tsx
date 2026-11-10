@@ -23,6 +23,7 @@ import {  loadPreferences, applyZoom, setMuteTab, updatePreferences, consumeRelo
 import {  fill, getDict, parseLang, readCookieLang } from '@/lib/i18n';
 import PreferencesPanel from '@/components/molecules/PreferencesPanel';
 import SocialHub from '@/components/social/SocialHub';
+import NotificationBell from '@/components/layout/NotificationBell';
 import {  LANGUAGE_OPTIONS, isLangAvailable } from '@ciszu/ui';
 import type { SearchUserItem } from '@ciszu/ui';
 
@@ -406,6 +407,7 @@ export const NavbarContent = () => {
               </button>
 
               {/* Account / User Button + Dropdown */}
+              <NotificationBell userId={user?.id ?? null} />
               <div className="relative">
                 {user ? (
                   <button

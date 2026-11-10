@@ -190,8 +190,16 @@ staffcon.ps1 (TUI)  ──>  scripts/staffcon.js (motor)  ──>  staff.json
 | **Cambiar rango** | Ascender/descender/colocar un cargo (mueve la carpeta del empleado) |
 | **Modificar datos** | Cualquier campo excepto el rango |
 | **Otras herramientas** | Abrir carpetas, logs, regenerar docs, ver JSON |
+| **MuzicMania Finanzas** | Bandeja de reembolsos y retiros, resolución de solicitudes y generador/listado de códigos promocionales. Solo CEO, CFO y Gerencia |
 | **Manual / Información** | Ayuda y créditos |
 | **Salir** | Cierra la consola (los cambios ya están guardados y regenerados) |
+
+**MuzicMania Finanzas** usa `scripts/muzicmania-finance.js` con la service role del
+vault local y exige nivel ≤2 (CEO, CFO o Gerencia). Permite listar y resolver
+reembolsos/retiros (aprobar, marcar pagado/reembolsado o rechazar) y crear códigos
+promocionales de puntos. Cada acción queda en el log de STAFFCON y dispara la
+notificación del usuario afectado; rechazar un retiro devuelve los MZP. El pago
+bancario real sigue siendo manual/contable.
 
 ### 5.4 Permisos (matriz)
 

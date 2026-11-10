@@ -1,8 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { formatMzP } from '@/lib/economy/format';
-import { claimDaily, claimTask, createInvoice, equipItem, fetchCreatorCode, fetchDaily, fetchEconomy, fetchOrder, fetchPackages, fetchShopItems, fetchTasks, giftPoints, purchaseItem } from '@/lib/economy/client';
+import { claimDaily, claimTask, createInvoice, equipItem, fetchCreatorCode, fetchDaily, fetchEconomy, fetchOrder, fetchPackages, fetchShopItems, fetchTasks, giftItem, giftPoints, purchaseItem } from '@/lib/economy/client';
 import type { EconomySnapshot, PointPackage, ShopItem } from '@/lib/economy/types';
 import { AgeGateModal } from './AgeGateModal';
 import { WalletChip } from './WalletChip';
@@ -291,6 +292,7 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
         <button type="button" onClick={onBack} className="rounded-xl border border-white/10 px-3 py-2 text-[9px] font-black uppercase tracking-widest text-white/50">Volver</button>
         <div className="flex items-center gap-2">
           {profile && <span className="rounded-full border border-neon-purple/30 bg-neon-purple/10 px-3 py-1 text-[8px] font-black uppercase tracking-widest text-neon-purple">NIVEL {profile.level} · {profile.xp} XP</span>}
+          <Link href="/profile/billing" className="rounded-full border border-cyan-300/30 bg-cyan-300/10 px-3 py-1 text-[8px] font-black uppercase tracking-widest text-cyan-200">Facturación</Link>
           <WalletChip points={snapshot?.wallet.points ?? 0} />
         </div>
       </div>
@@ -341,10 +343,13 @@ export default function StorePanel({ userId, onBack, onEquipArrow }: { userId: s
       {tab === 'inventory' && (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {items.filter((item) => item.owned).map((item) => (
-            <button key={item.id} type="button" disabled={busy !== null} onClick={() => void equip(item)} className="rounded-2xl border border-emerald-300/20 bg-emerald-300/5 p-4 text-left disabled:opacity-50">
+            <div key={item.id} className="rounded-2xl border border-emerald-300/20 bg-emerald-300/5 p-4">
               <p className="font-header text-lg font-black text-white">{item.name}</p>
-              <p className="text-[9px] uppercase tracking-widest text-emerald-300">{item.equippedSlot ? 'Equipado' : 'Equipar'}</p>
-            </button>
+              <div className="mt-3 flex gap-2">
+                <button type="button" disabled={busy !== null} onClick={() => void equip(item)} className="flex-1 rounded-lg border border-white/10 px-2 py-1.5 text-[8px] font-black uppercase tracking-widest text-white disabled:opacity-50">{item.equippedSlot ? 'Equipado' : 'Equipar'}</button>
+                <button type="button" disabled={busy !== null} onClick={() => { const username = window.prompt('Usuario destino'); if (username) { setBusy(item.id); giftItem(item.id, username).then(() => load()).catch((cause) => setError(cause instanceof Error ? cause.message : 'No se pudo regalar.')).finally(() => setBusy(null)); } }} className="rounded-lg border border-neon-pink/30 px-2 py-1.5 text-[8px] font-black uppercase tracking-widest text-neon-pink disabled:opacity-50">Regalar</button>
+              </div>
+            </div>
           ))}
           {items.every((item) => !item.owned) && <p className="text-[10px] uppercase tracking-widest text-white/30">Sin ítems todavía.</p>}
         </div>

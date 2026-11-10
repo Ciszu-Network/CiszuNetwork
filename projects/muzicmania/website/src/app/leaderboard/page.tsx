@@ -7,7 +7,7 @@ import QuickDocks from '@/components/molecules/QuickDocks';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePageTitle } from '@/lib/usePageTitle';
-import { DebugTag, useDebugMode } from '@ciszu/ui';
+import { DebugTag, Icon, useDebugMode } from '@ciszu/ui';
 import { useT } from '@/hooks/useT';
 
 // --- Icons ---
@@ -32,6 +32,12 @@ interface LeaderboardEntry {
   accuracy: number;
   total_playtime_minutes: number;
   tracks_created: number;
+  level: number;
+  xp: number;
+  period_games?: number;
+  rankKey: string;
+  rankName: string;
+  badges: Array<{ id: string; name: string; icon: string; level: number; style: string }>;
 }
 
 export default function LeaderboardPage() {
@@ -45,6 +51,7 @@ export default function LeaderboardPage() {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('highest_score');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
+  const [period, setPeriod] = useState('all');
 
   const pageSize = 10;
   const displayEntries = useMemo(() => {
@@ -65,7 +72,7 @@ export default function LeaderboardPage() {
 
   useEffect(() => {
     fetchLeaderboard();
-  }, [page, sortBy, sortDir, search]);
+  }, [page, sortBy, sortDir, search, period]);
 
   const fetchLeaderboard = async () => {
     setLoading(true);
@@ -76,6 +83,7 @@ export default function LeaderboardPage() {
         sortBy,
         sortDir,
         search,
+        period,
       });
       const res = await fetch(`/api/leaderboard?${params}`, { cache: 'no-store' });
       if (!res.ok) throw new Error(`Leaderboard ${res.status}`);
@@ -89,6 +97,14 @@ export default function LeaderboardPage() {
     }
     setLoading(false);
   };
+
+  const periodOptions = [
+    { id: 'all', label: 'TODO EL TIEMPO' },
+    { id: 'daily', label: 'DIARIO' },
+    { id: 'weekly', label: 'SEMANAL' },
+    { id: 'monthly', label: 'MENSUAL' },
+    { id: 'yearly', label: 'ANUAL' },
+  ];
 
   const getRankColor = (index: number) => {
     const globalIndex = (page - 1) * pageSize + index;
@@ -172,6 +188,11 @@ export default function LeaderboardPage() {
                  ))}
               </div>
 
+              <div className="flex flex-wrap items-center justify-center gap-2 border-t border-white/5 pt-4">
+                {periodOptions.map((option) => (
+                  <button key={option.id} type="button" onClick={() => { setPeriod(option.id); setPage(1); }} className={`rounded-xl border px-4 py-2 text-[8px] font-black uppercase tracking-widest transition-all ${period === option.id ? 'border-neon-cyan bg-neon-cyan/15 text-neon-cyan' : 'border-white/10 text-white/30 hover:border-white/25'}`}>{option.label}</button>
+                ))}
+              </div>
               <button 
                 onClick={() => setSortDir(d => d === 'desc' ? 'asc' : 'desc')}
                 className="px-8 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all flex items-center gap-3 group/sort"
@@ -235,6 +256,12 @@ export default function LeaderboardPage() {
                               <div>
                                  <h4 className="flex items-center gap-2 text-2xl font-header font-black text-white uppercase italic tracking-tighter group-hover:text-neon-cyan transition-colors">{entry.display_name}{isPlaceholder && <DebugTag />}</h4>
                                  <p className="text-[10px] text-white/20 font-black uppercase tracking-[0.4em]">@{entry.username}</p>
+                                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                                    <span className="rounded-full border border-white/10 px-2 py-0.5 text-[7px] font-black uppercase tracking-widest text-white/40">{entry.rankName || 'Wood'} · LV {entry.level || 1}</span>
+                                    {(entry.badges || []).slice(0, 3).map((badge) => (
+                                      <span key={badge.id} title={`${badge.name} · Nivel ${badge.level}`} className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[7px] font-black uppercase tracking-widest text-white/45"><Icon name={badge.icon || 'medal'} size={10} /> {badge.level}</span>
+                                    ))}
+                                 </div>
                               </div>
                            </div>
 

@@ -77,6 +77,17 @@ export async function giftPoints(recipientUsername: string, amount: number, mess
   return data;
 }
 
+export async function giftItem(itemId: string, recipientUsername: string, message = '') {
+  const response = await apiFetch('/api/economy/gift', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ recipient_username: recipientUsername, item_id: itemId, message }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error ?? 'gift_failed');
+  return data;
+}
+
 export async function donateToCreator(levelId: string, amount: number, message = '') {
   const response = await apiFetch('/api/economy/donate', {
     method: 'POST',

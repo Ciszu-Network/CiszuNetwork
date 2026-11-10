@@ -80,13 +80,20 @@
 - ✅ **Descarga online:** Release `muzicmania-v2.1.1` con assets para Windows 10/11; el API route redirige al release si no existe el archivo local.
 - ✅ **Launcher pre-game:** inicializador, update checker GitHub con descarga progressiva/reintentos/omitir offline, tutorial de primera ejecución, hub maximizado online/offline, invitado local, cuenta CISZU ID, sesión persistente, ajustes, redes y soporte. Ver `MOBILE_LAUNCHER_PLAN.md` para Android/iOS.
 - ✅ **Anclaje a taskbar:** check final que encola `LAUNCH_PIN`/`PIN_ONLY`; Windows 11 usa `TaskbarManager` con diálogo de confirmación y Windows 10 el verbo Shell clásico. Si no está permitido, diálogo nativo topmost con instrucciones y `shell:AppsFolder`; AUMID y shortcut de Menú Inicio sincronizados.
-- ✅ **Desinstalador custom:** UI propia v2.0.0 con versión/ruta/espacio, conservación o borrado de datos locales, feedback opcional, progreso y logs. Integrado en el hub y en el desinstalador de Windows; si no detecta instalación muestra vista "not installed" con descarga y soporte.
+- ✅ **Desinstalador custom:** UI propia v2.1.0 con versión/ruta/espacio, conservación o borrado de datos locales, feedback opcional, progreso y logs. Integrado en el hub y en el desinstalador de Windows; si no detecta instalación muestra vista "not installed" con descarga y soporte.
 - ✅ **Roadmap visual compartido:** `roadmap.css/js` en instalador (6 etapas) y desinstalador (3 etapas), con completados verdes, bloqueados con candado, error rojo en todo el recorrido y navegación hacia atrás solo por etapas completadas.
 - ✅ **Marca y soporte:** logo real `logo.svg` compartido, footer con copyright, versión, 6 redes sociales, WhatsApp de soporte y selector rápido de idioma; enlaces externos vía `open_url`.
 - ✅ **Pulido UI:** rate limits de 500–1200 ms en acciones, hints de licencia, validación de rutas/espacio, easter egg de 5 clics al logo, botones de error con iconos y colores, y advertencias de red/soporte.
 - ✅ **Modo offline jugable:** ventana local maximizada con las 4 pistas oficiales de Genesis Neon, charts generados, selector de dificultad y récords locales en localStorage.
 - ✅ **Detección de instalación:** si MuzicMania ya existe, el setup muestra versión/ruta y permite actualizar/reinstalar, abrir el desinstalador o cerrar. El arranque normal ya no muestra una pantalla de instalación completada.
 - ✅ **Bloqueo de Atajos:** Bloqueados teclas del navegador (F3, F5, F11, Ctrl+P, Ctrl+R, DevTools, etc.) en instalador y launcher.
+- ✅ **Facturación y códigos:** `/profile/billing` con historial de compras, solicitudes de reembolso, canje de códigos promocionales y solicitudes de retiro (revisión manual). Los artículos comprados también se pueden regalar desde el inventario.
+- ✅ **Rangos y medallas:** rangos Wood/Stone/Iron/Gold/Platinum/Diamond/Obsidian/Legend por nivel, badge de rango automático, staff y empresa verificada; los badges de logros existentes se muestran en perfil y leaderboard.
+- ✅ **Leaderboard avanzado:** filtros diario/semanal/mensual/anual sobre `scores`, búsqueda, orden, rango de cuenta y hasta 3 badges destacados por jugador.
+- ✅ **Migraciones fase 5/7/8:** `20261109000001_phase5_finance_ranks.sql`, `20261109000002_rank_badges_backfill.sql`, `20261109000003_rank_badges_extra.sql` y `20261109000004_notifications_friends.sql` aplicadas.
+- ✅ **Notificaciones:** campana junto a la cuenta con badge, slider de 50 actividades, filtros por logro/social/amistad/compras/seguridad, búsqueda, marcar leído y página completa `/notifications`. Incluye notificaciones automáticas de badges, solicitudes de amistad, sanciones y cambios de reembolso/retiro.
+- ✅ **Amistad:** solicitudes desde el perfil, aceptar/rechazar desde la campana y notificaciones de resultado.
+- ✅ **Devcon Finanzas:** bandeja de reembolsos/retiros y generador/listado de promociones en `MUZICMANIA FINANZAS`, con auditoría y sin exponer la service role.
 - ✅ **Offline Screen:** Pantalla de error con botón para jugar en `Modo Offline` local y botón de salir.
 - ✅ **Ventana de Launcher:** `always_on_top` y tamaño ampliado para el primer inicio.
 
