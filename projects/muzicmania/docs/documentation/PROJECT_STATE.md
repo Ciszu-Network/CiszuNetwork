@@ -75,9 +75,9 @@
 - ✅ **Fix UI Logotipo (`/information`):** Se corrigió el desbordamiento del branding limitando el Logotipo a `w-64` en vez de `w-full` en la vista desktop (`xl:flex-row`), evitando que el texto se salga de la pantalla con zoom.
 
 ### 📦 Instaladores (Tauri & NSIS)
-- ✅ **Instalador custom real:** NSIS 2.3.0 perMachine con UAC de administrador, UI WebView2, 18 idiomas con banderas y lista custom, inglés por defecto, licencia, ruta, progreso, cancelación con rollback, atajos, bienvenida y despedidas. Artefacto final de ~11.6 MB (ya no placeholders de 971 bytes).
+- ✅ **Instalador custom real:** NSIS 2.3.1 perMachine con UAC de administrador, UI WebView2, 18 idiomas con banderas y lista custom, inglés por defecto, licencia, ruta, progreso, cancelación con rollback, atajos, bienvenida y despedidas. Artefacto final de ~11.6 MB (ya no placeholders de 971 bytes).
 - ✅ **Build reproducible:** `launcher/build-installer.ps1` compila, parchea, copia a `website/public/downloads/` y `launcher/downloads/` y verifica tamaño.
-- ✅ **Descarga online:** Release `muzicmania-v2.1.0` con assets para Windows 10/11; el API route redirige al release si no existe el archivo local.
+- ✅ **Descarga online:** Release `muzicmania-v2.1.1` con assets para Windows 10/11; el API route redirige al release si no existe el archivo local.
 - ✅ **Launcher pre-game:** inicializador, update checker GitHub con descarga progressiva/reintentos/omitir offline, tutorial de primera ejecución, hub maximizado online/offline, invitado local, cuenta CISZU ID, sesión persistente, ajustes, redes y soporte. Ver `MOBILE_LAUNCHER_PLAN.md` para Android/iOS.
 - ✅ **Anclaje a taskbar:** check final que encola `LAUNCH_PIN`/`PIN_ONLY`; Windows 11 usa `TaskbarManager` con diálogo de confirmación y Windows 10 el verbo Shell clásico. Si no está permitido, diálogo nativo topmost con instrucciones y `shell:AppsFolder`; AUMID y shortcut de Menú Inicio sincronizados.
 - ✅ **Desinstalador custom:** UI propia v2.0.0 con versión/ruta/espacio, conservación o borrado de datos locales, feedback opcional, progreso y logs. Integrado en el hub y en el desinstalador de Windows; si no detecta instalación muestra vista "not installed" con descarga y soporte.

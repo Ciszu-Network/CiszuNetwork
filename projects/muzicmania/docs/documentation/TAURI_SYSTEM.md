@@ -114,7 +114,7 @@ Define el paquete Rust, las dependencias de Tauri y las características habilit
 ```toml
 [package]
 name = "muzicmania"
-version = "2.1.0"
+version = "2.1.1"
 description = "MuzicMania 2.0 - Ecosistema Rítmico de Alto Rendimiento"
 authors = ["Ciszuko Antony"]
 edition = "2021"
@@ -228,13 +228,13 @@ El script usa el CLI de Tauri del workspace (`@tauri-apps/cli 2.11.4`), el targe
 ```
 launcher/src-tauri/target/x86_64-pc-windows-msvc/release/
 ├── muzicmania.exe
-├── bundle/nsis/MuzicMania_2.1.0_x64-setup.exe
+├── bundle/nsis/MuzicMania_2.1.1_x64-setup.exe
 └── nsis/x64/nsis-output.exe
 ```
 
 El artefacto final pesa ~11.6 MB comprimido. `build-installer.ps1` lo publica en
 `website/public/downloads/` y `launcher/downloads/` con los nombres
-`MuzicMania(v2.1.0)_InstallerSetup(v2.3.0)_Windows10/11_x64.exe`.
+`MuzicMania(v2.1.1)_InstallerSetup(v2.3.1)_Windows10/11_x64.exe`.
 
 ## 6. Instaladores: MSI y NSIS
 
@@ -279,7 +279,9 @@ la web directamente. El flujo es:
 1. Splash compacto (estado, versión y progreso).
 2. `launcher_check_update` contra GitHub Releases; descarga el asset Windows10/11
    adecuado con `curl`, progreso por tamaño, tres reintentos y opción de omitir solo
-   cuando falla la red (fuerza modo offline).
+   cuando falla la red (fuerza modo offline). Si la actualización automática está activa,
+   tras descargar hace una cuenta atrás e instala con UAC; el instalador emite una
+   notificación nativa de Windows al completar.
 3. Inicializador y tutorial de primera ejecución.
 4. Login CISZU ID si hay red y no hay sesión; si no hay red o el usuario elige invitado,
    se crea una sesión local `guest`.
@@ -295,22 +297,22 @@ la sesión y los datos de navegación del WebView. La planificación Android/iOS
 `MOBILE_LAUNCHER_PLAN.md`.
 
 Los comandos principales son `launcher_boot`, `launcher_check_update`,
-`launcher_start_update`, `launcher_update_progress`, `launcher_apply_update`,
+`launcher_start_update`, `launcher_update_progress`, `launcher_apply_update`, `launcher_pin_taskbar`,
 `launcher_open_login`, `launcher_session`, `launcher_guest`, `launcher_logout`,
 `launcher_show_small`, `launcher_show_hub`, `launcher_restart`, `launcher_ready` y
 `launcher_offline_game`.
 
 ## 7. Distribución vía GitHub Releases
 
-Release activo: `muzicmania-v2.1.0` en
+Release activo: `muzicmania-v2.1.1` en
 `Ciszu-Network/CiszuNetwork`. GitHub normaliza los paréntesis del nombre a puntos
-(`MuzicMania.v2.1.0._InstallerSetup.v2.3.0._Windows10_x64.exe`). El API route
+(`MuzicMania.v2.1.1._InstallerSetup.v2.3.1._Windows10_x64.exe`). El API route
 `/api/download/windows` sirve el archivo local si existe y, si no, redirige al asset del
 release con esa normalización. Se puede cambiar la base con
 `MUZICMANIA_INSTALLER_RELEASE_URL`.
 
-Asset final: **11.690.192 bytes** (`11.15 MiB`), SHA256
-`D6EFE74CE086014BCC6AF1076361EB89EC7F5F6E225486D231DD123ABFE5BC36`.
+Asset final: **11.692.682 bytes** (`11.15 MiB`), SHA256
+`E04C694194E776CD6E12BE879076A12985D34A1D97D2CFD0D02F70316B68F3BC`.
 
 > `website/public/downloads/` y `launcher/downloads/` están ignorados por git. En Vercel se
 > usa el redirect al release; para pruebas locales el archivo real queda en ambas carpetas.

@@ -134,6 +134,43 @@ fn set_taskbar_identity() {
     };
 }
 
+#[cfg(target_os = "windows")]
+fn xml_escape(value: &str) -> String {
+    value
+        .replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
+}
+
+#[cfg(target_os = "windows")]
+fn show_windows_toast(title: &str, body: &str) {
+    use windows::core::HSTRING;
+    use windows::Data::Xml::Dom::XmlDocument;
+    use windows::UI::Notifications::{ToastNotification, ToastNotificationManager};
+
+    let xml_text = format!(
+        "<toast><visual><binding template=\"ToastGeneric\"><text>{}</text><text>{}</text></binding></visual></toast>",
+        xml_escape(title),
+        xml_escape(body)
+    );
+    let Ok(xml) = XmlDocument::new() else {
+        return;
+    };
+    if xml.LoadXml(&HSTRING::from(xml_text)).is_err() {
+        return;
+    }
+    let Ok(toast) = ToastNotification::CreateToastNotification(&xml) else {
+        return;
+    };
+    let Ok(notifier) = ToastNotificationManager::CreateToastNotifierWithId(&HSTRING::from(
+        "com.ciszunetwork.muzicmania",
+    )) else {
+        return;
+    };
+    let _ = notifier.Show(&toast);
+}
+
 fn windows_build_number() -> u32 {
     read_reg_value(
         r"HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion",
@@ -573,6 +610,15 @@ fn launcher_show_hub(app: tauri::AppHandle) {
         let _ = window.maximize();
         let _ = window.set_focus();
     }
+}
+
+#[cfg(target_os = "windows")]
+#[tauri::command]
+fn launcher_pin_taskbar(app: tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("launcher") {
+        let _ = window.set_focus();
+    }
+    request_taskbar_pin();
 }
 
 #[tauri::command]
@@ -1269,6 +1315,11 @@ fn installer_finish(app: tauri::AppHandle, run: bool, desktop: bool, taskbar: bo
         (false, false) => "DONE",
     };
     let _ = std::fs::write(dir_path.join("cmd.txt"), cmd);
+    #[cfg(target_os = "windows")]
+    show_windows_toast(
+        "MuzicMania instalado",
+        "Gracias por elegir Ciszu Network. Tu launcher está listo.",
+    );
     INSTALLER_FORCE_CLOSE.store(true, Ordering::SeqCst);
     if let Some(win) = app.get_webview_window("installer") {
         let _ = win.close();
@@ -1660,6 +1711,7 @@ fn main() {
             launcher_mark_tutorial_done,
             launcher_show_hub,
             launcher_show_small,
+            launcher_pin_taskbar,
             launcher_open_login,
             launcher_restart,
             launcher_check_update,

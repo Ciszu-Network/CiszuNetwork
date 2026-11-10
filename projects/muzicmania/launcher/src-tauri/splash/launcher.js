@@ -14,6 +14,7 @@ const state = {
   tutorialIndex: 0,
   pendingLink: '',
   updating: false,
+  autoApplying: false,
 };
 
 const TUTORIAL = [
@@ -127,8 +128,8 @@ async function boot() {
     state.boot = await invoke('launcher_boot');
     state.settings = await invoke('get_settings');
     state.session = state.boot?.session || null;
-    setText('splash-version', `V${state.boot?.version || '2.1.0'}`);
-    setText('hub-version', state.boot?.version || '2.1.0');
+    setText('splash-version', `V${state.boot?.version || '2.1.1'}`);
+    setText('hub-version', state.boot?.version || '2.1.1');
   } catch (error) {
     setText('splash-status', 'ERROR DE INICIALIZACIÓN');
     setText('splash-note', 'No se pudo leer la configuración local. Revisa la instalación.');
@@ -263,6 +264,7 @@ async function waitForDownload() {
       $('update-install')?.classList.remove('hidden');
       $('update-retry')?.classList.add('hidden');
       $('update-skip')?.classList.add('hidden');
+      await maybeAutoInstall();
       return;
     }
     if (status.state === 'error') {
@@ -278,6 +280,22 @@ async function waitForDownload() {
     }
     await sleep(350);
   }
+}
+
+async function maybeAutoInstall() {
+  if (!state.updateFromBoot || state.settings?.auto_update === false || state.autoApplying) {
+    return;
+  }
+  state.autoApplying = true;
+  for (let seconds = 5; seconds > 0; seconds -= 1) {
+    setText('update-note', `Actualización automática: instalando en ${seconds}s…`);
+    await sleep(1000);
+  }
+  if (!state.autoApplying) return;
+  await invoke('launcher_apply_update').catch((error) => {
+    state.autoApplying = false;
+    toast(String(error), 'error');
+  });
 }
 
 async function skipUpdate() {
@@ -437,7 +455,7 @@ function renderHub() {
   setText('hub-session-note', session?.guest
     ? 'Invitado local. No hay cuenta online vinculada.'
     : `Sesión recordada: ${session?.email || name}.`);
-  setText('hub-version', state.boot?.version || '2.1.0');
+  setText('hub-version', state.boot?.version || '2.1.1');
 
   if (state.settings) {
     const auto = $('setting-auto-update');
@@ -497,7 +515,12 @@ function bind() {
   });
   $('update-skip')?.addEventListener('click', skipUpdate);
   $('update-install')?.addEventListener('click', () => {
-    invoke('launcher_apply_update').catch((error) => toast(String(error), 'error'));
+    if (state.autoApplying) return;
+    state.autoApplying = true;
+    invoke('launcher_apply_update').catch((error) => {
+      state.autoApplying = false;
+      toast(String(error), 'error');
+    });
   });
 
   $('tutorial-back')?.addEventListener('click', () => {
@@ -549,6 +572,9 @@ function bind() {
   });
   $('hub-restart-online')?.addEventListener('click', restartLauncher);
   $('settings-restart')?.addEventListener('click', restartLauncher);
+  $('settings-pin')?.addEventListener('click', () => {
+    invoke('launcher_pin_taskbar').catch((error) => toast(String(error), 'error'));
+  });
   $('hub-refresh')?.addEventListener('click', async () => {
     state.online = await checkOnline();
     renderHub();

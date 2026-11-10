@@ -2,11 +2,11 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 
-const APP_VERSION = '2.1.0';
-const INSTALLER_VERSION = '2.3.0';
+const APP_VERSION = '2.1.1';
+const INSTALLER_VERSION = '2.3.1';
 const RELEASE_BASE = (
   process.env.MUZICMANIA_INSTALLER_RELEASE_URL ||
-  'https://github.com/Ciszu-Network/CiszuNetwork/releases/download/muzicmania-v2.1.0'
+  'https://github.com/Ciszu-Network/CiszuNetwork/releases/download/muzicmania-v2.1.1'
 ).replace(/\/$/, '');
 
 const AVAILABLE: Record<string, string[]> = {
