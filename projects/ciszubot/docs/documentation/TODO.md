@@ -4,4 +4,4 @@
 
 ## Prioridad Alta
 
-- [ ] Más comandos: eventos, sorteos avanzados, economías por guild
+- [ ] Verificar CiszuBot en Top GG, se declino debido a que vercel tiene tumbado la website y el dashboard.
