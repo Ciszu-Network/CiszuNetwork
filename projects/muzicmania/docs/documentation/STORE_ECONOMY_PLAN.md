@@ -1,7 +1,7 @@
 # STORE_ECONOMY_PLAN — Tienda, MuziPoints y economía de MuzicMania
 
 **Versión:** 1.0
-**Actualización:** 4 de noviembre de 2026
+**Actualización:** 2026-11-10
 **Identificador:** STORE_ECONOMY_PLAN
 **Definición:** diseño de la tienda, la moneda virtual cerrada MuziPoints (MZP), el ledger de movimientos, las compras con proveedor, las recompensas, los regalos, las donaciones a creadores y el programa de creadores de MuzicMania.
 
@@ -543,4 +543,4 @@ Todas las mutaciones requieren autenticación, rate limit y body validado con Zo
 
 ---
 
-_Última revisión: 4 de noviembre de 2026. Fases 1–3 implementadas y desplegadas; fase 4 (tarjetas/PayPal) bloqueada por proveedor y mayoría de edad._
+_Última revisión: 10 nov 2026. Fases 1–3 implementadas y desplegadas; fase 4 (tarjetas/PayPal) bloqueada por proveedor y mayoría de edad._

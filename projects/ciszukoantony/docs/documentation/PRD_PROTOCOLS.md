@@ -74,4 +74,4 @@ Identificador: PRD_ciszukoantony_PROTOCOLS_V1.0.0_2026_08_26_ciszunetwork
 - Trafico (Cloudflare/GA4), engagement (PostHog), ingresos (anuncios/donaciones), NPS/soporte.
 
 ---
-_Ultima revision: 2026-08-26_. Relacionado: TRD, WORKFLOW, IMPLEMENTATION_PLAN.
+_Ultima revision: 10 nov 2026_. Relacionado: TRD, WORKFLOW, IMPLEMENTATION_PLAN.

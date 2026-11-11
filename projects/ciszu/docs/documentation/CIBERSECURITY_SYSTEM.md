@@ -1,7 +1,7 @@
 # CIBERSECURITY_SYSTEM — Ciberseguridad del Ecosistema
 
 Versión: 1.0.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: CIBERSECURITY_SYSTEM_V1.0.0_2026_08_18_ciszunetwork
 
 > **Definición**: sistema de ciberseguridad oficial de Ciszu Network — las **herramientas**
@@ -714,4 +714,4 @@ echo "$(date -Iseconds) | IPs: $(wc -l < /tmp/blocklist_ips.txt) | YARA: $(grep 
 
 ---
 
-_Última revisión: 23 oct 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `OSINT_PROTOCOLS.md`, `VAULT_SYSTEM.md`, `TODO.md`, `TESTING_SYSTEM.md` §10 (FULL_TESTING).
+_Última revisión: 10 nov 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `OSINT_PROTOCOLS.md`, `VAULT_SYSTEM.md`, `TODO.md`, `TESTING_SYSTEM.md` §10 (FULL_TESTING).

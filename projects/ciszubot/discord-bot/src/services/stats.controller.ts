@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Post, Req, Res, UnauthorizedException } from '@nestjs/common';
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import type { Client } from 'discord.js';
 import { createRateLimiter } from '@ciszunetwork/utils';
@@ -10,13 +10,14 @@ import { bumpCounter } from './cacheService';
 /**
  * Microservicio HTTP del bot (NestJS + adaptador Fastify).
  * - GET  /api/stats         estado en vivo
- * - POST /api/update-stats  actualización manual de campos
+ * - POST /api/update-stats  actualización manual de campos (STATS_UPDATE_SECRET)
  * - POST /api/votes         webhook de votos de top.gg
  * - POST /api/votes/dbl     webhook de votos de DiscordBotList
  */
 
 const TOP_GG_TOKEN = () => process.env.TOP_GG_TOKEN;
 const DBL_SECRET = () => process.env.DBL_WEBHOOK_SECRET || process.env.DISCORDBOTLIST_TOKEN;
+const STATS_UPDATE_SECRET = () => process.env.STATS_UPDATE_SECRET;
 
 // Anti-abuso: máx. 10 votos por IP y hora (webhooks sin auth del lado top.gg)
 const voteLimiter = createRateLimiter({ windowMs: 60 * 60 * 1000, max: 10 });
@@ -40,18 +41,28 @@ export class StatsController {
   }
 
   @Post('update-stats')
-  updateStats(@Body() body: Record<string, unknown>): { success: boolean } {
-    Object.assign(botStats, body);
+  updateStats(
+    @Headers('authorization') authorization: string | undefined,
+    @Body() body: Record<string, unknown>,
+  ): { success: boolean } {
+    const secret = STATS_UPDATE_SECRET();
+    if (!secret || authorization !== `Bearer ${secret}`) {
+      throw new UnauthorizedException();
+    }
+    for (const [key, value] of Object.entries(body)) {
+      if (Object.prototype.hasOwnProperty.call(botStats, key)) {
+        (botStats as unknown as Record<string, unknown>)[key] = value;
+      }
+    }
     return { success: true };
   }
 
   @Post('votes')
   handleTopGgVote(@Req() req: FastifyRequest, @Res() res: FastifyReply): FastifyReply {
     const topGgToken = TOP_GG_TOKEN();
-    if (topGgToken) {
-      const auth = req.headers.authorization;
-      if (auth !== topGgToken) return res.status(401).send('Unauthorized');
-    }
+    if (!topGgToken) return res.status(503).send('not_configured');
+    const auth = req.headers.authorization;
+    if (auth !== topGgToken) return res.status(401).send('Unauthorized');
     const rl = voteLimiter.allow(clientIp(req));
     if (!rl.allowed) {
       return res.status(429).send({ error: 'rate_limited', retryAfterMs: rl.resetInMs });
@@ -75,8 +86,8 @@ export class StatsController {
     @Res() res: FastifyReply,
     @Headers('authorization') authorization?: string
   ): FastifyReply {
-    if (DBL_SECRET() && authorization !== DBL_SECRET()) {
-      return res.status(401).send('Unauthorized');
+    if (!DBL_SECRET() || authorization !== DBL_SECRET()) {
+      return res.status(DBL_SECRET() ? 401 : 503).send(DBL_SECRET() ? 'Unauthorized' : 'not_configured');
     }
     const rl = voteLimiter.allow(`dbl:${clientIp(req)}`);
     if (!rl.allowed) {

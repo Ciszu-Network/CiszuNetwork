@@ -1,5 +1,5 @@
 import 'server-only';
-import { createHmac, timingSafeEqual } from 'node:crypto';
+import { createHmac, randomBytes, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 import { db, ciszubotSchema, eq } from '@ciszunetwork/db';
 
@@ -7,7 +7,7 @@ export { db, ciszubotSchema };
 
 export const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID ?? '1395532235872141312';
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET ?? '';
-const SESSION_SECRET = process.env.SESSION_SECRET ?? 'ciszubot-dev-secret-no-usar-en-prod';
+const SESSION_SECRET = process.env.SESSION_SECRET ?? (process.env.NODE_ENV !== 'production' ? randomBytes(32).toString('hex') : '');
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3002';
 
 // ─── Auth local de desarrollo (nunca en producción) ───
@@ -25,6 +25,7 @@ export const API_BASE = 'https://discord.com/api/v10';
 
 const COOKIE_NAME = 'ciszubot_session';
 const SESSION_MAX_AGE = 7 * 24 * 60 * 60; // 7 días
+const SESSION_TTL_MS = SESSION_MAX_AGE * 1000;
 
 // ─── Sesión (cookie firmada HMAC) ───
 
@@ -32,19 +33,28 @@ export interface SessionData {
   id: string;
   name: string | null;
   avatar: string | null;
+  /** Expiración absoluta del token (epoch ms). */
+  exp?: number;
 }
 
 function sign(payload: string): string {
+  if (!SESSION_SECRET) throw new Error('SESSION_SECRET no configurado.');
   return createHmac('sha256', SESSION_SECRET).update(payload).digest('hex');
 }
 
 export function createSessionToken(userId: string, profile?: { name?: string | null; avatar?: string | null }): string {
-  const data: SessionData = { id: userId, name: profile?.name ?? null, avatar: profile?.avatar ?? null };
+  const data: SessionData = {
+    id: userId,
+    name: profile?.name ?? null,
+    avatar: profile?.avatar ?? null,
+    exp: Date.now() + SESSION_TTL_MS,
+  };
   const payload = Buffer.from(JSON.stringify(data)).toString('base64url');
   return `${payload}.${sign(payload)}`;
 }
 
 export function verifySessionToken(token: string): SessionData | null {
+  if (!SESSION_SECRET) return null;
   const [payload, sig] = token.split('.');
   if (!payload || !sig) return null;
   const expected = sign(payload);
@@ -54,6 +64,7 @@ export function verifySessionToken(token: string): SessionData | null {
   try {
     const parsed = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as SessionData;
     if (!parsed?.id) return null;
+    if (typeof parsed.exp !== 'number' || !Number.isFinite(parsed.exp) || parsed.exp <= Date.now()) return null;
     return parsed;
   } catch {
     return null;

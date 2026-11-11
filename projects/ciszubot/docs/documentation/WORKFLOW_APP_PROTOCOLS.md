@@ -55,4 +55,4 @@ Identificador: WORKFLOW_APP_ciszubot_PROTOCOLS_V1.0.0_2026_08_26_ciszunetwork
 - Auth (login/registro/logout), partidas (MuzicMania), dashboard (CiszuBot).
 
 ---
-_Ultima revision: 2026-08-26_. Relacionado: GLOBAL_SYSTEM, IMPLEMENTATION_PLAN.
+_Ultima revision: 10 nov 2026_. Relacionado: GLOBAL_SYSTEM, IMPLEMENTATION_PLAN.

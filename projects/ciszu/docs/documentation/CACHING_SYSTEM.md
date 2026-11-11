@@ -1,7 +1,7 @@
 # CACHING_SYSTEM — Sistema de Caché de Ciszu Network
 
 Versión: 2.0.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: CACHING_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: sistema de caché del ecosistema. Caché multi-tienda (memoria LRU →
@@ -24,8 +24,9 @@ sin necesidad:
 1. **Leaderboard de MuzicMania** — todos los visitantes repiten la misma query por página.
 2. **Dashboard de CiszuBot** — cada admin repite `GET /users/@me/guilds` y
    `GET /applications/@me/guilds` en cada carga.
-3. **Webhook de votos top.gg (`POST /api/votes`)** — endpoint **sin autenticación**: cualquiera
-   puede inundarlo y recompensar monedas falsas.
+3. **Webhook de votos top.gg (`POST /api/votes`)** — endpoint **fail-closed**: sin
+   `TOP_GG_TOKEN` responde 503 y no otorga recompensas; con token exige el header
+   `Authorization` correcto. `/api/votes/dbl` aplica el mismo criterio con su secreto.
 4. **Stats de votos** — no existía contador persistente de votos recibidos.
 
 ## 2. Arquitectura (qué hay)
@@ -75,7 +76,7 @@ Dashboard solo evalúa tablas **expuestas vía PostgREST** (schemas expuestos:
 | ---- | --- | ------ |
 | 1. Leaderboard | `projects/muzicmania/website` | Nueva API route `src/app/api/leaderboard/route.ts` (server-only): loader usa la misma query PostgREST (service o anon), cache TTL 60s con clave `leaderboard:v1:page:pageSize:sortBy:sortDir:search`. La página `src/app/leaderboard/page.tsx` **ya no consulta Supabase desde el navegador**: hace `fetch('/api/leaderboard?...')` con `cache: 'no-store'`. Fallback: si el cache falla, la ruta hace la query directa. |
 | 2. Dashboard | `projects/ciszubot/website/src/lib/auth.ts` | `getGuildsForUser` → `cacheStore.getOrSet('discord:guilds:'+userId, 60s, loader)`; `getBotGuildIds` → `'discord:bot-guilds'` 60s (almacena array, devuelve `Set`). La caché es **por usuario** (nunca global). |
-| 3. Rate limit | `projects/ciszubot/discord-bot/src/services/statsServer.ts` | `createRateLimiter({ windowMs: 1h, max: 10 })` por IP en `POST /api/votes` **y** `/api/votes/dbl` (429 + `retryAfterMs`). |
+| 3. Auth webhooks | `projects/ciszubot/discord-bot/src/services/stats.controller.ts` | `/api/votes` y `/api/votes/dbl` exigen token/secreto; sin configuración responden 503 (nunca recompensan). `POST /api/update-stats` exige `STATS_UPDATE_SECRET` con `Authorization: Bearer …`. Rate limit 10/IP/hora en votos. |
 | 4. Contador | mismo statsServer | `bumpCounter('topgg_votes')` / `bumpCounter('dbl_votes')` — INCR atómico persistente en `ciszu.counters` (fallback: memoria si no hay supabase). |
 
 **Conexión BD por app** (cada una crea su propio cliente al schema `ciszu`):
@@ -220,5 +221,5 @@ dbvr sql -ds=supabase "select * from ciszu.counters;"
 pnpm test
 ```
 
-_Última revisión: 23 oct 2026._ Relacionado: `DB_SYSTEM.md`, `BACKEND_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `DB_SYSTEM.md`, `BACKEND_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `TOOLS_SYSTEM.md`, `STATUS_SYSTEM.md`.

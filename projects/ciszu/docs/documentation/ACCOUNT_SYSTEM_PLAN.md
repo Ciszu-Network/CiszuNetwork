@@ -1,7 +1,7 @@
 # ACCOUNT_SYSTEM_PLAN — Ciclo de vida de cuentas, sanciones, roles y auth
 
 **Versión:** 1.0.0
-**Actualización:** 2026-09-30
+**Actualización:** 2026-11-10
 **Identificador:** ACCOUNT_SYSTEM_PLAN_V1.0.0_2026_09_30_ciszunetwork
 **Definición:** Plan maestro del sistema unificado de cuentas del ecosistema. **ESTADO:
 EJECUTADO en su núcleo** — la implementación y operación vigentes viven en
@@ -153,6 +153,6 @@ cuenta no existe. Se reemplaza ese flujo por:
 
 ---
 
-_Última revisión: 23 oct 2026._ Relacionado: `AUTH_SYSTEM.md`, `LOGIN_REGISTER_PROTOCOLS.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `AUTH_SYSTEM.md`, `LOGIN_REGISTER_PROTOCOLS.md`,
 `DB_SYSTEM.md`, `SECURITY_PROTOCOLS.md`, `STAFF_SYSTEM.md`, `EMPLOYEES_SYSTEM.md`, `CUSTOMERS_SYSTEM.md`,
 `DEV_CONSOLE_SYSTEM.md`, `PROJECT_STATE.md`, `TODO.md` (solo lectura), `STATIC_MIGRATION_PLAN.md`.

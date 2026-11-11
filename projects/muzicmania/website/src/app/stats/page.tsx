@@ -58,7 +58,7 @@ export default function StatsPage() {
   }, [dateRange]);
 
   const fetchGlobalCounts = async () => {
-    const { count: users } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+    const { count: users } = await supabase.from('profiles').select('id', { count: 'exact', head: true });
     const { count: scores } = await supabase.from('scores').select('*', { count: 'exact', head: true });
     
     setGlobalCounts({
@@ -99,7 +99,7 @@ export default function StatsPage() {
     setIsSearching(true);
     const { data } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id, username, display_name, avatar_url, level, xp, high_score, games_played, accuracy, rank, role, email_verified')
       .ilike('username', `%${cleanSearch}%`)
       .limit(5);
     

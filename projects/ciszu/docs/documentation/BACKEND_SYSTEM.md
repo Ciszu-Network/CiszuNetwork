@@ -1,7 +1,7 @@
 # BACKEND_SYSTEM — Sistema de Backend de los Proyectos (Ciszu Network)
 
 Versión: 1.1.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: BACKEND_SYSTEM_V1.1.0_2026_08_14_ciszunetwork
 
 > **Definición**: sistema que documenta el **backend** (lado servidor: base de datos, APIs,
@@ -130,21 +130,22 @@ Cada web tiene `src/app/api/*` para lógica serverless:
 - No expone BD directamente; usa service key solo en el proceso del bot.
 - Panel de dashboard (opcional) usa RPC protegido.
 
-### 9.1 `statsServer.ts` (Express, único uso en el monorepo)
+### 9.1 `statsServer.ts` (NestJS + Fastify, único uso en el monorepo)
 
 `projects/ciszubot/discord-bot/src/services/statsServer.ts` arranca un servidor HTTP con
-**Express ^4.21.2** para el estado en vivo del bot (`:5000`). Rutas:
+**NestJS 11 + Fastify 5** para el estado en vivo del bot (`:5000`). Rutas:
 
 | Ruta | Método | Función |
 |---|---|---|
 | `/` (estáticos `discord-bot/public`) | GET | Assets del panel |
 | `/api/stats` | GET | Estado del bot (`online`, `guilds`, `users`, `uptime`, etc.) |
-| `/api/update-stats` | POST | Actualizar métricas desde el proceso del bot |
-| `/api/votes` | POST | Webhook top.gg — recompensa 500 monedas por voto (rate limit) |
-| `/api/votes/dbl` | POST | Webhook DiscordBotList — idéntico, auth por `authorization` header |
+| `/api/update-stats` | POST | Actualizar métricas (requiere `STATS_UPDATE_SECRET` en `Authorization: Bearer …`) |
+| `/api/votes` | POST | Webhook top.gg — fail-closed sin `TOP_GG_TOKEN`; recompensa 500 monedas con token válido y rate limit |
+| `/api/votes/dbl` | POST | Webhook DiscordBotList — igual, con `DBL_WEBHOOK_SECRET` o `DISCORDBOTLIST_TOKEN` |
 
-- **Rate limit** propio para votos (`createRateLimiter`, máx. 10/IP/hora) y auth simple por
-  header en `/api/votes/dbl`; top.gg no usa firma aquí (mitigado con rate limit).
+- **Rate limit** propio para votos (`createRateLimiter`, máx. 10/IP/hora); autenticación
+  fail-closed por token en `/api/votes` y `/api/votes/dbl`, y `STATS_UPDATE_SECRET` para
+  `/api/update-stats`. Sin secreto configurado no se otorgan recompensas.
 - Devuelve el `http.Server` para poder cerrarlo en tests.
 - Ver evaluación de reemplazo (Fastify/http nativo) en §19.
 
@@ -291,13 +292,13 @@ Cada web tiene `src/app/api/*` para lógica serverless:
 | Capa | Necesita framework? | Decisión |
 |---|---|---|
 | **Webs (API routes)** | No | Next.js serverless cubre rutas, auth, rate limit y middleware. Meter Express/Nest/Fastify **dentro** de Next no aporta y complica el deploy en Vercel. |
-| **Bot (statsServer)** | Sí (reemplazo planificado) | `statsServer.ts` (Express ^4) migra a **NestJS + Fastify** como microservicio del bot; lo no-Discord.js pasa a `ciszubot-website` (Next.js). |
+| **Bot (statsServer)** | Sí (reemplazo planificado) | `statsServer.ts` ya corre como **NestJS + Fastify** (Express eliminado); lo no-Discord.js pasa a `ciszubot-website` (Next.js). |
 
 ### 19.2 Comparativa y veredicto
 
 | Framework | Fortaleza | Veredicto Ciszu |
 |---|---|---|
-| **Express v5** | Simple, maduro, sin opiniones, ecosistema enorme | Se **migra** en el bot (F2): será reemplazado por NestJS+Fastify y eliminada la dependencia. |
+| **NestJS + Fastify** | Microservicio tipado, validación y rendimiento | Adoptado en el bot (F2); Express fue eliminado. |
 | **Fastify** | Máximo throughput, validación de schemas nativa | **Motor HTTP del bot** vía adaptador de NestJS (NestJS+Fastify = arquitectura modular + velocidad). |
 | **NestJS + adaptador Fastify** | Híbrido: DI, módulos, guards, interceptors + velocidad Fastify | **Elegido para el microservicio HTTP del bot** (stats + webhooks). Base futura si el panel crece. |
 | **Next.js (ciszubot-website)** | Backend web del proyecto | **Recibe todo lo no-Discord.js** del bot: estado/panel (desde `ciszubot.bot_status`) y webhooks como API routes. |
@@ -307,8 +308,8 @@ Cada web tiene `src/app/api/*` para lógica serverless:
 
 - **Webs**: backend en Next.js serverless, sin frameworks adicionales (RSC + Server Actions +
   API routes para webhooks) — correcto para Vercel.
-- **Bot**: el proceso Discord.js se mantiene en Docker; su microservicio HTTP migra de Express a
-  **NestJS + Fastify** (F2). Todo lo no-Discord.js (panel, estado, webhooks) vive en
+- **Bot**: el proceso Discord.js se mantiene en Docker; su microservicio HTTP corre en
+  **NestJS + Fastify** (F2, Express eliminado). Todo lo no-Discord.js (panel, estado, webhooks) vive en
   `ciszubot-website` (Next.js), que lee `ciszubot.bot_status` de Supabase y expone webhooks
   como API routes con rate limit + Zod.
 - **Regla futura**: NestJS+Fastify queda como capa HTTP de servicios standalone del ecosistema
@@ -337,5 +338,5 @@ Cada web tiene `src/app/api/*` para lógica serverless:
   problema existe; los descartados NO bloquean el futuro (transición limpia si aplican).
 - Detalle de investigación de cada herramienta en `FRONTEND_SYSTEM.md` §7.3 y `BACKEND_SYSTEM.md` §19-20.
 
-_Última revisión: 23 oct 2026._ Relacionado: `DB_SYSTEM.md`, `CDN_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `DB_SYSTEM.md`, `CDN_SYSTEM.md`,
 `AUTH_SYSTEM.md`, `SECURITY_PROTOCOLS.md`, `FRAMEWORKS_SYSTEM.md`, `FULL_STACK_SYSTEM.md`.

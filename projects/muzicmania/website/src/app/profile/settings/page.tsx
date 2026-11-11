@@ -51,7 +51,11 @@ export default function ProfileSettingsPage() {
   useEffect(() => {
     const fetchProfile = async () => {
       if (user?.id) {
-        const { data } = await supabase.from('profiles').select('*').eq('id', user.id).maybeSingle();
+        const { data } = await supabase
+          .from('profiles')
+          .select('id, username, display_name, avatar_url, banner_url, bio, country, languages, role, created_at, updated_at, email_verified, level, xp, high_score, games_played, accuracy, rank, birth_privacy')
+          .eq('id', user.id)
+          .maybeSingle();
         if (data) {
           setProfileData(data);
           setBio(data.bio || '');

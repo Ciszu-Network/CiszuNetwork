@@ -35,4 +35,4 @@ Identificador: IMPLEMENTATION_PLAN_ciszubot_PROTOCOLS_V1.0.0_2026_08_26_ciszunet
 - El sistema de anuncios propio ya esta operativo (flotantes, cerrables).
 
 ---
-_Ultima revision: 2026-08-26_. Relacionado: PRD, TRD, WORKFLOW, GLOBAL_SYSTEM.
+_Ultima revision: 10 nov 2026_. Relacionado: PRD, TRD, WORKFLOW, GLOBAL_SYSTEM.

@@ -1,7 +1,7 @@
 # VERCEL_USAGE_PLAN — Límites, pausa y prevención de consumo
 
 **Versión:** 1.0
-**Actualización:** 7 de noviembre de 2026
+**Actualización:** 2026-11-10
 **Identificador:** VERCEL_USAGE_PLAN
 **Definición:** diagnóstico y plan operativo para la pausa por fair use de Vercel, causas del consumo, recuperación y reglas para no volver a exceder los límites del plan Hobby.
 
@@ -191,4 +191,4 @@ Si se supera el 60% de cualquier métrica, revisar antes de hacer más cambios.
 
 ---
 
-_Última revisión: 7 de noviembre de 2026. Pausa activa hasta el 7 de diciembre; `VERCEL_PAUSED=true` evita reintentos._
+_Última revisión: 10 nov 2026. Pausa activa hasta el 7 de diciembre; `VERCEL_PAUSED=true` evita reintentos._

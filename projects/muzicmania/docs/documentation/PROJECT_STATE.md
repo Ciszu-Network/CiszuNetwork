@@ -1,6 +1,6 @@
-# Estado del Proyecto MuzicMania 2.0 (Next.js Edition)
+# Estado del Proyecto MuzicMania 2.1.1 (Next.js Edition)
 
-**Última actualización:** 8 Noviembre 2026
+**Última actualización:** 2026-11-10
 **Autor y Propietario:** Ciszuko Antony (Francisco Garcia)
 **Stack:** Next.js 15 + TypeScript + Tailwind CSS v4 + Supabase + Tauri
 
@@ -13,6 +13,30 @@
 - Fases 2–3 implementadas: login diario, rachas, tareas, XP, recompensas por publicar niveles/likes, regalos de MZP, donaciones a creadores y código de creador (5% de MZP base).
 - Fase 4 pendiente por bloqueo externo: tarjetas/PayPal requieren proveedor MoR aprobado y mayoría de edad; la UI muestra “próximamente” y los flags están en false.
 - Documentación: `STORE_ECONOMY_PLAN.md` y `STORE_ECONOMY_PHASE1_IMPLEMENTATION_PLAN.md`.
+
+## 🛠️ Pendientes Próximos (Prioridad Alta)
+
+1. **Desbloqueo de Vercel**: la plataforma está pausada por fair use hasta el 7 de diciembre de 2026; hasta entonces no hay deploy ni validación online de OAuth, economía o notificaciones.
+2. **Payout/refund real**: los reembolsos y retiros son solicitudes con revisión manual; falta integración automática con el proveedor de pagos.
+3. **Taskbar automática**: `TaskbarManager` funciona, pero el anclaje automático de Windows 11 requiere un escritorio interactivo; el botón manual del hub es el fallback.
+4. **App móvil nativa**: solo existe el plan (`MOBILE_LAUNCHER_PLAN.md`); Android Studio/Xcode y firma siguen bloqueados.
+5. **Recaptcha v3 / Turnstile**: revisar protección de formularios y eliminar cualquier fallback hardcodeado al rotar claves.
+
+## 📄 Documentación legal y transparencia (10 Nov 2026)
+
+- Actualizados `terms`, `policy`, `guidelines`, `rules` y `license` con MZP/NOWPayments, reembolsos y retiros manuales, promociones, notificaciones, contenido de usuario, copyright, avatares y anticheat.
+- Añadida navegación legal compartida en todas las páginas legales y sección de transparencia del anticheat en `/information` y `/about`.
+- Reglas nuevas para subida de niveles/charts, fotos de perfil y canciones con copyright; límites técnicos alineados con `/api/levels` y `/api/profile/avatar`.
+- `ANTICHEAT_SYSTEM.md` (ciszu) sigue siendo la fuente técnica: señales ponderadas, umbrales, strikes, sanciones y apelaciones.
+
+## 🔐 Auditoría de seguridad (10 Nov 2026)
+
+- `muzicmania.profiles` ya no expone `email`, `phone` ni `birth_date` a anon; la escritura propia se limita a columnas de perfil/preferencias y `role/is_admin/xp/level` quedan server-only.
+- `muzicmania.scores` perdió INSERT/UPDATE/DELETE directo; la única vía es `submit_game_score` como `SECURITY DEFINER` con validación de usuario.
+- **Bug de puntuaciones corregido**: el RPC insertaba `combo`/`grade`/`perfect`/`great`/`good`/`miss`, columnas que faltaban en `muzicmania.scores`; se restauraron y el guardado volvió a funcionar (probado en transacción).
+- `custom_levels`, `multiplayer_rooms`, `multiplayer_room_players`, `chat_messages`, `friend_requests` y `notifications` usan service_role desde sus APIs; no aceptan DML directo del navegador.
+- `public.sanctions` dejó de exponer IP y motivo a anon; 2FA, elevaciones staff, IP bans y auditoría de moderación quedaron server-only.
+- Migraciones aplicadas localmente (gitignored): `20261110000001_security_hardening_public_tables.sql`, `20261110000002_security_hardening_public_sensitive.sql`, `20261110000003_security_hardening_sanctions_actor.sql`, `20261110000004_security_hardening_user_roles_columns.sql` y `20261110000005_scores_restore_columns.sql`.
 
 ## 🚀 Logros Recientes
 
@@ -90,10 +114,10 @@
 - ✅ **Facturación y códigos:** `/profile/billing` con historial de compras, solicitudes de reembolso, canje de códigos promocionales y solicitudes de retiro (revisión manual). Los artículos comprados también se pueden regalar desde el inventario.
 - ✅ **Rangos y medallas:** rangos Wood/Stone/Iron/Gold/Platinum/Diamond/Obsidian/Legend por nivel, badge de rango automático, staff y empresa verificada; los badges de logros existentes se muestran en perfil y leaderboard.
 - ✅ **Leaderboard avanzado:** filtros diario/semanal/mensual/anual sobre `scores`, búsqueda, orden, rango de cuenta y hasta 3 badges destacados por jugador.
-- ✅ **Migraciones fase 5/7/8:** `20261109000001_phase5_finance_ranks.sql`, `20261109000002_rank_badges_backfill.sql`, `20261109000003_rank_badges_extra.sql` y `20261109000004_notifications_friends.sql` aplicadas.
+- ✅ **Migraciones fase 5/7/8:** `20261109000001_phase5_finance_ranks.sql`, `20261109000002_rank_badges_backfill.sql`, `20261109000003_rank_badges_extra.sql`, `20261109000004_notifications_friends.sql` y `20261109000005_notifications_status.sql` aplicadas.
 - ✅ **Notificaciones:** campana junto a la cuenta con badge, slider de 50 actividades, filtros por logro/social/amistad/compras/seguridad, búsqueda, marcar leído y página completa `/notifications`. Incluye notificaciones automáticas de badges, solicitudes de amistad, sanciones y cambios de reembolso/retiro.
 - ✅ **Amistad:** solicitudes desde el perfil, aceptar/rechazar desde la campana y notificaciones de resultado.
-- ✅ **Devcon Finanzas:** bandeja de reembolsos/retiros y generador/listado de promociones en `MUZICMANIA FINANZAS`, con auditoría y sin exponer la service role.
+- ✅ **STAFFCON Finanzas:** bandeja de reembolsos/retiros y generador/listado de promociones en `MUZICMANIA FINANZAS`, con auditoría y sin exponer la service role; devcon ya no muestra esta opción.
 - ✅ **Offline Screen:** Pantalla de error con botón para jugar en `Modo Offline` local y botón de salir.
 - ✅ **Ventana de Launcher:** `always_on_top` y tamaño ampliado para el primer inicio.
 
@@ -102,18 +126,4 @@
 - ✅ **Changelog**: Página `/changelog` con filtros, búsqueda, orden, paginación y likes con login.
 - ✅ **Support**: Página `/support` con sistema de tickets (tabla `muzicmania_tickets`) y AuthWarningModal.
 - ✅ **Disclaimer Actions**: Soporte de botones de acción (`--action "Texto|URL"` o `--action "OK|close"`) en devcon y componente `DisclaimerStack`.
-
-## 🛠️ Pendientes Próximos (Prioridad Alta)
-
-1. **Integración Supabase Auth**: Flujo real de login/registro para sincronizar récords y favoritos en la nube.
-2. **Leaderboard Global**: Consulta de mejores puntuaciones mundiales por track.
-3. **Recaptcha v3**: Protección de formularios.
-4. **Logros/Achievements**: Sistema de medallas por hitos (p.ej. FC en Hard).
-
-## 🛠️ Pendientes Próximos (Prioridad Alta)
-
-1. **Integración Supabase Auth**: Flujo real de login/registro para sincronizar récords y favoritos en la nube.
-2. **Leaderboard Global**: Consulta de mejores puntuaciones mundiales por track.
-3. **Recaptcha v3**: Protección de formularios.
-4. **Logros/Achievements**: Sistema de medallas por hitos (p.ej. FC en Hard).
 

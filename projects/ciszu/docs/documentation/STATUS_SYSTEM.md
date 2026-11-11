@@ -1,31 +1,31 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.2.3
-Actualización: 2026-10-26
-Identificador: STATUS_SYSTEM_V2.2.3_2026_10_26_ciszunetwork
+Versión: 2.2.4
+Actualización: 2026-11-10
+Identificador: STATUS_SYSTEM_V2.2.4_2026_11_10_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
 
 ## Estado actual del monorepo
 
-### Resumen General (v3.0.0 — ago 2026)
+### Resumen General (10 nov 2026)
 
 | Proyecto | Website | App | Docs | documentation | public/docs/ |
 |---|---|---|---|---|---|
-| CiszuNetwork Page | ✅ Activo | — | ✅ Completo | ✅ | ✅ |
-| Ciszuko Antony Portfolio | ✅ Activo | — | ✅ Completo | ✅ | ✅ |
-| MuzicMania | ✅ Activo | ✅ Tauri | ✅ Completo | ✅ | ✅ |
-| CiszuBot | ✅ Activo | ✅ Discord bot v3.2.0 | ✅ Completo | ✅ | ✅ |
+| CiszuNetwork Page | ⏸️ Pausado en Vercel | — | ✅ Completo | ✅ | ✅ |
+| Ciszuko Antony Portfolio | ⏸️ Pausado en Vercel | — | ✅ Completo | ✅ | ✅ |
+| MuzicMania | ⏸️ Pausado en Vercel | ✅ Tauri 2.1.1 / NSIS 2.3.1 / desinstalador 2.1.0 | ✅ Completo | ✅ | ✅ |
+| CiszuBot | ⏸️ Web pausada / bot activo | ✅ Discord bot v3.4.0 | ✅ Completo | ✅ | ✅ |
 | CiszuGamens | — | — | ✅ Histórico | ✅ | — |
 | @ciszunetwork/cdn | — | ✅ Activo | — | — | — |
 
-### Estado real (ago 2026)
+### Estado real (10 nov 2026)
 
 | Sistema | Estado |
 |---|---|
 | Consola dev local | ✅ `test/website/debug/dev_console.ps1` (TUI + CLI, puertos fijos 3000-3003) — 16 ago 2026 |
-| 4 websites en producción (Vercel) | ✅ Despliegan desde `main` (GitHub Actions) |
+| 4 websites en producción (Vercel) | ⏸️ Pausadas por fair use hasta el 7 dic 2026 (`VERCEL_PAUSED=true`); los deploys se reanudan después del reset |
 | CDN Supabase Storage `ciszu-cdn` | ✅ 7.353 objetos / 160.6 MB (16% de cuota; bucket legacy `ciszu-assets` eliminado 10 ago 2026) |
 | Sistema de formatos (avif/webp/opus) | ✅ Implementado (8 ago 2026) + `SmartImage` en las webs |
 | PDWA (manifest + sw + botón instalar) | ✅ Las 4 webs |
@@ -34,7 +34,7 @@ Identificador: STATUS_SYSTEM_V2.2.3_2026_10_26_ciszunetwork
 | Auth Supabase (MuzicMania) | ✅ REST corregido, RLS activo |
 | Auth CISZU ID (4 webs) | ✅ Login/registro por schema propio (ciszu/ciszukoantony/ciszubot/muzicmania), migración 20 (profiles + RLS + trigger), branding CISZU ID (isotipo CISZU + X + isotipo web), OAuth Google/Microsoft bajo "CONTINUAR CON:", footer de acciones (recuperar/registrar/acceder/soporte), errores a la izquierda, Discord obligatorio en ciszubot — 20 ago 2026 |
 | Componentes de auth compartidos | ✅ `packages/ui/src/auth/*` (CiszuIdBrand, AuthField, PasswordStrengthBar, OAuthProviders, AuthSecondaryActions, PreferencesModal) usados en las 4 webs — 20 ago 2026 |
-| Bot de Discord | ✅ v3.2.0, 72 comandos, Supabase conectado (heartbeat `bot_status`) |
+| Bot de Discord | ✅ v3.4.0, 72 comandos, Supabase conectado (heartbeat `bot_status`) |
 | Caché multi-tienda | ✅ Implementado (9 ago 2026) — memoria → KV Upstash (`upstash-kv-ciszunetwork`) → Postgres `ciszu.cache` |
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
 | Logging centralizado | ✅ Better Stack Telemetry conectado (15 ago 2026) — `@logtail/pino` en `@ciszunetwork/utils/logger`, envía en producción con `BETTERSTACK_TELEMETRY_TOKEN` |
@@ -121,9 +121,9 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 | Proyecto | Estado | Notas |
 |---|---|---|
-| CiszuNetwork | Operativo | Despliega desde `main` a Vercel |
-| CiszukoAntony | Operativo | Portfolio + música |
-| MuzicMania | Operativo | Juego + app Tauri (NSIS) |
+| CiszuNetwork | Pausado temporalmente | Último deploy válido; Vercel en pausa por fair use hasta el 7 dic 2026 |
+| CiszukoAntony | Pausado temporalmente | Último deploy válido; Vercel en pausa por fair use hasta el 7 dic 2026 |
+| MuzicMania | Pausado temporalmente | Juego + app Tauri 2.1.1 (NSIS 2.3.1); Vercel en pausa hasta el 7 dic 2026 |
 | CiszuBot | Operativo | Bot Discord + landing + estado en vivo |
 | CDN Supabase | Operativo | `ciszu-cdn`, 7.353 objetos |
 | CI/CD | Operativo | GitHub Actions: CI, CodeQL, DAST, deploy ×4, uptime-watch. **3 runners self-hosted online** (servicios Windows en `E:\actions-runners\CISZU-PC`, `CISZU-PC-2`, `CISZU-PC-3`) desde 15 ago 2026: jobs portables del CI y deploys ×4 en `self-hosted`, sin consumir minutos de la org |
@@ -298,7 +298,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
-_Última revisión: 26 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-10-23
@@ -345,4 +345,20 @@ _Última revisión: 26 oct 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Migraciones**: `trivia_categories`, `confessions`, `news_rss_*` y `poll_style` aplicadas; RLS deny-all en `ciszubot.confessions`.
 - **Validación**: `pnpm typecheck`, `pnpm test` (405/405), build del bot y build de ciszubot verdes.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-10-26
+## Sesión 10 nov 2026 — documentación legal, anticheat y auditoría
+
+- **MuzicMania**: actualizados términos, privacidad, directrices, reglas y licencia; añadidas reglas de niveles, avatares y copyright; navegación legal compartida y sección de transparencia del anticheat en `/information` y `/about`.
+- **Docs**: fechas de revisión refrescadas en MuzicMania, Ciszu Network, Ciszubot y CiszukoAntony (excluyendo los TODO, que solo edita Ciszuko Antony).
+- **Estado**: release `muzicmania-v2.1.1` publicado (11.692.682 bytes, SHA256 `E04C6941…68F3BC`); Vercel pausado hasta el 7 dic 2026.
+- **Validación**: `tsc --noEmit`, ESLint y `next build` de MuzicMania en verde (72 páginas generadas).
+
+### Auditoría de seguridad 10 nov 2026
+
+- **RLS/grants**: cerrada la exposición de `email` en `muzicmania.profiles` (anon podía leer 6 correos), la escritura directa de `role/is_admin/xp/level` y el INSERT directo en `muzicmania.scores`; `custom_levels`, multijugador, chat, amistades y notificaciones pasan a service_role. Migraciones locales aplicadas: `20261110000001_security_hardening_public_tables.sql`, `20261110000002_security_hardening_public_sensitive.sql`, `20261110000003_security_hardening_sanctions_actor.sql` y `20261110000004_security_hardening_user_roles_columns.sql`.
+- **Bug crítico de puntuaciones**: `submit_game_score` insertaba columnas (`combo`, `grade`, `perfect`, `great`, `good`, `miss`) que no existían en `muzicmania.scores`; todas las partidas fallaban. Restauradas con `20261110000005_scores_restore_columns.sql` y probado el RPC dentro de una transacción.
+- **Sanciones**: `public.sanctions` ya no expone `ip`, `reason` ni `actor` (email del staff) a anon; solo tipo, alcance y fechas. `user_roles` mantiene lectura pública de rol y pierde DML directo. 2FA, elevaciones staff, IP bans y auditoría de moderación quedan server-only.
+- **Ciszubot**: eliminado el fallback hardcodeado de `SESSION_SECRET`; sesiones con expiración de 7 días, state OAuth con `crypto.randomBytes`, `/api/update-stats` protegido con `STATS_UPDATE_SECRET` y webhooks de votos fail-closed.
+- **Privacidad funcional**: perfiles públicos de las 3 webs recuperan columnas públicas (`role`, `bio`, `banner_url`, etc.); preferencias sincronizan solo las columnas permitidas.
+- **Validación**: `pnpm typecheck` ✅, `pnpm lint:all` ✅, `pnpm test` 414/414 ✅, tests del bot 81/81 ✅ y builds de las 4 webs ✅ (Ciszubot tuvo un fallo transitorio de Google Fonts y pasó al reintentar).
+
+ÚLTIMA ACTUALIZACIÓN: 2026-11-10

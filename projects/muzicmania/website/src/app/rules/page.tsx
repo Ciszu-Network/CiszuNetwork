@@ -5,6 +5,7 @@ import { useT } from '@/hooks/useT';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import LegalDocNav from '@/components/molecules/LegalDocNav';
 import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
@@ -15,7 +16,7 @@ const I = {
 
 const RULES_ARTICLES = [
   { id: 1, title: "CONDUCTA Y RESPETO MUTUO", content: "Se prohíbe terminantemente cualquier forma de acoso, discurso de odio o toxicidad dentro del ecosistema de MuzicMania. El respeto hacia otros usuarios y miembros del Staff es la base fundamental de nuestra comunidad." },
-  { id: 2, title: "INTEGRIDAD DEL JUEGO (ANTI-CHEAT)", content: "MuzicMania mantiene una política de tolerancia cero ante el uso de bots, macros, scripts de automatización o cualquier software de terceros que manipule el rendimiento real del jugador. El incumplimiento conlleva el baneo inmediato y permanente." },
+  { id: 2, title: "INTEGRIDAD DEL JUEGO (ANTI-CHEAT)", content: "MuzicMania mantiene una política de tolerancia cero ante el uso de bots, macros, scripts de automatización o cualquier software de terceros que manipule el rendimiento real del jugador. El servidor evalúa el resultado y el historial con señales ponderadas; no se sanciona por una única señal débil. El incumplimiento puede conllevar sanciones escalonadas, baneo o eliminación de la cuenta, con derecho a apelación." },
   { id: 3, title: "IDENTIDAD DE USUARIO Y PERFILES", content: "Los nombres de usuario no deben contener lenguaje ofensivo, discriminatorio o contenido sensible. MuzicMania se reserva el derecho de modificar nombres inapropiados o suspender cuentas infractoras." },
   { id: 4, title: "SUPLANTACIÓN DE IDENTIDAD", content: "Queda prohibido fingir ser otro usuario, artista o miembro oficial del equipo de MuzicMania. La suplantación de identidad es considerada una falta grave contra la confianza de la comunidad." },
   { id: 5, title: "REPORTE OBLIGATORIO DE FALLOS", content: "Los usuarios tienen el deber ético de informar cualquier bug crítico o vulnerabilidad técnica mediante los canales oficiales (Soporte o Discord). El reporte de fallos contribuye a la estabilidad del sistema." },
@@ -31,6 +32,9 @@ const RULES_ARTICLES = [
   { id: 15, title: "REPRESENTACIÓN DE MARCA Y LOGOTIPOS", content: "Queda prohibido el uso de los logotipos e imágenes oficiales de MuzicMania para fines comerciales o de representación engañosa sin el consentimiento explícito de Ciszu Network y Ciszuko Antony." },
   { id: 16, title: "MODIFICADORES Y CLIENTES EXTERNOS", content: "No se permite el uso de versiones modificadas del cliente del juego que alteren la visualización de las notas o la mecánica de juego para obtener ventajas sobre los usuarios del cliente oficial." },
   { id: 17, title: "TRANSPARENCIA EN EL PROCESO DE APELACIÓN", content: "Todo usuario sancionado tiene derecho a solicitar una revisión de su caso mediante el sistema oficial de apelaciones, siempre y cuando se proporcione evidencia válida y se mantenga un tono respetuoso." },
+  { id: 18, title: "SUBIDA DE NIVELES Y CONTENIDO", content: "Solo puedes publicar niveles y charts creados por ti o para los que tengas autorización expresa. No se permite copiar, reclamar como propio o reutilizar el trabajo de otro creador sin crédito y permiso. Los niveles deben usar las pistas de la biblioteca oficial, tener metadatos veraces y no contener contenido ofensivo, publicidad, enlaces maliciosos, archivos corruptos ni patrones imposibles. El Staff puede archivar o retirar niveles que incumplan estas reglas o las directrices técnicas. La publicación masiva de duplicados o el spam de niveles puede conllevar sanciones." },
+  { id: 19, title: "FOTOS DE PERFIL Y AVATARES", content: "La foto de perfil debe ser una imagen JPEG, PNG o WebP de hasta 5 MB y no puede contener desnudos, contenido sexual, violencia gráfica, gore, discurso de odio, acoso, símbolos ilegales, datos personales de terceros, suplantación de identidad, marcas sin autorización, publicidad ni enlaces maliciosos. No está permitido usar la foto de otra persona sin su consentimiento ni imágenes protegidas por copyright sin licencia. Podemos restablecer el avatar predeterminado y sancionar la cuenta; la reincidencia puede retirar la función de personalización." },
+  { id: 20, title: "CANCIONES Y COPYRIGHT", content: "No está permitido subir audio, extraer pistas de servicios de streaming, usar remixes no autorizados ni publicar charts con música de terceros sin licencia. La música de MuzicMania proviene de NCS, Creative Commons o acuerdos directos, y ese permiso no autoriza a redistribuirla fuera del juego. Si eres titular de derechos, envía una reclamación a ciszunetwork@outlook.com con la obra, la URL, la prueba de titularidad y una declaración de buena fe. Podemos retirar el contenido y suspender cuentas reincidentes." },
 ];
 
   const sectionVariants = {
@@ -133,6 +137,8 @@ export default function RulesPage() {
 
           </div>
         </motion.div>
+
+        <LegalDocNav />
 
         <QuickDocks />
 

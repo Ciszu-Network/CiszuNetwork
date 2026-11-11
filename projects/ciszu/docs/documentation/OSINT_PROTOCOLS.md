@@ -1,7 +1,7 @@
 # OSINT_PROTOCOLS — Protocolos de Inteligencia de Código Abierto
 
 Versión: 1.0.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: OSINT_PROTOCOLS_V1.0.0_2026_08_18_ciszunetwork
 
 > **Definición**: protocolos operativos de **OSINT** (Open Source INTelligence) del
@@ -430,5 +430,5 @@ cabecera (la cuenta no existe). Preset `quick` tarda ~10-15 s por target.
 
 ---
 
-_Última revisión: 23 oct 2026._ Relacionado: `CIBERSECURITY_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `CIBERSECURITY_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
 `VAULT_SYSTEM.md`, `TODO.md`.

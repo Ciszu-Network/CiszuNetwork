@@ -1,5 +1,10 @@
 # Historial del Proyecto CiszuBot
 
+## 10 de Noviembre, 2026
+
+- Auditoría documental: fechas de revisión actualizadas y estado sincronizado.
+- Sin cambios funcionales en esta sesión; la verificación en Top GG sigue bloqueada por tokens de bot lists.
+
 ## 29 de Julio, 2026
 - CDN integrado: `@ciszunetwork/cdn` con `resolveIcon()` en icons.ts y useIcon.tsx.
 - vercel.json actualizado con `NEXT_PUBLIC_CDN_URL`.
@@ -16,3 +21,5 @@
 
 ### Pendiente
 - Implementación del bot en `discord/` (pendiente de crear).
+
+_Última revisión: 10 nov 2026._

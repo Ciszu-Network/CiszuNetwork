@@ -53,7 +53,9 @@ Estándares y planes corporativos aplicables a este proyecto (viven en `projects
 - No borrar ni modificar los docs de estado/TODO salvo en el flujo de trabajo establecido.
 - No crear duplicados de los docs corporativos de ciszu: referenciarlos.
 - Los docs nuevos deben cumplir el estándar de `DOCUMENTATION_SYSTEM.md` (ciszu) y superar las ~200 líneas para sistemas/plan/protocolo.
-- El bot está implementado en TypeScript (v3.2.0, 72 comandos, 9 categorías): los docs deben reflejar el estado actual, nunca estados obsoletos.
+- El bot está implementado en TypeScript (v3.4.0, 72 comandos, 9 categorías): los docs deben reflejar el estado actual, nunca estados obsoletos.
+
+_Última revisión: 10 nov 2026._ Relacionado: `PROJECT_STATE.md`, `ARCHITECTURE.md`, `STACK_SYSTEM.md`.
 
 
 

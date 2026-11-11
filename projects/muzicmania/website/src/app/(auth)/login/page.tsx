@@ -220,7 +220,7 @@ export default function LoginPage() {
     if (!session) return;
     const { data: profile } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id, username, display_name, avatar_url, role, is_admin')
       .eq('id', session.user.id)
       .maybeSingle();
     returnToLauncher(session, session.user, profile);
@@ -339,7 +339,7 @@ export default function LoginPage() {
         // Obtener datos extendidos del perfil
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
-          .select('*')
+          .select('id, username, display_name, avatar_url, role, is_admin')
           .eq('id', data.user.id)
           .maybeSingle();
 

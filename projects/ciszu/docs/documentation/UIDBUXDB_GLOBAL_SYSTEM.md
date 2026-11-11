@@ -33,4 +33,4 @@ Identificador: UIDBUXDB_GLOBAL_SYSTEM_V1.0.0_2026_08_26_ciszunetwork
 - Assets via CDN (`@ciszunetwork/cdn`, Supabase Storage). Logos de marca en `projects/<web>/content`.
 
 ---
-_Ultima revision: 2026-08-26_. Relacionado: GLOBAL_SYSTEM (GLOBAL_COMPONENTS, STYLES, COLOR), UI_COMPONENTS_SYSTEM.
+_Ultima revision: 10 nov 2026_. Relacionado: GLOBAL_SYSTEM (GLOBAL_COMPONENTS, STYLES, COLOR), UI_COMPONENTS_SYSTEM.

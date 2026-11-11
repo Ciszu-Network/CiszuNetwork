@@ -1,7 +1,7 @@
 # LOGIN_REGISTER_PROTOCOLS — Protocolo CISZU ID (Login/Registro) — Ciszu Network
 
 Versión: 1.0.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: LOGIN_REGISTER_PROTOCOLS_V1.0.0_2026_08_19_ciszunetwork
 
 > **Estado**: aprobado e implementado (19 ago 2026). Define el estándar **oficial** de
@@ -398,4 +398,4 @@ Brechas principales a cerrar con este protocolo:
 - `CDN_SYSTEM.md` — resolver de isotipos (`assetResolver.resolve`).
 - `MONITORING_SYSTEM.md` — logs/observabilidad de intentos de auth.
 
-_Última revisión: 23 oct 2026._ Relacionado: `AUTH_SYSTEM.md`, `SECURITY_PROTOCOLS.md`, `DB_SYSTEM.md`, `FRONTEND_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`.
+_Última revisión: 10 nov 2026._ Relacionado: `AUTH_SYSTEM.md`, `SECURITY_PROTOCOLS.md`, `DB_SYSTEM.md`, `FRONTEND_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`.

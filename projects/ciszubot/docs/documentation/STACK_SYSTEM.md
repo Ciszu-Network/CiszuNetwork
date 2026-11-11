@@ -1,7 +1,7 @@
 # STACK_SYSTEM — Pila Tecnológica (CiszuBot)
 
 Versión: 1.3.0
-Actualización: 2026-10-26
+Actualización: 2026-11-10
 Identificador: STACK_SYSTEM_V1.3.0_2026_10_26_ciszunetwork
 
 > **Definición**: Documenta la pila tecnológica completa y actual del proyecto CiszuBot por capas (website, bot, base de datos, despliegue y herramientas), con versiones exactas tomadas de los manifiestos del repositorio.
@@ -39,13 +39,13 @@ Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/u
 | Framework web | Next.js (App Router) | 15.5.x | `website/` |
 | UI web | React | 19.2.x | `website/` |
 | Estilos | Tailwind CSS + PostCSS | 4.2.x | `website/` |
-| Bot | Discord.js | 14.22.x | `discord-bot/` |
-| Bot (lenguaje) | TypeScript | 5.9.x | `discord-bot/` |
+| Bot | Discord.js | 14.28.x | `discord-bot/` |
+| Bot (lenguaje) | TypeScript | 6.0.x | `discord-bot/` |
 | Bot (audio) | @discordjs/voice + play-dl | 0.19.2 / 1.9.7 | `discord-bot/` |
 | Backend de datos | Supabase (Postgres) | — | nube |
-| Observabilidad | Sentry | 10.69.x | ambos |
+| Observabilidad | Sentry | 10.76.x | ambos |
 | Bot lists | @top-gg/sdk + discordbotlist | 3.1.6 / 1.1.1 | `discord-bot/` |
-| Server stats | Express | 4.21.x | `discord-bot/` |
+| Server stats | NestJS + Fastify | 11.2.x / 5.12.x | `discord-bot/` |
 | Despliegue web | Vercel | — | CI GitHub Actions |
 | Contenedor bot | Docker | node:24-alpine | `discord-bot/Dockerfile` |
 
@@ -81,7 +81,7 @@ Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/u
 
 ### 4.1 Lenguaje y runtime
 
-- **TypeScript 5.9.x**, compilado con `tsc` (`dist/`).
+- **TypeScript 6.0.x**, compilado con `tsc` (`dist/`).
 - **Node.js ≥ 22** (manifiesto `engines`), en producción **Node 24** en Alpine.
 - **pnpm** como package manager y gestor de workspaces.
 
@@ -89,12 +89,12 @@ Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/u
 
 | Librería | Versión | Propósito |
 | --- | --- | --- |
-| `discord.js` | ^14.22.0 | Cliente y APIs de Discord |
+| `discord.js` | ^14.28.0 | Cliente y APIs de Discord |
 | `@discordjs/voice` | ^0.19.2 | Reproducción de audio en canales de voz |
 | `play-dl` | ^1.9.7 | Descarga de audio (YouTube, etc.) |
 | `@supabase/supabase-js` | ^2.60.0 | Acceso a Supabase (schema `ciszubot`) |
-| `@sentry/node` | ^10.69.0 | Captura de errores |
-| `express` | ^4.21.2 | Servidor interno de stats (puerto 5000) |
+| `@sentry/node` | ^10.76.0 | Captura de errores |
+| `@nestjs/core` / `@nestjs/platform-fastify` | ^11.2.3 | Servidor interno de stats (puerto 5000) |
 | `dotenv` | ^16.6.1 | Variables de entorno |
 | `@top-gg/sdk` | ^3.1.6 | Estadísticas y votos en top.gg |
 | `discordbotlist` | ^1.1.1 | Estadísticas en DiscordBotList |
@@ -108,7 +108,7 @@ Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/u
 | `typescript` | ^5.9.0 | Compilador |
 | `nodemon` | ^3.0.1 | Recarga en desarrollo (`tsc -w & nodemon`) |
 | `@types/node` | ^26.0.0 | Tipos de Node |
-| `@types/express` | ^5.0.6 | Tipos de Express |
+| `reflect-metadata` | ^0.2.2 | Decoradores NestJS |
 
 ### 4.4 Estructura interna del bot
 
@@ -130,7 +130,7 @@ Toda la pila vive en el monorepo de Ciszu Network y comparte paquetes (`@ciszu/u
 | `src/services/autoposts.ts` | Autoposts y timer `guild:nsfw` (solo con triple candado y canal NSFW) |
 | `src/services/configService.ts` | Config por servidor (caché en memoria; social feeds; triple candado +18 y `nsfw_content`) |
 | `src/services/botlists.ts` | Posting de stats a bot lists |
-| `src/services/statsServer.ts` | Express interno de métricas |
+| `src/services/statsServer.ts` | NestJS + Fastify: métricas y webhooks |
 | `src/services/supabase.ts` | Cliente Supabase (service_role) |
 | `src/services/sentry.ts` | Inicialización de Sentry |
 | `src/services/logger.ts` | Logging |
@@ -216,20 +216,20 @@ Sección de `discord-bot/package.json`:
 }
 ```
 
-Dependencias de producción: `@ciszunetwork/utils` (workspace), `@discordjs/voice`, `@sentry/node`, `@supabase/supabase-js`, `@top-gg/sdk`, `discord.js`, `discordbotlist`, `dotenv`, `express`, `play-dl`.
+Dependencias de producción: `@ciszunetwork/utils` (workspace), `@discordjs/voice`, `@sentry/node`, `@supabase/supabase-js`, `@top-gg/sdk`, `discord.js`, `discordbotlist`, `dotenv`, `@nestjs/*`, `fastify`, `play-dl`.
 
 ## 9. Versiones y compatibilidad
 
 | Componente | Versión mínima | Producción actual | Notas |
 | --- | --- | --- | --- |
 | Node.js | 22 | 24 (Alpine) | `engines` del bot: >= 22 |
-| Discord.js | 14 | 14.22 | API v10 |
+| Discord.js | 14 | 14.28 | API v10 |
 | TypeScript | 5 | 5.9 | `tsc --noEmit` para typecheck |
 | Next.js | 15 | 15.5.22 | App Router |
 | React | 19 | 19.2.7 | — |
 | Tailwind | 4 | 4.2.4 | PostCSS plugin |
 | Supabase JS | 2 | 2.60.0 | schema `ciszubot` |
-| Sentry | 10 | 10.69.0 | node + nextjs |
+| Sentry | 10 | 10.76.0 | node + nextjs |
 | pnpm | 12 | 12.16.1 | CI/container: 12.16.1 |
 
 ## 10. Entornos y variables de entorno
@@ -244,8 +244,9 @@ Dependencias de producción: `@ciszunetwork/utils` (workspace), `@discordjs/voic
 | `SUPABASE_URL` | secreto | URL del proyecto Supabase |
 | `SUPABASE_SERVICE_ROLE_KEY` | secreto | Clave service_role (bypass RLS) |
 | `SENTRY_DSN` | secreto | DSN de Sentry |
-| `TOP_GG_TOKEN` | secreto | Token top.gg (pendiente de aportar) |
-| `DISCORDBOTLIST_TOKEN` | secreto | Token DiscordBotList (pendiente de aportar) |
+| `TOP_GG_TOKEN` | secreto | Token top.gg (webhook fail-closed sin token) |
+| `DISCORDBOTLIST_TOKEN` / `DBL_WEBHOOK_SECRET` | secreto | Token/secreto de DiscordBotList (webhook fail-closed) |
+| `STATS_UPDATE_SECRET` | secreto | Autoriza `POST /api/update-stats` (`Authorization: Bearer …`); sin él, 401 |
 | `PORT` | opcional | Puerto del statsServer (5000 por defecto) |
 | `NODE_ENV` | opcional | `development`/`production` |
 
@@ -253,7 +254,7 @@ Dependencias de producción: `@ciszunetwork/utils` (workspace), `@discordjs/voic
 
 `DISCORD_BOT_TOKEN`, `DISCORD_CLIENT_ID`, `SUPABASE_SERVICE_ROLE_KEY`, `SESSION_SECRET`, `NEXT_PUBLIC_SITE_URL`.
 
-**Regla de oro**: secretos SOLO como `process.env.X` en server-only; nunca `NEXT_PUBLIC_` para secretos; nunca fallbacks hardcodeados (ver `SECURITY_PROTOCOLS.md`, ciszu).
+**Regla de oro**: secretos SOLO como `process.env.X` en server-only; nunca `NEXT_PUBLIC_` para secretos; nunca fallbacks hardcodeados (ver `SECURITY_PROTOCOLS.md`, ciszu). `SESSION_SECRET` es obligatorio en producción: el servidor rechaza sesiones si falta y los tokens llevan expiración absoluta de 7 días.
 
 ## 11. Actualización de la pila
 
@@ -289,4 +290,4 @@ Dependencias de producción: `@ciszunetwork/utils` (workspace), `@discordjs/voic
 - [ ] Social feeds documentados (columnas, migración, resolución y límites free/premium).
 - [ ] Sin secretos ni valores inventados.
 
-_Última revisión: 26 oct 2026. Relacionados: ARCHITECTURE.md, WORKFLOW_SYSTEM.md, SECURITY_PROTOCOLS.md (ciszu), MONITORING_SYSTEM.md (ciszu), VPS_PLAN.md (ciszu)._
+_Última revisión: 10 nov 2026. Relacionados: ARCHITECTURE.md, WORKFLOW_SYSTEM.md, SECURITY_PROTOCOLS.md (ciszu), MONITORING_SYSTEM.md (ciszu), VPS_PLAN.md (ciszu)._

@@ -1,7 +1,7 @@
 # MODERATION_PROTOCOLS — Normas de moderación y sanciones del ecosistema
 
 **Versión:** 1.0.0
-**Actualización:** 2026-10-09
+**Actualización:** 2026-11-10
 **Identificador:** MODERATION_PROTOCOLS_V1.0.0_2026_10_09_ciszunetwork
 **Definición:** protocolo obligatorio de moderación para las 4 webs y las consolas internas:
 qué se sanciona, con qué herramientas, cómo se escala, cómo se registra y cómo se apela.
@@ -135,5 +135,5 @@ no es "una sanción más": es terminal y **no apelable** (ver `ANTICHEAT_SYSTEM.
 - `DEV_CONSOLE_SYSTEM.md` — herramientas de moderación en la consola (usuarios, sitios).
 - `EMAILS_SYSTEM.md` — avisos de sanción con marca.
 
-_Última revisión: 23 oct 2026._ Relacionado: `ANTICHEAT_SYSTEM.md`, `ACCOUNT_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `ANTICHEAT_SYSTEM.md`, `ACCOUNT_SYSTEM.md`,
 `ADMIN_PROTOCOLS.md`, `SECURITY_PROTOCOLS.md`, `DEV_CONSOLE_SYSTEM.md`.

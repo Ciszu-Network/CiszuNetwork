@@ -28,15 +28,4 @@ export const ScoreService = {
 
     return rows.map((s) => ({ ...s, profiles: profiles[s.user_id] }));
   },
-
-  async saveScore(score: Omit<ScoreEntry, 'id' | 'created_at'>) {
-    const { data, error } = await supabase
-      .from('scores')
-      .insert(score)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
-  }
 };

@@ -1,7 +1,7 @@
 ﻿# DISCORD_SECURITY_PROTOCOLS — Protocolos de Seguridad de Discord (CiszuBot)
 
 Versión: 1.0.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: DISCORD_SECURITY_PROTOCOLS_V1.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: Protocolos de seguridad específicos del bot de Discord (CiszuBot): protección del token, permisos de invitación, rate limits de la API de Discord, manejo de datos de usuarios, verificación de comandos y checklist de auditoría. Lo genérico del ecosistema vive en `SECURITY_PROTOCOLS.md` (ciszu).
@@ -157,7 +157,7 @@ En el código, los upserts de estado (`bot_status`) y logs de comandos se envuel
 
 ## 9. Seguridad del dashboard OAuth
 
-- El flujo usa OAuth de Discord con cookie **HMAC** firmada con `SESSION_SECRET` (secreto de alta entropía, nunca `NEXT_PUBLIC_`).
+- El flujo usa OAuth de Discord con cookie **HMAC** firmada con `SESSION_SECRET` (secreto de alta entropía, nunca `NEXT_PUBLIC_`). El token incluye expiración absoluta de 7 días; si `SESSION_SECRET` falta en producción, la verificación falla cerrada y el state OAuth se genera con `crypto.randomBytes`.
 - El callback `https://ciszubot.vercel.app/api/auth/discord/callback` debe estar registrado en el Developer Portal con redirects exactos.
 - Validar el `state` del OAuth (anti-CSRF) en el intercambio.
 - La web solo debe poder configurar servidores donde el usuario tenga permisos (comprobar roles vía API de Discord).

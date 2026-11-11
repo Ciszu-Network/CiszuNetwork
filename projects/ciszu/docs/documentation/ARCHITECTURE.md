@@ -1,7 +1,7 @@
 ﻿# ARCHITECTURE — Arquitectura de Ciszu Network
 
 Versión: 2.1.0
-Actualización: 2026-10-25
+Actualización: 2026-11-10
 Identificador: ARCHITECTURE_V2.1.0_2026_08_13_ciszunetwork
 
 > **Definición**: visión estructural del monorepo: repositorio, proyectos, paquetes
@@ -230,5 +230,5 @@ Bot: Docker (node:24-alpine) ──► Discord ──► Supabase
 - [ ] Seguridad → RLS, rate limit, CSP/IAST y secretos por env revisados.
 - [ ] Los assets se sirven por resolver/CDN, nunca por `public/` salvo docs/pwa/sw.
 
-_Última revisión: 25 oct 2026._
+_Última revisión: 10 nov 2026._
 

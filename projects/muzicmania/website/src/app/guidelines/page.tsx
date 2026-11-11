@@ -5,6 +5,7 @@ import { useT } from '@/hooks/useT';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import LegalDocNav from '@/components/molecules/LegalDocNav';
 import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
@@ -24,18 +25,23 @@ const ARTICLES = [
   { id: 8, title: "ICONOGRAFÍA Y VECTORES", content: "El sistema de interfaz utiliza exclusivamente SVG Sprites centralizados. Está estrictamente prohibido el uso de Emojis unicode o librerías externas como FontAwesome para elementos de navegación interna." },
   { id: 9, title: "TIPOGRAFÍA OFICIAL", content: "Se establece 'Exo 2' como fuente principal para encabezados y 'Rajdhani' para cuerpos de texto y botones. El incumplimiento de esta jerarquía invalida cualquier propuesta de diseño oficial." },
   { id: 10, title: "SEMÁNTICA DE CÓDIGO", content: "Toda estructura de la plataforma debe seguir el estándar HTML5 semántico (<main>, <section>, <article>). Esto garantiza la accesibilidad para lectores de pantalla y la indexación profesional en motores de búsqueda." },
-  { id: 11, title: "PROPIEDAD INTELECTUAL", content: "MuzicMania utiliza música bajo licencias de libre uso (NCS, Creative Commons) o mediante acuerdos directos. Se respeta la autoría original y queda prohibida la redistribución de tracks fuera del entorno del juego." },
+  { id: 11, title: "PROPIEDAD INTELECTUAL Y MÚSICA", content: "MuzicMania utiliza música bajo licencias de libre uso (NCS, Creative Commons) o mediante acuerdos directos. Se respeta la autoría original y queda prohibida la redistribución de tracks fuera del entorno del juego. Los niveles de la comunidad solo pueden usar pistas de la biblioteca oficial; no se aceptan archivos de audio subidos por el usuario." },
   { id: 12, title: "CÓDIGO DE CONDUCTA", content: "Se prohíbe cualquier conducta de acoso, toxicidad o suplantación de identidad en los perfiles de Ciszu Network. La plataforma fomenta un entorno de respeto y crecimiento artístico mutuo." },
   { id: 13, title: "REPORTE DE VULNERABILIDADES", content: "El descubrimiento de fallos críticos o vulnerabilidades debe reportarse de manera privada a través de los canales oficiales de soporte, evitando la difusión pública que pueda comprometer la integridad de la plataforma." },
-  { id: 14, title: "INTEGRIDAD DE PUNTUACIONES (ANTI-CHEAT)", content: "El uso de macros, scripts de automatización o cualquier software externo que manipule las pulsaciones reales del usuario resultará en el baneo permanente de la cuenta y la eliminación de récords." },
+  { id: 14, title: "INTEGRIDAD DE PUNTUACIONES (ANTI-CHEAT)", content: "El uso de macros, scripts de automatización o cualquier software externo que manipule las pulsaciones reales del usuario resultará en sanciones escalonadas y, en casos graves, el baneo o la eliminación de la cuenta. El servidor evalúa el resultado y el historial; no se sanciona por una única señal débil ni se revelan los umbrales internos. Toda sanción automática puede apelarse desde Soporte." },
   { id: 15, title: "GESTIÓN DE CUENTAS", content: "Los perfiles de usuario pertenecen al ecosistema de Ciszu Network. El usuario es responsable de la seguridad de sus credenciales y de la veracidad de la información proporcionada en su perfil." },
   { id: 16, title: "PRIVACIDAD DE DATOS", content: "Toda información personal recolectada se gestiona mediante protocolos de seguridad avanzada vía Supabase Auth. No se comparten datos con terceros fuera del ámbito operativo de MuzicMania." },
-  { id: 17, title: "CONTRIBUCIÓN CREATIVA", content: "Se invita a la comunidad a proponer nuevas canciones ('Charts') y arte conceptual. Toda contribución aprobada será acreditada debidamente al autor original en la sección de Créditos." },
-  { id: 18, title: "CICLO DE ACTUALIZACIONES", content: "MuzicMania se encuentra en un estado de evolución constante (Fase Beta). Las funciones existentes pueden ser modificadas o retiradas para mejorar la estabilidad y experiencia general del sistema." },
-  { id: 19, title: "COMPATIBILIDAD MÓVIL", content: "Aunque la versión web es responsiva, la experiencia óptima se reserva para equipos de escritorio. Las aplicaciones nativas para iOS y Android están sujetas al Roadmap oficial de 2026." },
+  { id: 17, title: "CONTRIBUCIÓN CREATIVA", content: "Se invita a la comunidad a proponer nuevas canciones ('Charts') y arte conceptual mediante Level Studio. Toda contribución aprobada será acreditada debidamente al autor original en la sección de Créditos. Solo se aceptan charts propios o autorizados y pistas de la biblioteca oficial." },
+  { id: 18, title: "CICLO DE ACTUALIZACIONES", content: "MuzicMania se encuentra en un estado de evolución constante. Las funciones existentes pueden ser modificadas o retiradas para mejorar la estabilidad y experiencia general del sistema." },
+  { id: 19, title: "COMPATIBILIDAD MÓVIL", content: "Aunque la versión web es responsiva, la experiencia óptima se reserva para equipos de escritorio. Las aplicaciones nativas para iOS y Android están sujetas al Roadmap oficial." },
   { id: 20, title: "SALUD VISUAL Y FOTOSENSIBILIDAD", content: "Dada la naturaleza del juego, se incluye contenido con efectos de luces intermitentes y flashes neón. Se recomienda discreción a usuarios sensibles a estímulos visuales intensos." },
   { id: 21, title: "CANALES DE SOPORTE", content: "El único medio oficial para asistencia técnica directa es la sección de Soporte de la web o el servidor de Discord verificado de Ciszu Network." },
-  { id: 22, title: "AUTORIDAD DE GESTIÓN", content: "Ciszuko Antony (Francisco Garcia), como creador de MuzicMania, se reserva el derecho final de interpretación de estas directrices y de la administración de accesos a la plataforma." },
+  { id: 22, title: "AUTORIDAD DE GESTIÓN", content: "Ciszuko Antony (Francisco Garcia), como creador de MuzicMania, se reserva el derecho final de interpretación de estas directrices y de la administración de accesos a la plataforma, sin perjuicio de los derechos legales de los usuarios." },
+  { id: 23, title: "CREACIÓN Y PUBLICACIÓN DE NIVELES", content: "Cualquier usuario registrado puede crear niveles con Level Studio usando las pistas de la biblioteca oficial. El nivel se guarda como borrador y queda sujeto a revisión antes de publicarse. Debes completar título, descripción, dificultad y BPM de forma veraz. No se permite publicar niveles duplicados en masa, con relleno, con fines publicitarios o para manipular recompensas. El creador conserva la autoría, pero otorga a MuzicMania una licencia para mostrarlo y distribuirlo dentro de la plataforma." },
+  { id: 24, title: "REQUISITOS TÉCNICOS DE LOS CHARTS", content: "Los charts deben usar cuatro carriles, notas con tiempos válidos y un máximo de 5.000 notas. La duración de las notas debe quedar dentro de la pista (0–3.600 segundos), el BPM entre 40 y 400 y el offset entre -30 y +30. No se aceptan charts vacíos, corruptos, con valores fuera de rango, con notas superpuestas imposibles o que alteren la información del track. Los holds deben tener un final posterior a su inicio y los metadatos deben coincidir con la pista seleccionada." },
+  { id: 25, title: "FOTOS DE PERFIL Y AVATARES", content: "Los avatares admitidos son JPEG, PNG o WebP, con un máximo de 5 MB. Se recomienda una imagen cuadrada y legible. No se permite contenido sexual o nudista, violencia gráfica, gore, discurso de odio, acoso, símbolos ilegales, datos personales de terceros, suplantación de identidad, marcas o imágenes protegidas sin autorización, publicidad no solicitada ni enlaces maliciosos. Podemos sustituir el avatar por el predeterminado y sancionar la cuenta si incumple estas normas. La reincidencia puede conllevar la pérdida de la función de personalización." },
+  { id: 26, title: "MÚSICA, COPYRIGHT Y CONTENIDO DE TERCEROS", content: "No se permite subir audio, extraer pistas de plataformas de streaming, usar remixes no autorizados ni publicar charts con música de terceros sin licencia. La biblioteca oficial y los acuerdos directos cubren el uso dentro de MuzicMania; ese permiso no se extiende a redistribuir la música fuera del juego. Si eres titular de derechos y detectas un uso no autorizado, escribe a ciszunetwork@outlook.com con la obra, la URL, la prueba de titularidad y una declaración de buena fe. Las cuentas reincidentes pueden ser suspendidas." },
+  { id: 27, title: "MODERACIÓN, RETIRO Y APELACIÓN", content: "El Staff puede ocultar, archivar o retirar niveles, avatares, comentarios o cualquier contenido que incumpla estas directrices. Las medidas se comunican por los canales oficiales y pueden incluir advertencias, restricciones o sanciones. Puedes apelar una sanción desde Soporte → Apelación de sanción; revisaremos el caso con el historial y la evidencia disponible. La moderación no revela información confidencial de otros usuarios ni detalles internos del anticheat." },
 ];
 
 export default function GuidelinesPage() {
@@ -133,6 +139,8 @@ export default function GuidelinesPage() {
 
           </div>
         </motion.div>
+
+        <LegalDocNav />
 
         <QuickDocks />
 

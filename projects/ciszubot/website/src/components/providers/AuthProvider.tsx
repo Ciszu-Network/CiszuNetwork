@@ -88,7 +88,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
     try {
       const { data: profile, error } = await supabase
         .from('profiles')
-        .select('username, display_name, avatar_url, email, role')
+        .select('username, display_name, avatar_url, role')
         .eq('id', userId)
         .maybeSingle();
 
@@ -108,7 +108,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
         id: userId,
         name: displayName,
         avatar: /^https?:\/\//.test(avatarUrl) ? avatarUrl : null,
-        email: profile?.email ?? email,
+        email: email,
         username,
         display_name: displayName,
         provider: 'ciszu',

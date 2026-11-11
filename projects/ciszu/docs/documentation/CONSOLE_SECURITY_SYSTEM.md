@@ -1,7 +1,7 @@
 # CONSOLE_SECURITY_SYSTEM — Seguridad de las consolas (auth OTP, sesiones, testing, proyectos)
 
 **Versión:** 1.0.0
-**Actualización:** 2026-10-06
+**Actualización:** 2026-11-10
 **Identificador:** CONSOLE_SECURITY_SYSTEM_V1.0.0_2026_10_06_ciszunetwork
 **Definición:** seguridad compartida de las 3 consolas internas (devcon, staffcon, customerscon):
 autenticación por OTP al correo del staff, sesiones de 60 min con cierre automático, registro de
@@ -130,5 +130,5 @@ A partir de ahora el rango de un staff puede estar acotado a proyectos:
 - `SECURITY_PROTOCOLS.md` — reglas de seguridad generales.
 - `DB_SYSTEM.md` — el schema `internal` no se expone por PostgREST; solo servicio.
 
-_Última revisión: 23 oct 2026._ Relacionado: `DEV_CONSOLE_SYSTEM.md`, `STAFF_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `DEV_CONSOLE_SYSTEM.md`, `STAFF_SYSTEM.md`,
 `EMAILS_SYSTEM.md`, `TODO.md`.

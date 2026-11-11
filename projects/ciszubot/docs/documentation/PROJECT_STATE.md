@@ -1,7 +1,7 @@
 ﻿# PROJECT_STATE — Estado de CiszuBot
 
 Versión: 1.1.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: PROJECT_STATE_V1.1.0_2026_09_10_ciszunetwork
 
 > **Definición**: estado actual del proyecto **CiszuBot** (bot de Discord + landing web +
@@ -13,7 +13,7 @@ Identificador: PROJECT_STATE_V1.1.0_2026_09_10_ciszunetwork
 | Componente | Estado | Notas |
 |---|---|---|
 | Website (Next.js) | ✅ Listo | Landing neon + dashboard OAuth (config por servidor) — 12 rutas, build OK 2 ago 2026 |
-| Bot (Discord.js) | ✅ Listo | v3.2.0 — TypeScript, 72 comandos (slash + prefijo `cz!`), heartbeat Supabase |
+| Bot (Discord.js) | ✅ Listo | v3.4.0 — TypeScript, 72 comandos (slash + prefijo `cz!`), heartbeat Supabase |
 | Comandos | ✅ 72 | 9 categorías: Configuración, Diversión, Economía, Información, Moderación, Música, Niveles, Social, Utilidad |
 | Slash commands JSON | ✅ Listo | `commands.json` (canónico) + `docs/slash-commands.json`/`.md` — regenerables con `scripts/generate-commands.js` |
 | Migración 14 | ✅ Aplicada | 13 tablas en `ciszubot` (guild_configs, wallets, transactions, shop_items, inventory, levels, warns, tickets, giveaways, afk, alliances, discord_users, snipes) |
@@ -34,8 +34,10 @@ Identificador: PROJECT_STATE_V1.1.0_2026_09_10_ciszunetwork
 | Support | ✅ Completo | Página `/support` con sistema de tickets (tabla `ciszubot_tickets`) y AuthWarningModal |
 | Disclaimers | ✅ Actualizado | Soporte de botones de acción (`--action "Texto|URL"` o `--action "OK|close"`) en devcon y componente `DisclaimerStack` |
 
-## Notas técnicas (10 sep 2026)
+## Notas técnicas (10 nov 2026)
 
+- **Auditoría de seguridad (10 nov 2026)**: eliminado el fallback hardcodeado de `SESSION_SECRET`; las sesiones llevan expiración absoluta (7 días) y el state OAuth usa `crypto.randomBytes`. `POST /api/update-stats` exige `STATS_UPDATE_SECRET` y los webhooks de votos fallan cerrados si falta token. Tests del bot 81/81.
+- **Auditoría documental (10 nov 2026)**: fechas de revisión refrescadas; sin cambios funcionales adicionales en bot ni web. El bot reporta v3.4.0 y la verificación de Top GG sigue pendiente de tokens.
 - Registry soporta arrays y fábricas por archivo (`utils/commandRegistry.ts`).
 - SimulatedMessage ampliado (mentions con users/roles/channels, member con permissions/roles/voice).
 - Limitación conocida: `configService.ts` cachea guild_configs en memoria del bot; cambios desde el dashboard no invalidan la caché hasta reiniciar el bot.
@@ -49,4 +51,4 @@ Identificador: PROJECT_STATE_V1.1.0_2026_09_10_ciszunetwork
 - **Package Manager**: pnpm
 - **Backend**: Supabase (PostgreSQL + Auth + Storage)
 
-ÚLTIMA ACTUALIZACIÓN: 2026-10-23
+ÚLTIMA ACTUALIZACIÓN: 2026-11-10

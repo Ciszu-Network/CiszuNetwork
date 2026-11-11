@@ -1847,3 +1847,5 @@ git commit -m "docs(muzicmania): plan de tienda y economia"
 - No se implementan login diario, tareas, XP, regalos, donaciones, códigos de creador ni tarjetas/PayPal en este plan; pertenecen a `STORE_ECONOMY_PHASE2/3/4`.
 - Cada task debe terminar con sus pruebas y commit propios.
 - Si un test falla por el entorno de Supabase, no se avanza a la siguiente task hasta corregir la migración o la lógica.
+
+_Última revisión: 10 nov 2026._ Relacionado: `STORE_ECONOMY_PLAN.md`, `PROJECT_STATE.md`.

@@ -56,4 +56,4 @@ Tablas:
 - SQL en `services/supabase/migrations/`, aplicadas con `scripts/apply-migration-XX.js`.
 
 ---
-_Ultima revision: 2026-08-26_. Relacionado: DB_SYSTEM, ORM_SYSTEM, SECURITY_PROTOCOLS.
+_Ultima revision: 10 nov 2026_. Relacionado: DB_SYSTEM, ORM_SYSTEM, SECURITY_PROTOCOLS.

@@ -49,4 +49,4 @@ Identificador: TRD_GLOBAL_SYSTEM_V1.0.0_2026_08_26_ciszunetwork
 - `development` (local, puerto fijo), `preview` (Vercel), `production` (main).
 
 ---
-_Ultima revision: 2026-08-26_. Relacionado: PRD, BACKEND_SCHEMA, IMPLEMENTATION_PLAN.
+_Ultima revision: 10 nov 2026_. Relacionado: PRD, BACKEND_SCHEMA, IMPLEMENTATION_PLAN.

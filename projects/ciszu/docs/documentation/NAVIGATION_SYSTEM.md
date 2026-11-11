@@ -113,3 +113,5 @@ que React hidrate, así que el árbol del `<head>` no coincide. React regenera e
 subárbol, no rompe la UI. Se arregla cargando AdSense con `next/script`
 `strategy="afterInteractive"` (dejando el script estático solo para la
 verificación de Google), y queda como tarea aparte.
+
+_Última revisión: 10 nov 2026._ Relacionado: `FRONTEND_SYSTEM.md`, `GLOBAL_COMPONENTS_SYSTEM.md`.

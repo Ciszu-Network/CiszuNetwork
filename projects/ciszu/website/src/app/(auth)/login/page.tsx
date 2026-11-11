@@ -206,7 +206,7 @@ export default function LoginPage() {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, username, display_name, avatar_url, role')
         .eq('id', data.user.id)
         .maybeSingle();
 

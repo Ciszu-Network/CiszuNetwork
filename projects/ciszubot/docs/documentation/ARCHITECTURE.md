@@ -1,7 +1,7 @@
 ﻿# ARCHITECTURE — Arquitectura del Sistema (CiszuBot)
 
 Versión: 1.3.0
-Actualización: 2026-10-26
+Actualización: 2026-11-10
 Identificador: ARCHITECTURE_V1.3.0_2026_10_26_ciszunetwork
 
 > **Definición**: Documenta la arquitectura real y actual del proyecto CiszuBot: estructura del monorepo, componentes (website Next.js + bot Discord.js en TypeScript + base de datos Supabase), flujos de datos, despliegue y decisiones de diseño.
@@ -94,14 +94,14 @@ projects/ciszubot/
 | --- | --- |
 | Nombre de paquete | `ciszubot` |
 | Versión | 3.2.0 |
-| Runtime | Node.js ≥ 22 (Docker: `node:24-alpine`) |
-| Lenguaje | TypeScript 5.x |
+| Runtime | Node.js ≥ 24 (Docker: `node:24-alpine`) |
+| Lenguaje | TypeScript 6.x |
 | Librería | Discord.js v14 |
 | Audio | `@discordjs/voice` + `play-dl` (requiere ffmpeg) |
 | Base de datos | Supabase (`@supabase/supabase-js`, schema `ciszubot`) |
 | Errores | `@sentry/node` |
 | Bot lists | `@top-gg/sdk` + `discordbotlist` |
-| Servidor stats | Express (panel de métricas interno) |
+| Servidor stats | NestJS + Fastify (panel de métricas interno) |
 | Prefijo | `cz!` (+ mención como prefijo alternativo) |
 
 **Intents del gateway** (`src/index.ts`):
@@ -234,11 +234,11 @@ Bot (setInterval 60s)
   → la web /estado y el dashboard leen la fila con SELECT público
 ```
 
-El bot también publica `updateStats()` cada 30 s al statsServer interno (Express).
+El bot también publica `updateStats()` cada 30 s al statsServer interno (NestJS + Fastify).
 
-### 4.4 Panel de estadísticas (Express interno)
+### 4.4 Panel de estadísticas (NestJS + Fastify)
 
-El bot levanta un servidor Express en el puerto 5000 (`statsServer.ts`) que expone métricas en vivo del proceso (comandos totales, servidores, uptime). Esto permite monitorizar el contenedor Docker sin abrir la API de Discord.
+El bot levanta un servidor NestJS + Fastify en el puerto 5000 (`statsServer.ts`) que expone métricas en vivo del proceso (comandos totales, servidores, uptime). Esto permite monitorizar el contenedor Docker sin abrir la API de Discord.
 
 ### 4.5 Noticias verificadas (bot → Discord)
 
@@ -333,7 +333,7 @@ Pendiente de definir. Recomendación: **Oracle Cloud Free Tier** (VPS siempre en
 | --- | --- |
 | Estado público | `ciszubot.bot_status` → `/estado` en la web |
 | Heartbeat | Cada 60 s (upsert) |
-| Stats internas | Express en puerto 5000 |
+| Stats internas | NestJS + Fastify en puerto 5000 |
 | Errores | Sentry (`captureError` con contexto: command, user, context) |
 | Logs | `src/services/logger.ts` + ficheros en `logs/` |
 | Bot lists | top.gg (auto, 30 min) + DiscordBotList (30 min) |
@@ -350,7 +350,7 @@ Pendiente de definir. Recomendación: **Oracle Cloud Free Tier** (VPS siempre en
 | ADR-4 | Heartbeat `bot_status` single-row | Estado ligero, público y barato de consultar por la web |
 | ADR-5 | Docker multi-stage con usuario `node` | Imagen mínima y segura en producción |
 | ADR-6 | `commands.json` canónico + generador | Slash commands y docs se regeneran desde una única fuente |
-| ADR-7 | Express interno en puerto 5000 | Monitorización del contenedor sin exponer la API de Discord |
+| ADR-7 | NestJS + Fastify en puerto 5000 | Monitorización del contenedor sin exponer la API de Discord |
 | ADR-8 | Registro de comandos slash en `ClientReady` | Aplicación inmediata sin pasos manuales por entorno |
 | ADR-9 | Nitro manual + auto con lista de roles excluidos | Evita abuso sin quitar la comodidad de reenviar emojis externos; el modo manual da control total |
 | ADR-10 | Noticias con allowlist de fuentes y dedupe en `news_seen` | Evita phishing/enlaces no verificados y republicaciones; el seed inicial impide llenar el canal con historial |
@@ -402,6 +402,6 @@ Pendiente de definir. Recomendación: **Oracle Cloud Free Tier** (VPS siempre en
 - [ ] Referencias cruzadas a `STACK_SYSTEM.md`, `WORKFLOW_SYSTEM.md`, `DISCORD_SECURITY_PROTOCOLS.md`, `SECURITY_PROTOCOLS.md` (ciszu) y `VPS_PLAN.md` (ciszu).
 - [ ] Sin datos falsos ni estado "pendiente de crear" que contradiga `PROJECT_STATE.md`.
 
-_Última revisión: 26 oct 2026. Relacionados: STACK_SYSTEM.md, WORKFLOW_SYSTEM.md, DISCORD_SECURITY_PROTOCOLS.md, SECURITY_PROTOCOLS.md (ciszu), VPS_PLAN.md (ciszu)._
+_Última revisión: 10 nov 2026. Relacionados: STACK_SYSTEM.md, WORKFLOW_SYSTEM.md, DISCORD_SECURITY_PROTOCOLS.md, SECURITY_PROTOCOLS.md (ciszu), VPS_PLAN.md (ciszu)._
 
 

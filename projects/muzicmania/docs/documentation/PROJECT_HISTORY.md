@@ -2,6 +2,26 @@
 
 Este documento registra los hitos importantes, correcciones y evoluciones del proyecto.
 
+## 10 de Noviembre, 2026
+
+### Documentación legal, anticheat y reglas de contenido
+
+- **Legal**: reescritos los términos, la política de privacidad, las directrices, las reglas y la licencia de MuzicMania para reflejar MZP/NOWPayments, compras 18+, reembolsos y retiros con revisión manual, promociones, notificaciones, CISZU ID/OAuth, datos del anticheat y retención.
+- **Contenido de usuario**: nuevas reglas para subida de niveles/charts, límites técnicos, fotos de perfil (JPEG/PNG/WebP ≤5 MB), canciones con copyright y reclamaciones de titularidad.
+- **Anticheat**: sección de transparencia en `/information` y `/about`; se aclaró que el análisis es servidor-side, no instala drivers de kernel ni escanea archivos/procesos, y que las sanciones automáticas se apelan con revisión humana.
+- **Navegación legal**: componente compartido en `/terms`, `/policy`, `/guidelines`, `/rules` y `/license`; fechas y metadatos del portal actualizados al 10 nov 2026.
+- **Auditoría documental**: fechas de revisión refrescadas en la documentación de MuzicMania, Ciszu Network, Ciszubot y CiszukoAntony.
+
+## 9 de Noviembre, 2026
+
+### Launcher, notificaciones, rangos y finanzas
+
+- **Launcher**: auto-instalación de updates con cuenta atrás, toast nativo al finalizar, botón manual de anclaje a taskbar y navegación de sesión CISZU ID.
+- **Release**: `muzicmania-v2.1.1` publicado para Windows 10/11; instalador NSIS 2.3.1 y desinstalador 2.1.0.
+- **Economía y perfiles**: facturación en `/profile/billing`, reembolsos/retiros como solicitudes, códigos promocionales, regalos, rangos y badges, leaderboard por periodos.
+- **Notificaciones**: campana, página `/notifications`, amistades y avisos automáticos de logros, sanciones y comercio.
+- **STAFFCON**: bandeja `MUZICMANIA FINANZAS` con acceso restringido; devcon retiró la opción.
+
 ## 31 de Enero, 2026
 
 ### Reparacion Masiva de Encoding UTF-8
@@ -104,3 +124,5 @@ Este documento registra los hitos importantes, correcciones y evoluciones del pr
 - **Audio del Menu**: Se corrigio la reanudacion de la musica global al volver al menu despues de una partida. Tambien se reanuda al abortar partida.
 - **Licencias**: Actualizadas LICENSE.txt del instalador y root LICENSE con Ciszu Network.
 - **BUILD.bat**: Se creo script de build automatizado para Windows.
+
+_Última revisión: 10 nov 2026._ Relacionado: `PROJECT_STATE.md`, `CHANGELOG_SYSTEM.md`.

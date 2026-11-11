@@ -34,6 +34,18 @@ definición de 1-2 líneas y contenido en español. Las reglas completas viven e
 |---|---|
 | `` `DOC_EXPORT_PROTOCOLS.md` `` | Exportación de documentación oficial (nomenclatura, txt/md/docx/pdf, script `export-docs.js`) |
 
+### Legal (páginas oficiales)
+
+| Documento | Ruta |
+|---|---|
+| Términos y Condiciones | `/terms` |
+| Política de Privacidad | `/policy` |
+| Directrices de uso y contenido | `/guidelines` |
+| Reglas de comunidad | `/rules` |
+| Licencia | `/license` |
+
+> Las páginas son la versión canónica y vigente; las copias descargables del portal se actualizan por lotes.
+
 ### Estado
 
 | Doc | Descripción |
@@ -69,3 +81,5 @@ Documentación corporativa/genérica no duplicada aquí; vive en
 - No borrar secciones sin antes actualizar quién las referencia.
 - La documentación es oficial: se revisa en commits y no es basura de agentes.
 - Los doc de sistema/protocolo/guía deben cumplir el mínimo de líneas del estándar.
+
+_Última revisión: 10 nov 2026._ Relacionado: `PROJECT_STATE.md`, `TAURI_SYSTEM.md`, `STORE_ECONOMY_PLAN.md`.

@@ -238,6 +238,7 @@ export default function InformationPage() {
       <ScrollSpy items={[
         { id: 'hero', label: 'Inicio' },
         { id: 'tutorial', label: '{t.pages.information.howToPlay}' },
+        { id: 'anticheat', label: 'Anticheat' },
         { id: 'identidad', label: 'Identidad' },
         { id: 'color', label: 'Colorología' },
         { id: 'eslogan', label: 'Eslogan' },
@@ -352,6 +353,62 @@ export default function InformationPage() {
                      </>
                   )}
                </div>
+            </div>
+          </div>
+        </motion.section>
+
+        {/* --- ANTICHEAT --- */}
+        <motion.section id="anticheat" data-scrollspy initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-50px' }} variants={sectionVariants} className="space-y-10">
+          <div className="flex items-center gap-4 justify-center">
+            <div className="w-8 h-8 text-neon-red">{I.identity}</div>
+            <h2 className="text-2xl font-header font-black text-white uppercase italic tracking-widest">Transparencia anticheat</h2>
+          </div>
+
+          <div className="max-w-4xl mx-auto text-center border-l-4 border-neon-red/40 pl-8 py-2">
+            <p className="text-gray-300 font-header font-bold text-base md:text-lg leading-relaxed uppercase">
+              Ciszu Anti-Cheat protege la integridad de los rankings y de la economía del juego.
+              No es un sistema de vigilancia del dispositivo: analiza el resultado de tus partidas en el servidor.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[
+              {
+                title: 'Qué analiza',
+                color: '#FF3355',
+                body: 'Recibe el resultado que envía el juego al terminar una partida: puntuación, precisión, combo máximo y dificultad. El servidor lo contrasta con tu historial reciente y con patrones estadísticos del nivel.',
+              },
+              {
+                title: 'Cómo decide',
+                color: '#FFB000',
+                body: 'Suma señales ponderadas según el contexto (dificultad, racha, repetición y coherencia de los valores). Permanece invisible mientras la puntuación interna es baja; solo actúa al cruzar el umbral configurado para MuzicMania.',
+              },
+              {
+                title: 'Qué no hace',
+                color: '#00F0FF',
+                body: 'No instala controladores a nivel de kernel, no escanea archivos o procesos de tu PC, no lee tu teclado fuera del juego y no accede a otras aplicaciones. El cliente solo envía el resumen de la partida.',
+              },
+              {
+                title: 'Qué ocurre si se activa',
+                color: '#FF33CC',
+                body: 'Puede aplicar una advertencia, silencio, bloqueo temporal o eliminación de cuenta, de forma escalonada y según el historial. Los strikes y las sanciones quedan registrados y pueden apelarse con revisión humana.',
+              },
+            ].map((item) => (
+              <div key={item.title} className="p-7 rounded-[2rem] bg-doc-dark border border-white/5 border-l-4 transition-all duration-300 hover:bg-white/5" style={{ borderLeftColor: item.color }}>
+                <h3 className="text-lg font-header font-black uppercase italic mb-3" style={{ color: ink(item.color) }}>{item.title}</h3>
+                <p className="text-xs text-gray-400 font-bold leading-relaxed">{item.body}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-[2rem] border border-neon-red/20 bg-neon-red/5 p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5">
+            <p className="flex-1 text-[11px] text-gray-400 font-bold leading-relaxed">
+              Si crees que una sanción es un falso positivo, puedes apelarla. También puedes consultar las reglas completas y la política de privacidad para saber qué datos tratamos.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/appeal" className="px-5 py-3 rounded-xl bg-neon-red text-black text-[10px] font-black uppercase tracking-[0.15em] hover:brightness-110 transition-all">Apelar sanción</Link>
+              <Link href="/rules" className="px-5 py-3 rounded-xl border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.15em] hover:border-neon-red/50 transition-all">Reglas</Link>
+              <Link href="/policy" className="px-5 py-3 rounded-xl border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.15em] hover:border-neon-red/50 transition-all">Privacidad</Link>
             </div>
           </div>
         </motion.section>

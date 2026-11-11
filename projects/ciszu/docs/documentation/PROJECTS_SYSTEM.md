@@ -1,8 +1,8 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
-Versión: 2.1.1
-Actualización: 2026-10-26
-Identificador: PROJECTS_SYSTEM_V2.1.1_2026_10_26_ciszunetwork
+Versión: 2.1.2
+Actualización: 2026-11-10
+Identificador: PROJECTS_SYSTEM_V2.1.2_2026_11_10_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
 > general (Projects), el estado detallado (Project State) y el historial cronológico
@@ -140,14 +140,31 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 1. **Ciszubot OAuth**: registrar callback en Discord Developer Portal + `DISCORD_CLIENT_SECRET`
    en Vercel (ver AGENTS.md sección Ciszubot web).
 2. **Tokens bot lists**: `TOP_GG_TOKEN` / `DISCORDBOTLIST_TOKEN` (código listo, sin ellos no postea).
-3. **GUIDELINES/RULES/ACTA DOCX/PDF**: composición manual.
-4. **DNS**: push a GitHub desde esta máquina (usuario push manual).
-5. **Keys Turnstile MuzicMania**: eliminar fallbacks hardcodeados al rotar (repo privado por ahora).
+3. **Vercel**: pausa por fair use hasta el 7 dic 2026; no desplegar hasta el reset.
+4. **MuzicMania**: validar OAuth, economía y notificaciones online cuando Vercel vuelva; payout/refund sigue siendo manual.
+5. **Mobile**: Android/iOS nativo pendiente de Android Studio/Xcode y firma.
 
 ## 4. Historial cronológico (changelog del monorepo)
 
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
+
+### 10 de Noviembre, 2026 — MuzicMania 2.1.1, documentación legal y auditoría de docs
+
+- **MuzicMania legal**: actualizados términos, privacidad, directrices, reglas y licencia con MZP/NOWPayments, compras 18+, reembolsos/retiros manuales, promociones, notificaciones, CISZU ID/OAuth, contenido de usuario, copyright y anticheat.
+- **Reglas nuevas**: subida de niveles/charts, límites técnicos, fotos de perfil y canciones con copyright; transparencia del anticheat en `/information` y `/about`.
+- **Navegación legal**: componente compartido en las cinco páginas legales; metadatos y fechas del portal al 10 nov 2026.
+- **Documentación**: fechas de revisión refrescadas en las cuatro carpetas de docs; TODO intactos.
+- **Release**: `muzicmania-v2.1.1` (11.692.682 bytes, SHA256 `E04C6941…68F3BC`); instalador NSIS 2.3.1 y desinstalador 2.1.0.
+- **Bloqueo**: Vercel pausado por fair use hasta el 7 dic 2026; sin validación online de OAuth/economía.
+- **Auditoría de seguridad (10 nov)**: cerrada la lectura pública de emails y la escalada de rol en `muzicmania.profiles`; `scores` solo por RPC (con columnas restauradas: el guardado de partidas estaba roto), DML directo cerrado en niveles/multijugador/chat/amistades/notificaciones; grants de perfiles por web y `public.sanctions` sin IP/motivo/actor para anon. Ciszubot: sesión con expiración, sin secreto fallback, state OAuth CSPRNG, stats/votos fail-closed. Migraciones locales aplicadas (gitignored).
+
+### 9 de Noviembre, 2026 — finanzas, notificaciones y experiencia de launcher
+
+- **MuzicMania**: `/profile/billing`, solicitudes de reembolso/retiro, códigos promocionales, regalos, rangos/badges y leaderboard por periodos.
+- **Notificaciones**: campana, `/notifications`, amistades y avisos automáticos.
+- **Launcher**: auto-instalación de updates, toast nativo, botón manual de taskbar y sesión CISZU ID.
+- **STAFFCON**: bandeja `MUZICMANIA FINANZAS` restringida; devcon retiró la opción.
 
 ### 17 de Octubre, 2026 — CiszuBot 24/7 en Bot-Hosting, emails Gmail SMTP + advisor, TUI de consolas
 
@@ -675,7 +692,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 26 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.
 
 ## Historial — Sesión 21-22 oct 2026
@@ -687,14 +704,14 @@ _Última revisión: 26 oct 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_S
 - **Changelogs**: 4 entradas publicadas en `ciszunetwork.global_changelogs`.
 - **Mantenimiento**: ~8.2 GB liberados (temp + caches `.next`).
 
-_Última revisión: 23 oct 2026._
+_Última revisión: 10 nov 2026._
 
 ## Historial — Sesión 23 oct 2026
 
 - **Arranque/BitLocker**: tareas programadas reapuntadas a stubs en C: con guard de BitLocker y salida silenciosa; Git Updater desactivado.
 - **Docs**: auditoría de 190 documentos, corrección de referencias rotas y refresco de fechas.
 
-_Última revisión: 23 oct 2026._
+_Última revisión: 10 nov 2026._
 
 ## Historial — Sesión 26 oct 2026
 
@@ -706,4 +723,4 @@ _Última revisión: 23 oct 2026._
 - **Migraciones**: categorías de trivia, registro privado de confesiones, RSS de noticias y estilos de encuestas aplicados con RLS deny-all.
 - **Extras**: RSS personalizada por servidor, estilos de encuesta `classic/neon/pulse/compact` y cobertura i18n de las 4 webs en 0 literales pendientes.
 
-_Última revisión: 26 oct 2026._
+_Última revisión: 10 nov 2026._

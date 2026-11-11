@@ -1,7 +1,7 @@
 ﻿# PROJECT_STATE — Estado de Ciszuko Antony Portfolio
 
 Versión: 1.1.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: PROJECT_STATE_V1.1.0_2026_09_10_ciszunetwork
 
 > **Definición**: estado actual del proyecto **Ciszuko Antony Portfolio** (portfolio personal
@@ -21,9 +21,14 @@ Identificador: PROJECT_STATE_V1.1.0_2026_09_10_ciszunetwork
 | documentation | ✅ Completo | 11 archivos |
 | public/docs/ | ✅ Creado | En website/public/docs/ |
 
+## Notas (10 nov 2026)
+
+- Auditoría documental: fechas de revisión refrescadas; sin cambios funcionales en el portfolio en esta sesión.
+- Estado de Vercel: pausa por fair use hasta el 7 dic 2026; el portfolio sigue servido desde el último deploy válido.
+
 ## Stack
 
 - Next.js 15 + TypeScript + Tailwind 4 + framer-motion
 - pnpm + Vercel
 
-ÚLTIMA ACTUALIZACIÓN: 2026-10-23
+ÚLTIMA ACTUALIZACIÓN: 2026-11-10

@@ -1,7 +1,7 @@
 ﻿# SCHEDULE_PROTOCOLS — Horario y agenda
 
 Versión: 2.0.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: SCHEDULE_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: horarios y agenda de trabajo recomendados para Ciszu Network (empresa
@@ -201,5 +201,5 @@ el corte nocturno y la cadencia de seguridad (diaria/semanal) del repo.
 Con las métricas de seguimiento: si los pendientes arrastrados bajan y hay días de
 descanso respetados, la agenda funciona; si no, ajustar bloques o prioridades.
 
-_Última revisión: 23 oct 2026._ Relacionado: `GEOGRAPHIC_CONTEXT_PROTOCOLS.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `GEOGRAPHIC_CONTEXT_PROTOCOLS.md`,
 `HEALTH_AND_SAFETY_PROTOCOLS.md`, `WORKFLOW_SYSTEM.md`, `VPS_PLAN.md`.

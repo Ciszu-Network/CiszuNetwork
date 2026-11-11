@@ -1,7 +1,7 @@
 # ADMIN_PROTOCOLS — Normas de administración, jerarquía y accesos del staff
 
 **Versión:** 1.0.0
-**Actualización:** 2026-10-09
+**Actualización:** 2026-11-10
 **Identificador:** ADMIN_PROTOCOLS_V1.0.0_2026_10_09_ciszunetwork
 **Definición:** protocolo obligatorio para el personal con mando (owner, dirección, gerencia,
 administración): jerarquía de rangos, accesos a las consolas, matriz de permisos, subcargos
@@ -110,6 +110,6 @@ sesión de 60 min + internet obligatorio.
 - `ANTICHEAT_SYSTEM.md` — sanciones automáticas y strikes.
 - `ACCOUNT_SYSTEM.md` — cuentas, roles (`user_roles`) y eliminación.
 
-_Última revisión: 23 oct 2026._ Relacionado: `CONSOLE_SECURITY_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `CONSOLE_SECURITY_SYSTEM.md`,
 `MODERATION_PROTOCOLS.md`, `STAFF_SYSTEM.md`, `EMPLOYEES_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `ANTICHEAT_SYSTEM.md`.

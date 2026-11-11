@@ -1,7 +1,7 @@
 # DEV_CONSOLE_SYSTEM — Consola de Desarrollo y Debugging Local (Ciszu Network)
 
 Versión: 1.5.0
-Actualización: 2026-10-10
+Actualización: 2026-11-10
 Identificador: DEV_CONSOLE_SYSTEM_V1.5.0_2026_10_10_ciszunetwork
 
 > **Definición**: sistema que documenta la consola interactiva (TUI) y el modo CLI
@@ -452,4 +452,4 @@ Al tocar lógica del TUI, ejecutar siempre el runner antes de commitear.
 - Framework de tests global: `TESTING_SYSTEM.md`.
 - Comandos del agente: `OPENCODE_SYSTEM.md`.
 
-_Última revisión: 10 oct 2026._ Relacionado: `DEBUGGING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `TESTING_SYSTEM.md`.
+_Última revisión: 10 nov 2026._ Relacionado: `DEBUGGING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `TESTING_SYSTEM.md`.

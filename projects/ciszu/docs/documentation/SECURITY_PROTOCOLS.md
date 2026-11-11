@@ -1,7 +1,7 @@
 ﻿# SECURITY_PROTOCOLS — Protocolos de Seguridad del Ecosistema
 
 Versión: 2.0.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: SECURITY_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
 
 > **Qué es este documento**: protocolos **permanentes y accionables** de seguridad para el
@@ -353,4 +353,4 @@ secretos.
 |---|---|---|
 | 2026-10-23 | Sin rotaciones abiertas | ✅ |
 
-_Última revisión: 23 oct 2026._
+_Última revisión: 10 nov 2026._

@@ -289,3 +289,5 @@ no encontraba `E:\...run-hidden.vbs`). Mismo patrón aplicado a `Ciszu SSH Login
 
 - Comandos útiles: `bash scripts/backup-cloud.sh --dry-run` (vista previa),
   `--check` (verificar integridad), `rclone size ciszu-backup:CiszuNetwork --json` (progreso).
+
+_Última revisión: 10 nov 2026._ Relacionado: `TOOLS_SYSTEM.md`, `SECURITY_PROTOCOLS.md`.

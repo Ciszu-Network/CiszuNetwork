@@ -1,7 +1,7 @@
 ﻿# KNOWLEDGE_SYSTEM — Estrategias de aprendizaje e investigación
 
 Versión: 2.0.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: KNOWLEDGE_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Definición**: estrategias de aprendizaje e investigación del ecosistema: fuentes
@@ -245,7 +245,7 @@ para esto.
 Marcarla como pendiente en `TODO.md` con referencia a la fuente; no escribirla
 como hecho confirmado en los docs hasta verificarla empíricamente.
 
-_Última revisión: 23 oct 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `TOOLS_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `TOOLS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `CODE_PRINCIPLES_PROTOCOLS.md`.
 
 ## AC3 — Aprendizaje Completo Cruzado Continuo (C3L)
@@ -340,5 +340,5 @@ legal o seudónimo profesional CiszukoAntony. Esto otorga fecha cierta de creaci
 Permite usar y compartir libremente, obliga a reconocer al autor original y prohíbe 
 la monetización por terceros sin autorización expresa.
 
-_Última revisión: 23 oct 2026._ Relacionado: `KNOWLEDGE_SYSTEM.md`, `FULL_STACK_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `KNOWLEDGE_SYSTEM.md`, `FULL_STACK_SYSTEM.md`,
 `TOOLS_SYSTEM.md`, `WORKFLOW_SYSTEM.md`.

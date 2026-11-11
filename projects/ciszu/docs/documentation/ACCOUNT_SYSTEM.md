@@ -1,7 +1,7 @@
 # ACCOUNT_SYSTEM — Ciclo de vida de cuentas, verificación, sanciones y roles
 
 **Versión:** 1.1.0
-**Actualización:** 2026-09-30
+**Actualización:** 2026-11-10
 **Identificador:** ACCOUNT_SYSTEM_V1.1.0_2026_09_30_ciszunetwork
 **Definición:** Sistema unificado de cuentas del ecosistema (CISZU ID): registro con
 verificación obligatoria C-XXX XXX, OTP de acceso, sesiones recordadas por dispositivo,
@@ -246,6 +246,6 @@ Las cuentas antiguas (auth primitivo) se actualizan a un esquema **versionado** 
 
 ---
 
-_Última revisión: 23 oct 2026._ Relacionado: `ACCOUNT_SYSTEM_PLAN.md` (plan y requisitos originales),
+_Última revisión: 10 nov 2026._ Relacionado: `ACCOUNT_SYSTEM_PLAN.md` (plan y requisitos originales),
 `AUTH_SYSTEM.md`, `LOGIN_REGISTER_PROTOCOLS.md`, `DB_SYSTEM.md`, `SECURITY_PROTOCOLS.md`,
 `STAFF_SYSTEM.md`, `EMPLOYEES_SYSTEM.md`, `DEV_CONSOLE_SYSTEM.md`, `TODO.md` (solo lectura).

@@ -76,7 +76,7 @@ export default function DynamicProfilePage() {
             const [roleRes, statusRes, banRes, privacyRes] = await Promise.all([
               publicDb.from('user_roles').select('role').eq('user_id', data.id).eq('website', 'muzicmania').maybeSingle(),
               publicDb.from('account_public_status').select('status').eq('user_id', data.id).maybeSingle(),
-              publicDb.from('sanctions').select('type, actor, expires_at').eq('user_id', data.id).eq('type', 'ban'),
+              publicDb.from('sanctions').select('type, expires_at').eq('user_id', data.id).eq('type', 'ban'),
               publicDb.from('account_privacy').select('visibility').eq('user_id', data.id).maybeSingle(),
             ]);
             const privacy = ((privacyRes.data as { visibility?: string } | null)?.visibility) ?? 'public';
@@ -99,9 +99,9 @@ export default function DynamicProfilePage() {
             }
             setUserRole(((roleRes.data as { role?: string } | null)?.role) ?? null);
             setAccountStatus(((statusRes.data as { status?: string } | null)?.status) ?? null);
-            const bans = (banRes.data as Array<{ actor?: string; expires_at?: string | null }> | null) ?? [];
+            const bans = (banRes.data as Array<{ expires_at?: string | null }> | null) ?? [];
             const activeBan = bans.find((b) => !b.expires_at || Date.parse(b.expires_at) > Date.now());
-            setBanInfo(activeBan ? { actor: activeBan.actor ?? 'staff' } : null);
+            setBanInfo(activeBan ? { actor: 'staff' } : null);
           } catch {
             /* sin filas públicas */
           }

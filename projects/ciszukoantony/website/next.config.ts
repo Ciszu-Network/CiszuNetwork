@@ -1,5 +1,5 @@
 import type { NextConfig } from 'next';
-import { withSentryConfig } from '@sentry/nextjs';
+import { withSentryConfig } from '@sentry/nextjs/config';
 import { withBotId } from 'botid/next/config';
 import path from 'path';
 import { fileURLToPath } from 'node:url';

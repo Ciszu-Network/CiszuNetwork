@@ -1,7 +1,7 @@
 # PAYMENTS_SYSTEM — Metodología de pagos y donaciones de Ciszu Network
 
 Versión: 2.1.0
-Actualización: 2026-10-27
+Actualización: 2026-11-10
 Identificador: PAYMENTS_SYSTEM_V2.1.0_2026_10_27_ciszunetwork
 
 > **Definición**: metodología de pagos y donaciones del ecosistema: matriz producto×método,
@@ -232,6 +232,6 @@ packages/payments/
 - `SECURITY_PROTOCOLS.md` — rate limit y RLS obligatorios.
 - `STATUS_SYSTEM.md` / `STATISTICS_SYSTEM.md` — estado y cifras de pagos cuando haya ingresos.
 
-_Última revisión: 27 oct 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
 `INTERNATIONAL_LLC_PLAN.md`, `EMAILS_SYSTEM.md`, `REVIEWS_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`.

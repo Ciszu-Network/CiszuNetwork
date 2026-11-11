@@ -17,7 +17,7 @@ export function StatsTicker() {
     async function fetchStats() {
       try {
         // Usuarios Totales
-        const { count: userCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
+        const { count: userCount } = await supabase.from('profiles').select('id', { count: 'exact', head: true });
 
         // Partidas Hoy (Simulado por ahora o desde tabla scores)
         const { count: matchCount } = await supabase
@@ -37,7 +37,7 @@ export function StatsTicker() {
         const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
         const { count: activeCount } = await supabase
           .from('profiles')
-          .select('*', { count: 'exact', head: true })
+          .select('id', { count: 'exact', head: true })
           .gte('updated_at', yesterday); // Asumiendo actividad reciente o nuevos registros
 
         setStats([

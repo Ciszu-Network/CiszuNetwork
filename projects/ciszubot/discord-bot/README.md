@@ -135,7 +135,8 @@ host): `dist/` + `node_modules` de producción **para Linux** + `public/` +
 | `DATABASE_URL` | Postgres de Supabase (pooler) — **obligatoria** |
 | `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY` | REST/admin (heartbeat, flags) |
 | `SENTRY_DSN` | Errores (opcional) |
-| `TOP_GG_TOKEN` / `DISCORDBOTLIST_TOKEN` | Votos en listas (opcional) |
+| `TOP_GG_TOKEN` / `DISCORDBOTLIST_TOKEN` | Votos en listas (sin token el webhook responde 503) |
+| `STATS_UPDATE_SECRET` | Autoriza `POST /api/update-stats` con `Authorization: Bearer …` |
 | `NODE_ENV` / `PORT` | `production` / puerto del panel web interno (5000) |
 | `FEATURES_OFF` | Kill switch por deploy (`music,search,…`) |
 

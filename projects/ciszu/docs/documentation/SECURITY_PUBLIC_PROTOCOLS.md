@@ -1,7 +1,7 @@
 # SECURITY_PUBLIC_PROTOCOLS.md
 
 **Versión:** 1.0
-**Actualización:** 23 ago 2026
+**Actualización:** 2026-11-10
 **Identificador:** SECURITY_PUBLIC_PROTOCOLS
 **Definición:** Protocolo obligatorio de seguridad y validación previa a cada `git push` cuando el repositorio sea público. Garantiza cero filtración de secretos, tokens, credenciales o información sensible en el historial público de Git. Este documento es el estándar único de referencia para la operación segura del monorepo Ciszu Network en GitHub público.
 
@@ -285,5 +285,5 @@ required_pull_request_reviews:
 
 ---
 
-_Última revisión: 23 oct 2026. Autor: Ciszuko Antony (Ciszu Network)._
+_Última revisión: 10 nov 2026. Autor: Ciszuko Antony (Ciszu Network)._
 **Fuente de verdad:** `projects/ciszu/docs/documentation/`. Estándar: `DOCUMENTATION_SYSTEM.md`.

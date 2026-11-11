@@ -1,7 +1,7 @@
 # CDN_SYSTEM — Sistema de CDN y Cloudflare (Ciszu Network)
 
 Versión: 2.0.1
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: CDN_SYSTEM_V2.0.1_2026_08_17_ciszunetwork
 
 > **Definición**: este documento define el **sistema completo de distribución de contenido**
@@ -305,5 +305,5 @@ conjunto de credenciales.
 - `packages/cdn/index.ts` — resolver de assets (`resolveIcon`, `assetResolver`, `deliveryVariants`).
 - `scripts/upload-cdn.js` — subida a Supabase Storage.
 
-_Última revisión: 23 oct 2026._ Relacionado: `MEDIA_FORMATS_SYSTEM.md`, `CACHING_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `MEDIA_FORMATS_SYSTEM.md`, `CACHING_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `DOMAINS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`.

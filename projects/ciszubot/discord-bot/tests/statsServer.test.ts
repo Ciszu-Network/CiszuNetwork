@@ -20,6 +20,7 @@ let base = '';
 beforeAll(async () => {
   process.env.PORT = '0'; // puerto efímero para no chocar con el bot en :5000
   process.env.DBL_WEBHOOK_SECRET = 'test-secret';
+  process.env.STATS_UPDATE_SECRET = 'test-stats-secret';
   server = await setupStatsServer();
   const addr = server!.address();
   base = `http://127.0.0.1:${(addr as { port: number }).port}`;
@@ -29,6 +30,7 @@ afterAll(async () => {
   await new Promise<void>((resolve) => server?.close(() => resolve()));
   delete process.env.PORT;
   delete process.env.DBL_WEBHOOK_SECRET;
+  delete process.env.STATS_UPDATE_SECRET;
 });
 
 async function getStats(): Promise<Record<string, unknown>> {
@@ -41,10 +43,19 @@ describe('setupStatsServer — API HTTP', () => {
     expect(stats).toMatchObject({ online: false, guilds: 0, users: 0, commands: 0, uptime: 0 });
   });
 
-  it('POST /api/update-stats actualiza campos y el GET los refleja', async () => {
+  it('POST /api/update-stats exige el secreto (401)', async () => {
     const res = await fetch(`${base}/api/update-stats`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ commands: 99 }),
+    });
+    expect(res.status).toBe(401);
+  });
+
+  it('POST /api/update-stats actualiza campos y el GET los refleja', async () => {
+    const res = await fetch(`${base}/api/update-stats`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer test-stats-secret' },
       body: JSON.stringify({ commands: 42 }),
     });
     expect(await res.json()).toEqual({ success: true });

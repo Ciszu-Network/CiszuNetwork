@@ -1,7 +1,7 @@
 # PUBLISHER_SYSTEM — Sistema de Publicación y Distribución (Ciszu Network)
 
 Versión: 1.0.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: PUBLISHER_SYSTEM_V1.0.0_2026_08_30_ciszunetwork
 
 > **Definición**: pipeline end-to-end de publicación de contenido (web, docs, assets, social, releases) para el ecosistema Ciszu Network. Define automatizaciones, validaciones, flujos y gobernanza.
@@ -274,4 +274,4 @@ pnpm notify "🚀 **Nuevo release v3.2.0**\n\nMuzicMania: nuevo modo ranked + 5 
 
 ---
 
-_Última revisión: 23 oct 2026._
+_Última revisión: 10 nov 2026._

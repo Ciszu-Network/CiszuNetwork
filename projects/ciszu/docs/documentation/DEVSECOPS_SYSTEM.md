@@ -1,7 +1,7 @@
 # 🛡️ DEVSECOPS_SYSTEM — Sistema de Seguridad Integrada (Ciszu Network)
 
 Versión: 2.1.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: DEVSECOPS_SYSTEM_V2.1.0_2026_10_10_ciszunetwork
 
 > Documentación para agentes de IA. Este documento define la filosofía, los métodos y las
@@ -290,6 +290,6 @@ comprometidas):
 5. **Restaurar**: reactivar webs (`site-control off`), desplegar de nuevo desde
    `main` y confirmar CI en verde.
 
-_Última revisión: 23 oct 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `CODE_PRINCIPLES_PROTOCOLS.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `CODE_PRINCIPLES_PROTOCOLS.md`,
 `VAULT_SYSTEM.md`, `TESTING_SYSTEM.md`, `report/seguridad_escalabilidad_report-2026-09-30.md`,
 `ACCOUNT_SYSTEM.md`.

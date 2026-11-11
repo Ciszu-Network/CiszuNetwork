@@ -57,7 +57,7 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   async function syncUserToStore(userId: string, email: string) {
     const { data: profile, error } = await supabase
       .from('profiles')
-      .select('id, username, display_name, avatar_url, email, role, settings_lang, settings_theme, settings_controls')
+      .select('id, username, display_name, avatar_url, role, settings_lang, settings_theme, settings_controls')
       .eq('id', userId)
       .maybeSingle();
 

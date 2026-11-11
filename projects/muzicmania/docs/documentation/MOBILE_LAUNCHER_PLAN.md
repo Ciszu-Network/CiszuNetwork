@@ -1,7 +1,7 @@
 # MOBILE_LAUNCHER_PLAN
 
 **Versión:** 1.0
-**Actualización:** 09 nov 2026
+**Actualización:** 2026-11-10
 **Identificador:** MOBILE_LAUNCHER_PLAN
 **Definición:** Plan de empaquetado Android APK e iOS del launcher de MuzicMania.
 
@@ -145,5 +145,5 @@ Planificado. La implementación Android/iOS queda pendiente de Android Studio, X
 cuentas de desarrollador y firma. El launcher web compartido se mantiene listo para
 reutilizarse en Tauri mobile.
 
-_Última revisión: 09 nov 2026. Relacionados: `TAURI_SYSTEM`, `PROJECT_STATE`,
+_Última revisión: 10 nov 2026. Relacionados: `TAURI_SYSTEM`, `PROJECT_STATE`,
 `AUTH_SYSTEM`, `LOCAL_TESTING_PROTOCOLS`._

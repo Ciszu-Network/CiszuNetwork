@@ -5,6 +5,7 @@ import { useT } from '@/hooks/useT';
 import { motion } from 'framer-motion';
 import MainLayout from '@/components/templates/MainLayout';
 import QuickDocks from '@/components/molecules/QuickDocks';
+import LegalDocNav from '@/components/molecules/LegalDocNav';
 import { usePageTitle } from '@/lib/usePageTitle';
 
 // --- Icons Library ---
@@ -23,11 +24,13 @@ const LICENSE_ARTICLES = [
     content: "MIT License\n\nCopyright (c) 2026 Ciszu Network — Ciszuko Antony\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
     isCode: true
   },
-  { id: 5, title: "LICENCIAS DE CONTENIDO MULTIMEDIA", content: "La música utilizada en la plataforma proviene mayoritariamente de NoCopyrightSounds (NCS) o artistas bajo licencia Creative Commons. El uso de estos contenidos fuera de MuzicMania debe adherirse a los términos específicos de cada autor original." },
+  { id: 5, title: "LICENCIAS DE CONTENIDO MULTIMEDIA", content: "La música utilizada en la plataforma proviene mayoritariamente de NoCopyrightSounds (NCS) o artistas bajo licencia Creative Commons, o de acuerdos directos con sus titulares. El uso de estos contenidos fuera de MuzicMania debe adherirse a los términos específicos de cada autor original. Los niveles de la comunidad solo pueden usar las pistas de la biblioteca oficial." },
   { id: 6, title: "ATRIBUCIÓN OBLIGATORIA", content: "Toda redistribución o uso derivado del código fuente de MuzicMania debe incluir de forma visible la atribución a Ciszu Network — Ciszuko Antony y un enlace a los repositorios oficiales." },
   { id: 7, title: "RESTRICCIONES DE COMERCIALIZACIÓN", content: "Queda estrictamente prohibida la venta, sub-licenciamiento comercial o inclusión de MuzicMania en paquetes de software de pago sin un acuerdo de licencia comercial previo y por escrito con el autor." },
   { id: 8, title: "LIMITACIÓN JURÍDICA DE RESPONSABILIDAD", content: "En ningún caso el autor o los titulares del copyright serán responsables de ninguna reclamación, daños u otras responsabilidades, ya sea en una acción de contrato, agravio o de otro modo, que surja de o en conexión con el software." },
-  { id: 9, title: "JURISDICCIÓN Y MODIFICACIONES", content: "MuzicMania se reserva el derecho de modificar los términos de esta licencia en cualquier momento. El uso continuado de la plataforma tras dichos cambios implica la aceptación de los nuevos términos de licenciamiento." },
+  { id: 9, title: "JURISDICCIÓN Y MODIFICACIONES", content: "MuzicMania se reserva el derecho de modificar los términos de esta licencia en cualquier momento. El uso continuado de la plataforma tras dichos cambios implica la aceptación de los nuevos términos de licenciamiento. La licencia del software no limita los derechos irrenunciables que la ley reconozca al usuario." },
+  { id: 10, title: "CONTENIDO DE USUARIO Y LICENCIA A LA PLATAFORMA", content: "Los niveles, charts, textos, imágenes y demás contenido original que publiques siguen siendo tuyos. Al publicarlo otorgas a Ciszu Network y MuzicMania una licencia mundial, no exclusiva, gratuita y revocable al retirar el contenido, para alojarlo, reproducirlo, mostrarlo y distribuirlo dentro de la plataforma, su promoción y sus copias de seguridad. Declaras que eres autor o que cuentas con las licencias necesarias. No puedes subir audio, charts, imágenes o marcas de terceros sin autorización." },
+  { id: 11, title: "RECLAMACIONES DE COPYRIGHT", content: "Si eres titular de derechos y consideras que un nivel, chart, imagen o avatar infringe tu obra, envía una reclamación a ciszunetwork@outlook.com con la identificación de la obra, la URL del contenido, la prueba de titularidad y una declaración de buena fe. Podemos retirar el contenido mientras revisamos el caso y suspender a las cuentas reincidentes. El retiro no implica una admisión de responsabilidad y el usuario afectado puede presentar una contra-notificación." },
 ];
 
   const sectionVariants = {
@@ -136,6 +139,8 @@ export default function LicensePage() {
 
           </div>
         </motion.div>
+
+        <LegalDocNav />
 
         <QuickDocks />
 

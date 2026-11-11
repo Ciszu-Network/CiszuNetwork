@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useT } from '@/hooks/useT';
 import MainLayout from '@/components/templates/MainLayout';
 import { Icon } from '@ciszu/ui';
@@ -76,6 +77,36 @@ export default function AboutPage() {
           </div>
         </section>
 
+
+        <section className="space-y-6">
+          <h2 className="text-2xl font-header font-black text-neon-cyan">ANTICHEAT TRANSPARENTE</h2>
+          <div className="bg-neon-cyan/5 border-2 border-neon-cyan/30 rounded-3xl p-8 space-y-6">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 text-neon-cyan shrink-0">
+                <Icon name="shield" size={40} />
+              </div>
+              <p className="text-gray-300 font-medium leading-relaxed">
+                Ciszu Anti-Cheat analiza el resultado de tus partidas en el servidor para proteger los rankings. No instala controladores a nivel de kernel,
+                no escanea archivos o procesos de tu dispositivo y no captura tu teclado fuera del juego.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {[
+                { title: 'Señales', desc: 'Puntuación, precisión, combo y dificultad contrastados con tu historial.' },
+                { title: 'Umbral', desc: 'Permanece invisible hasta que la evidencia acumulada supera el límite.' },
+                { title: 'Apelación', desc: 'Toda sanción automática puede revisarse desde Soporte.' },
+              ].map((item) => (
+                <div key={item.title} className="rounded-2xl border border-white/5 bg-black/30 p-4">
+                  <h3 className="text-xs font-header font-black text-neon-cyan uppercase italic">{item.title}</h3>
+                  <p className="mt-2 text-[11px] text-gray-400 font-bold leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+            <Link href="/information#anticheat" className="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-neon-cyan hover:text-white transition-colors">
+              Cómo funciona el anticheat →
+            </Link>
+          </div>
+        </section>
 
       </div>
       </div>

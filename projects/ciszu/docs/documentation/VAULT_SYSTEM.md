@@ -1,7 +1,7 @@
 # VAULT_SYSTEM — Protección del vault de credenciales — plan y estado (10 ago 2026)
 
 Versión: 2.2.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: VAULT_SYSTEM_V2.2.0_2026_08_18_ciszunetwork
 
 > **Definición**: protección de los archivos locales de credenciales (`.env`/vault) de Ciszu

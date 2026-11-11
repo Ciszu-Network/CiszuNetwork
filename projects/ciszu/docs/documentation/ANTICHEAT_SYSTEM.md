@@ -1,7 +1,7 @@
 # ANTICHEAT_SYSTEM — Ciszu Anti-Cheat (sistema reutilizable para videojuegos del ecosistema)
 
 **Versión:** 1.0.0
-**Actualización:** 2026-10-09
+**Actualización:** 2026-11-10
 **Identificador:** ANTICHEAT_SYSTEM_V1.0.0_2026_10_09_ciszunetwork
 **Definición:** sistema anti-trampas compartido ("Ciszu Anti-Cheat") para los videojuegos
 del ecosistema (hoy **MuzicMania**, mañana cualquier otro juego). Detecta valores
@@ -217,5 +217,5 @@ El schema `anticheat` **no se expone por PostgREST** (revocado a anon/authentica
 - `DEV_CONSOLE_SYSTEM.md` — herramientas del staff (ver señales `suspicious`, strikes).
 - MuzicMania — primer juego integrado (reglas `perfect_streak`, `speed_anomaly`, `bot_pattern`).
 
-_Última revisión: 23 oct 2026._ Relacionado: `ACCOUNT_SYSTEM.md`, `DB_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `ACCOUNT_SYSTEM.md`, `DB_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `EMAILS_SYSTEM.md`, `DEV_CONSOLE_SYSTEM.md`.

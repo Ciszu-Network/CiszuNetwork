@@ -203,13 +203,16 @@ export default function LoginPage() {
 
       if (emailToUse && !emailToUse.includes('@')) {
         const username = emailToUse.replace(/^@/, '');
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('email')
-          .eq('username', username.toLowerCase())
-          .maybeSingle();
-        if (!profile?.email) throw new Error(`El usuario @${username} no fue encontrado.`);
-        emailToUse = profile.email;
+        const res = await fetch('/api/auth/resolve-username', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || typeof data.email !== 'string') {
+          throw new Error(`El usuario @${username} no fue encontrado.`);
+        }
+        emailToUse = data.email;
       }
 
       const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({

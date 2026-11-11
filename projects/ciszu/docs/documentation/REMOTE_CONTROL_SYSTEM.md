@@ -1,7 +1,7 @@
 ﻿# REMOTE_CONTROL_SYSTEM — Control Remoto de la Terminal
 
 Versión: 2.0.0
-Actualización: 2026-10-23
+Actualización: 2026-11-10
 Identificador: REMOTE_CONTROL_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 
 > **Sistema**: acceso remoto a la terminal de `ciszu-pc` (Windows) desde el móvil o cualquier dispositivo externo. Solución completa en dos capas: avisos push (ntfy) + terminal real en vivo (Tailscale + OpenSSH Server + Termius + opencode `serve`/`attach`, sin WSL/tmux). Referencia técnica y guía de uso.
