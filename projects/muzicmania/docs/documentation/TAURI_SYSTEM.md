@@ -131,7 +131,7 @@ serde_json = "1.0"
 ### 4.2 `tauri.conf.json`
 
 Contiene la configuración de ventanas, dimensiones, comportamiento del webview y seguridad.
-La ventana es redimensionable, centrada y con tema oscuro; el CSP se deja a cargo de la web.
+La ventana es redimensionable, centrada y con tema oscuro; Tauri define un CSP base y la web aplica su propia política. El splash local conserva su meta CSP.
 
 ```json
 {
@@ -155,7 +155,7 @@ La ventana es redimensionable, centrada y con tema oscuro; el CSP se deja a carg
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self' https:; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https: asset: http://asset.localhost; connect-src 'self' ipc: http://ipc.localhost https: wss:; frame-src 'self' https:;"
     }
   },
   "bundle": {
@@ -288,13 +288,7 @@ la web directamente. El flujo es:
 5. Hub maximizado con cuenta, estado online/offline, jugar online/offline, reinicio
    online, ajustes, actualización manual, comunidad, soporte y enlaces.
 
-La sesión se guarda en `%APPDATA%\MuzicMania\launcher_session.json`; el invitado usa el
-mismo archivo sin tokens. El login se abre en una ventana CISZU ID real
-(`/login?launcher=1`) y la web devuelve la sesión a `/launcher-auth?session=...`; el
-callback `on_navigation` de Tauri la intercepta, la valida y emite
-`launcher-auth-finished`. El registro queda oculto en ese modo. `launcher_logout` limpia
-la sesión y los datos de navegación del WebView. La planificación Android/iOS está en
-`MOBILE_LAUNCHER_PLAN.md`.
+La sesión se guarda en `%APPDATA%\MuzicMania\launcher_session.json`; solo contiene identidad pública (id, usuario, nombre, avatar y rol), nunca tokens ni email. El invitado usa el mismo archivo sin tokens. El login se abre en una ventana CISZU ID real (`/login?launcher=1`) y la web devuelve la sesión a `/launcher-auth?session=...`; el callback `on_navigation` de Tauri la intercepta, la valida y emite `launcher-auth-finished`. Al cargar una sesión antigua, el launcher la reescribe sin campos heredados. `launcher_logout` limpia la sesión y los datos de navegación del WebView. La planificación Android/iOS está en `MOBILE_LAUNCHER_PLAN.md`.
 
 Los comandos principales son `launcher_boot`, `launcher_check_update`,
 `launcher_start_update`, `launcher_update_progress`, `launcher_apply_update`, `launcher_pin_taskbar`,

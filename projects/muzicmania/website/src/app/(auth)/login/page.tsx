@@ -202,13 +202,10 @@ export default function LoginPage() {
     const payload = {
       guest: false,
       user_id: user?.id || session.user?.id || '',
-      email: user?.email || session.user?.email || '',
       username: profile?.username || session.user?.email?.split('@')[0] || 'user',
       display_name: profile?.display_name || session.user?.email || 'MuzicMania',
       avatar_url: profile?.avatar_url || '',
       role: profile?.role || 'user',
-      access_token: session.access_token || '',
-      refresh_token: session.refresh_token || '',
     };
     window.location.href = `/launcher-auth?session=${encodeURIComponent(JSON.stringify(payload))}`;
     return true;

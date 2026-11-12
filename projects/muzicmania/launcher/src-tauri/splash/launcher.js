@@ -454,7 +454,7 @@ function renderHub() {
     : 'Sin conexión con el servicio. El modo offline está disponible y no requiere internet.');
   setText('hub-session-note', session?.guest
     ? 'Invitado local. No hay cuenta online vinculada.'
-    : `Sesión recordada: ${session?.email || name}.`);
+    : `Sesión recordada: @${session?.username || name}.`);
   setText('hub-version', state.boot?.version || '2.1.1');
 
   if (state.settings) {

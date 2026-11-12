@@ -160,6 +160,7 @@ function PlayPageContent() {
   const countdownIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const gameFinishedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const gameActiveRef = useRef(false);
+  const scoreSessionPromiseRef = useRef<Promise<string | null> | null>(null);
   const customPlayRef = useRef(false);
   const officialOverridesRef = useRef<Record<string, LoadedLevel>>({});
   const multiplayerRoomRef = useRef<string | null>(null);
@@ -949,6 +950,29 @@ function PlayPageContent() {
     }
     setCurrentLevel(null as any);
     setRetryKey(k => k + 1);
+
+    scoreSessionPromiseRef.current = null;
+    if (!levelOverride && user) {
+      const difficulty = (track as { difficulty?: string | null }).difficulty ?? level.config.difficulty ?? null;
+      scoreSessionPromiseRef.current = (async () => {
+        try {
+          const { data } = await supabase.auth.getSession();
+          const token = data.session?.access_token;
+          if (!token) return null;
+          const response = await fetch('/api/scores/session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ track_id: track.id, difficulty }),
+          });
+          if (!response.ok) return null;
+          const payload = await response.json().catch(() => null) as { session?: { id?: string } } | null;
+          return payload?.session?.id ?? null;
+        } catch {
+          return null;
+        }
+      })();
+    }
+
     loadingTimeoutRef.current = setTimeout(() => {
       setCurrentLevel(level);
     }, 50);
@@ -1164,24 +1188,33 @@ function PlayPageContent() {
 
       if (user && !isFail) {
         try {
-          const { error: submitError } = await supabase.rpc('submit_game_score', {
-            p_track_id: selectedTrack.id,
-            p_score: activeGameState.score,
-            p_combo: activeGameState.maxCombo,
-            p_accuracy: activeGameState.accuracy,
-            p_grade: getGrade(activeGameState.accuracy).rank,
-            p_max_combo: activeGameState.maxCombo,
-            p_perfect: activeGameState.hits.perfect,
-            p_great: activeGameState.hits.great,
-            p_good: activeGameState.hits.good,
-            p_miss: activeGameState.hits.miss
-          });
-
-          if (submitError) {
-             console.error('Error submitting secure score:', submitError);
+          const scoreSession = await scoreSessionPromiseRef.current;
+          if (scoreSession) {
+            const { data: sessionData } = await supabase.auth.getSession();
+            const token = sessionData.session?.access_token;
+            if (token) {
+              const response = await fetch('/api/scores/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                body: JSON.stringify({
+                  session_id: scoreSession,
+                  score: activeGameState.score,
+                  accuracy: activeGameState.accuracy,
+                  max_combo: activeGameState.maxCombo,
+                  perfect: activeGameState.hits.perfect,
+                  great: activeGameState.hits.great,
+                  good: activeGameState.hits.good,
+                  miss: activeGameState.hits.miss,
+                  grade: getGrade(activeGameState.accuracy).rank,
+                }),
+              });
+              if (!response.ok) console.error('[scores/submit]', await response.text().catch(() => 'error'));
+            }
           }
         } catch (err) {
           console.error('Error saving score:', err);
+        } finally {
+          scoreSessionPromiseRef.current = null;
         }
 
         // Ciszu Anti-Cheat: ingesta de la partida. Es invisible para el jugador:

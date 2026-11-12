@@ -32,11 +32,12 @@
 ## 🔐 Auditoría de seguridad (10 Nov 2026)
 
 - `muzicmania.profiles` ya no expone `email`, `phone` ni `birth_date` a anon; la escritura propia se limita a columnas de perfil/preferencias y `role/is_admin/xp/level` quedan server-only.
-- `muzicmania.scores` perdió INSERT/UPDATE/DELETE directo; la única vía es `submit_game_score` como `SECURITY DEFINER` con validación de usuario.
+- `muzicmania.scores` perdió INSERT/UPDATE/DELETE directo; el flujo ahora es `/api/scores/session` + `/api/scores/submit` (sesión de un solo uso) y la API llama `submit_game_score_as` como service_role. El RPC antiguo ya no es ejecutable por el navegador.
 - **Bug de puntuaciones corregido**: el RPC insertaba `combo`/`grade`/`perfect`/`great`/`good`/`miss`, columnas que faltaban en `muzicmania.scores`; se restauraron y el guardado volvió a funcionar (probado en transacción).
 - `custom_levels`, `multiplayer_rooms`, `multiplayer_room_players`, `chat_messages`, `friend_requests` y `notifications` usan service_role desde sus APIs; no aceptan DML directo del navegador.
 - `public.sanctions` dejó de exponer IP y motivo a anon; 2FA, elevaciones staff, IP bans y auditoría de moderación quedaron server-only.
-- Migraciones aplicadas localmente (gitignored): `20261110000001_security_hardening_public_tables.sql`, `20261110000002_security_hardening_public_sensitive.sql`, `20261110000003_security_hardening_sanctions_actor.sql`, `20261110000004_security_hardening_user_roles_columns.sql` y `20261110000005_scores_restore_columns.sql`.
+- Migraciones aplicadas localmente (gitignored): `20261110000001_security_hardening_public_tables.sql`, `20261110000002_security_hardening_public_sensitive.sql`, `20261110000003_security_hardening_sanctions_actor.sql`, `20261110000004_security_hardening_user_roles_columns.sql`, `20261110000005_scores_restore_columns.sql` y `20261110000006_score_sessions_server_rpc.sql`.
+- Launcher: CSP de Tauri activo; la sesión ya no transporta tokens ni email y el JSON heredado se reescribe sin campos sensibles.
 
 ## 🚀 Logros Recientes
 

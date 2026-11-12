@@ -92,7 +92,7 @@
     "@playwright/test": "^1.63.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
-    "@vitejs/plugin-react": "^6.1.1",
+    "@vitejs/plugin-react": "^6.3.0",
     "@vitest/ui": "^5.0.5",
     "csv-parse": "^7.0.2",
     "eslint": "^9.39.5",
@@ -101,14 +101,14 @@
     "lint-staged": "^17.5.0",
     "miniflare": "^4.20260730.0",
     "pngjs": "^7.0.0",
-    "sass": "^1.104.1",
+    "sass": "^1.108.1",
     "tar": "^7.5.22",
-    "tsx": "^4.23.13",
-    "turbo": "^2.10.12",
+    "tsx": "^4.23.15",
+    "turbo": "^2.11.10",
     "typescript": "^6.0.3",
-    "vite": "^8.3.5",
+    "vite": "^8.3.7",
     "vitest": "^5.0.3",
-    "wrangler": "^4.130.0"
+    "wrangler": "^4.159.0"
   },
   "packageManager": "pnpm@12.16.1",
   "overrides": {

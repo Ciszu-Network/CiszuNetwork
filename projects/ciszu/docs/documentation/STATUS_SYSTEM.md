@@ -354,11 +354,14 @@ _Última revisión: 10 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 
 ### Auditoría de seguridad 10 nov 2026
 
-- **RLS/grants**: cerrada la exposición de `email` en `muzicmania.profiles` (anon podía leer 6 correos), la escritura directa de `role/is_admin/xp/level` y el INSERT directo en `muzicmania.scores`; `custom_levels`, multijugador, chat, amistades y notificaciones pasan a service_role. Migraciones locales aplicadas: `20261110000001_security_hardening_public_tables.sql`, `20261110000002_security_hardening_public_sensitive.sql`, `20261110000003_security_hardening_sanctions_actor.sql` y `20261110000004_security_hardening_user_roles_columns.sql`.
+- **RLS/grants**: cerrada la exposición de `email` en `muzicmania.profiles` (anon podía leer 6 correos), la escritura directa de `role/is_admin/xp/level` y el INSERT directo en `muzicmania.scores`; `custom_levels`, multijugador, chat, amistades y notificaciones pasan a service_role. Migraciones locales aplicadas: `20261110000001_security_hardening_public_tables.sql` a `20261110000006_score_sessions_server_rpc.sql`.
 - **Bug crítico de puntuaciones**: `submit_game_score` insertaba columnas (`combo`, `grade`, `perfect`, `great`, `good`, `miss`) que no existían en `muzicmania.scores`; todas las partidas fallaban. Restauradas con `20261110000005_scores_restore_columns.sql` y probado el RPC dentro de una transacción.
+- **Puntuaciones server-side**: nuevo flujo `/api/scores/session` → `/api/scores/submit` con sesión de partida de un solo uso; el navegador ya no puede invocar `submit_game_score` y la API usa `submit_game_score_as` como service_role.
+- **Launcher**: CSP de Tauri activo; `/launcher-auth` ya no transporta `access_token`/`refresh_token` ni email; la sesión local se reescribe sin campos heredados.
 - **Sanciones**: `public.sanctions` ya no expone `ip`, `reason` ni `actor` (email del staff) a anon; solo tipo, alcance y fechas. `user_roles` mantiene lectura pública de rol y pierde DML directo. 2FA, elevaciones staff, IP bans y auditoría de moderación quedan server-only.
 - **Ciszubot**: eliminado el fallback hardcodeado de `SESSION_SECRET`; sesiones con expiración de 7 días, state OAuth con `crypto.randomBytes`, `/api/update-stats` protegido con `STATS_UPDATE_SECRET` y webhooks de votos fail-closed.
 - **Privacidad funcional**: perfiles públicos de las 3 webs recuperan columnas públicas (`role`, `bio`, `banner_url`, etc.); preferencias sincronizan solo las columnas permitidas.
-- **Validación**: `pnpm typecheck` ✅, `pnpm lint:all` ✅, `pnpm test` 414/414 ✅, tests del bot 81/81 ✅ y builds de las 4 webs ✅ (Ciszubot tuvo un fallo transitorio de Google Fonts y pasó al reintentar).
+- **Actualizaciones aplicadas**: Next 15.5.29, React 19.3.1, @supabase/supabase-js 2.119, Tauri 2.12.4, discord.js 14.28.1, fastify 5.12.8, @fastify/static 10.1.10, Tailwind/PostCSS 4.3.5/8.5.32 y otros parches. Las mayores (Next 16, Sentry 11, NestJS 12, ESLint 10, TypeScript 7) quedan fuera de esta pasada.
+- **Validación**: `pnpm typecheck` ✅, `pnpm lint:all` ✅, `pnpm test` 414/414 ✅, tests del bot 81/81 ✅, Storybook 34/34 ✅, `cargo check` ✅ y builds de las 4 webs ✅.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-11-10

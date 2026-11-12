@@ -48,8 +48,6 @@ struct LauncherSession {
     #[serde(default)]
     user_id: String,
     #[serde(default)]
-    email: String,
-    #[serde(default)]
     username: String,
     #[serde(default)]
     display_name: String,
@@ -57,10 +55,6 @@ struct LauncherSession {
     avatar_url: String,
     #[serde(default)]
     role: String,
-    #[serde(default)]
-    access_token: String,
-    #[serde(default)]
-    refresh_token: String,
 }
 
 struct LauncherState(Mutex<Option<LauncherSession>>);
@@ -83,8 +77,13 @@ fn launcher_session_path() -> Option<std::path::PathBuf> {
 
 fn load_launcher_session() -> Option<LauncherSession> {
     let path = launcher_session_path()?;
-    let data = std::fs::read_to_string(path).ok()?;
-    serde_json::from_str(&data).ok()
+    let data = std::fs::read_to_string(&path).ok()?;
+    let session = serde_json::from_str::<LauncherSession>(&data).ok()?;
+    // Reescribe el JSON sin campos heredados (tokens/email) de versiones anteriores.
+    if let Ok(sanitized) = serde_json::to_string(&session) {
+        let _ = std::fs::write(&path, sanitized);
+    }
+    Some(session)
 }
 
 fn save_launcher_session(session: Option<&LauncherSession>) {

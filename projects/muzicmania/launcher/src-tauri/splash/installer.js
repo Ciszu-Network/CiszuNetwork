@@ -898,6 +898,29 @@ function T(key) {
   return dict[key] || FALLBACK[key] || key;
 }
 
+function flagPath(lang) {
+  switch (String(lang)) {
+    case '1034': return 'flags/es.svg';
+    case '2052': return 'flags/cn.svg';
+    case '1028': return 'flags/tw.svg';
+    case '1046': return 'flags/pt.svg';
+    case '1051': return 'flags/ru.svg';
+    case '1041': return 'flags/jp.svg';
+    case '1050': return 'flags/kr.svg';
+    case '1036': return 'flags/fr.svg';
+    case '1031': return 'flags/de.svg';
+    case '1040': return 'flags/it.svg';
+    case '1043': return 'flags/nl.svg';
+    case '1045': return 'flags/pl.svg';
+    case '1025': return 'flags/sa.svg';
+    case '1055': return 'flags/tr.svg';
+    case '1029': return 'flags/cz.svg';
+    case '1038': return 'flags/hu.svg';
+    case '1053': return 'flags/se.svg';
+    default: return 'flags/gb.svg';
+  }
+}
+
 function applyLang(lang) {
   if (!I18N[lang]) lang = "1033";
   currentLang = lang;
@@ -913,15 +936,15 @@ function applyLang(lang) {
     options[i].classList.toggle("selected", isCurrent);
     options[i].setAttribute("aria-selected", isCurrent ? "true" : "false");
     if (isCurrent) {
-      var flag = options[i].getAttribute("data-flag");
+      var flagPathValue = flagPath(lang);
       var label = options[i].querySelector("span");
       var currentFlag = $("lang-current-flag");
       var currentLabel = $("lang-current-label");
-      if (currentFlag) currentFlag.src = "flags/" + flag + ".svg";
+      if (currentFlag) currentFlag.src = flagPathValue;
       if (currentLabel) currentLabel.textContent = label ? label.textContent : "";
       var footerFlag = $("footer-lang-flag");
       var footerLabel = $("footer-lang-label");
-      if (footerFlag) footerFlag.src = "flags/" + flag + ".svg";
+      if (footerFlag) footerFlag.src = flagPathValue;
       if (footerLabel) footerLabel.textContent = label ? label.textContent : "";
     }
   }

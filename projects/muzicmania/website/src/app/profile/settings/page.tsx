@@ -211,7 +211,7 @@ export default function ProfileSettingsPage() {
                   Banner (URL https)
                   <input value={bannerUrl} onChange={(event) => setBannerUrl(event.target.value)} maxLength={500} placeholder="https://..." className="mt-1 w-full bg-black/80 border border-white/10 rounded-xl px-4 py-3 text-white font-bold" />
                 </label>
-                {bannerUrl && <div className="h-24 overflow-hidden rounded-xl border border-white/10 bg-black/40"><img src={bannerUrl} alt="" className="h-full w-full object-cover" /></div>}
+                {bannerUrl && <p className="text-[10px] font-bold text-gray-500">La vista previa se mostrará al guardar el perfil.</p>}
                 <div>
                   <p className="text-[9px] font-black uppercase tracking-widest text-gray-500">Idiomas</p>
                   <div className="mt-2 flex flex-wrap gap-2">
