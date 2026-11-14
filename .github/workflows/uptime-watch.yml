@@ -35,7 +35,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .opencode/temp/uptime-state.json
-          key: uptime-state-v1
+          key: uptime-state-${{ github.run_id }}
+          restore-keys: |
+            uptime-state-
 
       - name: Comprobar estado de los monitores
         env:

@@ -31,7 +31,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .opencode/temp/bot-heartbeat-state.json
-          key: bot-heartbeat-state-v1
+          key: bot-heartbeat-state-${{ github.run_id }}
+          restore-keys: |
+            bot-heartbeat-state-
 
       - name: Comprobar heartbeat
         env:
