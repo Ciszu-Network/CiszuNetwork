@@ -77,14 +77,15 @@ Auditoría del 14 nov:
 - Se reemplazaron dependencias de plataforma en el código: apertura de URLs con `open`,
   configuración en `dirs::config_dir`, `/dev/null` en Unix, restart nativo y login OAuth
   disponible también fuera de Windows. Taskbar pin queda no-op fuera de Windows.
-- **Pendiente real**: probar builds Linux/macOS en CI (no se pueden ejecutar aquí sin
-  sysroot/GTK); Android/iOS requieren toolchains y firma externas.
+- **Verificado**: workflow `build-launcher` 43633415206 completó Windows x64, Linux x64 y macOS arm64; artefactos Windows 11.3 MB, Linux 101.4 MB (DEB/AppImage), macOS 12.3 MB (app/DMG).
+- **Pendiente real**: probar los instaladores en máquinas reales; los builds Linux/macOS ya están validados.
+  Android/iOS requieren toolchains y firma externas.
 
 ## 5. Supervisión y prioridades
 
 1. Vercel: revisar el 7 dic 2026; no desplegar antes.
 2. Top.gg: reintentar solo con dashboard operativo.
-3. Launcher: ejecutar `build-launcher.yml` y validar artefactos Linux/macOS.
+3. Launcher: los artefactos Windows/Linux/macOS ya compilan; probarlos en máquinas reales.
 4. Instalador Windows: regenerar tras el fix de idiomas y revisar warnings.
 5. MuzicMania: no abrir features nuevas hasta validar auth/economía online.
 6. Devcon: no marcar la casilla; el test ya está verde y queda la revisión visual del owner.

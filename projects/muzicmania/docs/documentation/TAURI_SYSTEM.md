@@ -372,12 +372,13 @@ powershell -NoProfile -ExecutionPolicy Bypass -File launcher\build-installer.ps1
 node ../website/node_modules/@tauri-apps/cli/tauri.js build
 ```
 
+Verificado en CI el 14 nov 2026: `build-launcher` 43633415206 completó Windows x64, Linux x64 y macOS arm64. Artefactos: Windows 11.3 MB, Linux 101.4 MB (DEB/AppImage) y macOS 12.3 MB (app/DMG).
+
 Pendiente real antes de publicar:
 
-1. Ejecutar `build-launcher.yml` en GitHub (requiere librerías GTK/WebKit en Linux).
-2. Probar el binario `.deb`/AppImage y el `.dmg` en máquinas reales.
-3. Definir firma/notarización de macOS y certificado Windows.
-4. Android/iOS siguen fuera de alcance: requieren toolchains, OAuth nativo y firma móvil.
+1. Probar los instaladores en máquinas reales.
+2. Definir firma/notarización de macOS y certificado Windows.
+3. Android/iOS siguen fuera de alcance: requieren toolchains, OAuth nativo y firma móvil.
 
 ## 10. Troubleshooting
 

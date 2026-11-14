@@ -20,7 +20,8 @@
 - `build-installer.ps1`: OK; NSIS custom generado y copiado a descargas (11.68 MB, SHA256 `DF88BD85…93087A`).
 - Preparados `tauri.linux.conf.json` (DEB/AppImage) y `tauri.macos.conf.json` (app/DMG) + workflow `build-launcher.yml`.
 - El launcher ya usa `dirs`, `open` y rutas nativas para configuración, URLs, estado HTTP y reinicio; el login OAuth compila fuera de Windows.
-- Limitaciones: el instalador custom y el taskbar pin son Windows-only; Android/iOS siguen pendientes de toolchain y firma. Los builds Linux/macOS deben validarse en CI (aquí no hay GTK/WebKit sysroot).
+- Verificado en CI (`build-launcher` 43633415206): Windows x64, Linux x64 y macOS arm64 en verde; artefactos Windows 11.3 MB, Linux 101.4 MB (DEB/AppImage) y macOS 12.3 MB (app/DMG).
+- Limitaciones: el instalador custom y el taskbar pin son Windows-only; Android/iOS siguen pendientes de toolchain y firma. Los paquetes Linux/macOS aún deben probarse en máquinas reales.
 
 ## 🛠️ Pendientes Próximos (Prioridad Alta)
 
@@ -135,4 +136,3 @@
 - ✅ **Changelog**: Página `/changelog` con filtros, búsqueda, orden, paginación y likes con login.
 - ✅ **Support**: Página `/support` con sistema de tickets (tabla `muzicmania_tickets`) y AuthWarningModal.
 - ✅ **Disclaimer Actions**: Soporte de botones de acción (`--action "Texto|URL"` o `--action "OK|close"`) en devcon y componente `DisclaimerStack`.
-
