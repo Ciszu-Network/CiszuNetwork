@@ -1,8 +1,8 @@
 # TAURI_SYSTEM — Sistema de Integración Desktop Tauri (MuzicMania)
 
-Versión: 1.0.0
-Actualización: 2026-11-10
-Identificador: TAURI_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
+Versión: 1.1.0
+Actualización: 2026-11-14
+Identificador: TAURI_SYSTEM_V1.1.0_2026_11_14_ciszunetwork
 
 > **Definición**: sistema que documenta la integración de **MuzicMania PC Edition**, la
 > aplicación de escritorio nativa para Windows construida con **Tauri v2** que envuelve la
@@ -336,6 +336,49 @@ versión nativa de escritorio.
   torneos/eventos, lectura/escritura de configuraciones locales de audio.
 - **GitHub Actions CI**: automatizar el build en cada push a `main` con runners Windows.
 
+## 9.1 Portabilidad desktop — Windows, Linux y macOS (14 nov 2026)
+
+La base sigue siendo una webview shell; el instalador custom NSIS continúa siendo exclusivo
+de Windows. Para Linux/macOS se usan los bundles nativos de Tauri.
+
+Archivos:
+
+| Archivo | Uso |
+|---|---|
+| `tauri.conf.json` | Base; Windows usa `nsis` |
+| `tauri.linux.conf.json` | `deb` + `appimage` |
+| `tauri.macos.conf.json` | `app` + `dmg` |
+| `.github/workflows/build-launcher.yml` | build matrix Windows x64 / Linux x64 / macOS arm64 |
+| `launcher/build-installer.ps1` | build + parche NSIS + copia a descargas (Windows) |
+
+Cambios de código para portabilidad:
+
+- `settings_path()` usa `dirs::config_dir()` en vez de `APPDATA`.
+- `open_url` usa la crate `open` en vez de PowerShell.
+- `server_status` usa `NUL` en Windows y `/dev/null` en Unix.
+- `launcher_restart` relanza el ejecutable sin `cmd /C start`.
+- `launcher_open_login` y la sesión OAuth ya no están compilados solo para Windows.
+- El anclaje a taskbar sigue siendo exclusivo de Windows; fuera de Windows es no-op.
+
+Comandos:
+
+```powershell
+# Windows: instalador custom + parche de idiomas
+powershell -NoProfile -ExecutionPolicy Bypass -File launcher\build-installer.ps1
+```
+
+```bash
+# Linux/macOS: desde projects/muzicmania/launcher
+node ../website/node_modules/@tauri-apps/cli/tauri.js build
+```
+
+Pendiente real antes de publicar:
+
+1. Ejecutar `build-launcher.yml` en GitHub (requiere librerías GTK/WebKit en Linux).
+2. Probar el binario `.deb`/AppImage y el `.dmg` en máquinas reales.
+3. Definir firma/notarización de macOS y certificado Windows.
+4. Android/iOS siguen fuera de alcance: requieren toolchains, OAuth nativo y firma móvil.
+
 ## 10. Troubleshooting
 
 | Problema | Causa probable | Solución |
@@ -362,9 +405,9 @@ consultar Supabase. Es un trade-off aceptado por el modelo de actualizaciones in
 ~11.6 MB comprimido: incluye el launcher, instalador/desinstalador custom y las 4 pistas locales del modo offline. El resto de assets online se sirven desde la web/CDN.
 
 **¿Soporta macOS o Linux?**
-La configuración actual apunta a `nsis` (Windows). Tauri v2 es multiplataforma, así que
-los targets macOS/Linux podrían añadirse ajustando `bundle.targets` y generando iconos
-adicionales.
+Sí para desktop: `tauri.linux.conf.json` genera DEB/AppImage y `tauri.macos.conf.json`
+genera app/DMG. El instalador custom NSIS y el anclaje a taskbar siguen siendo Windows-only.
+Android/iOS aún no están implementados.
 
 **¿Dónde está el código del launcher?**
 En `launcher/src-tauri/` dentro del proyecto MuzicMania.

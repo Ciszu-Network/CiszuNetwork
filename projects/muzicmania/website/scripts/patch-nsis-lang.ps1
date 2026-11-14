@@ -24,6 +24,7 @@ if (-not (Test-Path $Makensis)) {
 }
 
 $content = Get-Content $NsiFile -Raw
+$content = $content.Replace("choowHowToInstall", "chooseHowToInstall")
 
 if ($content -match "Var CustomUIMode") {
     throw "installer.nsi ya esta parcheado. Regenera el bundle con tauri build."

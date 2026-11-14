@@ -1,0 +1,80 @@
+name: Build launcher
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'projects/muzicmania/launcher/**'
+      - '.github/workflows/build-launcher.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-launcher-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            os: windows-latest
+            artifact: muzicmania-windows-x64
+            bundles: nsis
+          - name: Linux x64
+            os: ubuntu-latest
+            artifact: muzicmania-linux-x64
+            bundles: deb,appimage
+          - name: macOS arm64
+            os: macos-latest
+            artifact: muzicmania-macos-arm64
+            bundles: app,dmg
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          dest: ~/setup-pnpm-${{ runner.name }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Dependencias Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
+
+      - name: Instalar dependencias JS
+        run: pnpm install --frozen-lockfile
+
+      - name: Compilar launcher
+        working-directory: projects/muzicmania/launcher
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Windows" ]; then
+            node ../website/node_modules/@tauri-apps/cli/tauri.js build --bundles "${{ matrix.bundles }}" --no-sign
+          else
+            node ../website/node_modules/@tauri-apps/cli/tauri.js build --bundles "${{ matrix.bundles }}"
+          fi
+
+      - name: Subir artefactos
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          if-no-files-found: error
+          path: |
+            projects/muzicmania/launcher/src-tauri/target/release/bundle/nsis/*.exe
+            projects/muzicmania/launcher/src-tauri/target/release/bundle/deb/*.deb
+            projects/muzicmania/launcher/src-tauri/target/release/bundle/appimage/*.AppImage
+            projects/muzicmania/launcher/src-tauri/target/release/bundle/dmg/*.dmg

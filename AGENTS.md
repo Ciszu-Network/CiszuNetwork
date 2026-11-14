@@ -91,6 +91,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `CORS_SYSTEM` · `BUSINESS_SYSTEM` · `OPENCODE_SYSTEM` (voz + comandos) ·
   `MODELS_LLM_SYSTEM` (historial y facturación de modelos LLM) ·
   `MODELS_SKILLS_SYSTEM` (galería de skills del agente opencode: 34 instaladas en `.opencode/skills/`, MCP ausente) ·
+  `AI_AGENT_ORCHESTRATION_REPORT` (herramientas y patrones de agentes/orquestación) ·
   `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `ACCESS_CONTROL_SYSTEM` (autorizacion: staff en DB, umbrales por consola, gobernanza GitHub) · `NTFY_SYSTEM` (notificaciones push: ntfy.sh) · `KNOWLEDGE_SYSTEM` (educación) ·
   `INSTALLERS_SYSTEM` · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
   `VISUAL_BUILDERS_SYSTEM` (editores visuales UI/UX: Puck-first) ·
@@ -113,7 +114,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
 - **Protocolos (testing/operación)**: `LOCAL_TESTING_PROTOCOLS` (pruebas locales obligatorias) ·
   `LSP_PROTOCOLS` (servidores LSP del agente) · `MCP_PROTOCOLS` (servidores MCP del ecosistema)
 - **Protocolos de identidad**: `LOGIN_REGISTER_PROTOCOLS` (UI/branding/reglas CISZU ID)
-- **Estado (vivo)**: `PROJECT_STATE.md` · `PROJECT_HISTORY.md` · `TODO.md`
+- **Estado (vivo)**: `PROJECT_STATE.md` · `PROJECT_HISTORY.md` · `TODO.md` · `BACKLOG_SUPERVISION_REPORT.md`
 - **Estándares**: `CODE_PRINCIPLES_PROTOCOLS` (DRY/KISS/YAGNI/SOLID) · `DEVSECOPS_SYSTEM`
   (SAST/DAST, shift-left) · `DOCUMENTATION_SYSTEM` (reglas de docs)
 
@@ -129,7 +130,7 @@ E:\Ciszu Network\
 ├── projects/            # Aplicaciones: ciszu, ciszukoantony, muzicmania, ciszubot, ciszugamens, ciszuai
 ├── packages/            # Paquetes compartidos: cdn, config, db, email, payments, ui, utils
 ├── services/            # Infraestructura: supabase (migraciones), vercel
-├── shared/              # Assets compartidos: fonts, icons, etc.
+├── shared/              # Assets compartidos + perfiles/scripts portables (powershell/, scripts/)
 ├── scripts/             # Scripts de automatización (txt2md, upload-cdn, vault, ...)
 ├── tools/               # Herramientas locales IA/ops (ascii-ai, ciszou-ai, convert, ...)
 ├── apis/                # Colecciones Bruno (health/, rest/)
@@ -211,6 +212,10 @@ pnpm test                 # unit tests (Vitest)
 pnpm e2e                  # Playwright E2E
 pnpm --filter <name> dev  # una app individual
 pnpm notify "Mensaje"     # push ntfy
+pnpm commands             # catálogo pnpm + opencode + PowerShell
+pnpm run doctor           # diagnóstico del entorno (Node, pnpm, puertos, discos)
+pnpm profile:install      # instala el perfil PowerShell portable (nuevo dispositivo)
+pnpm clean:all            # limpia .next, .turbo y logs de dev
 pnpm cdn:upload           # sube assets a Supabase Storage (ciszu-cdn)
 pnpm api:test             # tests de API con Bruno (prod)
 ```
@@ -519,5 +524,5 @@ cambia de sesión, y con modelos más potentes el umbral efectivo es mayor. Regl
 
 ---
 
-_Última revisión: 23 ago 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
+_Última revisión: 14 nov 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
 Estándar de docs: `DOCUMENTATION_SYSTEM.md`. Operación diaria: `WORKFLOW_SYSTEM.md`.

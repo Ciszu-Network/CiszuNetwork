@@ -286,7 +286,10 @@ test/
 archives/
 # Documentación de agente/IA (opencode config)
 opencode.json
-.opencode/
+.opencode/*
+!.opencode/command/
+!.opencode/command/**
+
 # Workers (Cloudflare/Miniflare)
 workers/
 # VR/AR, clientes, descargas, reportes
@@ -589,5 +592,11 @@ services/supabase/
 scripts/
 # GitHub Actions necesita sus propios scripts; se versionan.
 !.github/scripts/
+# Scripts portables de diagnóstico/CLI compartidos.
+!shared/scripts/
+!shared/scripts/**
+# Scripts del launcher necesarios para el instalador (no operativos locales).
+!projects/muzicmania/website/scripts/
+!projects/muzicmania/website/scripts/**
 
 deploy/

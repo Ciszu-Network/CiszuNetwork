@@ -7,6 +7,7 @@ $TauriCli = Join-Path $WebsiteRoot "node_modules\.bin\tauri.cmd"
 $PatchScript = Join-Path $WebsiteRoot "scripts\patch-nsis-lang.ps1"
 $TargetRoot = Join-Path $LauncherRoot "src-tauri\target\x86_64-pc-windows-msvc\release"
 $Installer = Join-Path $TargetRoot "nsis\x64\nsis-output.exe"
+$NsisWork = Join-Path $TargetRoot "nsis"
 $AppVersion = "2.1.1"
 $InstallerVersion = "2.3.1"
 $Names = @(
@@ -16,6 +17,10 @@ $Names = @(
 
 if (-not (Test-Path $TauriCli)) {
     throw "Tauri CLI no encontrado en $TauriCli"
+}
+
+if (Test-Path $NsisWork) {
+    Remove-Item -LiteralPath $NsisWork -Recurse -Force
 }
 
 Push-Location $LauncherRoot

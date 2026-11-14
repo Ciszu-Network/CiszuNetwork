@@ -4,7 +4,6 @@ LangString alreadyInstalledLong ${LANG_POLISH} "${PRODUCTNAME} ${VERSION} jest j
 LangString appRunning ${LANG_POLISH} "{{product_name}} jest uruchomiony! Zamknij go najpierw, a następnie spróbuj ponownie."
 LangString appRunningOkKill ${LANG_POLISH} "{{product_name}} jest uruchomiony!$\nKliknij OK, aby go zakończyć"
 LangString chooseMaintenanceOption ${LANG_POLISH} "Wybierz opcję konserwacji do wykonania."
-LangString choowHowToInstall ${LANG_POLISH} "Wybierz, jak chcesz zainstalować ${PRODUCTNAME}."
 LangString createDesktop ${LANG_POLISH} "Utwórz skrót na pulpicie"
 LangString dontUninstall ${LANG_POLISH} "Nie odinstalowuj"
 LangString dontUninstallDowngrade ${LANG_POLISH} "Nie odinstalowuj (przywracanie starszej wersji bez odinstalowania jest wyłączone dla tego instalatora)"

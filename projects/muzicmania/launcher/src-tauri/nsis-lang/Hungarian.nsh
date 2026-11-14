@@ -4,7 +4,6 @@ LangString alreadyInstalledLong ${LANG_HUNGARIAN} "${PRODUCTNAME} ${VERSION} má
 LangString appRunning ${LANG_HUNGARIAN} "{{product_name}} fut! Először zárja be, majd próbálja újra."
 LangString appRunningOkKill ${LANG_HUNGARIAN} "{{product_name}} fut!$\nKattintson az OK gombra a bezáráshoz"
 LangString chooseMaintenanceOption ${LANG_HUNGARIAN} "Válassza ki az elvégzendő karbantartási lehetőséget."
-LangString choowHowToInstall ${LANG_HUNGARIAN} "Válassza ki, hogyan szeretné telepíteni a ${PRODUCTNAME} programot."
 LangString createDesktop ${LANG_HUNGARIAN} "Parancsikon létrehozása az asztalon"
 LangString dontUninstall ${LANG_HUNGARIAN} "Ne távolítsa el"
 LangString dontUninstallDowngrade ${LANG_HUNGARIAN} "Ne távolítsa el (A visszaállítás eltávolítás nélkül le van tiltva ehhez a telepítőhöz)"

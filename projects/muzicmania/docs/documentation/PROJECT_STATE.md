@@ -1,6 +1,6 @@
 # Estado del Proyecto MuzicMania 2.1.1 (Next.js Edition)
 
-**Última actualización:** 2026-11-10
+**Última actualización:** 2026-11-14
 **Autor y Propietario:** Ciszuko Antony (Francisco Garcia)
 **Stack:** Next.js 15 + TypeScript + Tailwind CSS v4 + Supabase + Tauri
 
@@ -13,6 +13,14 @@
 - Fases 2–3 implementadas: login diario, rachas, tareas, XP, recompensas por publicar niveles/likes, regalos de MZP, donaciones a creadores y código de creador (5% de MZP base).
 - Fase 4 pendiente por bloqueo externo: tarjetas/PayPal requieren proveedor MoR aprobado y mayoría de edad; la UI muestra “próximamente” y los flags están en false.
 - Documentación: `STORE_ECONOMY_PLAN.md` y `STORE_ECONOMY_PHASE1_IMPLEMENTATION_PLAN.md`.
+
+## 🖥️ Portabilidad desktop (14 Nov 2026)
+
+- `cargo check` del launcher Windows: OK.
+- `build-installer.ps1`: OK; NSIS custom generado y copiado a descargas (11.68 MB, SHA256 `DF88BD85…93087A`).
+- Preparados `tauri.linux.conf.json` (DEB/AppImage) y `tauri.macos.conf.json` (app/DMG) + workflow `build-launcher.yml`.
+- El launcher ya usa `dirs`, `open` y rutas nativas para configuración, URLs, estado HTTP y reinicio; el login OAuth compila fuera de Windows.
+- Limitaciones: el instalador custom y el taskbar pin son Windows-only; Android/iOS siguen pendientes de toolchain y firma. Los builds Linux/macOS deben validarse en CI (aquí no hay GTK/WebKit sysroot).
 
 ## 🛠️ Pendientes Próximos (Prioridad Alta)
 

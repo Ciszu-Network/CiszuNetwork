@@ -1,8 +1,8 @@
 # OPENCODE_SYSTEM — Comandos y Voz para OpenCode
 
-Versión: 2.1.0
-Actualización: 2026-11-10
-Identificador: OPENCODE_SYSTEM_V2.1.0_2026_08_19_ciszunetwork
+Versión: 2.2.0
+Actualización: 2026-11-14
+Identificador: OPENCODE_SYSTEM_V2.2.0_2026_11_14_ciszunetwork
 
 Sistema de comandos personalizados y voz bidireccional (STT/TTS) para la terminal opencode en Windows.
 
@@ -202,6 +202,23 @@ Decisión de diseño: para acciones **manuales e inmediatas** el Nivel 1 es mejo
 4. **Contexto de sesión**: los comandos de código NO gastan tokens; markdown y MCP sí.
 5. **Seguridad**: comandos con `child_process` deben validar argumentos (lista blanca) para evitar inyección.
 
+## Perfil PowerShell portable y CLI (14 nov 2026)
+
+El perfil ya no vive duplicado en `$PROFILE`: el `$PROFILE` solo carga un **loader** y el
+código real está versionado en `shared/powershell/CiszuNetwork.Profile.ps1`.
+
+- Instalación/reparación en un dispositivo nuevo: `pnpm profile:install` (hace backup del
+  `$PROFILE` actual y escribe el loader).
+- Comprobación: `pnpm profile:check`.
+- El loader busca el repo en `CISZU_REPO`, la ruta instalada, `E:\Ciszu Network`,
+  `$HOME\Ciszu Network` y `$HOME\source\repos\CiszuNetwork`.
+- Incluye `doctor`, `cmds`, `opsstatus`, `opsdigest`, `opsreport`, `cleannext`, `cleanlogs`,
+  `cleanall`, `profile-reload`, `profile-edit`, `profile-path`, `free` y `ports`.
+- Autocompletado: scripts de `pnpm`, apps de `dev`/`devlog`, ramas de `git` en
+  `checkout/switch/merge/rebase/branch`, historial incremental y búsqueda con flechas.
+- `gc`/`gcp` bloquean el stage si detectan `.env`, `SECRET_TEMP.env` o `.age`.
+- Catálogo completo: `pnpm commands`; ayuda del perfil: `ciszuh` o `czhelp`.
+
 ## LSP (Language Server Protocol) — activado 2026-08-19
 
 OpenCode integra servidores LSP para usar los diagnósticos del lenguaje como **feedback proactivo
@@ -265,6 +282,6 @@ hacia el agente**. Activado en este ecosistema vía `"lsp": true` en `opencode.j
 - ntfy: `scripts/ntfy-notif.js` + doc `MONITORING_SYSTEM.md` / `REMOTE_CONTROL_SYSTEM.md`
 - MCP: `opencode.json` global (`C:\Users\fplay\.config\opencode\opencode.json`)
 
-_Última revisión: 10 nov 2026._ Relacionado: `LSP_PROTOCOLS.md`, `MCP_PROTOCOLS.md`,
+_Última revisión: 14 nov 2026._ Relacionado: `LSP_PROTOCOLS.md`, `MCP_PROTOCOLS.md`,
 `FRAMEWORKS_SYSTEM.md`, `TESTING_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`, `AGENTS.md` (§6.7),
 `REMOTE_CONTROL_SYSTEM.md`, `MONITORING_SYSTEM.md`, `MODELS_LLM_SYSTEM.md`.

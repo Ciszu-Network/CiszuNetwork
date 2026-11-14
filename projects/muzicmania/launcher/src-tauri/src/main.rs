@@ -383,10 +383,8 @@ fn request_taskbar_pin() {
 }
 
 fn settings_path() -> Option<std::path::PathBuf> {
-    let base = std::env::var("APPDATA")
-        .or_else(|_| std::env::var("AppData"))
-        .ok()?;
-    let dir = std::path::PathBuf::from(base).join("MuzicMania");
+    let base = dirs::config_dir()?;
+    let dir = base.join("MuzicMania");
     let _ = std::fs::create_dir_all(&dir);
     Some(dir.join("desktop_settings.json"))
 }
@@ -475,19 +473,18 @@ fn open_url(url: String) {
     if !url.starts_with("https://") && !url.starts_with("http://") {
         return;
     }
-    let ps = format!(
-        "$ErrorActionPreference='SilentlyContinue'; Start-Process '{}'",
-        ps_quote(&url)
-    );
-    let _ = hidden_command("powershell")
-        .args(["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", &ps])
-        .output();
+    let _ = open::that(&url);
 }
+
+#[cfg(target_os = "windows")]
+const NULL_DEVICE: &str = "NUL";
+#[cfg(not(target_os = "windows"))]
+const NULL_DEVICE: &str = "/dev/null";
 
 #[tauri::command]
 fn server_status(url: String) -> u16 {
     let output = hidden_command("curl")
-        .args(["-sS", "-o", "NUL", "-w", "%{http_code}", "--max-time", "6", "--head", &url])
+        .args(["-sS", "-o", NULL_DEVICE, "-w", "%{http_code}", "--max-time", "6", "--head", &url])
         .output();
     if let Ok(output) = output {
         let text = String::from_utf8_lossy(&output.stdout);
@@ -611,13 +608,15 @@ fn launcher_show_hub(app: tauri::AppHandle) {
     }
 }
 
-#[cfg(target_os = "windows")]
 #[tauri::command]
 fn launcher_pin_taskbar(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("launcher") {
         let _ = window.set_focus();
     }
+    #[cfg(target_os = "windows")]
     request_taskbar_pin();
+    #[cfg(not(target_os = "windows"))]
+    let _ = app;
 }
 
 #[tauri::command]
@@ -632,10 +631,8 @@ fn launcher_show_small(app: tauri::AppHandle) {
     }
 }
 
-#[cfg(target_os = "windows")]
 const LAUNCHER_AUTH_URL: &str = "https://muzicmania.vercel.app/login?launcher=1";
 
-#[cfg(target_os = "windows")]
 fn apply_launcher_session(app: &tauri::AppHandle, session: LauncherSession) {
     save_launcher_session(Some(&session));
     if let Some(state) = app.try_state::<LauncherState>() {
@@ -644,7 +641,6 @@ fn apply_launcher_session(app: &tauri::AppHandle, session: LauncherSession) {
     let _ = app.emit("launcher-auth-finished", ());
 }
 
-#[cfg(target_os = "windows")]
 #[tauri::command]
 fn launcher_open_login(app: tauri::AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window("launcher-auth") {
@@ -688,9 +684,8 @@ fn launcher_open_login(app: tauri::AppHandle) -> Result<(), String> {
 #[tauri::command]
 fn launcher_restart(app: tauri::AppHandle) {
     if let Ok(executable) = std::env::current_exe() {
-        let _ = hidden_command("cmd")
-            .args(["/C", "start", "", &executable.to_string_lossy()])
-            .spawn();
+        let exe = executable.to_string_lossy().to_string();
+        let _ = hidden_command(&exe).spawn();
     }
     LAUNCHER_FORCE_CLOSE.store(true, Ordering::SeqCst);
     app.exit(0);

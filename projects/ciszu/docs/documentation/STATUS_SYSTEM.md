@@ -379,7 +379,11 @@ _Última revisión: 14 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Stats digest**: `stats-digest.yml` diario 12:00 UTC; cuentas (4 webs), reseñas, wallets, scores/niveles/plays/likes y bot.
 - **Status report**: `status-report.yml` lunes 12:10 UTC; estado de sistemas, bot y fallos de GitHub Actions de 7 días.
 - **CI/deploys**: `workflow-failure-notify.yml` avisa fallos/timeouts; `deploy-status-notify.yml` avisa el resultado de cada deploy.
+- **CLI portable**: `pnpm commands`, `pnpm run doctor`, `pnpm clean:*`, `pnpm ops:*`, `pnpm profile:install|check`; perfil versionado en `shared/powershell/CiszuNetwork.Profile.ps1` con autocompletado de pnpm/dev/git y `gc/gcp` seguros.
+- **Supervisión TODO**: 46 hechas / 48 abiertas; Ciszu solo devcon (tests 20/20 tras BOM), CiszuBot bloqueado por Vercel y MuzicMania 46 abiertas (33 producto, 13 launcher). Reporte: `BACKLOG_SUPERVISION_REPORT.md`.
+- **Launcher**: `cargo check` OK, instalador NSIS generado (11.68 MB, SHA256 `DF88BD85…93087A`), idiomas NSIS corregidos y configuración Linux/macOS + workflow `build-launcher.yml` preparados.
+- **Investigación**: `AI_AGENT_ORCHESTRATION_REPORT.md` con Hermes Agent, LangGraph/LangSmith, MCP/A2A, sandboxes y playbook de producción.
 - **Datos**: migraciones locales `20261114000001_service_role_metrics_select.sql` y `20261114000002_ops_monitor_state.sql`; grants solo a `service_role`.
-- **Validación**: scripts con `node --check`, dry-run de system/stats/status, YAML de 24 workflows y baseline de `ops_monitor_state` OK.
+- **Validación**: scripts con `node --check`, dry-run de system/stats/status, YAML de 24 workflows, baseline de `ops_monitor_state` y perfil instalado/cargado OK.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-11-14

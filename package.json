@@ -84,7 +84,20 @@
     "seo:crawl": "node scripts/seo-crawl.js",
     "seo:crawl:all": "node scripts/seo-crawl-all.js",
     "vault:bw": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/vault-bitwarden.ps1",
-    "ciszuhelp": "node scripts/ciszuhelp.js"
+    "ciszuhelp": "node scripts/ciszuhelp.js",
+    "commands": "node shared/scripts/commands.mjs",
+    "doctor": "node shared/scripts/doctor.mjs",
+    "clean:next": "node shared/scripts/clean.mjs --next",
+    "clean:logs": "node shared/scripts/clean.mjs --logs",
+    "clean:all": "node shared/scripts/clean.mjs --next --turbo --logs",
+    "ops:status": "node .github/scripts/system-watch.js --dry-run",
+    "ops:digest": "node .github/scripts/stats-digest.js --dry-run",
+    "ops:report": "node .github/scripts/status-report.js --dry-run",
+    "profile:install": "powershell -NoProfile -ExecutionPolicy Bypass -File shared/powershell/install-profile.ps1",
+    "profile:check": "powershell -NoProfile -ExecutionPolicy Bypass -File shared/powershell/install-profile.ps1 -Check",
+    "deps:audit": "pnpm audit --prod",
+    "deps:outdated": "pnpm outdated -r",
+    "build:all": "pnpm turbo run build"
   },
   "devDependencies": {
     "@changesets/cli": "^2.31.1",
