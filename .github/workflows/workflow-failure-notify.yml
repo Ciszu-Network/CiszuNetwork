@@ -1,0 +1,62 @@
+name: Workflow failure notify
+
+on:
+  workflow_run:
+    workflows:
+      - CI
+      - CodeQL
+      - CodeQL Advanced
+      - CodeQL - Code Quality
+      - Chromatic
+      - DAST (ZAP)
+      - Lighthouse CI
+      - Repo Guard
+      - release-please
+      - sponsorship-cron
+      - uptime-watch
+      - Bot heartbeat watch
+      - Bot renewal reminder
+      - Ensure Production Deploys
+      - Finalize Deletions
+      - GCP Infra (Cloud ops)
+      - Publish Package
+      - System watch
+      - Stats digest
+      - Status report
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: workflow-failure-${{ github.event.workflow_run.id }}
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    if: >-
+      github.event.workflow_run.conclusion == 'failure' ||
+      github.event.workflow_run.conclusion == 'timed_out' ||
+      github.event.workflow_run.conclusion == 'action_required' ||
+      github.event.workflow_run.conclusion == 'startup_failure'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Enviar aviso por ntfy
+        env:
+          NOTIFY_TOPIC: ${{ secrets.NOTIFY_TOPIC }}
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+          COMMIT: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          MESSAGE=$(printf 'Workflow: %s\nResultado: %s\nRama: %s\nCommit: %s\n%s' \
+            "$WORKFLOW_NAME" "$CONCLUSION" "$BRANCH" "${COMMIT:0:12}" "$RUN_URL")
+          curl -sS -m 20 -X POST "https://ntfy.sh/${NOTIFY_TOPIC}" \
+            -H "Title: Workflow ${WORKFLOW_NAME}: ${CONCLUSION}" \
+            -H "Priority: high" \
+            -H "Tags: rotating_light" \
+            -H "Click: ${RUN_URL}" \
+            -d "$MESSAGE"

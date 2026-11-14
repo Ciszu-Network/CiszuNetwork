@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.2.5
-Actualización: 2026-11-13
-Identificador: STATUS_SYSTEM_V2.2.5_2026_11_13_ciszunetwork
+Versión: 2.2.6
+Actualización: 2026-11-14
+Identificador: STATUS_SYSTEM_V2.2.6_2026_11_14_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -299,7 +299,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
-_Última revisión: 13 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 14 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-10-23
@@ -373,4 +373,13 @@ _Última revisión: 13 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Vercel**: middleware migrado a subpaths `utils/iast` y `utils/csp` (−25 kB de Edge, sin `emailBranding`), `optimizePackageImports` para framer-motion/lucide y `prefetch={false}` en grids de tarjetas.
 - **Estado**: bot de Discord operativo; web/dashboard de CiszuBot pausados. Sin cambios funcionales.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-11-13
+## Sesión 14 nov 2026 — automatizaciones de monitorización
+
+- **System watch**: `system-watch.yml` cada 15 min; 4 webs, Supabase REST y CDN; estado persistente en `ciszu.ops_monitor_state` (service-only) y avisos solo en cambios.
+- **Stats digest**: `stats-digest.yml` diario 12:00 UTC; cuentas (4 webs), reseñas, wallets, scores/niveles/plays/likes y bot.
+- **Status report**: `status-report.yml` lunes 12:10 UTC; estado de sistemas, bot y fallos de GitHub Actions de 7 días.
+- **CI/deploys**: `workflow-failure-notify.yml` avisa fallos/timeouts; `deploy-status-notify.yml` avisa el resultado de cada deploy.
+- **Datos**: migraciones locales `20261114000001_service_role_metrics_select.sql` y `20261114000002_ops_monitor_state.sql`; grants solo a `service_role`.
+- **Validación**: scripts con `node --check`, dry-run de system/stats/status, YAML de 24 workflows y baseline de `ops_monitor_state` OK.
+
+ÚLTIMA ACTUALIZACIÓN: 2026-11-14

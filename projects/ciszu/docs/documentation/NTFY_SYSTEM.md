@@ -1,9 +1,9 @@
 # NTFY_SYSTEM
 
-> **Versión**: 2.0
-> **Actualización**: 09 oct 2026
+> **Versión**: 2.1
+> **Actualización**: 14 nov 2026
 > **Identificador**: NTFY_SYSTEM
-> **Definición**: Sistema de notificaciones push del ecosistema: canal único ntfy.sh, seguridad (reserva + token), suscripción, política de contenido y rotación.
+> **Definición**: Sistema de notificaciones push del ecosistema: canal único ntfy.sh, automatizaciones de monitorización, resumen de estadísticas, estado semanal, alertas de CI/deploys, seguridad (reserva + token), suscripción y política de contenido.
 
 ---
 
@@ -45,12 +45,38 @@
 - Staff: cada miembro suscribe el topic; quien deba **emitir** avisos recibe su propio token de
   publicación (nunca el del owner).
 
-## 6. Roadmap
+## 6. Automatizaciones (14 nov 2026)
+
+Además del envío manual y de los avisos de herramientas locales, el ecosistema publica
+automáticamente en ntfy:
+
+| Automatización | Frecuencia | Workflow / script | Qué avisa |
+|---|---|---|---|
+| **System watch** | cada 15 min | `system-watch.yml` · `.github/scripts/system-watch.js` | Cambios de estado de las 4 webs, Supabase REST y CDN. Usa `ciszu.ops_monitor_state` para no repetir avisos. |
+| **Bot heartbeat** | cada 15 min | `bot-heartbeat-watch.yml` | Bot sin latir >5 min o recuperación. |
+| **UptimeRobot** | cada 30 min | `uptime-watch.yml` | Cambios de los 5 monitores externos. |
+| **Stats digest** | diario 12:00 UTC | `stats-digest.yml` · `.github/scripts/stats-digest.js` | Cuentas, reseñas, wallets, scores/niveles/plays/likes de MuzicMania y estado del bot. |
+| **Status report** | lunes 12:10 UTC | `status-report.yml` · `.github/scripts/status-report.js` | Estado de sistemas, bot y fallos de GitHub Actions de los últimos 7 días. |
+| **Workflow failure** | al completar | `workflow-failure-notify.yml` | Fallo/timeout de CI, CodeQL, DAST, Lighthouse, Limpieza, backups y automatizaciones. |
+| **Deploy status** | al completar | `deploy-status-notify.yml` | Deploy completado o fallido de cada web. |
+
+Reglas:
+
+- `NOTIFY_TOPIC` es obligatorio; `NOTIFY_TOKEN` es opcional y solo se usa si existe.
+- Los scripts viven en `.github/scripts/` (versionados); los scripts operativos locales de
+  `scripts/` siguen fuera del repo público.
+- `system-watch` guarda estado en `ciszu.ops_monitor_state` (RLS sin policies, grants solo a
+  `service_role`); el primer run crea la baseline sin notificar.
+- Los resúmenes no incluyen secretos, emails, IPs ni datos personales: solo agregados y estados.
+- `services/supabase/` conserva las migraciones locales: `20261114000001_service_role_metrics_select.sql`
+  y `20261114000002_ops_monitor_state.sql`.
+
+## 7. Roadmap
 
 - Evaluar ntfy Pro si el spoofing pasa a ser inaceptable.
 - Tokens de publicación por rol cuando entre personal.
 
 ---
 
-_Última revisión: 10 nov 2026._ Relacionados: `SECURITY_PROTOCOLS.md`,
+_Última revisión: 14 nov 2026._ Relacionados: `SECURITY_PROTOCOLS.md`,
 `ACCESS_CONTROL_SYSTEM.md`, `MONITORING_SYSTEM.md`, `VAULT_SYSTEM.md`.

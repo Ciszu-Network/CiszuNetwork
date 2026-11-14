@@ -194,7 +194,7 @@ re-despliega las 4 webs (los workflows escuchan ese path).
   (`vercel --prod --yes --archive=tgz`; nunca `vercel pull/prebuilt` dentro de `projects/*/website`).
 - **GitHub Actions** (`.github/workflows/`) — CI (lint/test/semgrep/audit/gitleaks),
   CodeQL, DAST semanal ZAP, deploys ×4, uptime-watch cada 5 min.
-- **ntfy** — notificaciones push (`pnpm notify "Mensaje"`).
+- **ntfy** — notificaciones push (`pnpm notify "Mensaje"`) + automatizaciones: system-watch, stats digest, status semanal, fallos de CI y deploys. Detalle: `NTFY_SYSTEM.md`.
 - **UptimeRobot** — monitorización de las webs.
 - **Sentry** — errores. **PostHog** — analytics. **Bruno** — colecciones de API.
 

@@ -1,0 +1,50 @@
+name: Deploy status notify
+
+on:
+  workflow_run:
+    workflows:
+      - Deploy CiszuNetwork Website
+      - Deploy Ciszuko Antony Website
+      - Deploy MuzicMania Website
+      - Deploy CiszuBot Website
+    types: [completed]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-status-${{ github.event.workflow_run.id }}
+  cancel-in-progress: true
+
+jobs:
+  notify:
+    if: github.event.workflow_run.conclusion != 'skipped'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Enviar estado del deploy por ntfy
+        env:
+          NOTIFY_TOPIC: ${{ secrets.NOTIFY_TOPIC }}
+          WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+          CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          set -euo pipefail
+          if [ "$CONCLUSION" = "success" ]; then
+            PRIORITY="low"
+            TAG="rocket"
+            STATUS="deploy completado"
+          else
+            PRIORITY="high"
+            TAG="rotating_light"
+            STATUS="deploy fallido"
+          fi
+          MESSAGE=$(printf '%s\nRama: %s\nResultado: %s\n%s' \
+            "$WORKFLOW_NAME" "$BRANCH" "$CONCLUSION" "$RUN_URL")
+          curl -sS -m 20 -X POST "https://ntfy.sh/${NOTIFY_TOPIC}" \
+            -H "Title: ${WORKFLOW_NAME}: ${STATUS}" \
+            -H "Priority: ${PRIORITY}" \
+            -H "Tags: ${TAG}" \
+            -H "Click: ${RUN_URL}" \
+            -d "$MESSAGE"

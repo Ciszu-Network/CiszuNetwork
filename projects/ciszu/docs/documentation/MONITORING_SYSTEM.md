@@ -1,8 +1,8 @@
 # MONITORING_SYSTEM — Sistema de monitoreo externo (UptimeRobot) — Ciszu Network
 
-Versión: 2.0.0
-Actualización: 2026-11-10
-Identificador: MONITORING_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.1.0
+Actualización: 2026-11-14
+Identificador: MONITORING_SYSTEM_V2.1.0_2026_11_14_ciszunetwork
 
 > **Definición**: sistema de monitoreo externo del ecosistema con UptimeRobot: qué se
 > vigila, configuración de los 5 monitores, alertas y evolución futura.
@@ -52,6 +52,25 @@ es un secret; vive en `.env.local` de las 4 webs (`NEXT_PUBLIC_SUPABASE_ANON_KEY
 - Detección de bot apagado por fuera: el monitor #5 valida Supabase, no la vida del bot.
   La lógica `last_seen < 3 min` sigue siendo de la web. Cuando el bot pase a VPS 24/7,
   añadir un monitor sobre un endpoint del propio bot (Fase VPS, ver §5).
+
+### 2.1 System watch (GitHub Actions → ntfy, 15 min)
+
+Complementa a UptimeRobot sin depender de su webhook de pago. `system-watch.yml` ejecuta
+`.github/scripts/system-watch.js` cada 15 minutos y comprueba:
+
+| Sistema | Comprobación |
+|---|---|
+| CiszuNetwork, CiszukoAntony, MuzicMania, CiszuBot web | HTTP HEAD; `402 DEPLOYMENT_DISABLED` se clasifica como `paused`, no como caída |
+| Supabase REST | `ciszubot.bot_status` con anon key |
+| CDN Supabase | HEAD de un SVG público de `ciszu-cdn` |
+
+- Solo notifica **cambios**: caída (urgent), degradado (high), pausado (default) o recuperación
+  (low). El primer run guarda baseline sin avisar.
+- El estado vive en `ciszu.ops_monitor_state` (no en caché efímera de Actions), con RLS sin
+  policies y grants solo para `service_role`.
+- `stats-digest.yml` envía un resumen diario (12:00 UTC) y `status-report.yml` un estado
+  semanal (lunes 12:10 UTC). `workflow-failure-notify.yml` y `deploy-status-notify.yml`
+  cubren CI y deploys. Detalle: `NTFY_SYSTEM.md` §6.
 
 ---
 
@@ -221,5 +240,5 @@ que nadie (si el PC cae, el monitor cae con él).
 **¿Nueva web/CiszuBot API?** Añadir su monitor con el checklist de keyword y alertas
 correspondiente.
 
-_Última revisión: 10 nov 2026._ Relacionado: `CLOUDFLARE_SYSTEM.md`, `RAG_VECTORS_PLAN.md`,
-`ERRORS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`, `SCHEDULE_PROTOCOLS.md`.
+_Última revisión: 14 nov 2026._ Relacionado: `CLOUDFLARE_SYSTEM.md`, `RAG_VECTORS_PLAN.md`,
+`ERRORS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`, `NTFY_SYSTEM.md`, `SCHEDULE_PROTOCOLS.md`.

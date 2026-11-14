@@ -1,0 +1,30 @@
+name: Stats digest
+
+on:
+  schedule:
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: stats-digest
+  cancel-in-progress: true
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Enviar resumen diario
+        env:
+          NOTIFY_TOPIC: ${{ secrets.NOTIFY_TOPIC }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node .github/scripts/stats-digest.js
