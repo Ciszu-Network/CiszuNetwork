@@ -18,6 +18,7 @@ import BotOfflineDisclaimer from "@/components/status/BotOfflineDisclaimer";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import "./globals.scss";
+import "@ciszu/ui/motion.css";
 
 const inter = Inter({
   subsets: ["latin"],

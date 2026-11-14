@@ -1,8 +1,8 @@
 ﻿# STYLES_SYSTEM — Sistema de Estilos de las Aplicaciones (Ciszu Network)
 
-Versión: 1.0.0
-Actualización: 2026-11-10
-Identificador: STYLES_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
+Versión: 1.1.0
+Actualización: 2026-11-13
+Identificador: STYLES_SYSTEM_V1.1.0_2026_11_13_ciszunetwork
 
 > **Definición**: sistema de estilos global de las aplicaciones: cómo se aplica el color
 > (remite a `COLOR_SYSTEM.md`), tipografías, layouts, componentes, patrones de estilo y
@@ -210,7 +210,34 @@ externas de Google Fonts en runtime salvo necesidad (rendimiento y privacidad).
 | Fuentes | `public/fonts/*.woff2` |
 | Iconos | `@ciszu/ui` (`Icon`) |
 | Imágenes optimizadas | `@ciszu/ui` (`SmartImage`) |
+| Microinteracciones compartidas | `@ciszu/ui/motion.css` |
 | Config de webs | `src/config/` (navigation, site) |
 
-_Última revisión: 10 nov 2026._ Relacionado: `COLOR_SYSTEM.md`, `ICON_SYSTEM.md`,
+## 19. Microinteracciones compartidas (`@ciszu/ui/motion.css`)
+
+Capa única de CSS puro importada en los cuatro `layout.tsx`. No añade
+dependencias ni JavaScript de interacción, así que no consume funciones Fluid
+de Vercel.
+
+| Clase | Efecto |
+|---|---|
+| `.cz-card` | Elevación corta y outline del color de acento solo en dispositivos con hover real |
+| `.cz-shine` | Barrido de luz diagonal al pasar el puntero sobre tarjetas con `overflow: hidden` |
+| `.cz-press` | Respuesta de presión al tocar o hacer clic |
+| `.cz-reveal` | Entrada suave al viewport mediante `animation-timeline` (mejora progresiva) |
+| `.cz-link-underline` | Subrayado animado para enlaces de contenido |
+| `.cz-accent-*` | Acento cian, azul, verde, rosa, púrpura, rojo o marca por tarjeta |
+
+Reglas globales:
+
+- `:focus-visible` con outline de contraste para navegación por teclado.
+- `@media (hover: hover) and (pointer: fine)` evita hover pegado en táctiles.
+- `@media (prefers-reduced-motion: reduce)` desactiva animaciones y transiciones.
+- `PageReveal` de las webs usa `useReducedMotion` para no animar con movimiento reducido.
+
+La capa se aplica a proyectos, servicios, features del bot, plataformas,
+ecosistema y docks. Los grids con muchas tarjetas usan `prefetch={false}` para
+no disparar RSC por cada card visible.
+
+_Última revisión: 13 nov 2026._ Relacionado: `COLOR_SYSTEM.md`, `ICON_SYSTEM.md`,
 `FRAMEWORKS_SYSTEM.md`, `FRONTEND_SYSTEM.md`, `FULL_STACK_SYSTEM.md`.

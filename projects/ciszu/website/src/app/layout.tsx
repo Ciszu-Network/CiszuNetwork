@@ -17,6 +17,7 @@ import AdsWithUser from "@/components/providers/AdsWithUser";
 import LangSync from "@/components/providers/LangSync";
 import { CISZU_NETWORK } from "@/config/site";
 import "./globals.scss";
+import "@ciszu/ui/motion.css";
 
 const SITE_NAME = CISZU_NETWORK.name;
 const ICON_SVG = assetResolver.resolve("projects/ciszu/content/logos/images/outline/isotype/gradient/color/ciszu_logo_isotipo_outline_degradado_zwhite_ccolor.svg");

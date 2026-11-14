@@ -1,7 +1,7 @@
 # VERCEL_USAGE_PLAN — Límites, pausa y prevención de consumo
 
-**Versión:** 1.0
-**Actualización:** 2026-11-10
+**Versión:** 1.1
+**Actualización:** 2026-11-13
 **Identificador:** VERCEL_USAGE_PLAN
 **Definición:** diagnóstico y plan operativo para la pausa por fair use de Vercel, causas del consumo, recuperación y reglas para no volver a exceder los límites del plan Hobby.
 
@@ -160,6 +160,21 @@ Si se supera el 60% de cualquier métrica, revisar antes de hacer más cambios.
 - Revisar los logs de funciones por rutas con más CPU si se dispone de Observability Plus.
 - Si se contrata Pro, definir un presupuesto de gasto y alertas de facturación.
 
+### 6.5 Interacciones y prefetch
+
+- Las microinteracciones viven en `packages/ui/src/motion.css` (CSS puro, cero JS y
+  cero dependencias): hover, press, shine, reveal y focus visible. Se importan desde
+  los cuatro layouts y no generan tráfico ni CPU de Vercel.
+- Los grids con muchas tarjetas usan `prefetch={false}` (servicios, proyectos,
+  QuickDocks y tracks) para evitar RSC prefetch masivo al entrar en una página.
+- El middleware importa `@ciszunetwork/utils/iast` y `@ciszunetwork/utils/csp` por
+  subpath, no el barrel `@ciszunetwork/utils`; así el Edge no arrastra
+  `emailBranding` ni APIs Node (`process.getBuiltinModule`).
+- `optimizePackageImports` limita el JS de `framer-motion` y `lucide-react` en las
+  cuatro webs.
+- `useReducedMotion` y el bloque global `prefers-reduced-motion` evitan animaciones
+  para quien las desactiva, sin coste de servidor.
+
 ## 7. Consecuencias de no corregirlo
 
 - Pausa total de las cuatro webs hasta el siguiente ciclo.
@@ -191,4 +206,4 @@ Si se supera el 60% de cualquier métrica, revisar antes de hacer más cambios.
 
 ---
 
-_Última revisión: 10 nov 2026. Pausa activa hasta el 7 de diciembre; `VERCEL_PAUSED=true` evita reintentos._
+_Última revisión: 13 nov 2026. Pausa activa hasta el 7 de diciembre; `VERCEL_PAUSED=true` evita reintentos._

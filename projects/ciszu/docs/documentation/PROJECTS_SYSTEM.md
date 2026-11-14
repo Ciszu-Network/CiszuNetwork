@@ -1,8 +1,8 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
-Versión: 2.1.2
-Actualización: 2026-11-10
-Identificador: PROJECTS_SYSTEM_V2.1.2_2026_11_10_ciszunetwork
+Versión: 2.1.3
+Actualización: 2026-11-13
+Identificador: PROJECTS_SYSTEM_V2.1.3_2026_11_13_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
 > general (Projects), el estado detallado (Project State) y el historial cronológico
@@ -28,7 +28,7 @@ Identificador: PROJECTS_SYSTEM_V2.1.2_2026_11_10_ciszunetwork
 - **Filtro pnpm:** `ciszunetwork-website`
 - **URL:** ciszunetwork.vercel.app
 - **Framework:** Next.js 15 (App Router) + Tailwind v4
-- **Estado:** ✅ Activo — despliega desde `main` (GitHub Actions → Vercel)
+- **Estado:** ⏸️ Pausado en Vercel (HTTP 402 `DEPLOYMENT_DISABLED`, 13 nov 2026); código listo para desplegar desde `main` (GitHub Actions → Vercel)
 - **Docs:** docs/ (root) multi-formato + documentation/ completa
 
 ### 1.2 Ciszuko Antony Portfolio
@@ -36,7 +36,7 @@ Identificador: PROJECTS_SYSTEM_V2.1.2_2026_11_10_ciszunetwork
 - **Filtro pnpm:** `ciszukoantony-website`
 - **URL:** ciszukoantony.vercel.app
 - **Framework:** Next.js 15 (App Router) + Tailwind v4
-- **Estado:** ✅ Activo
+- **Estado:** ⏸️ Pausado en Vercel (HTTP 402 `DEPLOYMENT_DISABLED`, 13 nov 2026); código listo
 - **Docs:** projects/ciszukoantony/docs/ multi-formato
 - **Media:** content/ (fuente maestra de logos en content/logos)
 
@@ -48,7 +48,7 @@ Identificador: PROJECTS_SYSTEM_V2.1.2_2026_11_10_ciszunetwork
 - **Versions:** website (web), launcher (desktop, Windows), mobile (placeholder)
 - **Content:** arrowskins, logos, music (genesis_neon), particleskins
 - **Icons:** 5.194 SVGs en shared/icons/
-- **Estado:** ✅ Activo — REST corregido (schema muzicmania), auth Supabase, scoreboard cacheado
+- **Estado:** ⏸️ Pausado en Vercel (HTTP 402 `DEPLOYMENT_DISABLED`, 13 nov 2026); código listo — REST corregido (schema muzicmania), auth Supabase, scoreboard cacheado
 - **Docs:** projects/muzicmania/docs/ multi-formato
 
 ### 1.4 CiszuBot
@@ -56,8 +56,7 @@ Identificador: PROJECTS_SYSTEM_V2.1.2_2026_11_10_ciszunetwork
 - **Filtro pnpm:** `ciszubot-website` (website), `ciszubot` (bot)
 - **URL:** ciszubot.vercel.app
 - **Framework:** Next.js 15 (website) + Discord.js v14 (bot, TS)
-- **Estado:** ✅ Activo — bot v3.2.0 (72 comandos, 9 categorías), Drizzle ORM + Supabase conectado
-  (schema ciszubot, heartbeat `bot_status`), dashboard OAuth, Docker (node:24-alpine)
+- **Estado:** ⏸️ Bot v3.4.0 operativo; web y dashboard caídos por la pausa de Vercel (HTTP 402 `DEPLOYMENT_DISABLED`, 13 nov 2026). Top.gg denegó la verificación porque el dashboard no estaba disponible. Drizzle ORM + Supabase conectado (schema ciszubot, heartbeat `bot_status`), Docker (node:24-alpine).
 - **Panel:** NestJS + Fastify :5000 (stats + /api/votes; Express eliminado en F2)
 - **Docs:** projects/ciszubot/docs/ multi-formato
 
@@ -83,18 +82,18 @@ Identificador: PROJECTS_SYSTEM_V2.1.2_2026_11_10_ciszunetwork
 
 ---
 
-## 2. Estado del ecosistema (ago 2026)
+## 2. Estado del ecosistema (13 nov 2026)
 
 ### 2.1 Sistemas
 
 | Sistema | Estado |
 |---|---|
-| 4 websites en producción (Vercel) | ✅ Despliegan desde `main` (GitHub Actions) |
+| 4 websites en producción (Vercel) | ⏸️ Pausadas por fair use hasta el 7 dic 2026; las 4 URLs responden HTTP 402 `DEPLOYMENT_DISABLED` (13 nov 2026) |
 | CDN Supabase Storage `ciszu-cdn` | ✅ 7.353 objetos / 160.6 MB (16% de cuota; bucket legacy `ciszu-assets` eliminado 10 ago 2026) |
 | Sistema de formatos (avif/webp/opus) | ✅ Implementado (8 ago 2026) + `SmartImage` en las webs |
 | PWA (manifest + sw + botón instalar) | ✅ Las 4 webs |
 | Auth Supabase (MuzicMania) | ✅ REST corregido, RLS activo |
-| Bot de Discord | ✅ v3.2.0, 73 comandos, Supabase conectado (heartbeat `bot_status`) + feature flags globales y Premium beta (10 oct 2026) |
+| Bot de Discord | ✅ v3.4.0, 72 comandos, Supabase conectado (heartbeat `bot_status`) + feature flags globales y Premium beta (10 oct 2026); Top.gg denegó la verificación el 13 nov 2026 por el dashboard caído |
 | Caché multi-tienda | ✅ Implementado (9 ago 2026) — memoria → KV Upstash (`upstash-kv-ciszunetwork`) → Postgres `ciszu.cache` |
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
 | Cloudflare (standalone) | ✅ Web Analytics + Turnstile en las 4 webs |
@@ -139,7 +138,9 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 1. **Ciszubot OAuth**: registrar callback en Discord Developer Portal + `DISCORD_CLIENT_SECRET`
    en Vercel (ver AGENTS.md sección Ciszubot web).
-2. **Tokens bot lists**: `TOP_GG_TOKEN` / `DISCORDBOTLIST_TOKEN` (código listo, sin ellos no postea).
+2. **Bot lists**: Top.gg denegó la verificación de CiszuBot el 13 nov 2026 por el dashboard caído;
+   reintentar cuando Vercel vuelva a servir `ciszubot.vercel.app`. Quedan pendientes el callback OAuth
+   y los tokens `TOP_GG_TOKEN`/`DISCORDBOTLIST_TOKEN`.
 3. **Vercel**: pausa por fair use hasta el 7 dic 2026; no desplegar hasta el reset.
 4. **MuzicMania**: validar OAuth, economía y notificaciones online cuando Vercel vuelva; payout/refund sigue siendo manual.
 5. **Mobile**: Android/iOS nativo pendiente de Android Studio/Xcode y firma.
@@ -148,6 +149,11 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
+
+### 13 de Noviembre, 2026 — Vercel sigue pausado y Top.gg deniega CiszuBot
+
+- **Vercel**: las 4 URLs responden HTTP 402 `DEPLOYMENT_DISABLED`; sigue pausado, sin deploy ni validación online.
+- **Top.gg**: verificación de CiszuBot denegada porque `ciszubot.vercel.app` y el dashboard están caídos. Reintentar con la web operativa; callback OAuth y tokens de bot lists pendientes.
 
 ### 10 de Noviembre, 2026 — MuzicMania 2.1.1, documentación legal y auditoría de docs
 

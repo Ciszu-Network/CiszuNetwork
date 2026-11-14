@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import type { CSSProperties } from 'react';
 import { getIcon } from '@ciszu/ui';
 import type { ProfileBrand } from '@/data/profile';
 
@@ -34,7 +35,10 @@ export function BrandCard({ brand }: { brand: ProfileBrand }) {
   const initial = brand.name.charAt(0).toUpperCase();
 
   return (
-    <div className="group flex flex-col gap-3 p-5 rounded-[1.75rem] bg-white/[0.04] border border-white/10 hover:border-white/30 transition-all hover:-translate-y-0.5">
+    <div
+      style={{ '--cz-accent': accent } as CSSProperties}
+      className="cz-card group flex flex-col gap-3 p-5 rounded-[1.75rem] bg-white/[0.04] border border-white/10 hover:border-white/30 transition-all hover:-translate-y-0.5"
+    >
       <div className="flex items-center gap-4">
         <span
           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.04] group-hover:scale-110 transition-transform"

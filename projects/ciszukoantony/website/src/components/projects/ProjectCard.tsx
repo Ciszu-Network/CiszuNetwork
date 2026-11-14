@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import type { CSSProperties } from 'react';
 import { useDict } from '@/components/providers/I18nProvider';
 import { Icon } from '@ciszu/ui';
 import CdnImage from '@/components/shared/CdnImage';
@@ -43,6 +44,7 @@ export default function ProjectCard({
   ) : (
     <Link
       href={`/projects/${project.slug}`}
+      prefetch={false}
       className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-[10px] font-black uppercase tracking-widest text-white transition-all hover:scale-105 hover:brightness-150 ${project.accent.chipBg} ${project.accent.chipBorder}`}
     >
       <Icon name="chevronRight" size={13} />
@@ -52,7 +54,8 @@ export default function ProjectCard({
 
   return (
     <article
-      className={`group relative flex flex-col overflow-hidden rounded-[2.5rem] border bg-[#05060c]/80 transition-all duration-500 hover:-translate-y-2 ${project.accent.border} ${project.accent.glow}`}
+      style={{ '--cz-accent': project.accent.hex } as CSSProperties}
+      className={`cz-card cz-shine group relative flex flex-col overflow-hidden rounded-[2.5rem] border bg-[#05060c]/80 transition-all duration-500 hover:-translate-y-2 ${project.accent.border} ${project.accent.glow}`}
     >
       {/* Fondo único: gradiente de la marca + retícula del acento. */}
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${project.accent.surface}`} />

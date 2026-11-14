@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { createIast, buildCsp } from '@ciszunetwork/utils';
+import { createIast } from '@ciszunetwork/utils/iast';
+import { buildCsp } from '@ciszunetwork/utils/csp';
 import { cookieEqualsToken } from '@/lib/edit-auth';
 
 const iast = createIast('muzicmania');

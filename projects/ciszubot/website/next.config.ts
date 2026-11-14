@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    optimizePackageImports: ['framer-motion', 'lucide-react'],
+  },
   // Resolver alias @/ para que funcione en Vercel build
   webpack(config: any) {
     config.resolve.alias = {

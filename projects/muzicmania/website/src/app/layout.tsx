@@ -5,6 +5,7 @@ import { buildSeoMetadata, seoJsonLdString } from "@ciszunetwork/utils/seo";
 import Navbar from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import "./globals.scss";
+import "@ciszu/ui/motion.css";
 import AuthProvider from "@/components/providers/AuthProvider";
 import AdsWithUser from "@/components/providers/AdsWithUser";
 import { SpeedInsights } from "@vercel/speed-insights/next";

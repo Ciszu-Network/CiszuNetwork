@@ -47,6 +47,9 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    optimizePackageImports: ['framer-motion', 'lucide-react'],
+  },
   // Resolver aliases para que funcionen en Vercel build
   // El tsconfig.json ya tiene @/* -> ./src/*, y el base tsconfig ya no tiene @/* conflictivo
   webpack(config: any, { isServer }: { isServer: boolean }) {

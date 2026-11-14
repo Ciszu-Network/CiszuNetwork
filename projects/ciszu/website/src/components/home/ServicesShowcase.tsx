@@ -32,6 +32,15 @@ const BADGE_ACCENTS = {
   discord: 'border-[#5865F2]/40 bg-[#5865F2]/15 text-[#8b95ff]',
 } as const;
 
+const MOTION_ACCENTS: Record<string, string> = {
+  brand: 'cz-accent-brand',
+  cyan: 'cz-accent-cyan',
+  pink: 'cz-accent-pink',
+  purple: 'cz-accent-purple',
+  green: 'cz-accent-green',
+  discord: 'cz-accent-blue',
+};
+
 export function ServicesShowcase() {
   const dict = useDict();
   return (
@@ -61,8 +70,9 @@ export function ServicesShowcase() {
                   <Link
                     key={service.slug}
                     href={`/services/${service.slug}`}
+                    prefetch={false}
                     onClick={() => track('home_service_flyer_click', { service: service.slug })}
-                    className={`group flex w-[250px] shrink-0 snap-start flex-col overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5 transition-all duration-500 hover:-translate-y-2 sm:w-[270px] ${accent.border} ${accent.glow}`}
+                    className={`cz-card cz-shine ${MOTION_ACCENTS[service.accent] ?? 'cz-accent-brand'} group flex w-[250px] shrink-0 snap-start flex-col overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5 transition-all duration-500 hover:-translate-y-2 sm:w-[270px] ${accent.border} ${accent.glow}`}
                   >
                     <div className="relative overflow-hidden">
                       <Image

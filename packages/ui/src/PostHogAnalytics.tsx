@@ -107,6 +107,10 @@ function PostHogTracker({ app }: PostHogAnalyticsProps) {
         // $web_vitals (LCP/CLS/FCP/INP). network_timing: false (solo lo usa
         // session replay, que está desactivado por política del ecosistema).
         capture_performance: { web_vitals: true, network_timing: false },
+        capture_heatmaps: true,
+        capture_dead_clicks: true,
+        rageclick: true,
+        disable_session_recording: true,
         persistence: 'localStorage+cookie',
       });
     };

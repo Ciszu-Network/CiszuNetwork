@@ -9,7 +9,7 @@
  * framer-motion convertiría a un hijo `fixed` en relativo al wrapper.
  */
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 interface PageRevealProps {
   children: React.ReactNode;
@@ -17,11 +17,12 @@ interface PageRevealProps {
 }
 
 export default function PageReveal({ children, className = '' }: PageRevealProps) {
+  const reduce = useReducedMotion();
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
+      initial={reduce ? false : { opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
+      transition={reduce ? { duration: 0 } : { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const }}
       className={className}
     >
       {children}

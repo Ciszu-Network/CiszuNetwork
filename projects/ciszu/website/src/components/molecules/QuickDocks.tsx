@@ -292,7 +292,8 @@ export default function QuickDocks() {
                 <Link
                   key={i}
                   href={doc.href}
-                  className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-black border-2 transition-all group active-depth hover:-translate-y-1 ${isActive ? `${style.borderActive} ${style.shadow} scale-[1.02]` : style.border}`}
+                  prefetch={false}
+                  className={`cz-press flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-black border-2 transition-all group active-depth hover:-translate-y-1 ${isActive ? `${style.borderActive} ${style.shadow} scale-[1.02]` : style.border}`}
                   onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => {
                     if (!isActive) {
                       (e.currentTarget as HTMLElement).style.borderColor = hoverColor;

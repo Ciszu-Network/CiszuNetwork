@@ -1,8 +1,8 @@
 # ANALYTICS_SYSTEM — Sistema Global de Analíticas (Ciszu Network)
 
-Versión: 2.0.0
-Actualización: 2026-11-10
-Identificador: ANALYTICS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.0.1
+Actualización: 2026-11-13
+Identificador: ANALYTICS_SYSTEM_V2.0.1_2026_11_13_ciszunetwork
 
 > **Definición**: el sistema global de analíticas es la arquitectura completa que captura,
 > procesa y expone datos de comportamiento, tráfico, rendimiento y errores de todo el
@@ -90,6 +90,9 @@ Cloudflare Web Analytics: son complementarios.
   porque App Router no recarga en navegación SPA.
 - **Fix 11 ago 2026**: `capture_pageleave: true` (bounce rate/session duration exactos) +
   `capture_performance: { web_vitals: true, network_timing: false }` (`$web_vitals` LCP/CLS/FCP/INP).
+- **Insights de interacción (13 nov 2026)**: `capture_heatmaps: true`,
+  `capture_dead_clicks: true` y `rageclick: true` para detectar zonas muertas y clics
+  repetidos. `disable_session_recording: true` mantiene la política de no grabar sesiones.
 - Prop `app` (nombre corto de la web) en cada evento → separa las 4 webs en el único proyecto free.
 - Exporta `captureEvent(event, properties)` para eventos custom (fase 2).
 - Envuelto en `<Suspense>` (requisito Next 15 para `useSearchParams` en prerender estático).
@@ -123,7 +126,7 @@ Cloudflare Web Analytics: son complementarios.
 | Herramienta | Responsabilidad (ÚNICA) | Estado |
 |---|---|---|
 | **Cloudflare Web Analytics** | Tráfico/marketing: pageviews, referrers, países. Beacon ~1KB | ✅ Activo (4 webs, token `2fcf0eab...`) |
-| **Vercel Speed Insights** | Core Web Vitals reales (LCP/CLS/INP) | ✅ Activo (solo MuzicMania) |
+| **Vercel Speed Insights** | Core Web Vitals reales (LCP/CLS/INP) | ✅ Activo (4 webs) |
 | **UptimeRobot** | Disponibilidad 24/7 (5 monitores) + alertas email/push + watcher ntfy | ✅ Activo |
 | **PostHog Product Analytics** | Eventos de producto, embudos, retención, session replay, feature flags | ✅ Implementado (activo 11 ago 2026) |
 | **PostHog Error Tracking** | Errores con contexto de producto (alternativa a Sentry, NO ambos a la vez) | Fase 2 |
@@ -146,9 +149,9 @@ Cloudflare Web Analytics: son complementarios.
 ## 5. Herramienta nº3 — Vercel Speed Insights (CWV)
 
 - **Qué mide**: Core Web Vitals reales de usuarios (LCP, CLS, INP, FCP, TTFB).
-- **Estado**: ✅ Activo solo en MuzicMania.
+- **Estado**: ✅ Activo en las 4 webs (`SpeedInsights` en cada `layout.tsx`).
 - **Por qué**: datos de rendimiento real de campo (campo RUM) vs lab (Lighthouse).
-- **Ampliar**: activar en las otras 3 webs si se requiere medición de CWV en todas.
+- **Ampliar**: no requiere más código; revisar el panel de Speed Insights tras cada deploy.
 - **Complementa**: `MEDIA_FORMATS_SYSTEM.md` (avif/webp/opus) y `CACHING_SYSTEM.md` reducen estos números.
 
 ## 6. Herramienta nº4 — UptimeRobot + ntfy (disponibilidad)
@@ -277,11 +280,12 @@ PostHog (producto) + Sentry (errores) + Vercel SI (CWV) + UptimeRobot (uptime) +
 - [ ] Revisar `$pageview` en PostHog tras cada deploy.
 - [ ] No activar el Web Analytics de PostHog ni Sentry+PH Error Tracking a la vez.
 - [ ] Acotar `properties` en `captureEvent` (props custom = ~5x costo).
-- [ ] Sesión replay solo en páginas de producto.
+- [ ] Sesión replay solo en páginas de producto; el SDK permanece desactivado por política.
+- [ ] Revisar heatmaps, dead clicks y rage clicks en PostHog tras cambios de UI.
 - [ ] Actualizar `STATISTICS_SYSTEM.md` con cifras reales cuando haya histórico.
 - [ ] Evaluar reverse proxy (Worker) cuando el tráfico/privacidad lo exija.
 
-_Última revisión: 10 nov 2026._ Relacionado: `CLOUDFLARE_SYSTEM` → `CDN_SYSTEM.md`,
+_Última revisión: 13 nov 2026._ Relacionado: `CLOUDFLARE_SYSTEM` → `CDN_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `ERRORS_SYSTEM.md`, `CACHING_SYSTEM.md`, `STATISTICS_SYSTEM.md`.
 
 ## Verificación del bloque GA4 + GTM + AdSense (19 sep 2026)

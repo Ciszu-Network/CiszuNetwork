@@ -217,7 +217,7 @@ export default function HomeContent() {
               desc: 'Sube en el ranking mundial y demuestra quién es el verdadero maestro del ritmo.'
             },
           ] as { icon: React.FC<{className?:string}>; title: string; color: string; desc: string }[]).map((f, i) => (
-            <div key={i} className={`p-6 sm:p-10 rounded-3xl bg-doc-dark border-2 border-white/5 backdrop-blur-xl transition-all group active-depth hover:-translate-y-2 hover-glow-${f.color} border-neon-${f.color}/20`}>
+            <div key={i} className={`cz-card cz-accent-${f.color} p-6 sm:p-10 rounded-3xl bg-doc-dark border-2 border-white/5 backdrop-blur-xl transition-all group active-depth hover:-translate-y-2 hover-glow-${f.color} border-neon-${f.color}/20`}>
               <div className={`mb-6 flex justify-center text-neon-${f.color} drop-shadow-neon-${f.color}`}>
                 <f.icon className="w-16 h-16" />
               </div>
@@ -366,8 +366,8 @@ export default function HomeContent() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
               {TRACKS_DATA.slice(0, 4).map((track, i) => (
-                <div key={i} className={`flex items-center gap-4 p-5 rounded-2xl bg-doc-dark border-2 border-white/5 transition-all group active-depth hover-glow-${track.colorKey} border-neon-${track.colorKey}/20 cursor-default`}>
-                  <Link href={`/library?track=${track.id}`} className="w-12 h-12 shrink-0 relative block cursor-pointer">
+                <div key={i} className={`cz-card cz-accent-${track.colorKey} flex items-center gap-4 p-5 rounded-2xl bg-doc-dark border-2 border-white/5 transition-all group active-depth hover-glow-${track.colorKey} border-neon-${track.colorKey}/20 cursor-default`}>
+                  <Link href={`/library?track=${track.id}`} prefetch={false} className="w-12 h-12 shrink-0 relative block cursor-pointer">
                     <img src={trackDisc(track.id)} alt={`Disco de ${track.name}`}
                       className="absolute inset-0 w-full h-full -translate-y-1.5 z-0 transition-all duration-500 ease-out group-hover:-translate-y-3 group-hover:z-20"
                     />
@@ -376,7 +376,7 @@ export default function HomeContent() {
                     />
                   </Link>
                   <div className="min-w-0 flex-1 space-y-1">
-                    <Link href={`/library?track=${track.id}`} className="block cursor-pointer">
+                    <Link href={`/library?track=${track.id}`} prefetch={false} className="block cursor-pointer">
                       <h4 className="font-black text-white truncate text-sm tracking-tight italic group-hover:text-neon-cyan transition-colors flex items-center gap-1.5">
                         <svg viewBox="0 0 24 24" className="w-3 h-3 shrink-0 text-neon-cyan" fill="none" stroke="currentColor" strokeWidth={2}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
                         {track.name}

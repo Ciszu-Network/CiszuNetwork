@@ -14,7 +14,7 @@ export default function PremiumSection({ dict }: { dict: Dict }) {
   return (
     <section className="relative px-4 py-14">
       <div className="mx-auto max-w-screen-xl">
-        <div className="relative overflow-hidden rounded-3xl border border-neon-purple/40 bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 p-8 md:p-10">
+        <div className="cz-card cz-accent-purple relative overflow-hidden rounded-3xl border border-neon-purple/40 bg-gradient-to-r from-neon-blue/10 via-[#6600ff]/10 to-neon-pink/10 p-8 md:p-10">
           <div className="flex flex-wrap items-center justify-between gap-6">
             <div className="min-w-0 max-w-2xl">
               <p className="text-[10px] font-black uppercase tracking-[0.3em] text-neon-purple">{t.kicker}</p>

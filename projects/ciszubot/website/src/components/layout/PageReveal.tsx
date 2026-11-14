@@ -11,7 +11,7 @@
  * fixed`.
  */
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 
 export default function PageReveal({
   children,
@@ -20,11 +20,12 @@ export default function PageReveal({
   children: React.ReactNode;
   className?: string;
 }) {
+  const reduce = useReducedMotion();
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={reduce ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
+      transition={reduce ? { duration: 0 } : { duration: 0.5, ease: 'easeOut' }}
       className={className}
     >
       {children}

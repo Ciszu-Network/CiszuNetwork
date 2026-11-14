@@ -1,5 +1,11 @@
 # Historial del Proyecto CiszuBot
 
+## 13 de Noviembre, 2026
+
+- **Top.gg**: denegó la verificación de CiszuBot porque `ciszubot.vercel.app` y su dashboard están caídos por la pausa de Vercel. Reintentar cuando la web esté operativa; el callback OAuth y `DISCORDBOTLIST_TOKEN` siguen pendientes.
+- **Vercel**: comprobación externa de las 4 URLs; todas responden HTTP 402 `DEPLOYMENT_DISABLED`. El ecosistema sigue pausado, sin deploy ni validación online.
+- Sin cambios funcionales en el bot ni en la web.
+
 ## 10 de Noviembre, 2026
 
 - Auditoría documental: fechas de revisión actualizadas y estado sincronizado.
@@ -22,4 +28,4 @@
 ### Pendiente
 - Implementación del bot en `discord/` (pendiente de crear).
 
-_Última revisión: 10 nov 2026._
+_Última revisión: 13 nov 2026._

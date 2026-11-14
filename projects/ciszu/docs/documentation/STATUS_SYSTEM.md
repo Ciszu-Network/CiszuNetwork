@@ -1,31 +1,31 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.2.4
-Actualización: 2026-11-10
-Identificador: STATUS_SYSTEM_V2.2.4_2026_11_10_ciszunetwork
+Versión: 2.2.5
+Actualización: 2026-11-13
+Identificador: STATUS_SYSTEM_V2.2.5_2026_11_13_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
 
 ## Estado actual del monorepo
 
-### Resumen General (10 nov 2026)
+### Resumen General (13 nov 2026)
 
 | Proyecto | Website | App | Docs | documentation | public/docs/ |
 |---|---|---|---|---|---|
 | CiszuNetwork Page | ⏸️ Pausado en Vercel | — | ✅ Completo | ✅ | ✅ |
 | Ciszuko Antony Portfolio | ⏸️ Pausado en Vercel | — | ✅ Completo | ✅ | ✅ |
 | MuzicMania | ⏸️ Pausado en Vercel | ✅ Tauri 2.1.1 / NSIS 2.3.1 / desinstalador 2.1.0 | ✅ Completo | ✅ | ✅ |
-| CiszuBot | ⏸️ Web pausada / bot activo | ✅ Discord bot v3.4.0 | ✅ Completo | ✅ | ✅ |
+| CiszuBot | ⏸️ Web pausada / bot activo / Top.gg denegado | ✅ Discord bot v3.4.0 | ✅ Completo | ✅ | ✅ |
 | CiszuGamens | — | — | ✅ Histórico | ✅ | — |
 | @ciszunetwork/cdn | — | ✅ Activo | — | — | — |
 
-### Estado real (10 nov 2026)
+### Estado real (13 nov 2026)
 
 | Sistema | Estado |
 |---|---|
 | Consola dev local | ✅ `test/website/debug/dev_console.ps1` (TUI + CLI, puertos fijos 3000-3003) — 16 ago 2026 |
-| 4 websites en producción (Vercel) | ⏸️ Pausadas por fair use hasta el 7 dic 2026 (`VERCEL_PAUSED=true`); los deploys se reanudan después del reset |
+| 4 websites en producción (Vercel) | ⏸️ Pausadas por fair use hasta el 7 dic 2026 (`VERCEL_PAUSED=true`); verificado el 13 nov 2026: las 4 URLs responden HTTP 402 `DEPLOYMENT_DISABLED`. Top.gg denegó la verificación de CiszuBot por el dashboard caído |
 | CDN Supabase Storage `ciszu-cdn` | ✅ 7.353 objetos / 160.6 MB (16% de cuota; bucket legacy `ciszu-assets` eliminado 10 ago 2026) |
 | Sistema de formatos (avif/webp/opus) | ✅ Implementado (8 ago 2026) + `SmartImage` en las webs |
 | PDWA (manifest + sw + botón instalar) | ✅ Las 4 webs |
@@ -107,6 +107,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 | Push a GitHub | DNS de este PC no resuelve github.com → push manual del usuario | `WORKFLOW_SYSTEM.md` |
 | R2 Cloudflare | Requiere tarjeta → CDN activo = Supabase `ciszu-cdn` | `CDN_SYSTEM.md` |
 | Ciszubot OAuth | Pendiente registrar callback en Discord Developer Portal | `PROJECTS_SYSTEM.md` |
+| Top.gg CiszuBot | Verificación denegada el 13 nov 2026 por el dashboard caído; reintentar cuando Vercel vuelva | `PROJECT_STATE.md` (ciszubot) |
 | PDF engine | WeasyPrint requiere GTK DLLs no instaladas | `TOOLS_SYSTEM.md` |
 | Word COM | Se cuelga al convertir DOCX→PDF automáticamente | `TOOLS_SYSTEM.md` |
 
@@ -124,7 +125,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 | CiszuNetwork | Pausado temporalmente | Último deploy válido; Vercel en pausa por fair use hasta el 7 dic 2026 |
 | CiszukoAntony | Pausado temporalmente | Último deploy válido; Vercel en pausa por fair use hasta el 7 dic 2026 |
 | MuzicMania | Pausado temporalmente | Juego + app Tauri 2.1.1 (NSIS 2.3.1); Vercel en pausa hasta el 7 dic 2026 |
-| CiszuBot | Operativo | Bot Discord + landing + estado en vivo |
+| CiszuBot | Operativo con web pausada | Bot Discord v3.4.0 activo; landing y dashboard caídos por Vercel (HTTP 402). Top.gg denegó la verificación el 13 nov 2026 por el dashboard no disponible |
 | CDN Supabase | Operativo | `ciszu-cdn`, 7.353 objetos |
 | CI/CD | Operativo | GitHub Actions: CI, CodeQL, DAST, deploy ×4, uptime-watch. **3 runners self-hosted online** (servicios Windows en `E:\actions-runners\CISZU-PC`, `CISZU-PC-2`, `CISZU-PC-3`) desde 15 ago 2026: jobs portables del CI y deploys ×4 en `self-hosted`, sin consumir minutos de la org |
 
@@ -298,7 +299,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] Nuevas incidencias registradas en su `*_SYSTEM.md`.
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
-_Última revisión: 10 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 13 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-10-23
@@ -364,4 +365,12 @@ _Última revisión: 10 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Actualizaciones aplicadas**: Next 15.5.29, React 19.3.1, @supabase/supabase-js 2.119, Tauri 2.12.4, discord.js 14.28.1, fastify 5.12.8, @fastify/static 10.1.10, Tailwind/PostCSS 4.3.5/8.5.32 y otros parches. Las mayores (Next 16, Sentry 11, NestJS 12, ESLint 10, TypeScript 7) quedan fuera de esta pasada.
 - **Validación**: `pnpm typecheck` ✅, `pnpm lint:all` ✅, `pnpm test` 414/414 ✅, tests del bot 81/81 ✅, Storybook 34/34 ✅, `cargo check` ✅ y builds de las 4 webs ✅.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-11-10
+## Sesión 13 nov 2026 — Vercel sigue pausado y Top.gg deniega CiszuBot
+
+- **Vercel**: comprobación externa de las 4 URLs (`HEAD`/`GET`); todas responden HTTP 402 `DEPLOYMENT_DISABLED`. No está desbloqueado: no hay deploy ni validación online del dashboard/OAuth.
+- **Top.gg**: denegó la verificación de CiszuBot porque `ciszubot.vercel.app` y su dashboard están caídos. Reintentar cuando Vercel vuelva a servir la web; el callback OAuth y `DISCORDBOTLIST_TOKEN` siguen pendientes.
+- **Frontend**: capa compartida `@ciszu/ui/motion.css` con hover, press, shine, reveal y focus visible; `prefers-reduced-motion` y `useReducedMotion`; aplicada a tarjetas, servicios, ecosistema y docks.
+- **Vercel**: middleware migrado a subpaths `utils/iast` y `utils/csp` (−25 kB de Edge, sin `emailBranding`), `optimizePackageImports` para framer-motion/lucide y `prefetch={false}` en grids de tarjetas.
+- **Estado**: bot de Discord operativo; web/dashboard de CiszuBot pausados. Sin cambios funcionales.
+
+ÚLTIMA ACTUALIZACIÓN: 2026-11-13

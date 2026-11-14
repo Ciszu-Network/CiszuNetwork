@@ -107,7 +107,7 @@ export default function PlatformsSection({ dict }: PlatformsSectionProps) {
             return (
               <Reveal key={platform.key} delay={i * 80}>
                 <article
-                  className={`group flex h-full flex-col rounded-2xl border border-border bg-card p-4 sm:p-6 transition-all duration-300 hover:-translate-y-1 ${platform.border}`}
+                  className={`cz-card group flex h-full flex-col rounded-2xl border border-border bg-card p-4 sm:p-6 transition-all duration-300 hover:-translate-y-1 ${platform.border}`}
                 >
                   <span className={`inline-flex h-11 w-11 items-center justify-center rounded-xl mb-4 ${platform.bg} ${platform.accent} transition-transform duration-300 group-hover:scale-110`}>
                     <Icon name={platform.icon} size={22} />

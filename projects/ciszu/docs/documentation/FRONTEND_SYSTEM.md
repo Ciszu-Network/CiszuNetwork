@@ -1,8 +1,8 @@
 ﻿# FRONTEND_SYSTEM — Sistema de Frontend de los Proyectos (Ciszu Network)
 
-Versión: 1.0.0
-Actualización: 2026-11-10
-Identificador: FRONTEND_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
+Versión: 1.0.1
+Actualización: 2026-11-13
+Identificador: FRONTEND_SYSTEM_V1.0.1_2026_11_13_ciszunetwork
 
 > **Definición**: sistema que documenta el **frontend** (lado cliente: componentes, estilos,
 > navegación, estado, SEO, PWA) de los proyectos de Ciszu Network: qué tecnologías se usan,
@@ -68,6 +68,7 @@ src/app/
 | `<FabStack ... />` | Botones flotantes apilados (PDWA + reportar) |
 | `<InstallPdwaButton />` | Instalación PWA por navegador |
 | `<Guard>` / IAST | Protección por página |
+| `@ciszu/ui/motion.css` | Microinteracciones CSS, foco visible y movimiento reducido |
 
 - Paquetes compartidos viven en `packages/`: `@ciszu/ui`, `@ciszunetwork/cdn`,
   `@ciszunetwork/utils`, `@ciszunetwork/email`, `@ciszunetwork/payments`.
@@ -331,7 +332,7 @@ export const config = {
 - Seguridad: XSS cero, Turnstile + rate limit, CSP/IAST en middleware.
 - Toda página nueva pasa por el checklist de calidad y verificación externa.
 
-_Última revisión: 10 nov 2026._ Relacionado: `BACKEND_SYSTEM.md`, `FRAMEWORKS_SYSTEM.md`,
+_Última revisión: 13 nov 2026._ Relacionado: `BACKEND_SYSTEM.md`, `FRAMEWORKS_SYSTEM.md`,
 `STYLES_SYSTEM.md`, `COLOR_SYSTEM.md`, `ICON_SYSTEM.md`, `PACKAGES_SYSTEM.md` (crear),
 `INSTALLERS_SYSTEM.md`, `FULL_STACK_SYSTEM.md`, `SECURITY_PROTOCOLS.md`.
 

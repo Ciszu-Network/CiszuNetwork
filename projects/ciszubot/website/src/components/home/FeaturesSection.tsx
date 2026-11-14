@@ -17,6 +17,7 @@ const FEATURE_STYLES = [
     bg: 'bg-neon-blue/10',
     border: 'hover:border-neon-blue/60',
     glow: 'hover:shadow-[0_0_35px_rgba(0,212,255,0.15)]',
+    motion: 'cz-accent-blue',
   },
   {
     icon: 'globe',
@@ -24,6 +25,7 @@ const FEATURE_STYLES = [
     bg: 'bg-neon-cyan/10',
     border: 'hover:border-neon-cyan/60',
     glow: 'hover:shadow-[0_0_35px_rgba(34,211,238,0.15)]',
+    motion: 'cz-accent-cyan',
   },
   {
     icon: 'gamepad',
@@ -31,6 +33,7 @@ const FEATURE_STYLES = [
     bg: 'bg-neon-purple/10',
     border: 'hover:border-neon-purple/60',
     glow: 'hover:shadow-[0_0_35px_rgba(168,85,247,0.15)]',
+    motion: 'cz-accent-purple',
   },
   {
     icon: 'shield',
@@ -38,6 +41,7 @@ const FEATURE_STYLES = [
     bg: 'bg-neon-pink/10',
     border: 'hover:border-neon-pink/60',
     glow: 'hover:shadow-[0_0_35px_rgba(255,51,204,0.15)]',
+    motion: 'cz-accent-pink',
   },
 ];
 
@@ -66,7 +70,7 @@ export default function FeaturesSection({ dict }: FeaturesSectionProps) {
             return (
               <Reveal key={item.title} delay={i * 90}>
                 <div
-                  className={`group h-full soft-card rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1.5 ${style.border} ${style.glow}`}
+                  className={`cz-card ${style.motion} group h-full soft-card rounded-2xl p-6 border transition-all duration-300 hover:-translate-y-1.5 ${style.border} ${style.glow}`}
                 >
                   <span className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${style.bg} ${style.accent} mb-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                     <Icon name={style.icon} size={24} />

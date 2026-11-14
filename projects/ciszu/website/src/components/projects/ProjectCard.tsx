@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import type { CSSProperties } from 'react';
 import { assetResolver } from '@ciszunetwork/cdn';
 import { useDict } from '@/lib/useDict';
 import { Icon } from '@ciszu/ui';
@@ -27,7 +28,8 @@ export default function ProjectCard({
   const t = useDict();
   return (
     <article
-      className={`group relative flex flex-col overflow-hidden rounded-[2.5rem] border ${project.accent.border} bg-[#05060c]/80 transition-all duration-500 hover:-translate-y-2 ${project.accent.glow}`}
+      style={{ '--cz-accent': project.accent.hex } as CSSProperties}
+      className={`cz-card cz-shine group relative flex flex-col overflow-hidden rounded-[2.5rem] border ${project.accent.border} bg-[#05060c]/80 transition-all duration-500 hover:-translate-y-2 ${project.accent.glow}`}
     >
       {/* Fondo único: gradiente del color del logo + retícula sutil del acento. */}
       <div className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${project.accent.surface}`} />

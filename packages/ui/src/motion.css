@@ -1,0 +1,160 @@
+:root {
+  --cz-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:where(a, button, [role='button'], input, select, textarea, summary):focus-visible {
+  outline: 2px solid currentColor;
+  outline: 2px solid color-mix(in srgb, currentColor 72%, white 28%);
+  outline-offset: 3px;
+}
+
+.cz-press {
+  transition: scale 180ms var(--cz-ease-out), filter 180ms ease;
+}
+
+.cz-press:active {
+  scale: 0.97;
+}
+
+.cz-card {
+  --cz-accent: #68cfff;
+  --cz-ring: color-mix(in srgb, var(--cz-accent) 55%, transparent);
+  outline: 1px solid transparent;
+  outline-offset: 0;
+  transition:
+    translate 400ms var(--cz-ease-out),
+    outline-color 300ms ease,
+    outline-offset 300ms ease;
+}
+
+.cz-accent-brand {
+  --cz-accent: #5a82e8;
+}
+
+.cz-accent-blue {
+  --cz-accent: #59b4ff;
+}
+
+.cz-accent-cyan {
+  --cz-accent: #68cfff;
+}
+
+.cz-accent-green {
+  --cz-accent: #00ff88;
+}
+
+.cz-accent-pink {
+  --cz-accent: #ff33cc;
+}
+
+.cz-accent-purple {
+  --cz-accent: #a855f7;
+}
+
+.cz-accent-red {
+  --cz-accent: #ef4444;
+}
+
+.cz-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.cz-shine::after {
+  position: absolute;
+  z-index: 1;
+  top: -60%;
+  bottom: -60%;
+  left: -40%;
+  width: 28%;
+  content: '';
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.16), transparent);
+  opacity: 0;
+  transform: skewX(-18deg);
+  transition:
+    left 800ms var(--cz-ease-out),
+    opacity 250ms ease;
+}
+
+.cz-link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0 1px;
+  transition: background-size 250ms var(--cz-ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cz-press:hover {
+    filter: brightness(1.04);
+  }
+
+  .cz-card:hover {
+    translate: 0 -3px;
+    outline-color: var(--cz-ring);
+    outline-offset: 3px;
+  }
+
+  .cz-shine:hover::after {
+    left: 125%;
+    opacity: 1;
+  }
+
+  .cz-link-underline:hover {
+    background-size: 100% 1px;
+  }
+}
+
+@media (hover: none) {
+  .cz-card:active {
+    translate: 0 -1px;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  .cz-reveal {
+    animation: cz-reveal-in 700ms var(--cz-ease-out) both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 30%;
+  }
+}
+
+@keyframes cz-reveal-in {
+  from {
+    opacity: 0;
+    translate: 0 22px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .cz-card,
+  .cz-card:hover,
+  .cz-card:active {
+    translate: none !important;
+  }
+
+  .cz-shine::after {
+    display: none;
+  }
+
+  .cz-reveal {
+    opacity: 1 !important;
+    translate: none !important;
+    animation: none !important;
+  }
+}

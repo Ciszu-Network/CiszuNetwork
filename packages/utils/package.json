@@ -9,6 +9,8 @@
     "./logger": "./src/logger.ts",
     "./schema": "./src/schema.ts",
     "./effect": "./src/effect.ts",
+    "./iast": "./src/iast.ts",
+    "./csp": "./src/csp.ts",
     "./changelog": "./src/changelog.ts",
     "./reviews": "./src/reviews.ts",
     "./duration": "./src/duration.ts",

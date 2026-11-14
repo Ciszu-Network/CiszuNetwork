@@ -66,7 +66,7 @@ export function EcosystemSection({
   return (
     <section className="relative py-16 border-t border-white/5">
       <div className="max-w-screen-xl mx-auto px-4 text-center">
-        <div className="soft-card relative max-w-4xl mx-auto border border-white/10 overflow-hidden">
+        <div className="soft-card cz-card cz-shine cz-reveal cz-accent-brand relative max-w-4xl mx-auto border border-white/10 overflow-hidden">
           <div className="absolute -top-20 -right-20 w-64 h-64 bg-brand/10 rounded-full blur-[80px]" />
           <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-brand-accent/10 rounded-full blur-[80px]" />
           <div className="relative p-8 md:p-12 flex flex-col items-center gap-6">
@@ -90,7 +90,7 @@ export function EcosystemSection({
                 href={visitHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-brand to-brand-light text-white font-bold rounded-xl shadow-lg shadow-brand/30 hover:shadow-2xl hover:shadow-brand/40 hover:scale-105 transition-all"
+                className="cz-press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-gradient-to-r from-brand to-brand-light text-white font-bold rounded-xl shadow-lg shadow-brand/30 hover:shadow-2xl hover:shadow-brand/40 hover:scale-105 transition-all"
               >
                 {finalVisitLabel}
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -99,7 +99,7 @@ export function EcosystemSection({
               </a>
               <a
                 href={projectsHref}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white/5 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 hover:scale-105 transition-all"
+                className="cz-press w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-white/5 border border-white/20 text-white font-bold rounded-xl hover:bg-white/10 hover:scale-105 transition-all"
               >
                 {finalProjectsLabel}
                 <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
