@@ -15,7 +15,7 @@ $script:CiszuApps = [ordered]@{
 }
 $script:CiszuDevKeys = @('network', 'antony', 'ciszubot', 'muzic')
 
-$script:CiszuShowBanner = $env:CISZU_PROFILE_BANNER -eq '1'
+$script:CiszuShowBanner = $env:CISZU_PROFILE_BANNER -ne '0'
 
 $e = [char]27
 $c_cyan = "${e}[38;2;52;226;226m"
