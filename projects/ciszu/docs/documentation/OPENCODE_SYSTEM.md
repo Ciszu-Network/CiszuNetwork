@@ -217,7 +217,7 @@ código real está versionado en `shared/powershell/CiszuNetwork.Profile.ps1`.
 - Autocompletado: scripts de `pnpm`, apps de `dev`/`devlog`, ramas de `git` en
   `checkout/switch/merge/rebase/branch`, historial incremental y búsqueda con flechas.
 - `gc`/`gcp` bloquean el stage si detectan `.env`, `SECRET_TEMP.env` o `.age`.
-- Catálogo completo: `pnpm commands`; ayuda del perfil: `ciszuh` o `czhelp`.
+- Catálogo completo: `pnpm commands`; ayuda del perfil: `ciszuh` o `czhelp`.\n- **Arranque silencioso por defecto**: el módulo no imprime banner ni cabecera. Para mostrarlos, definir `CISZU_PROFILE_BANNER=1`. Si `E:` está bloqueado por BitLocker, el loader omite el módulo sin errores; para diagnóstico, `CISZU_PROFILE_DEBUG=1`.
 
 ## LSP (Language Server Protocol) — activado 2026-08-19
 

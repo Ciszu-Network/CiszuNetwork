@@ -14,23 +14,21 @@ if (-not (Test-Path -LiteralPath $module)) {
   throw "No se encontro el modulo del perfil: $module"
 }
 
+$documents = [Environment]::GetFolderPath('MyDocuments')
+$profilePaths = @(
+  $PROFILE,
+  (Join-Path $documents 'PowerShell\Microsoft.PowerShell_profile.ps1')
+) | Select-Object -Unique
+
 if ($Check) {
-  $loaded = if (Test-Path -LiteralPath $PROFILE) { Get-Content -LiteralPath $PROFILE -Raw } else { '' }
-  Write-Output "Perfil:  $PROFILE"
+  foreach ($path in $profilePaths) {
+    $loaded = if (Test-Path -LiteralPath $path) { Get-Content -LiteralPath $path -Raw } else { '' }
+    Write-Output "Perfil:  $path"
+    Write-Output "Loader:  $(if ($loaded -match 'CiszuNetwork\.Profile') { 'OK' } else { 'NO INSTALADO' })"
+  }
   Write-Output "Modulo:  $module"
   Write-Output "Repo:    $RepoRoot"
-  Write-Output "Loader:  $(if ($loaded -match 'CiszuNetwork\.Profile') { 'OK' } else { 'NO INSTALADO' })"
   exit 0
-}
-
-$profileDir = Split-Path -Parent $PROFILE
-if (-not (Test-Path -LiteralPath $profileDir)) {
-  New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
-}
-if (Test-Path -LiteralPath $PROFILE) {
-  $backup = "$PROFILE.bak-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-  Copy-Item -LiteralPath $PROFILE -Destination $backup -Force
-  Write-Output "Backup: $backup"
 }
 
 $escapedModule = $module.Replace("'", "''")
@@ -44,18 +42,33 @@ $loader = @"
   'E:\Ciszu Network',
   (Join-Path `$HOME 'Ciszu Network'),
   (Join-Path `$HOME 'source\repos\CiszuNetwork')
-)
+) | Select-Object -Unique
 foreach (`$ciszuRoot in `$ciszuCandidates) {
-  if (-not `$ciszuRoot) { continue }
-  `$ciszuModule = Join-Path `$ciszuRoot 'shared\powershell\CiszuNetwork.Profile.ps1'
-  if (Test-Path -LiteralPath `$ciszuModule) {
-    . `$ciszuModule
-    return
+  if ([string]::IsNullOrWhiteSpace([string]`$ciszuRoot)) { continue }
+  try {
+    if (-not (Test-Path -LiteralPath `$ciszuRoot -PathType Container -ErrorAction Stop)) { continue }
+    `$ciszuModule = Join-Path `$ciszuRoot 'shared\powershell\CiszuNetwork.Profile.ps1'
+    if (Test-Path -LiteralPath `$ciszuModule -PathType Leaf -ErrorAction Stop) {
+      . `$ciszuModule
+      return
+    }
+  } catch {
+    continue
   }
 }
-Write-Host 'CISZU profile: no se encontro shared/powershell/CiszuNetwork.Profile.ps1. Ejecuta pnpm profile:install desde el repo.' -ForegroundColor Yellow
 "@
 
-Set-Content -LiteralPath $PROFILE -Value $loader -Encoding UTF8
-Write-Output "Instalado: $PROFILE"
-Write-Output "Modulo:    $module"
+foreach ($path in $profilePaths) {
+  $profileDir = Split-Path -Parent $path
+  if (-not (Test-Path -LiteralPath $profileDir)) {
+    New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
+  }
+  if (Test-Path -LiteralPath $path) {
+    $backup = "$path.bak-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+    Copy-Item -LiteralPath $path -Destination $backup -Force
+    Write-Output "Backup: $backup"
+  }
+  Set-Content -LiteralPath $path -Value $loader -Encoding UTF8
+  Write-Output "Instalado: $path"
+}
+Write-Output "Modulo:    $escapedModule"

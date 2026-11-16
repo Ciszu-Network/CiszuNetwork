@@ -15,6 +15,8 @@ $script:CiszuApps = [ordered]@{
 }
 $script:CiszuDevKeys = @('network', 'antony', 'ciszubot', 'muzic')
 
+$script:CiszuShowBanner = $env:CISZU_PROFILE_BANNER -eq '1'
+
 $e = [char]27
 $c_cyan = "${e}[38;2;52;226;226m"
 $c_pink = "${e}[38;2;255;92;144m"
@@ -40,7 +42,7 @@ try {
   }
 } catch {}
 
-if ($Host.Name -match 'ConsoleHost') {
+if ($script:CiszuShowBanner -and $Host.Name -match 'ConsoleHost') {
   Write-Host "${c_cyan}☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰${c_reset}"
   Write-Host "                 ${c_blue}CISZU NETWORK${c_reset} ${c_purple}| PORTABLE PROFILE | CLI | TUI${c_reset}"
   Write-Host "${c_cyan}☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰${c_reset}"
@@ -76,8 +78,8 @@ try {
   }
 } catch {
   $msg = "$_"
-  if ($msg -notmatch 'virtual terminal processing|prediction plugin source|prediction .* not supported') {
-    Write-Host "PSReadLine skip: $msg"
+  if ($env:CISZU_PROFILE_DEBUG -eq '1' -and $msg -notmatch 'virtual terminal processing|prediction plugin source|prediction .* not supported') {
+    Write-Warning "PSReadLine skip: $msg"
   }
 }
 
@@ -330,4 +332,6 @@ function Show-CiszuHeader {
   }
   Write-Host ''
 }
-Show-CiszuHeader
+if ($script:CiszuShowBanner) {
+  Show-CiszuHeader
+}
