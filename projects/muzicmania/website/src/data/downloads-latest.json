@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-11-18T21:13:54Z",
+    "generatedAt":  "2026-11-18T21:27:05Z",
     "launcherVersion":  "2.4.1",
     "gameVersion":  "2.1.1",
     "channel":  "beta",
@@ -17,8 +17,8 @@
                                     "minimumWindows":  "10",
                                     "fileName":  "MuzicMania_Game-v2.1.1_Launcher-v2.4.1_beta_windows11_x64.exe",
                                     "path":  "2.4.1/beta/windows11/MuzicMania_Game-v2.1.1_Launcher-v2.4.1_beta_windows11_x64.exe",
-                                    "size":  11826216,
-                                    "sha256":  "84589B0EA774AC78AF05BCFD0C908A3C720CC6D0E9C7A909F4796A325CC0DE9D",
+                                    "size":  11825285,
+                                    "sha256":  "C09FCE11B6A8770E2D485E526920575F64AF8094C3B135CC52EED259F8CBD087",
                                     "buildDate":  "2026-11-18",
                                     "changelogUrl":  "https://muzicmania.vercel.app/changelog/launcher-v2.4.1-beta",
                                     "releaseTag":  "launcher-v2.4.1-beta"
@@ -33,8 +33,8 @@
                                     "minimumWindows":  "10",
                                     "fileName":  "MuzicMania_Game-v2.1.1_Launcher-v2.4.1_beta_windows10_x64.exe",
                                     "path":  "2.4.1/beta/windows10/MuzicMania_Game-v2.1.1_Launcher-v2.4.1_beta_windows10_x64.exe",
-                                    "size":  11826216,
-                                    "sha256":  "84589B0EA774AC78AF05BCFD0C908A3C720CC6D0E9C7A909F4796A325CC0DE9D",
+                                    "size":  11825285,
+                                    "sha256":  "C09FCE11B6A8770E2D485E526920575F64AF8094C3B135CC52EED259F8CBD087",
                                     "buildDate":  "2026-11-18",
                                     "changelogUrl":  "https://muzicmania.vercel.app/changelog/launcher-v2.4.1-beta",
                                     "releaseTag":  "launcher-v2.4.1-beta"
@@ -53,8 +53,8 @@
                  "minimumWindows":  "10",
                  "fileName":  "MuzicMania_Game-v2.1.1_Launcher-v2.4.1_beta_windows10_x64.exe",
                  "path":  "2.4.1/beta/windows10/MuzicMania_Game-v2.1.1_Launcher-v2.4.1_beta_windows10_x64.exe",
-                 "size":  11826216,
-                 "sha256":  "84589B0EA774AC78AF05BCFD0C908A3C720CC6D0E9C7A909F4796A325CC0DE9D",
+                 "size":  11825285,
+                 "sha256":  "C09FCE11B6A8770E2D485E526920575F64AF8094C3B135CC52EED259F8CBD087",
                  "buildDate":  "2026-11-18",
                  "changelogUrl":  "https://muzicmania.vercel.app/changelog/launcher-v2.4.1-beta",
                  "releaseTag":  "launcher-v2.4.1-beta"

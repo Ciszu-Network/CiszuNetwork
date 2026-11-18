@@ -810,7 +810,7 @@ async function skipUpdate() {
 async function afterInitialization() {
   setBar('splash-bar', 90);
   setPct('splash-pct', 90);
-  if (!state.boot?.tutorial_done) {
+  if (state.boot?.first_run && !state.boot?.tutorial_done) {
     showWelcome();
     return;
   }
@@ -1301,6 +1301,7 @@ function bind() {
 
 bind();
 boot();
+
 
 
 
