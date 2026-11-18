@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "policyVersion": 1,
+  "policyVersion": 2,
   "issuedAt": "2026-11-18T00:00:00Z",
   "minimumSupported": {
-    "launcher": "2.0.0",
-    "beta": "2.0.0",
-    "release": "2.0.0"
+    "launcher": "2.4.1",
+    "beta": "2.4.1",
+    "release": "2.4.1"
   },
   "blocks": [],
   "support": {
@@ -14,3 +14,4 @@
     "changelogUrl": "https://muzicmania.vercel.app/changelog"
   }
 }
+

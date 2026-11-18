@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
-  "policyVersion": 1,
+  "policyVersion": 2,
   "issuedAt": "2026-11-18T00:00:00Z",
-  "generatedAt": "2026-11-18T21:27:05.249Z",
+  "generatedAt": "2026-11-18T21:29:16.015Z",
   "product": "muzicmania",
   "minimumSupported": {
-    "launcher": "2.0.0",
-    "beta": "2.0.0",
-    "release": "2.0.0"
+    "launcher": "2.4.1",
+    "beta": "2.4.1",
+    "release": "2.4.1"
   },
   "blocks": [],
   "support": {
@@ -18,11 +18,11 @@
   "channels": {
     "beta": {
       "latest": "2.4.1",
-      "minimumSupported": "2.0.0"
+      "minimumSupported": "2.4.1"
     },
     "release": {
       "latest": "",
-      "minimumSupported": "2.0.0"
+      "minimumSupported": "2.4.1"
     }
   },
   "releases": [
@@ -81,7 +81,7 @@
       "changelogUrl": "https://muzicmania.vercel.app/changelog/launcher-v2.4.0-beta",
       "releaseTag": "launcher-v2.4.0-beta",
       "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/launcher-v2.4.0-beta/MuzicMania_Game-v2.1.1_Launcher-v2.4.0_beta_windows10_x64.exe",
-      "status": "supported"
+      "status": "blocked_support"
     },
     {
       "launcherVersion": "2.4.0",
@@ -100,7 +100,7 @@
       "changelogUrl": "https://muzicmania.vercel.app/changelog/launcher-v2.4.0-beta",
       "releaseTag": "launcher-v2.4.0-beta",
       "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/launcher-v2.4.0-beta/MuzicMania_Game-v2.1.1_Launcher-v2.4.0_beta_windows11_x64.exe",
-      "status": "supported"
+      "status": "blocked_support"
     },
     {
       "launcherVersion": "2.3.2",
@@ -119,7 +119,7 @@
       "changelogUrl": "https://muzicmania.vercel.app/changelog/launcher-v2.3.2-beta",
       "releaseTag": "launcher-v2.3.2-beta",
       "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/launcher-v2.3.2-beta/MuzicMania_Game-v2.1.1_Launcher-v2.3.2_beta_windows10_x64.exe",
-      "status": "supported"
+      "status": "blocked_support"
     },
     {
       "launcherVersion": "2.3.2",
@@ -138,7 +138,7 @@
       "changelogUrl": "https://muzicmania.vercel.app/changelog/launcher-v2.3.2-beta",
       "releaseTag": "launcher-v2.3.2-beta",
       "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/launcher-v2.3.2-beta/MuzicMania_Game-v2.1.1_Launcher-v2.3.2_beta_windows11_x64.exe",
-      "status": "supported"
+      "status": "blocked_support"
     },
     {
       "launcherVersion": "2.3.1",
@@ -157,7 +157,7 @@
       "changelogUrl": "",
       "releaseTag": "muzicmania-v2.1.1",
       "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/muzicmania-v2.1.1/MuzicMania(v2.1.1)_InstallerSetup(v2.3.1)_Windows10_x64.exe",
-      "status": "supported"
+      "status": "blocked_support"
     },
     {
       "launcherVersion": "2.3.1",
@@ -176,7 +176,7 @@
       "changelogUrl": "",
       "releaseTag": "muzicmania-v2.1.1",
       "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/muzicmania-v2.1.1/MuzicMania(v2.1.1)_InstallerSetup(v2.3.1)_Windows11_x64.exe",
-      "status": "supported"
+      "status": "blocked_support"
     }
   ]
 }
