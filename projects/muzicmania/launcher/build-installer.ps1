@@ -251,10 +251,13 @@ if (Test-Path $ManifestBuilder) {
     if ($LASTEXITCODE -ne 0) { throw "La generacion del manifiesto fallo con codigo $LASTEXITCODE" }
     Copy-Item -LiteralPath $ReleaseManifest -Destination (Join-Path $WebsiteData "releases-manifest.json") -Force
     Copy-Item -LiteralPath $ReleaseSignature -Destination (Join-Path $WebsiteData "releases-manifest.sig") -Force
+    Copy-Item -LiteralPath $ReleaseSignature -Destination (Join-Path $WebsiteData "releases-manifest.json.sig") -Force
     Copy-Item -LiteralPath $ReleaseManifest -Destination (Join-Path $WebsiteRoot "public\releases-manifest.json") -Force
     Copy-Item -LiteralPath $ReleaseSignature -Destination (Join-Path $WebsiteRoot "public\releases-manifest.sig") -Force
+    Copy-Item -LiteralPath $ReleaseSignature -Destination (Join-Path $WebsiteRoot "public\releases-manifest.json.sig") -Force
     Copy-Item -LiteralPath $ReleaseManifest -Destination (Join-Path $LauncherDownloads "releases-manifest.json") -Force
     Copy-Item -LiteralPath $ReleaseSignature -Destination (Join-Path $LauncherDownloads "releases-manifest.sig") -Force
+    Copy-Item -LiteralPath $ReleaseSignature -Destination (Join-Path $LauncherDownloads "releases-manifest.json.sig") -Force
 } else {
     Write-Warning "No se encontro build-release-manifest.mjs; no se genero el manifiesto."
 }
@@ -263,6 +266,7 @@ Write-Host "Instalador listo: $Installer" -ForegroundColor Green
 Write-Host "Launcher: v$LauncherVersion · Juego: v$GameVersion · Canal: $Channel" -ForegroundColor Green
 Write-Host "Tamano: $Size bytes" -ForegroundColor Green
 Write-Host "SHA256: $Hash" -ForegroundColor Green
+
 
 
 
