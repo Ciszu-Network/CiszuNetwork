@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "policyVersion": 2,
   "issuedAt": "2026-11-18T00:00:00Z",
-  "generatedAt": "2026-11-18T21:29:16.015Z",
+  "generatedAt": "2026-11-18T21:42:02.829Z",
   "product": "muzicmania",
   "minimumSupported": {
     "launcher": "2.4.1",
@@ -149,14 +149,14 @@
       "arch": "x64",
       "minimumWindows": "10",
       "fileName": "MuzicMania_Game-v2.1.1_Launcher-v2.3.1_beta_windows10_x64.exe",
-      "remoteFileName": "MuzicMania(v2.1.1)_InstallerSetup(v2.3.1)_Windows10_x64.exe",
+      "remoteFileName": "MuzicMania.v2.1.1._InstallerSetup.v2.3.1._Windows10_x64.exe",
       "path": "2.3.1/beta/windows10/MuzicMania_Game-v2.1.1_Launcher-v2.3.1_beta_windows10_x64.exe",
       "size": 11751698,
       "sha256": "3A489AA4F9A575CB513D1A5F3578C5642108DB1D891B70F804386D3B8440725C",
       "buildDate": "2026-11-17",
       "changelogUrl": "",
       "releaseTag": "muzicmania-v2.1.1",
-      "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/muzicmania-v2.1.1/MuzicMania(v2.1.1)_InstallerSetup(v2.3.1)_Windows10_x64.exe",
+      "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/muzicmania-v2.1.1/MuzicMania.v2.1.1._InstallerSetup.v2.3.1._Windows10_x64.exe",
       "status": "blocked_support"
     },
     {
@@ -168,14 +168,14 @@
       "arch": "x64",
       "minimumWindows": "10",
       "fileName": "MuzicMania_Game-v2.1.1_Launcher-v2.3.1_beta_windows11_x64.exe",
-      "remoteFileName": "MuzicMania(v2.1.1)_InstallerSetup(v2.3.1)_Windows11_x64.exe",
+      "remoteFileName": "MuzicMania.v2.1.1._InstallerSetup.v2.3.1._Windows11_x64.exe",
       "path": "2.3.1/beta/windows11/MuzicMania_Game-v2.1.1_Launcher-v2.3.1_beta_windows11_x64.exe",
       "size": 11751698,
       "sha256": "3A489AA4F9A575CB513D1A5F3578C5642108DB1D891B70F804386D3B8440725C",
       "buildDate": "2026-11-17",
       "changelogUrl": "",
       "releaseTag": "muzicmania-v2.1.1",
-      "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/muzicmania-v2.1.1/MuzicMania(v2.1.1)_InstallerSetup(v2.3.1)_Windows11_x64.exe",
+      "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/muzicmania-v2.1.1/MuzicMania.v2.1.1._InstallerSetup.v2.3.1._Windows11_x64.exe",
       "status": "blocked_support"
     }
   ]
