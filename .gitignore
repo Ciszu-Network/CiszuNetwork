@@ -1,4 +1,4 @@
-# Dependencies
+﻿# Dependencies
 node_modules/
 .pnpm-store/
 
@@ -600,3 +600,7 @@ scripts/
 !projects/muzicmania/website/scripts/**
 
 deploy/
+
+# Release policy private signing key (never commit)
+release-policy.private
+

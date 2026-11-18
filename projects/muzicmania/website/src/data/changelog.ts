@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+﻿import { ReactNode } from 'react';
 
 export type ChangelogType = 
   | 'hotfix' | 'add' | 'ui' | 'bugfix' | 'perf' | 'ux' 
@@ -25,6 +25,60 @@ export interface ChangelogItem {
 }
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
+  {
+    id: 'launcher-v2.4.1-beta',
+    version: 'LAUNCHER V2.4.1 BETA',
+    code: 'L-241-BETA',
+    title: 'Bienvenida, Tutorial y Login CISZU ID',
+    description: 'El primer arranque estrena bienvenida exclusiva, tutorial guiado y acceso CISZU ID con sesión recordada; el hub distingue primera vez.',
+    date: '2026-11-18',
+    author: 'CiszukoAntony',
+    types: ['ui', 'ux', 'add'],
+    likes: 0,
+    details: [
+      { text: 'Pantalla de bienvenida exclusiva antes del tutorial en el primer inicio.', type: 'ui' },
+      { text: 'El login aparece después del tutorial, antes del hub; solo inicio de sesión, sin registro local.', type: 'add' },
+      { text: 'CISZU ID conserva OAuth, recuperación, 2FA, CAPTCHA, soporte y opción Recordarme.', type: 'add' },
+      { text: 'El hub muestra un mensaje especial de primera vez y vuelve a “bienvenido de vuelta” en sesiones posteriores.', type: 'ux' },
+      { text: 'La sesión se guarda si Recordarme está activo; si no, se mantiene solo durante la sesión actual.', type: 'add' },
+    ],
+  },
+  {
+    id: 'launcher-v2.4.0-beta',
+    version: 'LAUNCHER V2.4.0 BETA',
+    code: 'L-240-BETA',
+    title: 'Política de Versiones y Bloqueos de Seguridad',
+    description: 'El launcher incorpora manifiesto firmado, canales, rangos de actualización, bloqueos obligatorios y avisos con elección del usuario.',
+    date: '2026-11-18',
+    author: 'CiszukoAntony',
+    types: ['sec', 'build', 'add', 'ui', 'ux'],
+    likes: 0,
+    details: [
+      { text: 'Manifiesto firmado Ed25519 con caché local y política embebida para funcionar sin conexión.', type: 'sec' },
+      { text: 'Actualizaciones opcionales con opción de quedarse, ir a la más nueva, a la más cercana o elegir del rango.', type: 'ux' },
+      { text: 'Bloqueos obligatorios por soporte o seguridad: hub, online y offline quedan desactivados hasta actualizar.', type: 'sec' },
+      { text: 'Canales beta/release con aviso de cambio, elección recordada y opción automática configurable.', type: 'add' },
+      { text: 'Validación de OS/arquitectura, checksum de descargas, error con reintento, descarga manual y soporte.', type: 'build' },
+    ],
+  },
+  {
+    id: 'launcher-v2.3.2-beta',
+    version: 'LAUNCHER V2.3.2 BETA',
+    code: 'L-232-BETA',
+    title: 'Launcher Beta con Versiones y Hub Inteligente',
+    description: 'El launcher estrena registro de versiones por canal, comparación de builds en el hub y una interfaz más limpia con isotipo y barra propia.',
+    date: '2026-11-18',
+    author: 'CiszukoAntony',
+    types: ['build', 'add', 'ui', 'ux'],
+    likes: 0,
+    details: [
+      { text: 'Cada build se archiva por versión de launcher, canal y sistema operativo, con metadatos, SHA256 y changelog.', type: 'build' },
+      { text: 'La web de descargas muestra el historial con búsqueda, filtros por canal y orden por fecha o versión.', type: 'add' },
+      { text: 'El hub compara la versión instalada con la del instalador y bloquea reinstalaciones que degraden la app.', type: 'ux' },
+      { text: 'El launcher y los setups usan el isotipo y una barra de ventana personalizada; se eliminaron logos y textos duplicados.', type: 'ui' },
+      { text: 'El updater distingue entre conexión fallida, versión del repositorio más nueva y versión local más reciente, sin degradar.', type: 'add' },
+    ],
+  },
   {
     id: 'patch-v2.7.0',
     version: 'PATCH V2.7.0',
@@ -279,3 +333,5 @@ export const CHANGELOG_DATA: ChangelogItem[] = [
     ]
   }
 ];
+
+

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -58,6 +58,31 @@
   .finish .btn { margin-top:8px; }
   .app-footer { flex-shrink:0; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 24px 12px; color:var(--muted); font-size:10px; z-index:2; }
   .footer-group { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  a { color:#0f9eff; text-decoration:none; transition:color .18s ease; }
+  a:hover { color:#61c4ff; }
+  button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+  .language-card { margin-bottom:14px; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:rgba(0,0,0,.18); }
+  .form-label { display:block; color:var(--muted); font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .language-trigger, .footer-lang { display:inline-flex; align-items:center; gap:8px; border:1px solid var(--border); border-radius:7px; background:rgba(0,0,0,.28); color:var(--text); padding:8px 10px; font-size:11px; outline:none; cursor:pointer; }
+  .language-trigger { width:100%; margin-top:7px; justify-content:flex-start; }
+  .language-trigger:hover, .footer-lang:hover { border-color:var(--primary); }
+  .language-trigger img, .footer-lang img, .language-option img { width:22px; height:15px; object-fit:cover; border-radius:2px; box-shadow:0 0 0 1px rgba(255,255,255,.15); }
+  .language-chevron { margin-left:auto; color:var(--muted); }
+  .language-hint { display:block; margin-top:6px; font-size:10px; color:var(--muted); }
+  .footer-lang { font-size:10px; padding:5px 8px; }
+  .language-modal { width:min(560px,92vw); max-height:80vh; overflow:auto; background:#11131d; border:1px solid var(--border); border-radius:12px; padding:20px; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+  .language-modal h2 { font-size:15px; margin-bottom:12px; }
+  .language-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .language-option { display:flex; align-items:center; gap:9px; width:100%; text-align:left; border:1px solid transparent; border-radius:7px; background:rgba(255,255,255,.035); color:var(--text); padding:9px 10px; font-size:12px; cursor:pointer; }
+  .language-option:hover, .language-option.selected { background:rgba(108,92,231,.18); border-color:var(--primary); }
+  .language-option.selected::after { content:"✓"; margin-left:auto; color:var(--success); }
+  @media (max-width:520px) { .language-grid { grid-template-columns:1fr; } }
+  .uninstall-busy .stage-host { overflow:hidden; }
+  .uninstall-busy .reason, .uninstall-busy .star, .uninstall-busy .btn-secondary,
+  .uninstall-busy .footer-lang, .uninstall-busy .language-card { pointer-events:none; opacity:.45; }
+  .uninstall-busy .btn-danger { pointer-events:none; opacity:.45; }
+  .uninstall-busy #modal-no { pointer-events:auto; opacity:1; }
+  .uninstall-busy #u-console { opacity:1; }
   .icon { width:1.05em; height:1.05em; fill:none; stroke:currentColor; stroke-width:1.9; stroke-linecap:round; stroke-linejoin:round; vertical-align:-.18em; flex-shrink:0; }
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); align-items:center; justify-content:center; z-index:99; }
   .modal-overlay.active { display:flex; animation:fadeIn .16s ease both; }
@@ -76,6 +101,7 @@
   @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
 </style>
 <link rel="stylesheet" href="roadmap.css">
+<link rel="stylesheet" href="setup-titlebar.css">
 </head>
 <body>
 <svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -104,80 +130,99 @@
   <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.5 3.5A11.8 11.8 0 0 0 1.9 17.7L.5 23.5l5.9-1.4A11.8 11.8 0 0 0 20.5 3.5Zm-8.4 18a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.5.9.9-3.4-.2-.4a9.8 9.8 0 1 1 8.2 4.5Zm5.4-7.3c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.2l-.9 1.1c-.2.2-.4.2-.7.1a8 8 0 0 1-2.3-1.4 8.8 8.8 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.6.3-.6c.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/></symbol>
 </svg>
 <div class="bg-glow"></div>
+<div class="setup-titlebar" data-tauri-drag-region>
+  <div class="setup-titlebar-brand" data-tauri-drag-region>
+    <img id="brand-logo" class="setup-titlebar-isotipo" src="isotipo.svg" alt="MuzicMania">
+    <span id="easter-cat" class="easter-cat" aria-hidden="true">🐱</span>
+    <span id="uninstaller-channel" class="setup-titlebar-beta">BETA</span>
+    <span id="uninstaller-version" class="setup-titlebar-version">MuzicMania</span>
+  </div>
+  <button type="button" class="setup-titlebar-lang footer-lang" id="u-footer-lang" aria-label="Language"><img id="u-footer-lang-flag" src="flags/gb.svg" alt=""><span id="u-footer-lang-label">English</span></button>
+  <div class="setup-titlebar-actions">
+    <button type="button" class="setup-titlebar-btn" id="setup-minimize" title="Minimize">&#8211;</button>
+    <button type="button" class="setup-titlebar-btn close" id="setup-close" title="Close">&#215;</button>
+  </div>
+</div>
 <div class="window-frame">
-  <div class="header"><img id="brand-logo" class="brand-logo" src="logo.svg" alt="MuzicMania"><span id="easter-cat" class="easter-cat" aria-hidden="true">🐱</span></div>
   <div id="roadmap" class="roadmap"></div>
   <div class="stage-host" id="stage-host">
     <div id="v-welcome" class="view active">
       <div class="panel finish">
         <div class="hero-warning"><svg class="icon" style="width:42px;height:42px"><use href="#i-warning"></use></svg></div>
-        <h1><svg class="icon"><use href="#i-trash"></use></svg>Hasta pronto</h1>
-        <p>Vamos a desinstalar MuzicMania. Lamentamos verte partir; tu cuenta online seguirá segura y podrás volver cuando quieras.</p>
+        <h1><svg class="icon"><use href="#i-trash"></use></svg><span data-u18n="welcomeTitle">Hasta pronto</span></h1>
+        <p data-u18n="welcomeDesc">Vamos a desinstalar MuzicMania. Lamentamos verte partir; tu cuenta online seguirá segura y podrás volver cuando quieras.</p>
+        <div class="language-card">
+          <label class="form-label" data-u18n="languageLabel">Idioma de la interfaz</label>
+          <button type="button" class="language-trigger" id="u-language-trigger" aria-haspopup="listbox">
+            <img id="u-language-flag" src="flags/gb.svg" alt=""><span id="u-language-name">English</span><span class="language-chevron">⌄</span>
+          </button>
+          <span class="language-hint" data-u18n="languageHint">Puedes cambiar el idioma ahora o desde el botón rápido de la barra superior.</span>
+        </div>
         <div class="btn-row" style="justify-content:center;margin-top:18px;">
-          <button class="btn btn-secondary" id="btn-welcome-close"><svg class="icon"><use href="#i-x"></use></svg>Cancelar</button>
-          <button class="btn btn-danger" id="btn-welcome-continue"><svg class="icon"><use href="#i-arrow-right"></use></svg>Continuar</button>
+          <button class="btn btn-secondary" id="btn-welcome-close"><svg class="icon"><use href="#i-x"></use></svg><span data-u18n="cancel">Cancelar</span></button>
+          <button class="btn btn-danger" id="btn-welcome-continue"><svg class="icon"><use href="#i-arrow-right"></use></svg><span data-u18n="continue">Continuar</span></button>
         </div>
       </div>
     </div>
     <div id="v-confirm" class="view">
       <div class="panel">
         <div class="hero-warning"><svg class="icon" style="width:42px;height:42px"><use href="#i-warning"></use></svg></div>
-        <h1><svg class="icon"><use href="#i-trash"></use></svg>Uninstall MuzicMania</h1>
-        <p>This will remove the application from your computer. Your MuzicMania account is stored online and will not be deleted.</p>
+        <h1><svg class="icon"><use href="#i-trash"></use></svg><span data-u18n="confirmTitle">Uninstall MuzicMania</span></h1>
+        <p data-u18n="confirmDesc">This will remove the application from your computer. Your MuzicMania account is stored online and will not be deleted.</p>
         <div class="info-list">
-          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-package"></use></svg>Installed version</span><strong id="u-version">—</strong></div>
-          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-folder"></use></svg>Application</span><strong id="u-path">—</strong></div>
-          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg>Disk used</span><strong id="u-size">—</strong></div>
-          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg>Local data</span><strong id="u-data">—</strong></div>
+          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-package"></use></svg><span data-u18n="installedVersion">Installed version</span></span><strong id="u-version">—</strong></div>
+          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-folder"></use></svg><span data-u18n="application">Application</span></span><strong id="u-path">—</strong></div>
+          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg><span data-u18n="diskUsed">Disk used</span></span><strong id="u-size">—</strong></div>
+          <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg><span data-u18n="localData">Local data</span></span><strong id="u-data">—</strong></div>
         </div>
-        <label class="checkbox-wrapper"><input type="checkbox" id="chk-delete"><svg class="icon"><use href="#i-warning"></use></svg><span>Also delete local settings, cache and offline data</span></label>
-        <p class="danger-text">If unchecked, your local settings and cache will be kept for a future installation. Account data is never affected.</p>
-        <div class="feedback-title"><svg class="icon"><use href="#i-info"></use></svg>Optional feedback</div>
+        <label class="checkbox-wrapper"><input type="checkbox" id="chk-delete"><svg class="icon"><use href="#i-warning"></use></svg><span data-u18n="deleteData">Also delete local settings, cache and offline data</span></label>
+        <p class="danger-text" data-u18n="deleteHint">If unchecked, your local settings and cache will be kept for a future installation. Account data is never affected.</p>
+        <div class="feedback-title"><svg class="icon"><use href="#i-info"></use></svg><span data-u18n="feedbackTitle">Optional feedback</span></div>
         <div class="reason-grid" id="reason-grid">
-          <button type="button" class="reason" data-reason="bugs">Too many bugs</button>
-          <button type="button" class="reason" data-reason="performance">Performance</button>
-          <button type="button" class="reason" data-reason="features">Missing features</button>
-          <button type="button" class="reason" data-reason="other">Other reason</button>
+          <button type="button" class="reason" data-reason="bugs" data-u18n="reasonBugs">Too many bugs</button>
+          <button type="button" class="reason" data-reason="performance" data-u18n="reasonPerformance">Performance</button>
+          <button type="button" class="reason" data-reason="features" data-u18n="reasonFeatures">Missing features</button>
+          <button type="button" class="reason" data-reason="other" data-u18n="reasonOther">Other reason</button>
         </div>
         <div class="rating" id="rating" aria-label="Rating">
           <button type="button" class="star" data-rating="1">★</button><button type="button" class="star" data-rating="2">★</button><button type="button" class="star" data-rating="3">★</button><button type="button" class="star" data-rating="4">★</button><button type="button" class="star" data-rating="5">★</button>
         </div>
-        <textarea id="feedback-text" placeholder="Tell us what could be better (optional)"></textarea>
+        <textarea id="feedback-text" placeholder="Tell us what could be better (optional)" data-u18n-placeholder="feedbackPlaceholder"></textarea>
       </div>
       <div class="btn-row">
-        <button class="btn btn-secondary" id="btn-cancel"><svg class="icon"><use href="#i-x"></use></svg>Cancel</button>
-        <button class="btn btn-danger" id="btn-uninstall"><svg class="icon"><use href="#i-trash"></use></svg>Uninstall</button>
+        <button class="btn btn-secondary" id="btn-cancel"><svg class="icon"><use href="#i-x"></use></svg><span data-u18n="cancel">Cancel</span></button>
+        <button class="btn btn-danger" id="btn-uninstall"><svg class="icon"><use href="#i-trash"></use></svg><span data-u18n="uninstall">Uninstall</span></button>
       </div>
     </div>
     <div id="v-missing" class="view">
       <div class="panel finish">
         <div class="hero-warning"><svg class="icon" style="width:42px;height:42px"><use href="#i-warning"></use></svg></div>
-        <h1><svg class="icon"><use href="#i-warning"></use></svg>MuzicMania is not installed</h1>
-        <p>No valid installation was found on this computer. Install MuzicMania again from the official download page.</p>
+        <h1><svg class="icon"><use href="#i-warning"></use></svg><span data-u18n="missingTitle">MuzicMania is not installed</span></h1>
+        <p data-u18n="missingDesc">No valid installation was found on this computer. Install MuzicMania again from the official download page.</p>
         <div class="btn-row" style="justify-content:center;margin-top:18px;">
-          <button class="btn btn-primary" id="btn-redownload"><svg class="icon"><use href="#i-download"></use></svg>Download MuzicMania</button>
-          <button class="btn btn-secondary" id="btn-missing-support"><svg class="icon"><use href="#i-whatsapp"></use></svg>Support</button>
-          <button class="btn btn-secondary" id="btn-missing-close"><svg class="icon"><use href="#i-x"></use></svg>Close</button>
+          <button class="btn btn-primary" id="btn-redownload"><svg class="icon"><use href="#i-download"></use></svg><span data-u18n="download">Download MuzicMania</span></button>
+          <button class="btn btn-secondary" id="btn-missing-support"><svg class="icon"><use href="#i-whatsapp"></use></svg><span data-u18n="support">Support</span></button>
+          <button class="btn btn-secondary" id="btn-missing-close"><svg class="icon"><use href="#i-x"></use></svg><span data-u18n="close">Close</span></button>
         </div>
       </div>
     </div>
     <div id="v-progress" class="view">
       <div class="panel">
-        <h1><svg class="icon"><use href="#i-trash"></use></svg>Uninstalling MuzicMania...</h1>
-        <p id="u-status">Preparing uninstallation...</p>
-        <div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="u-progress"></div></div><div class="progress-meta"><span id="u-detail">Removing files</span><span id="u-pct">0%</span></div></div>
+        <h1><svg class="icon"><use href="#i-trash"></use></svg><span data-u18n="progressTitle">Uninstalling MuzicMania...</span></h1>
+        <p id="u-status" data-u18n="preparing">Preparing uninstallation...</p>
+        <div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="u-progress"></div></div><div class="progress-meta"><span id="u-detail" data-u18n="removing">Removing files</span><span id="u-pct">0%</span></div></div>
         <div class="console" id="u-console"></div>
       </div>
     </div>
     <div id="v-done" class="view">
       <div class="panel finish">
         <div class="finish-icon">✓</div>
-        <h1><svg class="icon"><use href="#i-check"></use></svg>MuzicMania has been removed</h1>
-        <p id="u-done-note">The application was removed successfully.</p>
-        <p class="muted" style="margin-top:8px; color:var(--muted)">Lamentamos verte partir. Gracias por haber sido parte de MuzicMania; tu cuenta y tus recuerdos siguen aquí. Vuelve cuando quieras.</p>
-        <p class="muted" style="margin-top:8px"><svg class="icon"><use href="#i-shield"></use></svg> Your account data remains safe. Local settings were kept.</p>
-        <p class="muted" style="margin-top:8px"><svg class="icon"><use href="#i-whatsapp"></use></svg> Need help? <a data-external href="https://wa.me/584126858111" style="color:#25D366;text-decoration:none;">WhatsApp support</a> · <a data-external href="https://muzicmania.vercel.app/support" style="color:#0f9eff;text-decoration:none;">Support page</a></p>
-        <button class="btn btn-primary" id="btn-close"><svg class="icon"><use href="#i-check"></use></svg>Close</button>
+        <h1><svg class="icon"><use href="#i-check"></use></svg><span data-u18n="doneTitle">MuzicMania has been removed</span></h1>
+        <p id="u-done-note" data-u18n="doneNote">The application was removed successfully.</p>
+        <p class="muted" style="margin-top:8px; color:var(--muted)" data-u18n="doneMessage">Lamentamos verte partir. Gracias por haber sido parte de MuzicMania; tu cuenta y tus recuerdos siguen aquí. Vuelve cuando quieras.</p>
+        <p class="muted" style="margin-top:8px"><svg class="icon"><use href="#i-shield"></use></svg> <span data-u18n="accountSafe">Your account data remains safe. Local settings were kept.</span></p>
+        <p class="muted" style="margin-top:8px"><svg class="icon"><use href="#i-whatsapp"></use></svg> <span data-u18n="needHelp">Need help?</span> <a data-external href="https://wa.me/584126858111" style="color:#25D366;text-decoration:none;">WhatsApp</a> · <a data-external href="https://muzicmania.vercel.app/support" style="color:#0f9eff;text-decoration:none;" data-u18n="supportPage">Support page</a></p>
+        <button class="btn btn-primary" id="btn-close"><svg class="icon"><use href="#i-check"></use></svg><span data-u18n="close">Close</span></button>
       </div>
     </div>
   </div>
@@ -188,9 +233,11 @@
       <svg class="icon"><use href="#i-copyright"></use></svg>
       <span>2026 <a href="https://ciszunetwork.vercel.app" data-external>Ciszu Network</a></span>
       <span>· <a href="https://muzicmania.vercel.app" data-external>MuzicMania</a></span>
-      <span>· Uninstaller v2.1.0</span>
+      <span>· <span id="uninstaller-version-footer">Launcher v2.3.2 · BETA</span></span>
     </div>
-    <div class="footer-group"><span class="footer-support"><svg class="icon"><use href="#i-shield"></use></svg> Safe uninstall</span></div>
+    <div class="footer-group">
+      <span class="footer-support"><svg class="icon"><use href="#i-shield"></use></svg> <span data-u18n="footerSafe">Official uninstaller</span></span>
+    </div>
   </div>
   <div class="footer-social">
     <a class="social-link discord" data-external href="https://discord.gg/W3kMtMMj6E" title="Discord"><svg class="icon"><use href="#i-discord"></use></svg></a>
@@ -200,17 +247,53 @@
     <a class="social-link x" data-external href="https://x.com/CiszukoAntony" title="X"><svg class="icon"><use href="#i-social-x"></use></svg></a>
     <a class="social-link github" data-external href="https://github.com/Ciszu-Network" title="GitHub"><svg class="icon"><use href="#i-github"></use></svg></a>
     <a class="social-link whatsapp" data-external href="https://wa.me/584126858111" title="WhatsApp Support"><svg class="icon"><use href="#i-whatsapp"></use></svg></a>
-    <span class="footer-support">Soporte: <a data-external href="https://wa.me/584126858111">+58 412-685-8111</a></span>
+    <span class="footer-support"><span data-u18n="footerSupport">Soporte:</span> <a data-external href="https://wa.me/584126858111">+58 412-685-8111</a></span>
   </div>
 </footer>
 <div class="modal-overlay" id="close-modal">
   <div class="modal">
-    <h2><svg class="icon"><use href="#i-warning"></use></svg>Cancel uninstallation?</h2>
-    <p>If you close now, MuzicMania will stay installed.</p>
-    <div class="btn-row"><button class="btn btn-secondary" id="modal-no">Keep installed</button><button class="btn btn-danger" id="modal-yes">Cancel uninstall</button></div>
+    <h2><svg class="icon"><use href="#i-warning"></use></svg><span data-u18n="modalTitle">Cancel uninstallation?</span></h2>
+    <p data-u18n="modalDesc">If you close now, MuzicMania will stay installed.</p>
+    <div class="btn-row"><button class="btn btn-secondary" id="modal-no" data-u18n="keepInstalled">Continue uninstallation</button><button class="btn btn-danger" id="modal-yes" data-u18n="cancelUninstall">Cancel uninstall</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="running-modal">
+  <div class="modal">
+    <h2><svg class="icon"><use href="#i-warning"></use></svg><span data-u18n="runningTitle">MuzicMania is running</span></h2>
+    <p data-u18n="runningDesc">Close MuzicMania from the system tray or Task Manager before continuing.</p>
+    <div class="btn-row"><button class="btn btn-secondary" id="running-close" data-u18n="runningClose">Understood</button></div>
+  </div>
+</div>
+<div class="modal-overlay" id="u-language-modal">
+  <div class="language-modal">
+    <h2>Language / Idioma</h2>
+    <div class="language-grid" id="u-language-grid">
+      <button type="button" class="language-option" data-lang="1033" data-flag="gb"><img src="flags/gb.svg" alt=""><span>English</span></button>
+      <button type="button" class="language-option" data-lang="1034" data-flag="es"><img src="flags/es.svg" alt=""><span>Español</span></button>
+      <button type="button" class="language-option" data-lang="2052" data-flag="cn"><img src="flags/cn.svg" alt=""><span>简体中文</span></button>
+      <button type="button" class="language-option" data-lang="1028" data-flag="tw"><img src="flags/tw.svg" alt=""><span>繁體中文</span></button>
+      <button type="button" class="language-option" data-lang="1046" data-flag="pt"><img src="flags/pt.svg" alt=""><span>Português (Brasil)</span></button>
+      <button type="button" class="language-option" data-lang="1051" data-flag="ru"><img src="flags/ru.svg" alt=""><span>Русский</span></button>
+      <button type="button" class="language-option" data-lang="1041" data-flag="jp"><img src="flags/jp.svg" alt=""><span>日本語</span></button>
+      <button type="button" class="language-option" data-lang="1050" data-flag="kr"><img src="flags/kr.svg" alt=""><span>한국어</span></button>
+      <button type="button" class="language-option" data-lang="1036" data-flag="fr"><img src="flags/fr.svg" alt=""><span>Français</span></button>
+      <button type="button" class="language-option" data-lang="1031" data-flag="de"><img src="flags/de.svg" alt=""><span>Deutsch</span></button>
+      <button type="button" class="language-option" data-lang="1040" data-flag="it"><img src="flags/it.svg" alt=""><span>Italiano</span></button>
+      <button type="button" class="language-option" data-lang="1043" data-flag="nl"><img src="flags/nl.svg" alt=""><span>Nederlands</span></button>
+      <button type="button" class="language-option" data-lang="1045" data-flag="pl"><img src="flags/pl.svg" alt=""><span>Polski</span></button>
+      <button type="button" class="language-option" data-lang="1025" data-flag="sa"><img src="flags/sa.svg" alt=""><span>العربية</span></button>
+      <button type="button" class="language-option" data-lang="1055" data-flag="tr"><img src="flags/tr.svg" alt=""><span>Türkçe</span></button>
+      <button type="button" class="language-option" data-lang="1029" data-flag="cz"><img src="flags/cz.svg" alt=""><span>Čeština</span></button>
+      <button type="button" class="language-option" data-lang="1038" data-flag="hu"><img src="flags/hu.svg" alt=""><span>Magyar</span></button>
+      <button type="button" class="language-option" data-lang="1053" data-flag="se"><img src="flags/se.svg" alt=""><span>Svenska</span></button>
+    </div>
+    <div class="btn-row"><button class="btn btn-secondary" id="u-language-close" data-u18n="close">Close</button></div>
   </div>
 </div>
 <script src="roadmap.js"></script>
+<script src="build-info.js"></script>
 <script src="uninstaller.js"></script>
 </body>
 </html>
+
+

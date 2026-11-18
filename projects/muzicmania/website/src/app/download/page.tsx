@@ -1,6 +1,6 @@
-'use client';
+﻿'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import MainLayout from '@/components/templates/MainLayout';
 import { resolveAssetPath } from '@ciszunetwork/cdn';
@@ -152,12 +152,63 @@ const InfoCard = ({ title, desc, icon, glowClass, iconClass }: { title: string; 
   </div>
 );
 
+interface ReleaseEntry {
+  launcherVersion: string;
+  gameVersion: string;
+  channel: string;
+  os: string;
+  osLabel: string;
+  arch: string;
+  status?: string;
+  fileName: string;
+  path: string;
+  size: number;
+  sha256: string;
+  buildDate: string;
+  changelogUrl: string;
+  releaseTag: string;
+}
+
 export default function DownloadPage() {
   usePageTitle('DOWNLOAD');
   const t = useT();
   const {  } = useAppStore();
   const { toast } = useToast();
   const [isDownloading, setIsDownloading] = useState<string | null>(null);
+  const [releases, setReleases] = useState<ReleaseEntry[]>([]);
+  const [releaseQuery, setReleaseQuery] = useState('');
+  const [releaseChannel, setReleaseChannel] = useState('all');
+  const [releaseSort, setReleaseSort] = useState('newest');
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/download/registry', { cache: 'no-store' })
+      .then((response) => (response.ok ? response.json() : []))
+      .then((data) => {
+        if (!cancelled && Array.isArray(data)) setReleases(data);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const latestBuild = releases.find((entry) => entry.channel === 'beta' && entry.status !== 'blocked_security' && entry.status !== 'blocked_support') || releases.find((entry) => entry.status === 'supported') || releases[0];
+  const releaseRows = releases
+    .filter((entry) => {
+      const query = releaseQuery.trim().toLowerCase();
+      const matchesQuery = !query || [entry.launcherVersion, entry.gameVersion, entry.channel, entry.osLabel, entry.os]
+        .join(' ')
+        .toLowerCase()
+        .includes(query);
+      const matchesChannel = releaseChannel === 'all' || entry.channel === releaseChannel;
+      return matchesQuery && matchesChannel;
+    })
+    .sort((a, b) => {
+      if (releaseSort === 'oldest') return String(a.buildDate).localeCompare(String(b.buildDate));
+      if (releaseSort === 'version') return b.launcherVersion.localeCompare(a.launcherVersion, undefined, { numeric: true });
+      return String(b.buildDate).localeCompare(String(a.buildDate));
+    });
 
   // Allowlist: valores válidos de SO y arquitectura (vienen de botones fijos)
   const VALID_OS = new Set(['w10', 'w11']);
@@ -271,7 +322,15 @@ export default function DownloadPage() {
                   </div>
                   <div>
                     <h2 className="text-xl font-header font-black text-white italic uppercase tracking-tight">{t.pages.download.windowsEdition}</h2>
-                    <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest block mt-0.5">{t.pages.download.compat}</span>
+                    <div className="flex flex-wrap items-center gap-2 mt-1">
+                      <span className="text-[8px] font-bold text-gray-500 uppercase tracking-widest">{t.pages.download.compat}</span>
+                      <span className="text-[8px] font-black uppercase tracking-widest text-neon-cyan border border-neon-cyan/30 bg-neon-cyan/10 rounded px-2 py-0.5">
+                        {latestBuild ? `Launcher v${latestBuild.launcherVersion} · Game v${latestBuild.gameVersion}` : 'Launcher v2.3.2 · Game v2.1.1'}
+                      </span>
+                      <span className="text-[8px] font-black uppercase tracking-widest text-neon-pink border border-neon-pink/30 bg-neon-pink/10 rounded px-2 py-0.5">
+                        {(latestBuild?.channel || 'beta').toUpperCase()}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -607,43 +666,102 @@ export default function DownloadPage() {
             <div className="h-[1px] flex-grow bg-white/5" />
           </div>
 
-          <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
-            <table className="w-full text-left font-header text-xs text-gray-400 uppercase tracking-widest border-collapse">
-              <thead>
-                <tr className="bg-black/60 text-white border-b border-white/10">
-                  <th className="p-5 font-black">{t.pages.download.versionCol}</th>
-                  <th className="p-5 font-black">Plataforma</th>
-                  <th className="p-5 font-black">Fecha</th>
-                  <th className="p-5 font-black">Peso</th>
-                  <th className="p-5 font-black">Estado</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                <tr className="hover:bg-white/5 transition-all">
-                  <td className="p-5 font-black text-white">{t.pages.download.versionValue}</td>
-                  <td className="p-5 font-bold">{t.pages.download.win10x64Msi}</td>
-                  <td className="p-5 font-bold">31/05/2026</td>
-                  <td className="p-5 font-bold">{t.pages.download.size16}</td>
-                  <td className="p-5 font-black text-neon-blue">{t.pages.download.activeStable}</td>
-                </tr>
-                <tr className="hover:bg-white/5 transition-all">
-                  <td className="p-5 font-black text-white">{t.pages.download.versionValue}</td>
-                  <td className="p-5 font-bold">{t.pages.download.win11x64Exe}</td>
-                  <td className="p-5 font-bold">10/06/2026</td>
-                  <td className="p-5 font-bold">{t.pages.download.size12}</td>
-                  <td className="p-5 font-black text-neon-cyan">{t.pages.download.activeStable}</td>
-                </tr>
-                <tr className="hover:bg-white/5 transition-all opacity-50">
-                  <td className="p-5 font-black">{t.pages.download.versionValue}</td>
-                  <td className="p-5 font-bold">{t.pages.download.macLinuxRow}</td>
-                  <td className="p-5 font-bold">{t.pages.download.comingSoon}</td>
-                  <td className="p-5 font-bold">—</td>
-                  <td className="p-5 font-bold text-rose-500">{t.pages.download.closedBeta}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div className="flex justify-end">
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3">
+              <input
+                value={releaseQuery}
+                onChange={(event) => setReleaseQuery(event.target.value)}
+                placeholder="Buscar versión, canal u OS..."
+                className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-white outline-none placeholder:text-gray-600 focus:border-neon-blue"
+              />
+              <select
+                value={releaseChannel}
+                onChange={(event) => setReleaseChannel(event.target.value)}
+                className="rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-neon-blue"
+              >
+                <option value="all">Todos los canales</option>
+                <option value="beta">Beta</option>
+                <option value="release">Release</option>
+                <option value="testing">Testing</option>
+              </select>
+              <select
+                value={releaseSort}
+                onChange={(event) => setReleaseSort(event.target.value)}
+                className="rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-neon-blue"
+              >
+                <option value="newest">Más recientes</option>
+                <option value="oldest">Más antiguas</option>
+                <option value="version">Versión</option>
+              </select>
+            </div>
+
+            <div className="bg-white/5 border border-white/10 rounded-3xl overflow-x-auto shadow-2xl">
+              <table className="w-full min-w-[860px] text-left font-header text-[10px] text-gray-400 uppercase tracking-widest border-collapse">
+                <thead>
+                  <tr className="bg-black/60 text-white border-b border-white/10">
+                    <th className="p-4 font-black">Launcher</th>
+                    <th className="p-4 font-black">Juego</th>
+                    <th className="p-4 font-black">Canal</th>
+                    <th className="p-4 font-black">Plataforma</th>
+                    <th className="p-4 font-black">Fecha</th>
+                    <th className="p-4 font-black">Peso</th>
+                    <th className="p-4 font-black">Changelog</th>
+                    <th className="p-4 font-black text-right">Descargar</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                  {releaseRows.map((entry) => {
+                    const isLatest = Boolean(latestBuild && entry.launcherVersion === latestBuild.launcherVersion && entry.channel === latestBuild.channel);
+                    return (
+                      <tr key={`${entry.launcherVersion}-${entry.channel}-${entry.os}`} className="hover:bg-white/5 transition-all">
+                        <td className="p-4 font-black text-white">
+                          <span className="inline-flex items-center gap-2">
+                            v{entry.launcherVersion}
+                            {isLatest && <span className="rounded border border-neon-cyan/40 bg-neon-cyan/10 px-1.5 py-0.5 text-[7px] text-neon-cyan">LATEST</span>}
+                          </span>
+                        </td>
+                        <td className="p-4 font-bold">v{entry.gameVersion}</td>
+                        <td className="p-4 font-black">
+                          <span className={entry.channel === 'beta' ? 'text-neon-pink' : entry.channel === 'release' ? 'text-emerald-400' : 'text-amber-400'}>
+                            {entry.channel.toUpperCase()}
+                          </span>
+                          <span className={`block mt-1 text-[7px] ${entry.status === 'blocked_security' ? 'text-rose-400' : entry.status === 'blocked_support' ? 'text-amber-400' : 'text-emerald-400'}`}>
+                            {entry.status === 'blocked_security' ? 'SEGURIDAD' : entry.status === 'blocked_support' ? 'SIN SOPORTE' : 'SOPORTADA'}
+                          </span>
+                        </td>
+                        <td className="p-4 font-bold">{entry.osLabel || entry.os}</td>
+                        <td className="p-4 font-bold">{entry.buildDate || '—'}</td>
+                        <td className="p-4 font-bold">{entry.size ? `${(entry.size / 1024 / 1024).toFixed(1)} MB` : '—'}</td>
+                        <td className="p-4 font-bold">
+                          {entry.changelogUrl ? (
+                            <a href={entry.changelogUrl} className="text-neon-blue hover:text-neon-cyan transition-colors">Ver</a>
+                          ) : '—'}
+                        </td>
+                        <td className="p-4 text-right">
+                          <a
+                            href={`/api/download/windows?os=${entry.os === 'windows11' ? 'w11' : 'w10'}&arch=x64&version=${entry.launcherVersion}&channel=${entry.channel}`}
+                            download
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-neon-blue/30 bg-neon-blue/15 px-3 py-2 text-[9px] font-black text-neon-blue transition-all hover:border-neon-blue hover:bg-neon-blue hover:text-black"
+                            title={`SHA256: ${entry.sha256}`}
+                          >
+                            <DownloadIcon />
+                            EXE
+                          </a>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {!releaseRows.length && (
+                    <tr>
+                      <td colSpan={8} className="p-8 text-center font-bold text-gray-500">
+                        El registro de versiones se genera al compilar el instalador.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>          <div className="flex justify-end">
             <Link 
               href="/changelog" 
               className="inline-flex items-center gap-2 text-neon-blue/60 hover:text-neon-blue transition-colors font-header font-black text-xs uppercase tracking-widest"
@@ -806,3 +924,7 @@ const LockBadge = () => (
     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
 );
+
+
+
+

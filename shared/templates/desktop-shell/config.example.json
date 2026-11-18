@@ -1,0 +1,32 @@
+{
+  "$schema": "./config.schema.json",
+  "product": {
+    "name": "CiszuBot",
+    "slug": "ciszubot",
+    "appId": "com.ciszunetwork.ciszubot",
+    "version": "1.0.0"
+  },
+  "brand": {
+    "owner": "Ciszu Network",
+    "websiteUrl": "https://ciszunetwork.vercel.app"
+  },
+  "urls": {
+    "productUrl": "https://ciszubot.vercel.app",
+    "supportUrl": "https://ciszubot.vercel.app/support",
+    "githubRepo": "https://github.com/Ciszu-Network/CiszuNetwork",
+    "whatsapp": "https://wa.me/584126858111"
+  },
+  "socials": {
+    "discord": "https://discord.gg/W3kMtMMj6E",
+    "youtube": "https://www.youtube.com/@CiszuNetwork",
+    "instagram": "https://www.instagram.com/ciszunetwork/",
+    "tiktok": "https://www.tiktok.com/@ciszunetwork",
+    "x": "https://x.com/CiszukoAntony",
+    "github": "https://github.com/Ciszu-Network"
+  },
+  "shell": {
+    "kind": "installer",
+    "languages": ["1033", "1034"],
+    "source": "projects/muzicmania/launcher/src-tauri/splash"
+  }
+}

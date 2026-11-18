@@ -1,0 +1,113 @@
+﻿.setup-titlebar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  min-height: 38px;
+  padding: 0 8px 0 10px;
+  background: #0b0c10;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  position: relative;
+  z-index: 30;
+}
+.setup-titlebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.setup-titlebar-isotipo {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+  cursor: pointer;
+}
+.setup-titlebar-beta {
+  padding: 2px 6px;
+  border: 1px solid rgba(108, 92, 231, 0.55);
+  border-radius: 999px;
+  background: rgba(108, 92, 231, 0.18);
+  color: #cfc8ff;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+.setup-titlebar-version {
+  color: #8d93a6;
+  font-size: 9px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.setup-titlebar-lang {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f8f9fa;
+  font-size: 9px;
+  cursor: pointer;
+}
+.setup-titlebar-lang:hover {
+  border-color: #6c5ce7;
+}
+.setup-titlebar-lang img {
+  width: 17px;
+  height: 12px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+.setup-titlebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.setup-titlebar-btn {
+  width: 34px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #aeb3c2;
+  font: 16px/1 "Segoe UI", system-ui, sans-serif;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.setup-titlebar-btn:hover {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+}
+.setup-titlebar-btn.close:hover {
+  background: #c42b3a;
+  color: #fff;
+}
+.setup-titlebar .easter-cat {
+  display: none;
+  width: 22px;
+  min-width: 22px;
+  font-size: 18px;
+  line-height: 1;
+  animation: none;
+}
+
+body.easter-egg .setup-titlebar .easter-cat {
+  display: block !important;
+  font-size: 17px;
+}
+
+body.easter-egg .setup-titlebar-isotipo {
+  display: none !important;
+}
+@media (max-width: 560px) {
+  .setup-titlebar-version { display: none; }
+  .setup-titlebar-lang span { display: none; }
+}
+
+

@@ -1,22 +1,11 @@
-import { NextResponse } from 'next/server';
+﻿import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-
-const APP_VERSION = '2.1.1';
-const INSTALLER_VERSION = '2.3.1';
-const RELEASE_BASE = (
-  process.env.MUZICMANIA_INSTALLER_RELEASE_URL ||
-  'https://github.com/Ciszu-Network/CiszuNetwork/releases/download/muzicmania-v2.1.1'
-).replace(/\/$/, '');
-
-const AVAILABLE: Record<string, string[]> = {
-  w10: ['x64'],
-  w11: ['x64'],
-};
+import registryData from '@/data/downloads-registry.json';
 
 const OS_VERSION_MAP: Record<string, string> = {
-  w10: 'Windows10',
-  w11: 'Windows11',
+  w10: 'windows10',
+  w11: 'windows11',
 };
 
 const OS_LABEL: Record<string, string> = {
@@ -24,15 +13,40 @@ const OS_LABEL: Record<string, string> = {
   w11: 'Windows 11',
 };
 
-const EXT_MAP: Record<string, string> = {
-  w10: 'exe',
-  w11: 'exe',
-};
+interface RegistryEntry {
+  launcherVersion: string;
+  gameVersion: string;
+  channel: string;
+  os: string;
+  arch: string;
+  fileName: string;
+  path: string;
+  releaseTag?: string;
+  remoteFileName?: string;
+}
 
-function buildFilename(os: string, arch: string) {
-  const osVer = OS_VERSION_MAP[os];
-  const ext = EXT_MAP[os];
-  return `MuzicMania(v${APP_VERSION})_InstallerSetup(v${INSTALLER_VERSION})_${osVer}_x64.${ext}`;
+function readRegistry(): RegistryEntry[] {
+  return Array.isArray(registryData) ? (registryData as RegistryEntry[]) : [];
+}
+function selectEntry(entries: RegistryEntry[], os: string, arch: string, version?: string, channel?: string) {
+  const exact = entries.filter((entry) => {
+    if (entry.os !== os || entry.arch !== arch) return false;
+    if (version && entry.launcherVersion !== version) return false;
+    if (channel && entry.channel !== channel) return false;
+    return true;
+  });
+
+  return exact.sort((a, b) => {
+    const byVersion = b.launcherVersion.localeCompare(a.launcherVersion, undefined, { numeric: true });
+    if (byVersion !== 0) return byVersion;
+    if (a.channel !== b.channel) {
+      if (a.channel === 'release') return -1;
+      if (b.channel === 'release') return 1;
+      if (a.channel === 'beta') return -1;
+      if (b.channel === 'beta') return 1;
+    }
+    return 0;
+  })[0];
 }
 
 export async function GET(request: Request) {
@@ -40,59 +54,44 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const os = searchParams.get('os') || 'w10';
     const arch = searchParams.get('arch') || 'x64';
+    const version = searchParams.get('version') || undefined;
+    const channel = searchParams.get('channel') || undefined;
+    const osDir = OS_VERSION_MAP[os];
 
-    const osVer = OS_VERSION_MAP[os];
-    const ext = EXT_MAP[os];
-
-    if (!osVer || !ext) {
-      return NextResponse.json({ error: 'Parámetros no válidos' }, { status: 400 });
-    }
-
-    if (!AVAILABLE[os]?.includes(arch)) {
-      const osName = OS_LABEL[os] || os;
+    if (!osDir || arch !== 'x64') {
       return NextResponse.json({
-        error: `El instalador para ${osName} (x64) aún no ha sido compilado.`,
-        available: AVAILABLE,
+        error: `El instalador para ${OS_LABEL[os] || os} (${arch}) aún no ha sido compilado.`,
       }, { status: 404 });
     }
 
-    const filename = buildFilename(os, arch);
-    const publicPath = path.join(process.cwd(), 'public', 'downloads', filename);
+    const entry = selectEntry(readRegistry(), osDir, arch, version, channel);
+    if (!entry) {
+      return NextResponse.json({
+        error: `Todavía no hay un instalador publicado para ${OS_LABEL[os]}.`,
+      }, { status: 404 });
+    }
 
+    const publicPath = path.join(process.cwd(), 'public', 'downloads', entry.path);
     if (fs.existsSync(publicPath)) {
       const fileBuffer = fs.readFileSync(publicPath);
       return new NextResponse(fileBuffer, {
         headers: {
-          'Content-Disposition': `attachment; filename="${filename}"`,
+          'Content-Disposition': `attachment; filename="${entry.fileName}"`,
           'Content-Type': 'application/octet-stream',
+          'Cache-Control': 'public, max-age=3600',
         },
       });
     }
 
-    // Fallback a build local de Tauri
-    const possibleDirs = [
-      path.join(process.cwd(), 'src-tauri', 'target', 'x86_64-pc-windows-msvc', 'release', 'bundle', 'nsis'),
-      path.join(process.cwd(), 'src-tauri', 'target', 'release', 'bundle', 'nsis'),
-    ];
-    let installerFile: string | null = null;
-    for (const bundleDir of possibleDirs) {
-      if (fs.existsSync(bundleDir)) {
-        installerFile = fs.readdirSync(bundleDir).find(f => f.endsWith(`.${ext}`)) || null;
-        if (installerFile) {
-          const fileBuffer = fs.readFileSync(path.join(bundleDir, installerFile));
-          return new NextResponse(fileBuffer, {
-            headers: {
-              'Content-Disposition': `attachment; filename="${filename}"`,
-              'Content-Type': 'application/octet-stream',
-            },
-          });
-        }
-      }
+    if (entry.releaseTag) {
+      const releaseUrl = `https://github.com/Ciszu-Network/CiszuNetwork/releases/download/${encodeURIComponent(entry.releaseTag)}/${encodeURIComponent(entry.remoteFileName || entry.fileName)}`;
+      return NextResponse.redirect(releaseUrl, 307);
     }
 
-    const releaseFilename = filename.replace(/[()]/g, '.');
-    return NextResponse.redirect(`${RELEASE_BASE}/${encodeURIComponent(releaseFilename)}`, 307);
-  } catch (error) {
+    return NextResponse.json({ error: 'El instalador no está disponible.' }, { status: 404 });
+  } catch {
     return NextResponse.json({ error: 'No se pudo procesar la descarga' }, { status: 500 });
   }
 }
+
+

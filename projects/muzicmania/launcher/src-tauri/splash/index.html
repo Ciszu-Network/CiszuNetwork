@@ -1,13 +1,57 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
 <title>MuzicMania — Launcher</title>
+<link rel="icon" type="image/svg+xml" href="logo.svg">
 <link rel="stylesheet" href="launcher.css">
 </head>
 <body>
+<svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7V5Z"/></symbol>
+  <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="m3 3 18 18M8.5 8.5A8.5 8.5 0 0 1 21 10M3 10a8.5 8.5 0 0 1 2.2-1.5M6.5 13.5a5 5 0 0 1 5-1.3M10.5 17.5a2 2 0 0 1 1.5-.4M12 20h.01"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.9-4M4 4v5h5"/><path d="M4 13a8 8 0 0 0 14.9 4M20 20v-5h-5"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H2v-4h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L3.4 7 6.2 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3h4v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4h-.2a1.7 1.7 0 0 0-1.6 1Z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.8 2.1c-.8.5-1.3 1-1.3 2.1M12 17h.01"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.1"/></symbol>
+  <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 3v9"/><path d="M6.3 6.3a8 8 0 1 0 11.4 0"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="m15 4 5 5-3 1-4 4-1 3-3-3-4 4-1-1 4-4-3-3 3-1 4-4 1-3Z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.4 2.5 3.6 5.5 3.6 9S14.4 18.5 12 21c-2.4-2.5-3.6-5.5-3.6-9S9.6 5.5 12 3Z"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></symbol>
+  <symbol id="i-window-min" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-window-max" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="1"/></symbol>
+  <symbol id="i-window-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H4M10 6l-6 6 6 6"/></symbol>
+  <symbol id="i-discord" viewBox="0 0 24 24"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3c-.2.4-.4.9-.6 1.3a18.3 18.3 0 0 0-5.5 0C9 3.9 8.8 3.4 8.6 3a19.8 19.8 0 0 0-4.9 1.4C.5 9-.3 13.6.1 18.1a19.9 19.9 0 0 0 6 3c.5-.7.9-1.4 1.2-2a13 13 0 0 1-1.9-.9l.5-.4a14.2 14.2 0 0 0 12.1 0l.5.4c-.6.3-1.2.6-1.9.9.3.7.7 1.4 1.2 2a19.9 19.9 0 0 0 6-3c.5-5.2-.8-9.7-3.5-13.7ZM8 15.3c-1.2 0-2.2-1.1-2.2-2.4S6.7 10.5 8 10.5s2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Z"/></symbol>
+  <symbol id="i-youtube" viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.5 15.6V8.4L15.8 12l-6.3 3.6Z"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-tiktok" viewBox="0 0 24 24"><path d="M14.5 3c.3 2.1 1.5 3.4 3.7 3.8v2.9c-1.4.1-2.6-.3-3.8-1v5.6a5.8 5.8 0 1 1-5.8-5.8c.3 0 .7 0 1 .1v3a2.8 2.8 0 1 0 1.9 2.6V3h3Z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18.2 2.3h3.3l-7.2 8.3 8.5 11.1h-6.6l-5.2-6.8-5.9 6.8H1.8l7.7-8.9L1.3 2.3h6.8l4.7 6.2 5.4-6.2Zm-1.2 17.5h1.8L6.9 4.1H5Z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-github" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-3.2 19.4c.5.1.7-.2.7-.5v-1.8c-2.8.6-3.4-1.2-3.4-1.2-.5-1.1-1.1-1.4-1.1-1.4-.9-.6.1-.6.1-.6 1 .1 1.5 1 1.5 1 .9 1.5 2.3 1.1 2.9.8.1-.6.3-1.1.6-1.3-2.2-.3-4.6-1.1-4.6-5 0-1.1.4-2 1-2.7-.1-.3-.4-1.3.1-2.7 0 0 .8-.3 2.7 1a9.4 9.4 0 0 1 4.9 0c1.9-1.3 2.7-1 2.7-1 .5 1.4.2 2.4.1 2.7.6.7 1 1.6 1 2.7 0 3.9-2.4 4.7-4.6 5 .3.3.6.9.6 1.9V21c0 .3.2.6.7.5A10 10 0 0 0 12 2Z"/></symbol>
+  <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.5 3.5A11.8 11.8 0 0 0 1.9 17.7L.5 23.5l5.9-1.4A11.8 11.8 0 0 0 20.5 3.5Zm-8.4 18a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.5.9.9-3.4-.2-.4a9.8 9.8 0 1 1 8.2 4.5Zm5.4-7.3c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.2l-.9 1.1c-.2.2-.4.2-.7.1a8 8 0 0 1-2.3-1.4 8.8 8.8 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.6.3-.6c.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/></symbol>
+</svg>
+<header class="window-titlebar" id="window-titlebar" data-tauri-drag-region>
+  <div class="titlebar-brand" data-tauri-drag-region>
+    <img src="isotipo.svg" alt="MuzicMania" class="titlebar-logo titlebar-isotipo">
+    <span class="titlebar-beta" id="titlebar-beta">BETA</span>
+  </div>
+  <div class="titlebar-live">
+    <span class="status-pill" id="hub-status" data-i18n="checking">Comprobando</span>
+    <button class="account-chip" id="hub-account-chip" type="button"><span class="avatar" id="hub-avatar">?</span><span id="hub-account-name">Invitado</span></button>
+  </div>
+  <div class="titlebar-actions">
+    <button id="titlebar-hub" class="titlebar-btn" type="button" title="Volver al hub" aria-label="Volver al hub"><svg class="icon"><use href="#i-home"></use></svg><span>HUB</span></button>
+    <button id="titlebar-settings" class="titlebar-btn" type="button" title="Configuración" aria-label="Configuración"><svg class="icon"><use href="#i-settings"></use></svg></button>
+    <button id="titlebar-minimize" class="titlebar-btn" type="button" title="Minimizar" aria-label="Minimizar"><svg class="icon"><use href="#i-window-min"></use></svg></button>
+    <button id="titlebar-maximize" class="titlebar-btn" type="button" title="Maximizar" aria-label="Maximizar"><svg class="icon"><use href="#i-window-max"></use></svg></button>
+    <button id="titlebar-close" class="titlebar-btn close" type="button" title="Cerrar" aria-label="Cerrar"><svg class="icon"><use href="#i-window-close"></use></svg></button>
+  </div>
+</header>
 <div id="app">
   <section id="view-splash" class="view active">
     <div class="compact">
@@ -38,10 +82,31 @@
           <div class="bar" style="margin-top:16px"><i id="update-bar"></i></div>
           <div class="pct" id="update-pct" style="margin-top:6px">0%</div>
           <pre id="update-notes" class="notes hidden"></pre>
+          <div id="update-policy" class="update-policy hidden">
+            <div class="update-policy-meta">
+              <span id="update-channel-badge">BETA</span>
+              <span id="update-range"></span>
+              <span id="update-policy-source"></span>
+            </div>
+            <div id="update-block-reason" class="update-block-reason hidden"></div>
+            <div id="update-version-list" class="update-version-list hidden"></div>
+            <div class="row" style="margin-top:14px">
+              <button id="update-stay" class="btn ghost hidden">Quedarme en esta versión</button>
+              <button id="update-switch-release" class="btn primary hidden">Cambiar a release</button>
+              <button id="update-nearest" class="btn primary hidden">Actualizar a la más cercana</button>
+              <button id="update-latest" class="btn hidden">Actualizar a la más nueva</button>
+              <button id="update-choose" class="btn ghost hidden">Elegir versión</button>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <button id="update-downloads" class="btn ghost">Descargar manualmente</button>
+              <button id="update-support" class="btn ghost">Soporte</button>
+              <button id="update-close" class="btn ghost">Cerrar</button>
+            </div>
+          </div>
           <div class="row" style="margin-top:16px">
             <button id="update-install" class="btn primary hidden">Instalar y reiniciar</button>
             <button id="update-retry" class="btn hidden">Reintentar</button>
-            <button id="update-skip" class="btn ghost hidden">Omitir por red / modo offline</button>
+            <button id="update-skip" class="btn ghost hidden">Quedarme en esta versión</button>
           </div>
           <p class="note" style="margin-top:12px" id="update-note"></p>
         </div>
@@ -49,6 +114,19 @@
     </div>
   </section>
 
+  <section id="view-welcome" class="view">
+    <div class="welcome-screen">
+      <div class="welcome-badge">PRIMERA VEZ · CISZU ID</div>
+      <img class="welcome-logo" src="logo.svg" alt="MuzicMania">
+      <h1>Bienvenido a MuzicMania</h1>
+      <p>Tu launcher está listo. En unos segundos te muestro cómo actualizar, entrar con tu cuenta y jugar online u offline.</p>
+      <div class="welcome-actions">
+        <button id="welcome-start" class="btn primary wide">Empezar tutorial</button>
+        <button id="welcome-skip" class="btn ghost wide">Saltar por ahora</button>
+      </div>
+      <span class="welcome-foot">Ciszu Network · MuzicMania</span>
+    </div>
+  </section>
   <section id="view-tutorial" class="view">
     <div class="compact">
       <div class="compact-shell">
@@ -76,16 +154,13 @@
         <div class="panel">
           <div class="eyebrow">CISZU ID · ACCESO</div>
           <h1>Conecta tu cuenta</h1>
-          <p>El hub usa tu cuenta CISZU ID para guardar progreso, ajustes y reputación. Inicia sesión o continúa como invitado local.</p>
+          <p>El hub usa tu cuenta CISZU ID para guardar progreso, ajustes y reputación. Inicia sesión con tu cuenta; desde el launcher no se pueden crear cuentas nuevas.</p>
           <div class="login-row">
             <span class="login-chip" id="login-online-chip">Comprobando…</span>
             <span class="login-chip">MuzicMania</span>
           </div>
           <div class="row" style="margin-top:18px">
             <button id="login-open" class="btn primary wide">Iniciar sesión con CISZU ID</button>
-          </div>
-          <div class="row" style="margin-top:8px">
-            <button id="login-guest" class="btn ghost wide">Continuar como invitado</button>
           </div>
           <p class="note" id="login-status" style="margin-top:14px">La ventana de CISZU ID se abrirá con el login oficial.</p>
           <p class="note" style="margin-top:8px"><a href="https://ciszunetwork.vercel.app/help" data-url>Ayuda</a> · <a href="https://muzicmania.vercel.app/support" data-url>Soporte</a> · <a href="https://wa.me/584126858111" data-url>WhatsApp</a></p>
@@ -96,142 +171,188 @@
 
   <section id="view-hub" class="view">
     <div class="hub-shell">
-      <header class="hub-top">
-        <div class="hub-brand">
-          <img src="logo.svg" alt="MuzicMania">
-          <small>PRE-GAME HUB</small>
-        </div>
-        <div class="hub-top-right">
-          <span class="status-pill" id="hub-status">Comprobando</span>
-          <div class="account-chip" id="hub-account-chip">
-            <span class="avatar" id="hub-avatar">?</span>
-            <span id="hub-account-name">Invitado</span>
-          </div>
-        </div>
-      </header>
 
       <div class="hub-grid">
         <section class="hero">
           <div>
             <div class="eyebrow" id="hub-kicker">BIENVENIDO DE VUELTA</div>
-            <h1>Muzic<span>Mania</span></h1>
             <p id="hub-welcome">Tu launcher está listo. Elige cómo quieres entrar al juego.</p>
             <div class="hero-actions">
-              <button id="hub-play-online" class="btn primary">Jugar online</button>
-              <button id="hub-play-offline" class="btn">Jugar offline</button>
-              <button id="hub-restart-online" class="btn ghost hidden">Reintentar conexión</button>
+              <button id="hub-play-online" class="btn primary"><svg class="icon"><use href="#i-play"></use></svg><span id="hub-play-online-label" data-i18n="playOnline">Jugar online</span></button>
+              <button id="hub-play-offline" class="btn"><svg class="icon"><use href="#i-wifi-off"></use></svg><span data-i18n="playOffline">Jugar offline</span></button>
+              <button id="hub-restart-online" class="btn ghost hidden"><svg class="icon"><use href="#i-refresh"></use></svg><span data-i18n="retry">Reintentar conexión</span></button>
             </div>
           </div>
           <div>
             <div class="hero-meta" id="hub-disclaimer">El modo offline usa las pistas locales y no requiere conexión.</div>
-            <div class="hero-meta">Launcher v<span id="hub-version">2.1.1</span> · MuzicMania v2.1.1</div>
+            <div class="hero-meta">Launcher v<span id="hub-version">2.3.2</span> · MuzicMania v<span id="hub-game-version">2.1.1</span> · <span id="hub-channel">BETA</span></div>
           </div>
         </section>
 
         <aside class="hub-side">
           <div class="card">
-            <h3>Cuenta</h3>
-            <div class="who" id="account-who">Invitado</div>
-            <div class="sub" id="account-sub">Sesión local sin conexión</div>
+            <h3><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="account">Cuenta</span></h3>
             <div class="mini-actions">
-              <button id="account-login" class="btn hidden">Iniciar sesión</button>
-              <button id="account-profile" class="btn hidden">Mi cuenta</button>
-              <button id="account-logout" class="btn ghost hidden">Cerrar sesión</button>
+              <button id="account-login" class="btn hidden"><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="accountLogin">Iniciar sesión</span></button>
+              <button id="account-profile" class="btn hidden"><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="accountProfile">Mi cuenta</span></button>
+              <button id="account-logout" class="btn ghost hidden"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="accountLogout">Cerrar sesión</span></button>
             </div>
           </div>
-          <div class="card">
-            <h3>Launcher</h3>
-            <div class="settings-line"><span>Actualizaciones automáticas</span><label class="switch"><input id="setting-auto-update" type="checkbox"><span></span></label></div>
-            <div class="settings-line"><span>Confirmar al cerrar</span><label class="switch"><input id="setting-close-confirm" type="checkbox"><span></span></label></div>
-            <div class="settings-line"><span>Confirmar enlaces externos</span><label class="switch"><input id="setting-link-confirm" type="checkbox"><span></span></label></div>
-            <div class="mini-actions">
-              <button id="settings-check-update" class="btn">Buscar actualización</button>
-              <button id="settings-pin" class="btn">Anclar a taskbar</button>
-              <button id="settings-restart" class="btn ghost">Reiniciar launcher</button>
-            </div>
-          </div>
+
         </aside>
       </div>
 
       <div class="hub-bottom">
         <article class="card">
-          <h3>Comunidad</h3>
+          <h3><svg class="icon"><use href="#i-globe"></use></svg> <span data-i18n="community">Comunidad</span></h3>
           <div class="links">
-            <a class="link" data-url href="https://discord.gg/W3kMtMMj6E">Discord</a>
-            <a class="link" data-url href="https://www.youtube.com/@CiszuNetwork">YouTube</a>
-            <a class="link" data-url href="https://www.instagram.com/ciszunetwork/">Instagram</a>
-            <a class="link" data-url href="https://www.tiktok.com/@ciszunetwork">TikTok</a>
-            <a class="link" data-url href="https://x.com/CiszukoAntony">X</a>
-            <a class="link" data-url href="https://github.com/Ciszu-Network">GitHub</a>
+            <a class="link social discord" data-url href="https://discord.gg/W3kMtMMj6E"><svg class="icon"><use href="#i-discord"></use></svg><span>Discord</span></a>
+            <a class="link social youtube" data-url href="https://www.youtube.com/@CiszuNetwork"><svg class="icon"><use href="#i-youtube"></use></svg><span>YouTube</span></a>
+            <a class="link social instagram" data-url href="https://www.instagram.com/ciszunetwork/"><svg class="icon"><use href="#i-instagram"></use></svg><span>Instagram</span></a>
+            <a class="link social tiktok" data-url href="https://www.tiktok.com/@ciszunetwork"><svg class="icon"><use href="#i-tiktok"></use></svg><span>TikTok</span></a>
+            <a class="link social x" data-url href="https://x.com/CiszukoAntony"><svg class="icon"><use href="#i-x"></use></svg><span>X</span></a>
+            <a class="link social github" data-url href="https://github.com/Ciszu-Network"><svg class="icon"><use href="#i-github"></use></svg><span>GitHub</span></a>
           </div>
         </article>
         <article class="card">
-          <h3>Ayuda y páginas</h3>
+          <h3><svg class="icon"><use href="#i-help"></use></svg> <span data-i18n="helpPages">Ayuda y páginas</span></h3>
           <div class="links">
-            <a class="link" data-url href="https://muzicmania.vercel.app/support">Soporte</a>
-            <a class="link" data-url href="https://muzicmania.vercel.app/changelog">Changelog</a>
-            <a class="link" data-url href="https://muzicmania.vercel.app/download">Descargar</a>
-            <a class="link" data-url href="https://wa.me/584126858111">WhatsApp</a>
-            <a class="link" data-url href="https://ciszunetwork.vercel.app">Ciszu Network</a>
+            <a class="link" data-url href="https://muzicmania.vercel.app/support"><svg class="icon"><use href="#i-help"></use></svg><span data-i18n="support">Soporte</span></a>
+            <a class="link" data-url href="https://muzicmania.vercel.app/changelog"><svg class="icon"><use href="#i-refresh"></use></svg><span>Changelog</span></a>
+            <a class="link" data-url href="https://muzicmania.vercel.app/download"><svg class="icon"><use href="#i-download"></use></svg><span data-i18n="download">Descargar</span></a>
+            <a class="link social whatsapp" data-url href="https://wa.me/584126858111"><svg class="icon"><use href="#i-whatsapp"></use></svg><span>WhatsApp</span></a>
+            <a class="link" data-url href="https://ciszunetwork.vercel.app"><svg class="icon"><use href="#i-globe"></use></svg><span data-i18n="ciszuNetwork">Ciszu Network</span></a>
           </div>
         </article>
         <article class="card">
-          <h3>Estado de la sesión</h3>
+          <h3><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="session">Estado de la sesión</span></h3>
           <div class="sub" id="hub-session-note">La conexión se comprueba al iniciar.</div>
           <div class="mini-actions">
-            <button id="hub-refresh" class="btn">Actualizar estado</button>
+            <button id="hub-refresh" class="btn"><svg class="icon"><use href="#i-refresh"></use></svg><span id="hub-refresh-label" data-i18n="refresh">Actualizar estado</span></button>
           </div>
         </article>
       </div>
 
       <footer class="hub-footer">
-        <span>© 2026 <a data-url href="https://ciszunetwork.vercel.app">Ciszu Network</a> · Hecho por Ciszuko Antony</span>
-        <span><a data-url href="https://muzicmania.vercel.app">MuzicMania</a> · Todos los derechos reservados</span>
+        <span class="footer-brand"><svg class="footer-isotipo" viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="isotipoGradient" x1="0" x2="1"><stop offset="0" stop-color="#0f9eff"/><stop offset="1" stop-color="#b026ff"/></linearGradient></defs><path d="M7 24V8h4l5 7 5-7h4v16h-4v-9l-5 7-5-7v9H7Z" fill="url(#isotipoGradient)"/></svg> © 2026 <a data-url href="https://ciszunetwork.vercel.app">Ciszu Network</a> · <span data-i18n="madeBy">Hecho por</span> <a data-url href="https://ciszukoantony.vercel.app">Ciszuko Antony</a></span>
+        <span><a data-url href="https://muzicmania.vercel.app">MuzicMania</a> · <span data-i18n="rights">Todos los derechos reservados</span></span>
       </footer>
     </div>
+  </section>
+
+  <section id="view-offline" class="view">
+    <div class="offline-shell">
+      <img src="logo.svg" alt="MuzicMania" class="offline-logo">
+      <div class="offline-kicker"><span class="offline-dot"></span> MODO OFFLINE · BETA</div>
+      <h1>Estás ejecutando MuzicMania sin conexión</h1>
+      <p>Podrás jugar tus pistas y niveles descargados localmente. El modo online, leaderboard, tienda y salas quedan desactivados.</p>
+      <div class="offline-actions">
+        <button id="offline-back" class="btn"><svg class="icon"><use href="#i-back"></use></svg> Volver al menú</button>
+        <button id="offline-play" class="btn primary"><svg class="icon"><use href="#i-play"></use></svg> Jugar offline</button>
+      </div>
+      <p class="offline-note">Sesión local de invitado · Los niveles offline están en fase beta.</p>
+    </div>
+  </section>
+
+  <section id="view-offline-game" class="view">
+    <iframe id="offline-game-frame" title="MuzicMania Offline" src="about:blank"></iframe>
   </section>
 </div>
 
 <div id="close-dialog" class="overlay hidden">
   <div class="panel">
-    <div class="eyebrow">CERRAR MUZICMANIA</div>
-    <h2>¿Salir del launcher?</h2>
-    <p>La sesión y los ajustes locales se guardarán. MuzicMania no se iniciará.</p>
-    <div class="row" style="margin-top:18px">
-      <button id="close-cancel" class="btn ghost">Seguir aquí</button>
-      <button id="close-confirm" class="btn danger">Cerrar launcher</button>
+    <div class="eyebrow"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="closeEyebrow">CERRAR MUZICMANIA</span></div>
+    <h2 data-i18n="closeTitle">¿Cerrar el launcher?</h2>
+    <p data-i18n="closeDesc">MuzicMania puede seguir en segundo plano desde la bandeja del sistema, lista para abrir el juego. Si eliges cerrar completamente, se detendrán la sesión y las comprobaciones.</p>
+    <label class="check-row"><input type="checkbox" id="close-remember"><span data-i18n="closeRemember">Recordar mi elección</span></label>
+    <div class="close-actions" style="margin-top:18px">
+      <button id="close-background" class="btn primary"><svg class="icon"><use href="#i-monitor"></use></svg> <span data-i18n="closeBackground">Mantener en segundo plano</span></button>
+      <button id="close-confirm" class="btn danger"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="closeExit">Cerrar completamente</span></button>
+      <button id="close-cancel" class="btn ghost" data-i18n="closeCancel">Cancelar</button>
     </div>
+    <p class="note" style="margin-top:10px" data-i18n="closeNote">La bandeja permite abrir MuzicMania, ver información o salir definitivamente.</p>
   </div>
 </div>
 
 <div id="link-dialog" class="overlay hidden">
   <div class="panel">
-    <div class="eyebrow">ENLACE EXTERNO</div>
-    <h2>Salir de MuzicMania</h2>
-    <p id="link-dialog-url">Se abrirá un enlace externo en tu navegador.</p>
+    <div class="eyebrow"><svg class="icon"><use href="#i-globe"></use></svg> <span data-i18n="linkEyebrow">ENLACE EXTERNO</span></div>
+    <h2 data-i18n="linkTitle">Salir de MuzicMania</h2>
+    <p id="link-dialog-url" data-i18n="linkDesc">Se abrirá un enlace externo en tu navegador.</p>
     <div class="row" style="margin-top:18px">
-      <button id="link-cancel" class="btn ghost">Cancelar</button>
-      <button id="link-confirm" class="btn primary">Abrir enlace</button>
+      <button id="link-cancel" class="btn ghost" data-i18n="closeCancel">Cancelar</button>
+      <button id="link-confirm" class="btn primary" data-i18n="openLink">Abrir enlace</button>
     </div>
   </div>
 </div>
 
 <div id="settings-modal" class="overlay hidden">
-  <div class="panel">
-    <div class="eyebrow">CONFIGURACIÓN</div>
-    <h2>Opciones del launcher</h2>
-    <p>El launcher guarda estas preferencias localmente. La actualización automática se comprueba antes de abrir el hub.</p>
-    <div class="settings-line"><span>Actualizaciones automáticas</span><label class="switch"><input id="modal-auto-update" type="checkbox"><span></span></label></div>
-    <div class="settings-line"><span>Confirmar al cerrar</span><label class="switch"><input id="modal-close-confirm" type="checkbox"><span></span></label></div>
-    <div class="settings-line"><span>Confirmar enlaces externos</span><label class="switch"><input id="modal-link-confirm" type="checkbox"><span></span></label></div>
+  <div class="panel settings-panel">
+    <div class="eyebrow"><svg class="icon"><use href="#i-settings"></use></svg> <span data-i18n="settingsEyebrow">CONFIGURACIÓN</span></div>
+    <h2 data-i18n="settingsTitle">Opciones del launcher</h2>
+    <p data-i18n="settingsDesc">Las preferencias se guardan localmente. El idioma se aplica al reiniciar; el resto se aplica al instante.</p>
+    <div class="settings-section">
+      <div class="settings-label"><svg class="icon"><use href="#i-globe"></use></svg> <span data-i18n="languageLabel">Idioma</span></div>
+      <div class="language-picker" id="launcher-language-picker">
+        <button type="button" class="language-picker-trigger" id="launcher-language-trigger" aria-haspopup="listbox" aria-expanded="false">
+          <img id="launcher-language-flag" src="flags/es.svg" alt=""><span id="launcher-language-label">Español</span><span class="language-chevron">⌄</span>
+        </button>
+        <div class="language-picker-menu" id="launcher-language-menu" role="listbox"></div>
+      </div>
+    </div>
+    <div class="settings-line"><span><svg class="icon"><use href="#i-monitor"></use></svg> <span data-i18n="startWithWindows">Iniciar con Windows</span></span><label class="switch"><input id="modal-startup" type="checkbox"><span></span></label></div>
+    <div class="settings-section">
+      <div class="settings-label"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="closeBehavior">Al cerrar</span></div>
+      <div class="select-field">
+        <select id="modal-close-action" class="select-control">
+          <option value="ask" data-i18n="closeAsk">Preguntar siempre</option>
+          <option value="background" data-i18n="closeBackgroundOpt">Mantener en segundo plano</option>
+          <option value="exit" data-i18n="closeExitOpt">Cerrar completamente</option>
+        </select>
+      </div>
+    </div>
+    <div class="settings-line"><span><svg class="icon"><use href="#i-refresh"></use></svg> <span data-i18n="autoUpdate">Actualizaciones automáticas</span></span><label class="switch"><input id="modal-auto-update" type="checkbox"><span></span></label></div>
+    <div class="settings-line"><span><svg class="icon"><use href="#i-download"></use></svg> <span>Canal de actualizaciones</span></span><select id="modal-update-channel" class="settings-select"><option value="beta">Beta</option><option value="release">Release</option></select></div>
+    <div class="settings-line"><span><svg class="icon"><use href="#i-shield"></use></svg> <span>Cambiar a release automáticamente</span></span><label class="switch"><input id="modal-auto-release" type="checkbox"><span></span></label></div>
+    <div class="settings-line"><span><svg class="icon"><use href="#i-help"></use></svg> <span data-i18n="confirmLinks">Confirmar enlaces externos</span></span><label class="switch"><input id="modal-link-confirm" type="checkbox"><span></span></label></div>
+    <div class="settings-subtitle" data-i18n="actions">Acciones</div>
+    <div class="settings-actions">
+      <button id="settings-check-update" class="btn"><svg class="icon"><use href="#i-refresh"></use></svg> <span data-i18n="checkUpdate">Buscar actualización</span></button>
+      <button id="settings-pin" class="btn"><svg class="icon"><use href="#i-pin"></use></svg> <span data-i18n="pinTaskbar">Anclar a taskbar</span></button>
+      <button id="settings-restart" class="btn"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="restartLauncher">Reiniciar launcher</span></button>
+      <a class="btn ghost" data-url href="https://muzicmania.vercel.app/support"><svg class="icon"><use href="#i-help"></use></svg> <span data-i18n="help">Ayuda</span></a>
+    </div>
     <div class="row" style="margin-top:18px">
-      <button id="settings-save" class="btn primary">Guardar</button>
-      <button id="settings-close" class="btn ghost">Cerrar</button>
+      <button id="settings-save" class="btn primary" data-i18n="save">Guardar</button>
+      <button id="settings-close" class="btn ghost" data-i18n="closeAction">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div id="language-restart-modal" class="overlay hidden">
+  <div class="panel">
+    <div class="eyebrow"><svg class="icon"><use href="#i-globe"></use></svg> <span data-i18n="languageRestartEyebrow">IDIOMA</span></div>
+    <h2 data-i18n="languageRestartTitle">Reinicia el launcher</h2>
+    <p data-i18n="languageRestartDesc">El idioma se aplica al reiniciar. Puedes reiniciar ahora, cancelar el cambio o continuar con el idioma seleccionado; continuar sin reiniciar no es recomendable.</p>
+    <div class="close-actions" style="margin-top:18px">
+      <button id="language-restart-now" class="btn primary" data-i18n="languageRestartNow">Reiniciar ahora</button>
+      <button id="language-restart-continue" class="btn danger" data-i18n="languageRestartContinue">Continuar sin reiniciar</button>
+      <button id="language-restart-cancel" class="btn ghost" data-i18n="languageRestartCancel">Cancelar cambio</button>
     </div>
   </div>
 </div>
 
 <div id="toast"></div>
+<script src="build-info.js"></script>
 <script src="launcher.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+

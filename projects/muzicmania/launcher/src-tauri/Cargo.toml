@@ -1,6 +1,6 @@
 [package]
 name = "muzicmania"
-version = "2.1.1"
+version = "2.4.1"
 description = "MuzicMania 2.0 - Ecosistema Rítmico de Alto Rendimiento | Ciszu Network"
 authors = ["Ciszu Network <fplayersoffcial@gmail.com>"]
 license = "Proprietary"
@@ -19,9 +19,11 @@ codegen-units = 1
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
-tauri = { version = "2", features = [] }
+tauri = { version = "2", features = ["tray-icon"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+ed25519-dalek = "2"
+base64 = "0.22"
 dirs = "6"
 open = "5"
 
@@ -44,3 +46,6 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread"], optional = tr
 [features]
 default = []
 local-db = ["dep:sea-orm", "dep:tokio"]
+
+
+

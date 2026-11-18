@@ -1,4 +1,4 @@
-var tauriInvoke = function(command, args) {
+﻿var tauriInvoke = function(command, args) {
   if (window.__TAURI_INTERNALS__ && typeof window.__TAURI_INTERNALS__.invoke === "function") {
     return window.__TAURI_INTERNALS__.invoke(command, args);
   }
@@ -12,6 +12,163 @@ function formatBytes(bytes) {
   var i = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
   return (bytes / Math.pow(1024, i)).toFixed(i > 2 ? 1 : 0) + " " + units[i];
 }
+
+var U18N = {
+  es: {
+    welcomeTitle: "Hasta pronto",
+    welcomeDesc: "Vamos a desinstalar MuzicMania. Lamentamos verte partir; tu cuenta online seguirá segura y podrás volver cuando quieras.",
+    languageLabel: "Idioma de la interfaz",
+    languageHint: "Puedes cambiar el idioma ahora o desde el botón rápido de la barra superior.",
+    cancel: "Cancelar",
+    continue: "Continuar",
+    confirmTitle: "Desinstalar MuzicMania",
+    confirmDesc: "Esto eliminará la aplicación de tu equipo. Tu cuenta de MuzicMania está guardada online y no se borrará.",
+    installedVersion: "Versión instalada",
+    application: "Aplicación",
+    diskUsed: "Espacio usado",
+    localData: "Datos locales",
+    deleteData: "Eliminar también ajustes, caché y datos offline",
+    deleteHint: "Si no lo marcas, tus ajustes y caché se conservarán para una futura instalación. La cuenta nunca se modifica.",
+    feedbackTitle: "Comentario opcional",
+    reasonBugs: "Demasiados errores",
+    reasonPerformance: "Rendimiento",
+    reasonFeatures: "Faltan funciones",
+    reasonOther: "Otro motivo",
+    feedbackPlaceholder: "Cuéntanos qué podríamos mejorar (opcional)",
+    uninstall: "Desinstalar",
+    missingTitle: "MuzicMania no está instalado",
+    missingDesc: "No se encontró una instalación válida en este equipo. Instala MuzicMania de nuevo desde la página oficial.",
+    download: "Descargar MuzicMania",
+    support: "Soporte",
+    close: "Cerrar",
+    progressTitle: "Desinstalando MuzicMania...",
+    preparing: "Preparando la desinstalación...",
+    removing: "Eliminando archivos",
+    doneTitle: "MuzicMania se ha eliminado",
+    doneNote: "La aplicación se eliminó correctamente.",
+    doneNoteData: "La aplicación y los datos locales se eliminaron correctamente.",
+    doneNoteKept: "La aplicación se eliminó y los ajustes locales se conservaron.",
+    doneMessage: "Lamentamos verte partir. Gracias por haber sido parte de MuzicMania; tu cuenta y tus recuerdos siguen aquí. Vuelve cuando quieras.",
+    accountSafe: "Tu cuenta sigue segura. Los ajustes locales se conservaron.",
+    needHelp: "¿Necesitas ayuda?",
+    supportPage: "Página de soporte",
+    footerSafe: "Desinstalador oficial",
+    footerSupport: "Soporte:",
+    modalTitle: "¿Cancelar la desinstalación?",
+    modalDesc: "Si cierras ahora, MuzicMania seguirá instalado.",
+    keepInstalled: "Seguir con la desinstalación",
+    cancelUninstall: "Cancelar desinstalación",
+    alreadyRunning: "La desinstalación ya está en curso. Espera a que termine.",
+    pleaseWait: "Espera",
+    continueAction: "Continuar",
+    preparingAction: "Preparando la desinstalación...",
+    removingAction: "Eliminando archivos...",
+    complete: "Desinstalación completada",
+    failed: "La desinstalación falló. Cierra esta ventana e inténtalo de nuevo.",
+    noStart: "No se pudo iniciar el desinstalador.",
+    noResponse: "La desinstalación no respondió. Cierra la ventana e inténtalo de nuevo.",
+    runningTitle: "MuzicMania está en ejecución",
+    runningDesc: "Cierra MuzicMania desde la bandeja del sistema o el administrador de tareas antes de continuar.",
+    runningClose: "Entendido",
+  },
+  en: {
+    welcomeTitle: "See you soon",
+    welcomeDesc: "We are about to uninstall MuzicMania. We are sorry to see you go; your online account will stay safe and you can come back whenever you want.",
+    languageLabel: "Interface language",
+    languageHint: "You can change the language now or from the quick button in the title bar.",
+    cancel: "Cancel",
+    continue: "Continue",
+    confirmTitle: "Uninstall MuzicMania",
+    confirmDesc: "This will remove the application from your computer. Your MuzicMania account is stored online and will not be deleted.",
+    installedVersion: "Installed version",
+    application: "Application",
+    diskUsed: "Disk used",
+    localData: "Local data",
+    deleteData: "Also delete local settings, cache and offline data",
+    deleteHint: "If unchecked, your local settings and cache will be kept for a future installation. Account data is never affected.",
+    feedbackTitle: "Optional feedback",
+    reasonBugs: "Too many bugs",
+    reasonPerformance: "Performance",
+    reasonFeatures: "Missing features",
+    reasonOther: "Other reason",
+    feedbackPlaceholder: "Tell us what could be better (optional)",
+    uninstall: "Uninstall",
+    missingTitle: "MuzicMania is not installed",
+    missingDesc: "No valid installation was found on this computer. Install MuzicMania again from the official download page.",
+    download: "Download MuzicMania",
+    support: "Support",
+    close: "Close",
+    progressTitle: "Uninstalling MuzicMania...",
+    preparing: "Preparing uninstallation...",
+    removing: "Removing files",
+    doneTitle: "MuzicMania has been removed",
+    doneNote: "The application was removed successfully.",
+    doneNoteData: "The application and local data were removed successfully.",
+    doneNoteKept: "The application was removed and local settings were kept.",
+    doneMessage: "We are sorry to see you go. Thank you for being part of MuzicMania; your account and memories are still here. Come back whenever you want.",
+    accountSafe: "Your account data remains safe. Local settings were kept.",
+    needHelp: "Need help?",
+    supportPage: "Support page",
+    footerSafe: "Official uninstaller",
+    footerSupport: "Support:",
+    modalTitle: "Cancel uninstallation?",
+    modalDesc: "If you close now, MuzicMania will stay installed.",
+    keepInstalled: "Continue uninstallation",
+    cancelUninstall: "Cancel uninstall",
+    alreadyRunning: "Uninstallation is already in progress. Please wait for it to finish.",
+    pleaseWait: "Please wait",
+    continueAction: "Continue",
+    preparingAction: "Preparing uninstallation...",
+    removingAction: "Removing files...",
+    complete: "Uninstallation complete",
+    failed: "Uninstallation failed. Close this window and try again.",
+    noStart: "Could not start the uninstaller.",
+    noResponse: "Uninstallation did not respond. Close the window and try again.",
+    runningTitle: "MuzicMania is running",
+    runningDesc: "Close MuzicMania from the system tray or Task Manager before continuing.",
+    runningClose: "Understood",
+  }
+};
+var currentLang = "1033";
+try {
+  var savedLang = localStorage.getItem("muzicmania-installer-lang-v2");
+  if (!savedLang) savedLang = localStorage.getItem("muzicmania-uninstaller-lang");
+  if (savedLang) currentLang = savedLang === "es" ? "1034" : savedLang === "en" ? "1033" : savedLang;
+} catch (e) {}
+if (currentLang === "1033" && (navigator.language || "en").toLowerCase().indexOf("es") === 0) currentLang = "1034";
+
+function langKey(code) { return String(code) === "1034" ? "es" : "en"; }
+function uT(key) {
+  var keyLang = langKey(currentLang);
+  return (U18N[keyLang] && U18N[keyLang][key]) || U18N.en[key] || key;
+}
+
+function applyLanguage(lang) {
+  currentLang = String(lang || "1033");
+  document.documentElement.lang = langKey(currentLang);
+  var nodes = document.querySelectorAll("[data-u18n]");
+  for (var i = 0; i < nodes.length; i++) nodes[i].textContent = uT(nodes[i].getAttribute("data-u18n"));
+  var placeholders = document.querySelectorAll("[data-u18n-placeholder]");
+  for (var j = 0; j < placeholders.length; j++) placeholders[j].placeholder = uT(placeholders[j].getAttribute("data-u18n-placeholder"));
+  var selected = document.querySelector("#u-language-grid .language-option[data-lang='" + currentLang + "']");
+  var flag = selected ? selected.querySelector("img") : null;
+  var label = selected ? selected.querySelector("span").textContent : "English";
+  var currentFlag = $("u-language-flag");
+  var currentName = $("u-language-name");
+  if (currentFlag && flag) currentFlag.src = flag.src;
+  if (currentName) currentName.textContent = label;
+  var footerFlag = $("u-footer-lang-flag");
+  var footerLabel = $("u-footer-lang-label");
+  if (footerFlag && flag) footerFlag.src = flag.src;
+  if (footerLabel) footerLabel.textContent = label;
+  var options = document.querySelectorAll("#u-language-grid .language-option");
+  for (var k = 0; k < options.length; k++) options[k].classList.toggle("selected", options[k].getAttribute("data-lang") === currentLang);
+  try { localStorage.setItem("muzicmania-installer-lang-v2", currentLang); } catch (e) {}
+  if (isDone) setText("u-done-note", $("chk-delete") && $("chk-delete").checked ? uT("doneNoteData") : uT("doneNoteKept"));
+}
+
+function openLanguageModal() { $("u-language-modal").classList.add("active"); }
+function closeLanguageModal() { $("u-language-modal").classList.remove("active"); }
 
 var selectedReason = "";
 var selectedRating = 0;
@@ -86,10 +243,29 @@ function readState() {
   });
 }
 
+function showRunningModal() {
+  $("running-modal").classList.add("active");
+}
+
+function ensureAppClosed(callback) {
+  tauriInvoke("installer_app_running").then(function(running) {
+    if (running) {
+      showRunningModal();
+      return;
+    }
+    callback();
+  }).catch(function() { callback(); });
+}
+
 function startUninstall() {
   if (isRunning || !allowAction("uninstall", 900)) return;
+  ensureAppClosed(beginUninstall);
+}
+
+function beginUninstall() {
   isRunning = true;
-  setProgress(5, "Preparing uninstallation...");
+  document.body.classList.add("uninstall-busy");
+  setProgress(5, uT("preparingAction"));
   window.MuzicRoadmap.complete("review");
   goView("v-progress");
   tauriInvoke("uninstaller_start", {
@@ -103,7 +279,8 @@ function startUninstall() {
       attempts += 1;
       if (attempts > 1800) {
         isRunning = false;
-        setText("u-status", "Uninstallation did not respond. Close the window and try again.");
+        document.body.classList.remove("uninstall-busy");
+        setText("u-status", uT("noResponse"));
         return;
       }
       readState().then(function(status) {
@@ -112,13 +289,14 @@ function startUninstall() {
           if (progressTimer) clearInterval(progressTimer);
           isRunning = false;
           isDone = true;
-          setProgress(100, "Uninstallation complete");
+          document.body.classList.remove("uninstall-busy");
+          setProgress(100, uT("complete"));
           window.MuzicRoadmap.setDone("uninstall");
           window.MuzicRoadmap.setDone("done");
-          setText("u-detail", "Completed");
+          setText("u-detail", uT("complete"));
           $("u-done-note").textContent = $("chk-delete").checked
-            ? "The application and local data were removed successfully."
-            : "The application was removed and local settings were kept.";
+            ? uT("doneNoteData")
+            : uT("doneNoteKept");
           goView("v-done");
           return;
         }
@@ -126,8 +304,9 @@ function startUninstall() {
           if (pollTimer) clearTimeout(pollTimer);
           if (progressTimer) clearInterval(progressTimer);
           isRunning = false;
+          document.body.classList.remove("uninstall-busy");
           window.MuzicRoadmap.setAllError("uninstall");
-          setText("u-status", "Uninstallation failed. Close this window and try again.");
+          setText("u-status", uT("failed"));
           return;
         }
         pollTimer = setTimeout(poll, 350);
@@ -136,7 +315,8 @@ function startUninstall() {
     poll();
   }).catch(function() {
     isRunning = false;
-    setText("u-status", "Could not start the uninstaller.");
+    document.body.classList.remove("uninstall-busy");
+    setText("u-status", uT("noStart"));
   });
 }
 
@@ -146,14 +326,14 @@ window.showUninstallerCloseModal = function() {
   var yes = $("modal-yes");
   var no = $("modal-no");
   if (isRunning) {
-    setText("u-status", "Uninstallation is already in progress. Please wait for it to finish.");
+    setText("u-status", uT("alreadyRunning"));
     modal.classList.add("active");
-    if (yes) { yes.disabled = true; yes.textContent = "Please wait"; }
-    if (no) no.textContent = "Continue";
+    if (yes) { yes.disabled = true; yes.textContent = uT("pleaseWait"); }
+    if (no) no.textContent = uT("continueAction");
     return;
   }
-  if (yes) { yes.disabled = false; yes.textContent = "Cancel uninstall"; }
-  if (no) no.textContent = "Keep installed";
+  if (yes) { yes.disabled = false; yes.textContent = uT("cancelUninstall"); }
+  if (no) no.textContent = uT("keepInstalled");
   modal.classList.add("active");
 };
 
@@ -195,14 +375,46 @@ function bindEasterEgg() {
     }
     eggClicks += 1;
     clearTimeout(eggTimer);
-    eggTimer = setTimeout(function() { eggClicks = 0; }, 1400);
-    if (eggClicks >= 5) document.body.classList.add("easter-egg");
+    eggTimer = setTimeout(function() { eggClicks = 0; }, 1600);
+    if (eggClicks >= 3) {
+      document.body.classList.add("easter-egg");
+      if (cat) cat.title = langKey(currentLang) === "en"
+        ? "Click the cat to disable the easter egg"
+        : "Haz clic en el gato para desactivar el easter egg";
+    }
   });
-  if (cat) cat.addEventListener("click", function() { document.body.classList.remove("easter-egg"); eggClicks = 0; });
+  if (cat) {
+    cat.title = langKey(currentLang) === "en"
+      ? "Click the cat to disable the easter egg"
+      : "Haz clic en el gato para desactivar el easter egg";
+    cat.setAttribute("aria-label", cat.title);
+    cat.addEventListener("click", function() {
+      document.body.classList.remove("easter-egg");
+      eggClicks = 0;
+    });
+  }
 }
 
 function init() {
+  applyLanguage(currentLang);
+  var setupBuild = window.MUZIC_BUILD || {};
+  var setupChannel = String(setupBuild.channel || "beta").toUpperCase();
+  setText("uninstaller-channel", setupChannel);
+  setText("uninstaller-version", "Launcher v" + (setupBuild.launcherVersion || "2.3.2"));
+  setText("uninstaller-version-footer", "Launcher v" + (setupBuild.launcherVersion || "2.3.2") + " · " + setupChannel);
+  $("setup-minimize").addEventListener("click", function() { tauriInvoke("window_minimize").catch(function() {}); });
+  $("setup-close").addEventListener("click", function() { if (window.showUninstallerCloseModal) window.showUninstallerCloseModal(); });
   bindEasterEgg();
+  $("u-language-trigger").addEventListener("click", openLanguageModal);
+  $("u-footer-lang").addEventListener("click", openLanguageModal);
+  $("u-language-close").addEventListener("click", closeLanguageModal);
+  var languageOptions = document.querySelectorAll("#u-language-grid .language-option");
+  for (var l = 0; l < languageOptions.length; l++) {
+    languageOptions[l].addEventListener("click", function() {
+      applyLanguage(this.getAttribute("data-lang"));
+      closeLanguageModal();
+    });
+  }
   tauriInvoke("uninstaller_info").then(function(info) {
     if (!info) return;
     window.MuzicRoadmap.init("roadmap", UN_STAGES, "review", unRoadmapNavigate);
@@ -239,7 +451,8 @@ function init() {
   });
   $("btn-welcome-close").addEventListener("click", cancelAndClose);
   $("btn-uninstall").addEventListener("click", startUninstall);
-  $("btn-redownload").addEventListener("click", function() { tauriInvoke("open_url", { url: "https://github.com/Ciszu-Network/CiszuNetwork/releases/tag/muzicmania-v2.1.0" }); });
+  $("running-close").addEventListener("click", function() { $("running-modal").classList.remove("active"); });
+  $("btn-redownload").addEventListener("click", function() { tauriInvoke("open_url", { url: "https://github.com/Ciszu-Network/CiszuNetwork/releases/latest" }); });
   $("btn-missing-support").addEventListener("click", function() { tauriInvoke("open_url", { url: "https://wa.me/584126858111" }); });
   $("btn-missing-close").addEventListener("click", cancelAndClose);
   $("btn-cancel").addEventListener("click", cancelAndClose);
@@ -266,3 +479,5 @@ function init() {
 
 if (document.readyState === "complete" || document.readyState === "interactive") init();
 else document.addEventListener("DOMContentLoaded", init);
+
+

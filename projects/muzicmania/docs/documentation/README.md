@@ -69,6 +69,7 @@ Documentación corporativa/genérica no duplicada aquí; vive en
 | `` `DEVSECOPS_SYSTEM.md` `` (ver ciszu) | SAST/DAST y shift-left |
 | `` `IT_GLOSSARY_PROTOCOLS.md` `` (ver ciszu) | Glosario técnico |
 | `` `INSTALLERS_SYSTEM.md` `` (ver ciszu) | Packaging e instaladores del ecosistema |
+| `` `RELEASE_POLICY_SYSTEM.md` `` (ver ciszu) | Manifiesto firmado, canales y bloqueos |
 | `` `FULL_STACK_SYSTEM.md` `` (ver ciszu) | Stack global del ecosistema |
 | `` `STYLES_SYSTEM.md` `` (ver ciszu) | Estándares de estilos |
 | `` `COLOR_SYSTEM.md` `` (ver ciszu) | Sistema de color |
@@ -83,3 +84,4 @@ Documentación corporativa/genérica no duplicada aquí; vive en
 - Los doc de sistema/protocolo/guía deben cumplir el mínimo de líneas del estándar.
 
 _Última revisión: 10 nov 2026._ Relacionado: `PROJECT_STATE.md`, `TAURI_SYSTEM.md`, `STORE_ECONOMY_PLAN.md`.
+

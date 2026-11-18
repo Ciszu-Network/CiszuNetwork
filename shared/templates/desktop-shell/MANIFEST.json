@@ -1,0 +1,38 @@
+{
+  "name": "ciszu-desktop-shell",
+  "version": "1.0.0",
+  "reference": {
+    "splash": "projects/muzicmania/launcher/src-tauri/splash",
+    "rust": "projects/muzicmania/launcher/src-tauri/src/main.rs",
+    "nsisPatch": "projects/muzicmania/website/scripts/patch-nsis-lang.ps1",
+    "buildScript": "projects/muzicmania/launcher/build-installer.ps1"
+  },
+  "common": ["logo.svg", "flags"],
+  "installer": [
+    "installer.html",
+    "installer.js",
+    "uninstaller.html",
+    "uninstaller.js",
+    "roadmap.js",
+    "roadmap.css",
+    "license.txt"
+  ],
+  "launcher": [
+    "index.html",
+    "launcher.css",
+    "launcher.js",
+    "offline.html",
+    "offline-game.html",
+    "offline-game.js"
+  ],
+  "adapters": ["adapters/web-adapter.js"],
+  "forbidden": [
+    ".env",
+    ".env.local",
+    "SECRET_TEMP.env",
+    "node_modules",
+    "target",
+    "content",
+    "offline/music"
+  ]
+}

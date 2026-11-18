@@ -159,6 +159,14 @@
     reset(stages, activeId, navigator);
   }
 
+  function setLabels(labels) {
+    if (!labels) return;
+    for (var i = 0; i < state.stages.length; i++) {
+      if (labels[state.stages[i].id]) state.stages[i].label = labels[state.stages[i].id];
+    }
+    render();
+  }
+
   window.MuzicRoadmap = {
     init: init,
     reset: reset,
@@ -167,6 +175,7 @@
     complete: complete,
     setError: setError,
     setAllError: setAllError,
+    setLabels: setLabels,
     render: render
   };
 })();

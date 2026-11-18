@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -24,6 +24,9 @@
   html { overflow: hidden; }
   * { margin: 0; padding: 0; box-sizing: border-box; font-family: "Segoe UI", system-ui, sans-serif; user-select: none; }
   body { background: var(--bg-main); color: var(--text-main); height: 100vh; overflow: hidden; display: flex; flex-direction: column; position: relative; }
+  a { color: #0f9eff; text-decoration: none; transition: color .18s ease; }
+  a:hover { color: #61c4ff; }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
   body.rtl { direction: rtl; }
   body.rtl .view { text-align: right; }
   body.rtl .btn-row { flex-direction: row-reverse; }
@@ -35,7 +38,7 @@
     animation: slow-spin 20s linear infinite; z-index: 0; pointer-events: none;
   }
   @keyframes slow-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-  .window-frame { flex: 1; display: flex; flex-direction: column; z-index: 1; padding: 24px; position: relative; }
+  .window-frame { flex: 1; display: flex; flex-direction: column; min-height: 0; z-index: 1; padding: 24px; position: relative; }
   .header { display: flex; justify-content: center; align-items: center; margin-bottom: 24px; animation: fade-down 0.8s ease-out; }
   .header svg, .header .brand-logo { max-width: 200px; width: auto; height: auto; display: block; filter: drop-shadow(0 0 10px rgba(108,92,231,0.4)); cursor: pointer; }
   .view { display: none; flex-direction: column; flex: 1; animation: fade-in 0.4s ease-out forwards; opacity: 0; }
@@ -48,6 +51,7 @@
     background: var(--bg-panel); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-light); border-radius: 12px; padding: 20px;
     margin-bottom: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    min-height: 0; overflow-y: auto; scrollbar-gutter: stable;
   }
   .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
   .form-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); font-weight: 600; }
@@ -92,9 +96,16 @@
   .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; }
   .modal-overlay.active { display: flex; }
   .modal-content { background: var(--bg-panel); border: 1px solid var(--border-light); border-radius: 16px; padding: 32px; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 16px 48px rgba(0,0,0,0.4); animation: fade-down 0.3s ease-out; }
+  .reinstall-steps { display:flex; flex-direction:column; gap:8px; margin:16px 0; }
+  .reinstall-step { display:flex; align-items:center; gap:9px; color:var(--text-muted); font-size:12px; }
+  .reinstall-dot { width:10px; height:10px; border-radius:50%; border:2px solid var(--border-light); background:transparent; flex-shrink:0; }
+  .reinstall-step.active { color:#fff; }
+  .reinstall-step.active .reinstall-dot { border-color:var(--primary); background:var(--primary); box-shadow:0 0 10px var(--primary-glow); }
+  .reinstall-step.done { color:var(--success); }
+  .reinstall-step.done .reinstall-dot { border-color:var(--success); background:var(--success); }
   .finish-icon { width: 64px; height: 64px; border-radius: 50%; background: rgba(46, 213, 115, 0.1); border: 2px solid var(--success); color: var(--success); display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; box-shadow: 0 0 20px rgba(46, 213, 115, 0.3); }
-  #v-finish .glass-panel { padding: 14px 18px; }
-  #v-finish .finish-icon { width: 48px; height: 48px; font-size: 24px; margin-bottom: 8px; }
+  #v-finish .glass-panel { padding: 14px 18px; justify-content: flex-start; }
+  #v-finish .finish-icon { width: 48px; height: 48px; font-size: 24px; margin-bottom: 8px; flex-shrink: 0; }
   #v-finish h2 { margin-bottom: 2px; }
   #v-finish .checkbox-wrapper { margin-bottom: 6px; }
   #v-finish .log-details { margin-top: 4px; }
@@ -133,9 +144,14 @@
   .lang-option:hover { transform: translateX(3px); }
   .lang-option:active { transform: scale(.985); }
   .lang-select.open .lang-menu { animation: menuIn .18s cubic-bezier(.2,.8,.2,1) both; }
-  .stage-host { position: relative; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; }
-  .view { display: none; flex: 1; flex-direction: column; position: relative; animation: none; opacity: 1; }
-  .view.active { display: flex; animation: stageIn .32s cubic-bezier(.2,.8,.2,1) both; }
+  .stage-host { position: relative; flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  .view { display: none; flex: 1 1 auto; min-height: 0; flex-direction: column; position: relative; animation: none; opacity: 1; }
+  .view.active { display: flex; height: 100%; animation: stageIn .32s cubic-bezier(.2,.8,.2,1) both; }
+  .view.active > .glass-panel { flex: 1 1 auto; }
+  .view.active > .btn-row { flex: 0 0 auto; }
+  body.installing .roadmap, body.installing .header, body.installing .app-footer, body.installing .lang-trigger,
+  body.installing .btn-secondary, body.installing .btn-primary, body.installing .checkbox-wrapper { pointer-events: none; opacity: .48; }
+  body.installing #btn-install-cancel, body.installing #btn-modal-no, body.installing #btn-modal-yes { pointer-events: auto; opacity: 1; }
   .view.leaving { display: flex; position: absolute; inset: 0; pointer-events: none; animation: stageOut .22s ease both; }
   .stage-host[data-dir="back"] .view.active { animation-name: stageInBack; }
   .stage-host[data-dir="back"] .view.leaving { animation-name: stageOutBack; }
@@ -181,16 +197,30 @@
     .header svg, .header .brand-logo { max-width: 160px; }
     .glass-panel { padding: 14px; }
     h2 { font-size: 18px; }
+    p { margin-bottom: 12px; }
     .btn-row { gap: 8px; flex-wrap: wrap; }
     .btn { padding: 9px 14px; font-size: 12px; }
     .app-footer { padding: 0 16px 8px; font-size: 9px; }
     .req-grid, .pkg-list { grid-template-columns: 1fr; }
+    .roadmap { margin-bottom: 8px; }
+  }
+  @media (max-height: 760px) {
+    .header { margin-bottom: 12px; }
+    .header svg, .header .brand-logo { max-width: 170px; }
+    .glass-panel { padding: 14px 16px; margin-bottom: 10px; }
+    .license-box { height: 130px; }
+    .console { height: 92px; }
+    #v-finish .glass-panel { padding: 10px 14px; }
+    #v-finish .finish-icon { width: 38px; height: 38px; font-size: 19px; margin-bottom: 4px; }
+    #v-finish h2 { font-size: 18px; }
+    .app-footer { padding-bottom: 8px; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
   }
 </style>
 <link rel="stylesheet" href="roadmap.css">
+<link rel="stylesheet" href="setup-titlebar.css">
 </head>
 <body>
 <svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
@@ -226,11 +256,20 @@
   <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.5 3.5A11.8 11.8 0 0 0 1.9 17.7L.5 23.5l5.9-1.4A11.8 11.8 0 0 0 20.5 3.5Zm-8.4 18a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.5.9.9-3.4-.2-.4a9.8 9.8 0 1 1 8.2 4.5Zm5.4-7.3c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.2l-.9 1.1c-.2.2-.4.2-.7.1a8 8 0 0 1-2.3-1.4 8.8 8.8 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.6.3-.6c.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/></symbol>
 </svg>
 <div class="bg-glow"></div>
-<div class="window-frame">
-<div class="header">
-<img id="brand-logo" class="brand-logo" src="logo.svg" alt="MuzicMania">
-<span id="easter-cat" class="easter-cat" aria-hidden="true">🐱</span>
+<div class="setup-titlebar" data-tauri-drag-region>
+  <div class="setup-titlebar-brand" data-tauri-drag-region>
+    <img id="brand-logo" class="setup-titlebar-isotipo" src="isotipo.svg" alt="MuzicMania">
+    <span id="easter-cat" class="easter-cat" aria-hidden="true">🐱</span>
+    <span id="installer-channel" class="setup-titlebar-beta">BETA</span>
+    <span id="installer-version" class="setup-titlebar-version">Launcher v2.3.2</span>
+  </div>
+  <button type="button" class="setup-titlebar-lang footer-lang" id="footer-lang" aria-label="Language"><img id="footer-lang-flag" src="flags/gb.svg" alt=""><span id="footer-lang-label">English</span></button>
+  <div class="setup-titlebar-actions">
+    <button type="button" class="setup-titlebar-btn" id="setup-minimize" title="Minimizar">&#8211;</button>
+    <button type="button" class="setup-titlebar-btn close" id="setup-close" title="Cerrar">&#215;</button>
+  </div>
 </div>
+<div class="window-frame">
 <div id="roadmap" class="roadmap"></div>
 <div class="stage-host" id="stage-host">
 <!-- View: Language -->
@@ -274,21 +313,35 @@
 </div>
 <!-- View: Maintenance -->
 <div id="v-maintenance" class="view">
-  <div class="glass-panel" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+  <div class="glass-panel" style="flex:1; display:flex; flex-direction:column; justify-content:flex-start;">
     <h2 id="maint-title">Hola de nuevo, MuzicMania ya está instalado</h2>
     <p id="maint-desc">An existing installation was found on this computer. Puedes actualizar, reparar o abrir el desinstalador.</p>
     <div style="background:rgba(0,0,0,0.3); border:1px solid var(--border-light); border-radius:8px; padding:16px; margin:16px 0;">
       <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-package"></use></svg><span id="maint-version-label">Installed version</span></span><strong id="maint-version">—</strong></div>
       <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-folder"></use></svg><span id="maint-path-label">Location</span></span><span id="maint-path" style="font-size:12px; color:var(--text-main); word-break:break-all; text-align:right;">—</span></div>
-      <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg><span>Local data</span></span><strong>%APPDATA%\MuzicMania</strong></div>
+      <div class="info-row"><span class="footer-group"><svg class="icon"><use href="#i-disk"></use></svg><span id="maint-local-label">Local data</span></span><strong>%APPDATA%\MuzicMania</strong></div>
     </div>
-    <p id="maint-note" style="font-size:12px; color:var(--text-muted); margin-bottom:0;">Updating or reinstalling keeps your account and local settings. Uninstall opens the official uninstaller.</p>
-    <p style="font-size:11px; color:var(--text-muted); margin-top:10px;"><svg class="icon"><use href="#i-whatsapp"></use></svg> Need help? <a data-external href="https://wa.me/584126858111" style="color:#25D366;text-decoration:none;">WhatsApp support</a> · <a data-external href="https://muzicmania.vercel.app/support" style="color:#0f9eff;text-decoration:none;">Support page</a></p>
+    <div id="maint-version-state" style="margin:14px 0; padding:12px 14px; border:1px solid var(--border-light); border-radius:8px; background:rgba(0,0,0,.22);">
+      <strong id="maint-state-title" style="display:block; font-size:13px;">Comprobando versión instalada...</strong>
+      <span id="maint-state-desc" style="display:block; font-size:11px; color:var(--text-muted); margin-top:4px;"></span>
+      <span id="maint-build-meta" style="display:block; font-size:10px; color:var(--text-muted); margin-top:6px;"></span>
+    </div>
+    <div id="maint-policy" style="display:none; margin:12px 0; padding:12px 14px; border:1px solid var(--border-light); border-radius:8px; background:rgba(0,0,0,.22);">
+      <strong id="maint-policy-title" style="display:block; font-size:13px;"></strong>
+      <span id="maint-policy-desc" style="display:block; font-size:11px; color:var(--text-muted); margin-top:4px;"></span>
+      <div id="maint-policy-options" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"></div>
+      <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px;">
+        <a id="maint-policy-downloads" data-external href="https://muzicmania.vercel.app/download" style="font-size:11px; color:#0f9eff;">Descargar manualmente</a>
+        <a id="maint-policy-support" data-external href="https://muzicmania.vercel.app/support" style="font-size:11px; color:#0f9eff;">Soporte</a>
+      </div>
+    </div>    <p id="maint-note" style="font-size:12px; color:var(--text-muted); margin-bottom:0;">Updating or reinstalling keeps your account and local settings. Uninstall opens the official uninstaller.</p>
+    <p id="maint-help" style="font-size:11px; color:var(--text-muted); margin-top:10px;"><svg class="icon"><use href="#i-whatsapp"></use></svg> <span id="maint-help-label">Need help?</span> <a id="maint-support" data-external href="https://wa.me/584126858111" style="color:#25D366;text-decoration:none;">WhatsApp support</a> · <a id="maint-support-page" data-external href="https://muzicmania.vercel.app/support" style="color:#0f9eff;text-decoration:none;">Support page</a></p>
   </div>
   <div class="btn-row">
-    <button class="btn btn-secondary" id="btn-maint-close"><svg class="icon"><use href="#i-x"></use></svg>Close</button>
-    <button class="btn btn-danger" id="btn-maint-uninstall"><svg class="icon"><use href="#i-trash"></use></svg>Uninstall</button>
-    <button class="btn btn-primary" id="btn-maint-update"><svg class="icon"><use href="#i-refresh"></use></svg>Update / Reinstall</button>
+    <button class="btn btn-secondary" id="btn-maint-close"><svg class="icon"><use href="#i-x"></use></svg><span id="maint-close-label">Close</span></button>
+    <button class="btn btn-danger" id="btn-maint-uninstall"><svg class="icon"><use href="#i-trash"></use></svg><span id="maint-uninstall-label">Uninstall</span></button>
+    <button class="btn btn-secondary" id="btn-maint-reinstall"><svg class="icon"><use href="#i-refresh"></use></svg><span id="maint-reinstall-label">Reinstall</span></button>
+    <button class="btn btn-primary" id="btn-maint-update"><svg class="icon"><use href="#i-download"></use></svg><span id="maint-update-label">Check for updates</span></button>
   </div>
 </div>
 <!-- View: Welcome -->
@@ -299,7 +352,6 @@
     <div style="background:rgba(0,0,0,0.3); border-radius:8px; padding:16px; border:1px solid var(--border-light); margin-top:20px;">
       <div class="form-label" style="margin-bottom:8px;" id="lbl-system-detect">SISTEMA DETECTADO</div>
       <div class="flex-row">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--primary)"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
         <div style="font-weight:600;" id="sys-info">MuzicMania v2.1.1 (Windows x64)</div>
       </div>
     </div>
@@ -400,7 +452,7 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
 </div>
 <!-- View: Finish -->
 <div id="v-finish" class="view">
-  <div class="glass-panel" style="flex:1; display:flex; flex-direction:column; justify-content:center;">
+  <div class="glass-panel" style="flex:1; display:flex; flex-direction:column; justify-content:flex-start;">
     <div class="finish-icon">✓</div>
     <h2 id="lbl-finish-title" style="text-align:center;">¡Instalación Completada!</h2>
     <p id="lbl-finish-desc" style="text-align:center; margin-bottom:8px;">MuzicMania está listo para usarse.</p>
@@ -413,7 +465,15 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
       <label class="checkbox-wrapper"><input type="checkbox" id="chk-taskbar"><div class="checkmark"></div><span id="lbl-taskbar">Fijar en la barra de tareas</span></label>
       <label class="checkbox-wrapper"><input type="checkbox" id="chk-changelog"><div class="checkmark"></div><span id="lbl-changelog">Ver notas de la versión (Changelog)</span></label>
     </div>
-    <details class="log-details"><summary>Installation log & packages</summary><pre class="full-log" id="finish-full-log"></pre></details>
+    <details class="log-details"><summary><svg class="icon"><use href="#i-file"></use></svg> Installation log & packages</summary>
+      <div class="pkg-list" id="finish-packages">
+        <span><svg class="icon"><use href="#i-check"></use></svg>MuzicMania Launcher</span>
+        <span><svg class="icon"><use href="#i-check"></use></svg>Official uninstaller</span>
+        <span><svg class="icon"><use href="#i-check"></use></svg>Desktop/Start shortcuts</span>
+        <span><svg class="icon"><use href="#i-check"></use></svg>WebView2 runtime</span>
+      </div>
+      <pre class="full-log" id="finish-full-log"></pre>
+    </details>
     <p style="font-size:10px; color:var(--text-muted); margin-top:8px;">Installed: launcher, uninstaller, shortcuts, WebView2 check. Account data remains untouched.</p>
     <p style="font-size:11px; color:var(--text-muted); margin-top:8px;"><svg class="icon"><use href="#i-whatsapp"></use></svg> Need help? <a data-external href="https://wa.me/584126858111" style="color:#25D366;text-decoration:none;">Contact support</a> · <a data-external href="https://muzicmania.vercel.app/support" style="color:#0f9eff;text-decoration:none;">Support page</a></p>
   </div>
@@ -428,13 +488,10 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
     <div class="footer-copy">
       <svg class="icon"><use href="#i-copyright"></use></svg>
       <span>2026 <a href="https://ciszunetwork.vercel.app" data-external>Ciszu Network</a></span>
-      <span>· <a href="https://muzicmania.vercel.app" data-external>MuzicMania</a> v2.1.1</span>
-      <span>· Installer v2.3.1</span>
+      <span>· <a href="https://muzicmania.vercel.app" data-external>MuzicMania</a> <span id="installer-game-version-footer">v2.1.1</span></span>
+      <span>· <span id="installer-version-footer">Launcher v2.3.2 · BETA</span></span>
     </div>
-    <div class="footer-group">
-      <button type="button" class="footer-lang" id="footer-lang"><img id="footer-lang-flag" src="flags/gb.svg" alt=""><span id="footer-lang-label">English</span><svg class="icon"><use href="#i-globe"></use></svg></button>
-      <span class="footer-group" style="gap:5px;"><svg class="icon"><use href="#i-info"></use></svg> Admin install</span>
-    </div>
+
   </div>
   <div class="footer-social">
     <a class="social-link discord" data-external href="https://discord.gg/W3kMtMMj6E" title="Discord"><svg class="icon"><use href="#i-discord"></use></svg></a>
@@ -458,6 +515,54 @@ Al marcar la casilla y continuar, usted acepta los términos de este Acuerdo.
     </div>
   </div>
 </div>
+<div class="modal-overlay" id="running-modal">
+  <div class="modal-content">
+    <h2 id="running-title" style="color:#ffb020">MuzicMania está en ejecución</h2>
+    <p id="running-desc">Cierra MuzicMania desde la bandeja del sistema o el administrador de tareas antes de continuar.</p>
+    <div class="flex-row" style="justify-content:center; margin-top:24px;">
+      <button class="btn btn-secondary" id="running-close">Entendido</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="maint-modal">
+  <div class="modal-content" style="text-align:left; max-width:480px;">
+    <h2 id="maint-modal-title">MuzicMania</h2>
+    <p id="maint-modal-desc"></p>
+    <div class="progress-container" id="maint-modal-progress" style="display:none;">
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="maint-modal-bar"></div></div>
+      <div class="progress-details"><span id="maint-modal-status">...</span><span id="maint-modal-pct">0%</span></div>
+    </div>
+    <div class="flex-row" style="justify-content:center; margin-top:24px;">
+      <button class="btn btn-secondary" id="maint-modal-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="maint-modal-confirm">Aceptar</button>
+    </div>
+  </div>
+</div>
+<div class="modal-overlay" id="reinstall-modal">
+  <div class="modal-content" style="text-align:left; max-width:480px;">
+    <h2 id="reinstall-title">Reinstalando MuzicMania</h2>
+    <p id="reinstall-desc">Se eliminará la aplicación actual y se instalará de nuevo. Tus datos locales se conservarán.</p>
+    <div class="reinstall-steps">
+      <div class="reinstall-step" data-reinstall-phase="1"><span class="reinstall-dot"></span><span id="reinstall-step-uninstall">Desinstalando la versión anterior...</span></div>
+      <div class="reinstall-step" data-reinstall-phase="2"><span class="reinstall-dot"></span><span id="reinstall-step-install">Instalando la nueva versión...</span></div>
+      <div class="reinstall-step" data-reinstall-phase="3"><span class="reinstall-dot"></span><span id="reinstall-step-finish">Finalizando...</span></div>
+    </div>
+    <div class="progress-container">
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="reinstall-bar"></div></div>
+      <div class="progress-details"><span id="reinstall-status">Preparando...</span><span id="reinstall-pct">0%</span></div>
+    </div>
+    <p id="reinstall-error" style="display:none; color:var(--danger); font-size:12px;"></p>
+    <div class="flex-row" style="justify-content:center; margin-top:24px; flex-wrap:wrap;">
+      <button class="btn btn-primary" id="reinstall-open" style="display:none;">Abrir MuzicMania</button>
+      <button class="btn btn-secondary" id="reinstall-stay" style="display:none;">Mantenerme en el hub</button>
+      <button class="btn btn-secondary" id="reinstall-close" style="display:none;">Cerrar</button>
+    </div>
+  </div>
+</div>
 <script src="roadmap.js"></script>
+<script src="build-info.js"></script>
 <script src="installer.js"></script></body>
 </html>
+
+
+

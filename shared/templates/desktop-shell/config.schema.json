@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ciszunetwork.vercel.app/schemas/desktop-shell-config.json",
+  "title": "Ciszu Desktop Shell configuration",
+  "type": "object",
+  "required": ["product", "urls"],
+  "properties": {
+    "product": {
+      "type": "object",
+      "required": ["name", "slug", "appId", "version"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+        "appId": { "type": "string", "minLength": 3 },
+        "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+" }
+      },
+      "additionalProperties": false
+    },
+    "brand": {
+      "type": "object",
+      "properties": {
+        "owner": { "type": "string" },
+        "websiteUrl": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "urls": {
+      "type": "object",
+      "required": ["productUrl"],
+      "properties": {
+        "productUrl": { "type": "string", "format": "uri" },
+        "supportUrl": { "type": "string", "format": "uri" },
+        "githubRepo": { "type": "string", "format": "uri" },
+        "whatsapp": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "socials": {
+      "type": "object",
+      "properties": {
+        "discord": { "type": "string", "format": "uri" },
+        "youtube": { "type": "string", "format": "uri" },
+        "instagram": { "type": "string", "format": "uri" },
+        "tiktok": { "type": "string", "format": "uri" },
+        "x": { "type": "string", "format": "uri" },
+        "github": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "shell": {
+      "type": "object",
+      "properties": {
+        "kind": { "enum": ["installer", "launcher", "all"] },
+        "languages": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "source": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

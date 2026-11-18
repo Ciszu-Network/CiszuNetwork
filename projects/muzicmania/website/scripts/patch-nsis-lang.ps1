@@ -100,7 +100,7 @@ $customInit = @'
     InitPluginsDir
     SetOutPath "$PLUGINSDIR"
     File "${MAINBINARYSRCPATH}"
-    Exec '"$PLUGINSDIR\${MAINBINARYNAME}.exe" --installer'
+    Exec '"$PLUGINSDIR\${MAINBINARYNAME}.exe" --installer "$EXEPATH"'
     HideWindow
     StrCpy $R9 0
 
@@ -123,7 +123,6 @@ $customInit = @'
         Quit
       ${EndIf}
       ${If} $2 != "INSTALL"
-        Delete "$TEMP\muzicmania-ipc\cmd.txt"
         Goto WaitForCustomCmd
       ${EndIf}
       Delete "$TEMP\muzicmania-ipc\cmd.txt"
@@ -194,11 +193,14 @@ $content = $content.Replace(
 )
 
 $checkRunning = @'
-  ${If} $CustomUIMode != 1
-    !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"
+  ReadEnvStr $0 "MUZICMANIA_REINSTALL"
+  ${If} $0 != "1"
+    ${If} $CustomUIMode != 1
+      !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"
+    ${EndIf}
   ${EndIf}
 '@
-$runningLine = '  !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"'
+$runningLine = '  !insertmacro CheckIfAppIsRunning "$INSTDIR\${MAINBINARYNAME}.exe" "${PRODUCTNAME}"'
 $runningIndex = $content.IndexOf($runningLine)
 if ($runningIndex -ge 0) {
     $content = $content.Substring(0, $runningIndex) + $checkRunning + $content.Substring($runningIndex + $runningLine.Length)
@@ -250,42 +252,7 @@ $onInstSuccess = @'
     FileOpen $0 "$TEMP\muzicmania-ipc\status.txt" w
     FileWrite $0 "DONE"
     FileClose $0
-    StrCpy $R9 0
-
-    WaitFinishCmd:
-      IntOp $R9 $R9 + 1
-      ${If} $R9 > 240
-        Goto CustomFinishCleanup
-      ${EndIf}
-      Sleep 500
-      IfFileExists "$TEMP\muzicmania-ipc\cmd.txt" FinishCmdExists
-      Goto WaitFinishCmd
-
-    FinishCmdExists:
-      FileOpen $0 "$TEMP\muzicmania-ipc\cmd.txt" r
-      FileRead $0 $1
-      FileClose $0
-      Delete "$TEMP\muzicmania-ipc\cmd.txt"
-      ${If} $1 == "ABORT"
-        HideWindow
-        ExecWait '"$INSTDIR\uninstall.exe" /S _?=$INSTDIR'
-        Goto CustomFinishCleanup
-      ${EndIf}
-      ${If} $1 == "LAUNCH_PIN"
-        Sleep 1500
-        nsis_tauri_utils::RunAsUser "$INSTDIR\${MAINBINARYNAME}.exe" "--pin-taskbar"
-      ${EndIf}
-      ${If} $1 == "PIN_ONLY"
-        Sleep 1500
-        nsis_tauri_utils::RunAsUser "$INSTDIR\${MAINBINARYNAME}.exe" "--pin-taskbar --pin-only"
-      ${EndIf}
-      ${If} $1 == "LAUNCH"
-        Sleep 1500
-        nsis_tauri_utils::RunAsUser "$INSTDIR\${MAINBINARYNAME}.exe" ""
-      ${EndIf}
-
-    CustomFinishCleanup:
-      RMDir /r "$TEMP\muzicmania-ipc"
+    SetAutoClose true
     Return
   ${EndIf}
 
@@ -368,7 +335,6 @@ $unCustomInit = @'
         Quit
       ${EndIf}
       ${If} $2 != "UNINSTALL"
-        Delete "$TEMP\muzicmania-ipc\cmd.txt"
         Goto WaitForUninstallCustomCmd
       ${EndIf}
       Delete "$TEMP\muzicmania-ipc\cmd.txt"
@@ -407,28 +373,7 @@ Function un.onUninstSuccess
     FileOpen $0 "$TEMP\muzicmania-ipc\status.txt" w
     FileWrite $0 "DONE"
     FileClose $0
-    StrCpy $R9 0
-
-    WaitUninstallClose:
-      IntOp $R9 $R9 + 1
-      ${If} $R9 > 240
-        Goto UninstallCleanup
-      ${EndIf}
-      Sleep 500
-      IfFileExists "$TEMP\muzicmania-ipc\cmd.txt" UninstallCloseExists
-      Goto WaitUninstallClose
-
-    UninstallCloseExists:
-      FileOpen $0 "$TEMP\muzicmania-ipc\cmd.txt" r
-      FileRead $0 $1
-      FileClose $0
-      Delete "$TEMP\muzicmania-ipc\cmd.txt"
-      ${If} $1 == "ABORT"
-        Goto UninstallCleanup
-      ${EndIf}
-
-    UninstallCleanup:
-      RMDir /r "$TEMP\muzicmania-ipc"
+    SetAutoClose true
     Return
   ${EndIf}
 FunctionEnd
@@ -437,13 +382,16 @@ FunctionEnd
 $content = $content.Replace("Function un.onInit", $unSuccess + "Function un.onInit")
 
 $checkUninstallRunning = @'
-  ${If} $CustomUIMode != 1
-    !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"
+  ReadEnvStr $0 "MUZICMANIA_REINSTALL"
+  ${If} $0 != "1"
+    ${If} $CustomUIMode != 1
+      !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"
+    ${EndIf}
   ${EndIf}
 '@
 $uninstallSectionStart = $content.IndexOf("Section Uninstall")
-$uninstallRunningIndex = $content.IndexOf('  !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"', $uninstallSectionStart)
-$uninstallRunningLine = '  !insertmacro CheckIfAppIsRunning "${MAINBINARYNAME}.exe" "${PRODUCTNAME}"'
+$uninstallRunningIndex = $content.IndexOf('  !insertmacro CheckIfAppIsRunning "$INSTDIR\${MAINBINARYNAME}.exe" "${PRODUCTNAME}"', $uninstallSectionStart)
+$uninstallRunningLine = '  !insertmacro CheckIfAppIsRunning "$INSTDIR\${MAINBINARYNAME}.exe" "${PRODUCTNAME}"'
 if ($uninstallRunningIndex -ge 0) {
     $content = $content.Substring(0, $uninstallRunningIndex) + $checkUninstallRunning + $content.Substring($uninstallRunningIndex + $uninstallRunningLine.Length)
 }

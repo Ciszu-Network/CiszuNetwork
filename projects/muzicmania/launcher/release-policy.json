@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "policyVersion": 1,
+  "issuedAt": "2026-11-18T00:00:00Z",
+  "minimumSupported": {
+    "launcher": "2.0.0",
+    "beta": "2.0.0",
+    "release": "2.0.0"
+  },
+  "blocks": [],
+  "support": {
+    "downloadsUrl": "https://muzicmania.vercel.app/download",
+    "supportUrl": "https://muzicmania.vercel.app/support",
+    "changelogUrl": "https://muzicmania.vercel.app/changelog"
+  }
+}

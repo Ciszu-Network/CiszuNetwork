@@ -25,7 +25,7 @@
 .roadmap-step.error { color:#ff8a94; }
 .roadmap-label { font-size:9px; font-weight:700; letter-spacing:.4px; text-transform:uppercase; white-space:nowrap; }
 @keyframes pulseRing { 0%,100% { box-shadow:0 0 0 3px rgba(15,158,255,.1),0 0 14px rgba(15,158,255,.25); } 50% { box-shadow:0 0 0 5px rgba(15,158,255,.18),0 0 24px rgba(15,158,255,.45); } }
-@media (max-width:640px) { .roadmap { max-width:none; } .roadmap-track { min-width:520px; } .roadmap-label { font-size:8px; } }
+@media (max-width:640px) { .roadmap { max-width:none; } .roadmap-track { min-width:470px; } .roadmap-label { font-size:8px; } }
 
 .app-footer { flex-direction:column; align-items:stretch; gap:7px; }
 .footer-main { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
@@ -33,13 +33,20 @@
 .footer-copy a, .footer-support a { color:inherit; text-decoration:none; border-bottom:1px solid rgba(255,255,255,.16); transition:color .18s ease, border-color .18s ease; }
 .footer-copy a:hover, .footer-support a:hover { color:#0f9eff; border-color:#0f9eff; }
 .footer-social { display:flex; align-items:center; justify-content:center; gap:9px; flex-wrap:wrap; }
-.social-link { display:inline-flex; align-items:center; justify-content:center; width:25px; height:25px; border-radius:7px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.025); color:rgba(255,255,255,.62); transition:all .2s ease; }
-.social-link .icon { width:13px; height:13px; }
+.social-link { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:8px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.035); color:rgba(255,255,255,.76); transition:all .2s ease; }
+.social-link .icon { width:15px; height:15px; }
+.social-link.discord .icon, .social-link.youtube .icon, .social-link.tiktok .icon, .social-link.x .icon, .social-link.github .icon, .social-link.whatsapp .icon { fill:currentColor; stroke:none; }
+.social-link.instagram .icon { fill:none; stroke:currentColor; stroke-width:2.1; }
+.social-link.instagram .icon circle:last-child { fill:currentColor; stroke:none; }
 .social-link:hover { transform:translateY(-2px) scale(1.06); color:#fff; border-color:var(--social,#fff); background:color-mix(in srgb,var(--social,#0f9eff) 18%,transparent); box-shadow:0 5px 16px rgba(0,0,0,.25); }
 .social-link.discord { --social:#5865F2; }.social-link.youtube { --social:#FF0033; }.social-link.instagram { --social:#E4405F; }.social-link.tiktok { --social:#25F4EE; }.social-link.x { --social:#e7e9ea; }.social-link.github { --social:#f0f6fc; }.social-link.whatsapp { --social:#25D366; }
+.social-link.discord:hover { color:#5865F2; }.social-link.youtube:hover { color:#FF0033; }.social-link.instagram:hover { color:#E4405F; }.social-link.tiktok:hover { color:#25F4EE; }.social-link.x:hover { color:#e7e9ea; }.social-link.github:hover { color:#f0f6fc; }.social-link.whatsapp:hover { color:#25D366; }
+.footer-support .icon { color:#25D366; }
+.footer-copy a { color:#b9c3d6; }
 .footer-support { display:flex; align-items:center; justify-content:center; gap:6px; font-size:9px; color:rgba(255,255,255,.48); }
 @media (max-width:640px) { .footer-main { justify-content:center; } .footer-copy { justify-content:center; } }
-.easter-cat { display:none; font-size:58px; line-height:1; text-align:center; filter:drop-shadow(0 0 18px rgba(255,255,255,.45)); animation:catBounce 1.4s ease-in-out infinite; }
+.easter-cat { display:none; font-size:58px; line-height:1; text-align:center; filter:drop-shadow(0 0 18px rgba(255,255,255,.45)); animation:catBounce 1.4s ease-in-out infinite; cursor:pointer; }
+body.easter-egg .easter-cat { cursor:pointer; }
 body.easter-egg { background:linear-gradient(45deg,#ff004c,#ff9f00,#ffe600,#2ED573,#00d4ff,#6c5ce7,#ff20bf,#ff004c)!important; background-size:500% 500%!important; animation:rainbowBG 7s ease infinite!important; }
 body.easter-egg .bg-glow { opacity:.12; }
 body.easter-egg .brand-logo { display:none!important; }

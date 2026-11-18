@@ -18,6 +18,13 @@ body{background:#08080f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-seri
 .btn-primary{background:linear-gradient(135deg,#0f9eff,#b026ff);border:none;color:#fff}
 .btn-primary:hover{box-shadow:0 0 24px rgba(15,158,255,0.25)}
 .btn-secondary:hover{background:rgba(255,255,255,0.05);color:#fff}
+.close-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.72);z-index:20}
+.close-overlay.active{display:flex}
+.close-card{width:min(380px,90vw);background:#11131d;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:22px;text-align:left}
+.close-card h2{font-size:16px;margin-bottom:8px}
+.close-card p{font-size:12px;color:#9ba1b8;line-height:1.6;margin-bottom:16px}
+.close-card .btns{display:flex;gap:8px;flex-wrap:wrap}
+.close-card .btn{font-size:9px;padding:10px 14px}
 </style>
 </head>
 <body>
@@ -45,12 +52,26 @@ body{background:#08080f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-seri
   </div>
   
   <div class="btns">
-    <button class="btn btn-secondary" onclick="window.location.href='index.html'">REINTENTAR</button>
+    <button class="btn btn-secondary" onclick="backToMenu()">VOLVER AL MENÚ</button>
     <button class="btn btn-primary" onclick="launchOffline()">JUGAR</button>
+  </div>
+</div>
+<div class="close-overlay" id="close-modal">
+  <div class="close-card">
+    <h2>¿Cerrar el launcher?</h2>
+    <p>MuzicMania puede seguir en segundo plano desde la bandeja del sistema.</p>
+    <div class="btns">
+      <button class="btn btn-secondary" id="close-background">Mantener abierto</button>
+      <button class="btn btn-primary" id="close-exit">Cerrar completamente</button>
+    </div>
   </div>
 </div>
 
 <script>
+window.showCloseDialog = function () {
+  var modal = document.getElementById("close-modal");
+  if (modal) modal.classList.add("active");
+};
 // Bloquear atajos de navegador y click derecho
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('keydown', e => {
@@ -59,14 +80,35 @@ document.addEventListener('keydown', e => {
   }
 });
 
-async function launchOffline() {
+async function offlineNavigate(command, fallback) {
   try {
-    await window.__TAURI_INTERNALS__.invoke('launcher_offline_game');
-    window.location.href = 'offline-game.html';
-  } catch(e) {
-    alert("Error al iniciar el juego offline.");
+    if (window.__TAURI_INTERNALS__ && window.__TAURI_INTERNALS__.invoke) {
+      await window.__TAURI_INTERNALS__.invoke(command);
+      return;
+    }
+  } catch (e) {
+    console.warn('No se pudo navegar con el comando offline:', e);
   }
+  window.location.replace(fallback);
 }
+
+function backToMenu() {
+  offlineNavigate('offline_back_to_hub', 'index.html?offline=1');
+}
+
+function launchOffline() {
+  offlineNavigate('offline_start_game', 'offline-game.html');
+}
+document.getElementById("close-background").addEventListener("click", function () {
+  document.getElementById("close-modal").classList.remove("active");
+});
+document.getElementById("close-exit").addEventListener("click", function () {
+  if (window.__TAURI_INTERNALS__ && window.__TAURI_INTERNALS__.invoke) {
+    window.__TAURI_INTERNALS__.invoke("launcher_close");
+  } else {
+    window.close();
+  }
+});
 </script>
 </body>
 </html>

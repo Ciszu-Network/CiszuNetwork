@@ -1,4 +1,4 @@
-# Ciszu Network — AGENTS.md
+﻿# Ciszu Network — AGENTS.md
 
 Este archivo es la **primera lectura de toda sesión** y se relee en cada compactación. Es un
 **mapa + reglas**, no una enciclopedia: la documentación técnica completa vive en
@@ -93,7 +93,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `MODELS_SKILLS_SYSTEM` (galería de skills del agente opencode: 34 instaladas en `.opencode/skills/`, MCP ausente) ·
   `AI_AGENT_ORCHESTRATION_REPORT` (herramientas y patrones de agentes/orquestación) ·
   `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `ACCESS_CONTROL_SYSTEM` (autorizacion: staff en DB, umbrales por consola, gobernanza GitHub) · `NTFY_SYSTEM` (notificaciones push: ntfy.sh) · `KNOWLEDGE_SYSTEM` (educación) ·
-  `INSTALLERS_SYSTEM` · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
+  `INSTALLERS_SYSTEM` (build/releases/update/reinstall/uninstall) · `DESKTOP_SHELL_SYSTEM` (shell reutilizable instalador/hub/launcher + plantilla) · `RELEASE_POLICY_SYSTEM` (manifiesto firmado, canales, rangos y bloqueos) · `LAUNCHER_SYSTEM` (launcher: auth/offline/bandeja/idioma) · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
   `VISUAL_BUILDERS_SYSTEM` (editores visuales UI/UX: Puck-first) ·
   `PROJECTS_SYSTEM` · `STATUS_SYSTEM` · `ACTIONS_RUNNERS_SYSTEM` (CI/deploys locales sin GH Actions) ·
   `DEV_CONSOLE_SYSTEM` (TUI/CLI dev local) · `DEBUGGING_SYSTEM` (depuración local) ·
@@ -130,7 +130,7 @@ E:\Ciszu Network\
 ├── projects/            # Aplicaciones: ciszu, ciszukoantony, muzicmania, ciszubot, ciszugamens, ciszuai
 ├── packages/            # Paquetes compartidos: cdn, config, db, email, payments, ui, utils
 ├── services/            # Infraestructura: supabase (migraciones), vercel
-├── shared/              # Assets compartidos + perfiles/scripts portables (powershell/, scripts/)
+├── shared/              # Assets + perfiles/scripts portables + templates/desktop-shell (shell reutilizable)
 ├── scripts/             # Scripts de automatización (txt2md, upload-cdn, vault, ...)
 ├── tools/               # Herramientas locales IA/ops (ascii-ai, ciszou-ai, convert, ...)
 ├── apis/                # Colecciones Bruno (health/, rest/)
@@ -213,6 +213,7 @@ pnpm e2e                  # Playwright E2E
 pnpm --filter <name> dev  # una app individual
 pnpm notify "Mensaje"     # push ntfy
 pnpm commands             # catálogo pnpm + opencode + PowerShell
+pnpm shell:new --target <ruta> --config <json> --kind installer  # genera instalador/hub/launcher desde la plantilla oficial
 pnpm run doctor           # diagnóstico del entorno (Node, pnpm, puertos, discos)
 pnpm profile:install      # instala el perfil PowerShell portable (nuevo dispositivo)
 pnpm clean:all            # limpia .next, .turbo y logs de dev
@@ -524,5 +525,6 @@ cambia de sesión, y con modelos más potentes el umbral efectivo es mayor. Regl
 
 ---
 
-_Última revisión: 14 nov 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
+_Última revisión: 16 nov 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
 Estándar de docs: `DOCUMENTATION_SYSTEM.md`. Operación diaria: `WORKFLOW_SYSTEM.md`.
+

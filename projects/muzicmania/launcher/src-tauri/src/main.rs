@@ -1,18 +1,29 @@
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+﻿#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::sync::atomic::{AtomicBool, Ordering};
-use std::sync::Mutex;
+use std::sync::{Mutex, OnceLock};
 use std::time::Duration;
+use tauri::menu::{Menu, MenuItem};
+use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
 
 #[cfg(feature = "local-db")]
 mod db;
+mod policy;
+
+const LAUNCHER_VERSION: &str = env!("MUZIC_LAUNCHER_VERSION");
+const GAME_VERSION: &str = env!("MUZIC_GAME_VERSION");
+const BUILD_CHANNEL: &str = env!("MUZIC_CHANNEL");
+const BUILD_DATE: &str = env!("MUZIC_BUILD_DATE");
+const CHANGELOG_URL: &str = env!("MUZIC_CHANGELOG_URL");
 
 static FORCE_CLOSE: AtomicBool = AtomicBool::new(false);
 static LAUNCHER_FORCE_CLOSE: AtomicBool = AtomicBool::new(false);
 static INSTALLER_FORCE_CLOSE: AtomicBool = AtomicBool::new(false);
 static UNINSTALLER_FORCE_CLOSE: AtomicBool = AtomicBool::new(false);
 static CLOSE_TIMEOUT_ACTIVE: AtomicBool = AtomicBool::new(false);
+static POLICY_BLOCKED: AtomicBool = AtomicBool::new(false);
+static INSTALLER_SETUP_PATH: OnceLock<String> = OnceLock::new();
 
 fn default_true() -> bool {
     true
@@ -20,12 +31,34 @@ fn default_true() -> bool {
 
 #[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
 struct DesktopSettings {
+    #[serde(default = "default_true")]
     close_confirm: bool,
+    #[serde(default = "default_true")]
     link_confirm: bool,
     #[serde(default = "default_true")]
     auto_update: bool,
     #[serde(default = "default_true")]
     tutorial_done: bool,
+    #[serde(default = "default_language")]
+    language: String,
+    #[serde(default)]
+    launch_on_startup: bool,
+    #[serde(default = "default_close_action")]
+    close_action: String,
+    #[serde(default)]
+    update_channel: String,
+    #[serde(default)]
+    auto_switch_release: bool,
+    #[serde(default)]
+    release_prompted_version: String,
+}
+
+fn default_language() -> String {
+    "es".to_string()
+}
+
+fn default_close_action() -> String {
+    "ask".to_string()
 }
 
 impl Default for DesktopSettings {
@@ -35,6 +68,12 @@ impl Default for DesktopSettings {
             link_confirm: true,
             auto_update: true,
             tutorial_done: false,
+            language: default_language(),
+            launch_on_startup: false,
+            close_action: default_close_action(),
+            update_channel: String::new(),
+            auto_switch_release: false,
+            release_prompted_version: String::new(),
         }
     }
 }
@@ -55,6 +94,8 @@ struct LauncherSession {
     avatar_url: String,
     #[serde(default)]
     role: String,
+    #[serde(default = "default_true")]
+    remember: bool,
 }
 
 struct LauncherState(Mutex<Option<LauncherSession>>);
@@ -91,12 +132,12 @@ fn save_launcher_session(session: Option<&LauncherSession>) {
         return;
     };
     match session {
-        Some(session) => {
+        Some(session) if session.remember => {
             if let Ok(data) = serde_json::to_string(session) {
                 let _ = std::fs::write(path, data);
             }
         }
-        None => {
+        _ => {
             let _ = std::fs::remove_file(path);
         }
     }
@@ -108,6 +149,7 @@ fn guest_session() -> LauncherSession {
         display_name: "Invitado".to_string(),
         username: "invitado".to_string(),
         role: "guest".to_string(),
+        remember: true,
         ..LauncherSession::default()
     }
 }
@@ -408,6 +450,21 @@ fn save_settings_to_disk(settings: &DesktopSettings) {
     }
 }
 
+fn center_window(window: &tauri::WebviewWindow) {
+    let _ = window.center();
+    let Ok(Some(monitor)) = window.current_monitor() else {
+        return;
+    };
+    let Ok(size) = window.outer_size() else {
+        return;
+    };
+    let monitor_position = monitor.position();
+    let monitor_size = monitor.size();
+    let x = monitor_position.x + (monitor_size.width as i32 - size.width as i32) / 2;
+    let y = monitor_position.y + (monitor_size.height as i32 - size.height as i32) / 2;
+    let _ = window.set_position(tauri::PhysicalPosition::new(x, y));
+}
+
 #[tauri::command]
 fn close_window(app: tauri::AppHandle) {
     CLOSE_TIMEOUT_ACTIVE.store(false, Ordering::SeqCst);
@@ -424,6 +481,10 @@ fn cancel_close() {
 
 #[tauri::command]
 fn launcher_ready(app: tauri::AppHandle) {
+    if POLICY_BLOCKED.load(Ordering::SeqCst) {
+        let _ = app.emit("launcher-blocked", ());
+        return;
+    }
     let main = WebviewWindowBuilder::new(
         &app,
         "main",
@@ -497,6 +558,9 @@ fn server_status(url: String) -> u16 {
 
 #[tauri::command]
 fn launcher_offline_game(app: tauri::AppHandle) -> Result<(), String> {
+    if POLICY_BLOCKED.load(Ordering::SeqCst) {
+        return Err("launcher_update_required".to_string());
+    }
     let win = app
         .get_webview_window("launcher")
         .ok_or_else(|| "launcher_window_missing".to_string())?;
@@ -505,6 +569,33 @@ fn launcher_offline_game(app: tauri::AppHandle) -> Result<(), String> {
     win.set_maximizable(true).map_err(|e| e.to_string())?;
     win.maximize().map_err(|e| e.to_string())?;
     Ok(())
+}
+
+#[tauri::command]
+fn offline_back_to_hub(app: tauri::AppHandle) -> Result<(), String> {
+    let window = app
+        .get_webview_window("launcher")
+        .ok_or_else(|| "launcher_window_missing".to_string())?;
+    let current = window.url().map_err(|error| error.to_string())?;
+    let target = current
+        .join("index.html?offline=1")
+        .map_err(|error| error.to_string())?;
+    window.navigate(target).map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+fn offline_start_game(app: tauri::AppHandle) -> Result<(), String> {
+    if POLICY_BLOCKED.load(Ordering::SeqCst) {
+        return Err("launcher_update_required".to_string());
+    }
+    let window = app
+        .get_webview_window("launcher")
+        .ok_or_else(|| "launcher_window_missing".to_string())?;
+    let current = window.url().map_err(|error| error.to_string())?;
+    let target = current
+        .join("offline-game.html")
+        .map_err(|error| error.to_string())?;
+    window.navigate(target).map_err(|error| error.to_string())
 }
 
 #[tauri::command]
@@ -520,6 +611,77 @@ fn launcher_close(app: tauri::AppHandle) {
     if let Some(launcher) = app.get_webview_window("launcher") {
         let _ = launcher.close();
     }
+    app.exit(0);
+}
+
+#[tauri::command]
+fn launcher_minimize(app: tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("launcher") {
+        let _ = window.minimize();
+    }
+}
+
+#[tauri::command]
+fn launcher_toggle_maximize(app: tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("launcher") {
+        if window.is_maximized().unwrap_or(false) {
+            let _ = window.unmaximize();
+        } else {
+            let _ = window.maximize();
+        }
+    }
+}
+
+#[tauri::command]
+fn launcher_start_drag(app: tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("launcher") {
+        let _ = window.start_dragging();
+    }
+}
+
+#[tauri::command]
+fn launcher_hide(app: tauri::AppHandle) {
+    if let Some(launcher) = app.get_webview_window("launcher") {
+        let _ = launcher.hide();
+    }
+}
+
+#[tauri::command]
+fn set_launch_on_startup(enabled: bool) -> Result<(), String> {
+    #[cfg(target_os = "windows")]
+    {
+        let exe = std::env::current_exe().map_err(|error| error.to_string())?;
+        let value = format!("\"{}\"", exe.display());
+        let key = r"HKCU\Software\Microsoft\Windows\CurrentVersion\Run";
+        let output = if enabled {
+            hidden_command("reg")
+                .args([
+                    "add",
+                    key,
+                    "/v",
+                    "MuzicMania",
+                    "/t",
+                    "REG_SZ",
+                    "/d",
+                    &value,
+                    "/f",
+                ])
+                .output()
+        } else {
+            hidden_command("reg")
+                .args(["delete", key, "/v", "MuzicMania", "/f"])
+                .output()
+        };
+        let output = output.map_err(|error| error.to_string())?;
+        if enabled && !output.status.success() {
+            return Err(String::from_utf8_lossy(&output.stderr).trim().to_string());
+        }
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        let _ = enabled;
+    }
+    Ok(())
 }
 
 #[tauri::command]
@@ -550,9 +712,16 @@ fn mark_first_run_done() {
 #[derive(serde::Serialize)]
 struct LauncherBoot {
     version: String,
+    game_version: String,
+    channel: String,
+    build_date: String,
+    changelog_url: String,
     first_run: bool,
     tutorial_done: bool,
     auto_update: bool,
+    update_channel: String,
+    auto_switch_release: bool,
+    release_prompted_version: String,
     session: Option<LauncherSession>,
 }
 
@@ -560,10 +729,17 @@ struct LauncherBoot {
 fn launcher_boot(state: tauri::State<LauncherState>) -> LauncherBoot {
     let settings = load_settings_from_disk();
     LauncherBoot {
-        version: env!("CARGO_PKG_VERSION").to_string(),
+        version: LAUNCHER_VERSION.to_string(),
+        game_version: GAME_VERSION.to_string(),
+        channel: BUILD_CHANNEL.to_string(),
+        build_date: BUILD_DATE.to_string(),
+        changelog_url: CHANGELOG_URL.to_string(),
         first_run: !settings_path().map(|path| path.exists()).unwrap_or(false),
         tutorial_done: settings.tutorial_done,
         auto_update: settings.auto_update,
+        update_channel: settings_channel(&settings),
+        auto_switch_release: settings.auto_switch_release,
+        release_prompted_version: settings.release_prompted_version,
         session: state.0.lock().unwrap().clone(),
     }
 }
@@ -600,6 +776,7 @@ fn launcher_mark_tutorial_done(state: tauri::State<SettingsState>) {
 #[tauri::command]
 fn launcher_show_hub(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("launcher") {
+        let _ = window.set_title("MuzicMania");
         let _ = window.set_always_on_top(false);
         let _ = window.set_resizable(true);
         let _ = window.set_maximizable(true);
@@ -626,7 +803,7 @@ fn launcher_show_small(app: tauri::AppHandle) {
         let _ = window.unmaximize();
         let _ = window.set_resizable(false);
         let _ = window.set_size(tauri::LogicalSize::new(560.0, 700.0));
-        let _ = window.center();
+        center_window(&window);
         let _ = window.set_focus();
     }
 }
@@ -691,135 +868,59 @@ fn launcher_restart(app: tauri::AppHandle) {
     app.exit(0);
 }
 
-#[derive(serde::Serialize)]
-struct UpdateInfo {
-    available: bool,
-    current: String,
-    latest: String,
-    url: String,
-    size: u64,
-    notes: String,
-    error: String,
-}
-
 fn version_tuple(value: &str) -> Vec<u32> {
-    value
+    let core = value
+        .trim()
         .trim_start_matches('v')
+        .split(|c| c == '-' || c == '+')
+        .next()
+        .unwrap_or("0");
+    let mut parts: Vec<u32> = core
         .split('.')
         .map(|part| part.parse::<u32>().unwrap_or(0))
-        .collect()
+        .collect();
+    while parts.len() < 3 {
+        parts.push(0);
+    }
+    parts
 }
 
 fn version_is_newer(latest: &str, current: &str) -> bool {
     version_tuple(latest) > version_tuple(current)
 }
 
-#[tauri::command]
-fn launcher_check_update() -> UpdateInfo {
-    let current = env!("CARGO_PKG_VERSION").to_string();
-    let output = hidden_command("curl")
-        .args([
-            "-sS",
-            "-L",
-            "--max-time",
-            "15",
-            "-H",
-            "User-Agent: MuzicMania-Launcher",
-            "https://api.github.com/repos/Ciszu-Network/CiszuNetwork/releases/latest",
-        ])
-        .output();
-    let Ok(output) = output else {
-        return UpdateInfo {
-            available: false,
-            current,
-            latest: String::new(),
-            url: String::new(),
-            size: 0,
-            notes: String::new(),
-            error: "No se pudo comprobar la actualización.".to_string(),
-        };
-    };
-    if !output.status.success() {
-        return UpdateInfo {
-            available: false,
-            current,
-            latest: String::new(),
-            url: String::new(),
-            size: 0,
-            notes: String::new(),
-            error: "No se pudo comprobar la actualización.".to_string(),
-        };
-    }
-    let Ok(release) = serde_json::from_slice::<serde_json::Value>(&output.stdout) else {
-        return UpdateInfo {
-            available: false,
-            current,
-            latest: String::new(),
-            url: String::new(),
-            size: 0,
-            notes: String::new(),
-            error: "Respuesta de actualización inválida.".to_string(),
-        };
-    };
-    let latest = release
-        .get("tag_name")
-        .and_then(|value| value.as_str())
-        .unwrap_or("")
-        .trim_start_matches("muzicmania-")
-        .to_string();
-    let notes = release
-        .get("body")
-        .and_then(|value| value.as_str())
-        .unwrap_or("")
-        .to_string();
-    let wanted = if windows_build_number() >= 22000 {
-        "Windows11_x64.exe"
+fn settings_channel(settings: &DesktopSettings) -> String {
+    let channel = settings.update_channel.trim().to_lowercase();
+    if channel == "beta" || channel == "release" {
+        channel
     } else {
-        "Windows10_x64.exe"
-    };
-    let assets = release
-        .get("assets")
-        .and_then(|value| value.as_array())
-        .cloned()
-        .unwrap_or_default();
-    let asset = assets
-        .iter()
-        .find(|asset| {
-            asset
-                .get("name")
-                .and_then(|value| value.as_str())
-                .map(|name| name.ends_with(wanted))
-                .unwrap_or(false)
-        })
-        .or_else(|| {
-            assets.iter().find(|asset| {
-                asset
-                    .get("name")
-                    .and_then(|value| value.as_str())
-                    .map(|name| name.ends_with("Windows11_x64.exe"))
-                    .unwrap_or(false)
-            })
-        });
-    let url = asset
-        .and_then(|asset| asset.get("browser_download_url"))
-        .and_then(|value| value.as_str())
-        .unwrap_or("")
-        .to_string();
-    let size = asset
-        .and_then(|asset| asset.get("size"))
-        .and_then(|value| value.as_u64())
-        .unwrap_or(0);
-    UpdateInfo {
-        available: !latest.is_empty() && !url.is_empty() && version_is_newer(&latest, &current),
-        current,
-        latest,
-        url,
-        size,
-        notes,
-        error: String::new(),
+        BUILD_CHANNEL.to_string()
     }
 }
 
+fn check_policy(current: &str, preferred_channel: &str, allow_network: bool) -> policy::PolicyOutcome {
+    let settings = load_settings_from_disk();
+    let preferred = if preferred_channel.is_empty() {
+        settings_channel(&settings)
+    } else {
+        preferred_channel.to_string()
+    };
+    policy::check(
+        current,
+        GAME_VERSION,
+        BUILD_CHANNEL,
+        &preferred,
+        settings.auto_switch_release,
+        allow_network,
+    )
+}
+
+#[tauri::command]
+fn launcher_check_update(online: Option<bool>) -> policy::PolicyOutcome {
+    let outcome = check_policy(LAUNCHER_VERSION, "", online.unwrap_or(true));
+    POLICY_BLOCKED.store(outcome.mandatory, Ordering::SeqCst);
+    outcome
+}
 #[tauri::command]
 fn launcher_update_progress(state: tauri::State<UpdateState>) -> UpdateStatus {
     state.0.lock().unwrap().clone()
@@ -834,6 +935,9 @@ fn launcher_start_update(
 ) -> Result<(), String> {
     if !url.starts_with("https://github.com/Ciszu-Network/CiszuNetwork/releases/download/") {
         return Err("update_url_invalid".to_string());
+    }
+    if !version_is_newer(&version, LAUNCHER_VERSION) {
+        return Err("update_version_not_newer".to_string());
     }
     let state = app.state::<UpdateState>();
     {
@@ -972,6 +1076,10 @@ struct InstalledState {
 #[derive(serde::Serialize)]
 struct InstallerInfo {
     version: String,
+    game_version: String,
+    channel: String,
+    build_date: String,
+    changelog_url: String,
     os: String,
     arch: String,
     dir: String,
@@ -1068,6 +1176,51 @@ fn default_install_path() -> String {
     format!("{}\\MuzicMania", program_files)
 }
 
+fn installer_selected_language() -> u32 {
+    std::fs::read_to_string(ipc_dir().join("lang.txt"))
+        .ok()
+        .and_then(|value| value.trim().parse::<u32>().ok())
+        .unwrap_or(1033)
+}
+
+fn installer_toast_text(lang: u32) -> (&'static str, &'static str) {
+    match lang {
+        1034 => ("MuzicMania instalado", "Gracias por elegir Ciszu Network. Tu launcher está listo."),
+        2052 => ("MuzicMania 已安装", "感谢选择 Ciszu Network。你的启动器已准备就绪。"),
+        1028 => ("MuzicMania 已安裝", "感謝選擇 Ciszu Network。你的啟動器已準備就緒。"),
+        1046 => ("MuzicMania instalado", "Obrigado por escolher a Ciszu Network. Seu launcher está pronto."),
+        1051 => ("MuzicMania установлена", "Спасибо за выбор Ciszu Network. Лаунчер готов."),
+        1041 => ("MuzicMania をインストールしました", "Ciszu Network をお選びいただきありがとうございます。ランチャーの準備ができました。"),
+        1050 => ("MuzicMania 설치 완료", "Ciszu Network를 선택해 주셔서 감사합니다. 런처가 준비되었습니다."),
+        1036 => ("MuzicMania est installé", "Merci d'avoir choisi Ciszu Network. Votre launcher est prêt."),
+        1031 => ("MuzicMania wurde installiert", "Danke, dass du Ciszu Network gewählt hast. Dein Launcher ist bereit."),
+        1040 => ("MuzicMania è installato", "Grazie per aver scelto Ciszu Network. Il launcher è pronto."),
+        1043 => ("MuzicMania is geïnstalleerd", "Bedankt voor het kiezen van Ciszu Network. Je launcher is klaar."),
+        1045 => ("MuzicMania został zainstalowany", "Dziękujemy za wybór Ciszu Network. Launcher jest gotowy."),
+        1025 => ("تم تثبيت MuzicMania", "شكرًا لاختيار Ciszu Network. مشغّلك جاهز."),
+        1055 => ("MuzicMania yüklendi", "Ciszu Network'ü seçtiğiniz için teşekkürler. Başlatıcınız hazır."),
+        1029 => ("MuzicMania bylo nainstalováno", "Děkujeme, že jste si vybrali Ciszu Network. Launcher je připraven."),
+        1038 => ("A MuzicMania telepítve lett", "Köszönjük, hogy a Ciszu Networköt választottad. A launcher készen áll."),
+        1053 => ("MuzicMania har installerats", "Tack för att du valde Ciszu Network. Din launcher är redo."),
+        _ => ("MuzicMania installed", "Thanks for choosing Ciszu Network. Your launcher is ready."),
+    }
+}
+
+fn launch_installed_app(install_dir: &str, run: bool, taskbar: bool) {
+    if !run && !taskbar {
+        return;
+    }
+    let exe_path = format!("{}\\muzicmania.exe", install_dir);
+    let mut command = std::process::Command::new(&exe_path);
+    if taskbar {
+        command.arg("--pin-taskbar");
+        if !run {
+            command.arg("--pin-only");
+        }
+    }
+    let _ = command.spawn();
+}
+
 fn installer_default_path() -> String {
     std::fs::read_to_string(ipc_dir().join("default_dir.txt"))
         .ok()
@@ -1084,6 +1237,11 @@ fn current_install_path() -> String {
 }
 
 #[tauri::command]
+fn window_minimize(window: tauri::Window) -> Result<(), String> {
+    window.minimize().map_err(|error| format!("window_minimize: {error}"))
+}
+
+#[tauri::command]
 fn installer_info() -> InstallerInfo {
     let installer_mode = std::env::args().any(|a| a == "--installer");
     let installed = detect_installed();
@@ -1097,7 +1255,11 @@ fn installer_info() -> InstallerInfo {
         current_install_path()
     };
     InstallerInfo {
-        version: env!("CARGO_PKG_VERSION").to_string(),
+        version: LAUNCHER_VERSION.to_string(),
+        game_version: GAME_VERSION.to_string(),
+        channel: BUILD_CHANNEL.to_string(),
+        build_date: BUILD_DATE.to_string(),
+        changelog_url: CHANGELOG_URL.to_string(),
         os: detect_windows_version(),
         arch: detect_architecture(),
         dir: dir.clone(),
@@ -1246,10 +1408,17 @@ fn installer_run_uninstaller(app: tauri::AppHandle, path: String) -> Result<(), 
     if !uninstaller.exists() {
         return Err("uninstaller_not_found".to_string());
     }
+    let installed_exe = std::path::PathBuf::from(&clean).join("muzicmania.exe");
+    if let Ok(current) = std::env::current_exe() {
+        if current != installed_exe && installed_exe.exists() {
+            let _ = std::fs::copy(current, &installed_exe);
+        }
+    }
 
     let dir = ipc_dir();
     let _ = std::fs::create_dir_all(&dir);
     let _ = std::fs::write(dir.join("cmd.txt"), "ABORT");
+    cleanup_stale_uninstaller();
 
     let ps = format!(
         "$ErrorActionPreference = 'SilentlyContinue'; Start-Sleep -Milliseconds 1800; Start-Process -FilePath '{}' -WorkingDirectory '{}'",
@@ -1310,20 +1479,304 @@ fn installer_finish(app: tauri::AppHandle, run: bool, desktop: bool, taskbar: bo
     };
     let _ = std::fs::write(dir_path.join("cmd.txt"), cmd);
     #[cfg(target_os = "windows")]
-    show_windows_toast(
-        "MuzicMania instalado",
-        "Gracias por elegir Ciszu Network. Tu launcher está listo.",
-    );
+    {
+        let (toast_title, toast_body) = installer_toast_text(installer_selected_language());
+        show_windows_toast(toast_title, toast_body);
+    }
+    launch_installed_app(&install_dir, run, taskbar);
+    INSTALLER_FORCE_CLOSE.store(true, Ordering::SeqCst);
+    if let Some(win) = app.get_webview_window("installer") {
+        let _ = win.close();
+    }
+    let _ = std::fs::remove_dir_all(ipc_dir());
+}
+
+#[tauri::command]
+fn installer_app_running() -> bool {
+    #[cfg(target_os = "windows")]
+    {
+        let script = r#"$me=$PID; $p=Get-CimInstance Win32_Process -Filter "Name='muzicmania.exe'" -ErrorAction SilentlyContinue | Where-Object { $_.ProcessId -ne $me -and $_.CommandLine -notmatch '(?i)--installer|--uninstaller' }; if (@($p).Count -gt 0) { '1' } else { '0' }"#;
+        if let Ok(output) = hidden_command("powershell")
+            .args(["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", script])
+            .output()
+        {
+            return String::from_utf8_lossy(&output.stdout).trim() == "1";
+        }
+    }
+    false
+}
+
+fn cleanup_stale_uninstaller() {
+    #[cfg(target_os = "windows")]
+    {
+        let script = r#"Get-CimInstance Win32_Process -Filter "Name='muzicmania.exe'" -ErrorAction SilentlyContinue | Where-Object { $_.CommandLine -match '(?i)--uninstaller' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }; Get-CimInstance Win32_Process -Filter "Name='uninstall.exe'" -ErrorAction SilentlyContinue | Where-Object { $_.ExecutablePath -like '*MuzicMania*' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }"#;
+        let _ = hidden_command("powershell")
+            .args(["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", script])
+            .output();
+    }
+}
+
+fn abort_installer(app: tauri::AppHandle) {
+    let dir = ipc_dir();
+    let _ = std::fs::create_dir_all(&dir);
+    let _ = std::fs::write(dir.join("cmd.txt"), "ABORT");
     INSTALLER_FORCE_CLOSE.store(true, Ordering::SeqCst);
     if let Some(win) = app.get_webview_window("installer") {
         let _ = win.close();
     }
 }
 
+#[tauri::command]
+fn installer_check_update() -> policy::PolicyOutcome {
+    let detected = detect_installed();
+    let current = if detected.installed && !detected.version.trim().is_empty() {
+        detected.version.trim().to_string()
+    } else {
+        LAUNCHER_VERSION.to_string()
+    };
+    check_policy(&current, "", true)
+}
+
+#[tauri::command]
+fn installer_start_update(
+    app: tauri::AppHandle,
+    url: String,
+    size: u64,
+    version: String,
+) -> Result<(), String> {
+    let detected = detect_installed();
+    if detected.installed && !version_is_newer(&version, &detected.version) {
+        return Err("update_version_not_newer".to_string());
+    }
+    launcher_start_update(app, url, size, version)
+}
+
+#[tauri::command]
+fn installer_update_progress(state: tauri::State<UpdateState>) -> UpdateStatus {
+    state.0.lock().unwrap().clone()
+}
+
+#[tauri::command]
+fn installer_apply_update(app: tauri::AppHandle) -> Result<(), String> {
+    let state = app.state::<UpdateState>();
+    let path = state.0.lock().unwrap().path.clone();
+    if path.is_empty() || !std::path::Path::new(&path).exists() {
+        return Err("update_not_downloaded".to_string());
+    }
+    let install_dir = detect_installed()
+        .path
+        .trim()
+        .trim_end_matches(|c| c == '\\' || c == '/')
+        .to_string();
+    let target = if install_dir.is_empty() {
+        default_install_path()
+    } else {
+        install_dir
+    };
+    let exe_path = format!("{}\\muzicmania.exe", target);
+    let ps = format!(
+        "$ErrorActionPreference='SilentlyContinue'; Start-Sleep -Milliseconds 1200; Start-Process -FilePath '{}' -ArgumentList @('/S','/D={}') -Wait; Start-Process -FilePath '{}'",
+        ps_quote(&path),
+        ps_quote(&target),
+        ps_quote(&exe_path)
+    );
+    hidden_command("powershell")
+        .args(["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", &ps])
+        .spawn()
+        .map_err(|error| error.to_string())?;
+    abort_installer(app);
+    Ok(())
+}
+
+#[derive(serde::Serialize, Clone, Default)]
+struct ReinstallStatus {
+    state: String,
+    phase: u8,
+    progress: u8,
+    error: String,
+}
+
+static REINSTALL_STATE: Mutex<Option<ReinstallStatus>> = Mutex::new(None);
+
+fn set_reinstall_status(state: &str, phase: u8, progress: u8, error: &str) {
+    if let Ok(mut current) = REINSTALL_STATE.lock() {
+        *current = Some(ReinstallStatus {
+            state: state.to_string(),
+            phase,
+            progress,
+            error: error.to_string(),
+        });
+    }
+}
+
+#[tauri::command]
+fn installer_reinstall_progress() -> ReinstallStatus {
+    REINSTALL_STATE
+        .lock()
+        .ok()
+        .and_then(|value| value.clone())
+        .unwrap_or_default()
+}
+
+#[tauri::command]
+fn installer_open_app(app: tauri::AppHandle) -> Result<(), String> {
+    let installed = detect_installed();
+    if !installed.installed || installed.path.trim().is_empty() {
+        return Err("not_installed".to_string());
+    }
+    launch_installed_app(&installed.path, true, false);
+    INSTALLER_FORCE_CLOSE.store(true, Ordering::SeqCst);
+    if let Some(window) = app.get_webview_window("installer") {
+        let _ = window.close();
+    }
+    app.exit(0);
+    Ok(())
+}
+
+fn reinstall_cache_path() -> Result<std::path::PathBuf, String> {
+    let base = std::env::var("LOCALAPPDATA")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|_| std::env::temp_dir());
+    let directory = base.join("MuzicMania").join("installer-cache");
+    std::fs::create_dir_all(&directory).map_err(|error| error.to_string())?;
+    Ok(directory.join("MuzicMania-Setup.exe"))
+}
+
+fn cache_reinstall_setup(source: &str) -> Result<String, String> {
+    let destination = reinstall_cache_path()?;
+    std::fs::copy(source, &destination).map_err(|error| error.to_string())?;
+    Ok(destination.to_string_lossy().to_string())
+}
+
+fn download_reinstall_setup() -> Result<String, String> {
+    let info = check_policy(LAUNCHER_VERSION, "", true);
+    if info.url.is_empty() {
+        return Err("installer_setup_missing".to_string());
+    }
+    let destination = reinstall_cache_path()?;
+    let _ = std::fs::remove_file(&destination);
+    let output = hidden_command("curl")
+        .args([
+            "-L",
+            "--fail",
+            "--retry",
+            "3",
+            "--retry-delay",
+            "2",
+            "--silent",
+            "--show-error",
+            "--output",
+            &destination.to_string_lossy(),
+            &info.url,
+        ])
+        .output()
+        .map_err(|error| error.to_string())?;
+    if !output.status.success() || destination.metadata().map(|m| m.len()).unwrap_or(0) == 0 {
+        return Err("setup_download_failed".to_string());
+    }
+    Ok(destination.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+fn installer_reinstall_start() -> Result<(), String> {
+    let installed = detect_installed();
+    if !installed.installed || installed.path.trim().is_empty() {
+        return Err("not_installed".to_string());
+    }
+    let initial_setup = INSTALLER_SETUP_PATH
+        .get()
+        .cloned()
+        .filter(|path| std::path::Path::new(path).exists());
+    let install_dir = installed
+        .path
+        .trim()
+        .trim_end_matches(|c| c == '\\' || c == '/')
+        .to_string();
+    let uninstaller = format!("{}\\uninstall.exe", install_dir);
+    if !std::path::Path::new(&uninstaller).exists() {
+        return Err("uninstaller_not_found".to_string());
+    }
+
+    cleanup_stale_uninstaller();
+    set_reinstall_status("running", 0, 5, "");
+    let dir = ipc_dir();
+    let _ = std::fs::create_dir_all(&dir);
+    let _ = std::fs::write(dir.join("cmd.txt"), "ABORT");
+
+    let target_dir = install_dir.clone();
+    let uninstaller_path = uninstaller.clone();
+    std::thread::spawn(move || {
+        let mut setup_path = match initial_setup {
+            Some(path) => cache_reinstall_setup(&path).unwrap_or(path),
+            None => {
+                set_reinstall_status("running", 0, 8, "");
+                match download_reinstall_setup() {
+                    Ok(path) => path,
+                    Err(error) => {
+                        set_reinstall_status("error", 0, 8, &error);
+                        return;
+                    }
+                }
+            }
+        };
+        set_reinstall_status("running", 1, 15, "");
+        let uninstall_status = hidden_command(&uninstaller_path)
+            .env("MUZICMANIA_REINSTALL", "1")
+            .args(["/S", &format!("_?={}", target_dir)])
+            .status();
+        match uninstall_status {
+            Ok(status) if status.success() => {}
+            Ok(status) => {
+                set_reinstall_status("error", 1, 15, &format!("uninstall_exit:{}", status.code().unwrap_or(-1)));
+                return;
+            }
+            Err(error) => {
+                set_reinstall_status("error", 1, 15, &error.to_string());
+                return;
+            }
+        }
+
+        if !std::path::Path::new(&setup_path).exists() {
+            set_reinstall_status("running", 0, 10, "");
+            setup_path = match download_reinstall_setup() {
+                Ok(path) => path,
+                Err(error) => {
+                    set_reinstall_status("error", 0, 10, &error);
+                    return;
+                }
+            };
+        }
+
+        set_reinstall_status("running", 2, 55, "");
+        let setup_status = hidden_command(&setup_path)
+            .env("MUZICMANIA_REINSTALL", "1")
+            .args(["/S", &format!("/D={}", target_dir)])
+            .status();
+        match setup_status {
+            Ok(status) if status.success() => {}
+            Ok(status) => {
+                set_reinstall_status("error", 2, 55, &format!("install_exit:{}", status.code().unwrap_or(-1)));
+                return;
+            }
+            Err(error) => {
+                set_reinstall_status("error", 2, 55, &error.to_string());
+                return;
+            }
+        }
+
+        set_reinstall_status("done", 3, 100, "");
+    });
+
+    Ok(())
+}
+
 #[derive(serde::Serialize)]
 struct UninstallerInfo {
     installed: bool,
     version: String,
+    game_version: String,
+    channel: String,
+    build_date: String,
     install_path: String,
     data_path: String,
     webview_data_path: String,
@@ -1348,7 +1801,12 @@ fn directory_size(path: &std::path::Path) -> u64 {
 
 #[tauri::command]
 fn uninstaller_info() -> UninstallerInfo {
-    let install_path = installer_default_path();
+    let detected = detect_installed();
+    let install_path = if detected.installed && !detected.path.trim().is_empty() {
+        detected.path
+    } else {
+        installer_default_path()
+    };
     let install_dir = std::path::Path::new(&install_path);
     let version = std::fs::read_to_string(install_dir.join("version.txt"))
         .ok()
@@ -1364,6 +1822,9 @@ fn uninstaller_info() -> UninstallerInfo {
     UninstallerInfo {
         installed: install_dir.join("uninstall.exe").exists() || install_dir.join("muzicmania.exe").exists(),
         version,
+        game_version: GAME_VERSION.to_string(),
+        channel: BUILD_CHANNEL.to_string(),
+        build_date: BUILD_DATE.to_string(),
         install_path: install_path.clone(),
         data_path: appdata,
         webview_data_path: webview_data,
@@ -1374,7 +1835,18 @@ fn uninstaller_info() -> UninstallerInfo {
 #[tauri::command]
 fn uninstaller_start(delete_data: bool, reason: String, feedback: String, rating: u8) {
     #[cfg(target_os = "windows")]
-    remove_user_start_menu_shortcut();
+    {
+        remove_user_start_menu_shortcut();
+        let _ = hidden_command("reg")
+            .args([
+                "delete",
+                r"HKCU\Software\Microsoft\Windows\CurrentVersion\Run",
+                "/v",
+                "MuzicMania",
+                "/f",
+            ])
+            .output();
+    }
     let dir = ipc_dir();
     let _ = std::fs::create_dir_all(&dir);
     let _ = std::fs::write(dir.join("delete_data.txt"), if delete_data { "1" } else { "0" });
@@ -1424,6 +1896,7 @@ fn uninstaller_finish(app: tauri::AppHandle) {
     if let Some(win) = app.get_webview_window("uninstaller") {
         let _ = win.close();
     }
+    let _ = std::fs::remove_dir_all(ipc_dir());
 }
 #[tauri::command]
 fn installer_ipc_dir() -> String {
@@ -1518,6 +1991,15 @@ fn main() {
             let pin_only = args.iter().any(|arg| arg == "--pin-only");
 
             if is_installer {
+                if let Some(index) = args.iter().position(|arg| arg == "--installer") {
+                    if let Some(path) = args.get(index + 1) {
+                        if !path.trim().is_empty() {
+                            let _ = INSTALLER_SETUP_PATH.set(path.clone());
+                            let _ = cache_reinstall_setup(path);
+                        }
+                    }
+                }
+                app.manage(UpdateState(Mutex::new(UpdateStatus::default())));
                 let installer = WebviewWindowBuilder::new(
                     app,
                     "installer",
@@ -1529,10 +2011,11 @@ fn main() {
                 .resizable(true)
                 .maximizable(false)
                 .title("MuzicMania — Instalación")
-                .decorations(true)
+                .decorations(false)
                 .data_directory(std::env::temp_dir().join("muzicmania-installer-webview"))
                 .build()
                 .expect("Failed to create installer window");
+                center_window(&installer);
 
                 let installer_handle = installer.clone();
                 let _ = installer.on_window_event(move |event| {
@@ -1569,10 +2052,11 @@ fn main() {
                 .resizable(true)
                 .maximizable(false)
                 .title("MuzicMania — Desinstalación")
-                .decorations(true)
+                .decorations(false)
                 .data_directory(std::env::temp_dir().join("muzicmania-uninstaller-webview"))
                 .build()
                 .expect("Failed to create uninstaller window");
+                center_window(&uninstaller);
 
                 let uninstaller_handle = uninstaller.clone();
                 let _ = uninstaller.on_window_event(move |event| {
@@ -1595,6 +2079,7 @@ fn main() {
                 return Ok(());
             }
             let settings = load_settings_from_disk();
+            let tray_spanish = settings.language != "en";
             let session = load_launcher_session();
             app.manage(SettingsState(Mutex::new(settings)));
             app.manage(LauncherState(Mutex::new(session)));
@@ -1611,9 +2096,10 @@ fn main() {
             .maximizable(false)
             .always_on_top(true)
             .title("MuzicMania")
-            .decorations(true)
+            .decorations(false)
             .build()
             .expect("Failed to create launcher window");
+            center_window(&launcher);
 
             let launcher_handle = launcher.clone();
             let _ = launcher.on_window_event(move |event| {
@@ -1663,6 +2149,55 @@ fn main() {
                 });
             }
 
+            if let Some(icon) = app.default_window_icon().cloned() {
+                let show_label = if tray_spanish { "Abrir MuzicMania" } else { "Open MuzicMania" };
+                let info_label = if tray_spanish { "Información" } else { "Information" };
+                let quit_label = if tray_spanish { "Salir completamente" } else { "Quit completely" };
+                let show = MenuItem::with_id(app, "tray-show", show_label, true, None::<&str>)?;
+                let info = MenuItem::with_id(app, "tray-info", info_label, true, None::<&str>)?;
+                let quit = MenuItem::with_id(app, "tray-quit", quit_label, true, None::<&str>)?;
+                let menu = Menu::with_items(app, &[&show, &info, &quit])?;
+                let tray = TrayIconBuilder::new()
+                    .icon(icon)
+                    .tooltip("MuzicMania")
+                    .menu(&menu)
+                    .show_menu_on_left_click(false)
+                    .on_menu_event(|app, event| match event.id.as_ref() {
+                        "tray-show" => {
+                            if let Some(window) = app.get_webview_window("launcher") {
+                                let _ = window.show();
+                                let _ = window.unminimize();
+                                let _ = window.set_focus();
+                            }
+                        }
+                        "tray-info" => {
+                            let _ = open::that("https://muzicmania.vercel.app");
+                        }
+                        "tray-quit" => {
+                            LAUNCHER_FORCE_CLOSE.store(true, Ordering::SeqCst);
+                            app.exit(0);
+                        }
+                        _ => {}
+                    })
+                    .on_tray_icon_event(|tray, event| {
+                        if let TrayIconEvent::Click {
+                            button: MouseButton::Left,
+                            button_state: MouseButtonState::Up,
+                            ..
+                        } = event
+                        {
+                            let app = tray.app_handle();
+                            if let Some(window) = app.get_webview_window("launcher") {
+                                let _ = window.show();
+                                let _ = window.unminimize();
+                                let _ = window.set_focus();
+                            }
+                        }
+                    })
+                    .build(app)?;
+                let _ = tray;
+            }
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -1673,10 +2208,18 @@ fn main() {
             launcher_ready,
             launcher_offline_game,
             offline_game_close,
+            offline_back_to_hub,
+            offline_start_game,
             launcher_close,
+            launcher_hide,
+            launcher_minimize,
+            launcher_toggle_maximize,
+            launcher_start_drag,
             launcher_cancel_close,
+            set_launch_on_startup,
             get_settings,
             update_settings,
+            window_minimize,
             installer_info,
             installer_disk_info,
             installer_ipc_dir,
@@ -1692,6 +2235,14 @@ fn main() {
             installer_cancel,
             installer_run_uninstaller,
             installer_finish,
+            installer_app_running,
+            installer_check_update,
+            installer_start_update,
+            installer_update_progress,
+            installer_apply_update,
+            installer_reinstall_start,
+            installer_reinstall_progress,
+            installer_open_app,
             uninstaller_info,
             uninstaller_start,
             uninstaller_cancel,
@@ -1716,3 +2267,14 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("Error al inicializar el ejecutable de MuzicMania");
 }
+
+
+
+
+
+
+
+
+
+
+

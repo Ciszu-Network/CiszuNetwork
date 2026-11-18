@@ -310,6 +310,10 @@ window.showCloseDialog = function() {
 };
 
 function init() {
+  if (window.self !== window.top) {
+    var frameClose = document.getElementById("close-app");
+    if (frameClose) frameClose.style.display = "none";
+  }
   var diffs = document.querySelectorAll(".diff");
   var i;
   for (i = 0; i < diffs.length; i++) {

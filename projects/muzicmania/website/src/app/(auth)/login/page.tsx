@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect } from 'react';
 import { useT } from '@/hooks/useT';
@@ -99,6 +99,7 @@ export default function LoginPage() {
     confirmPassword: '',
     twoFactor: '',
   });
+  const [rememberMe, setRememberMe] = useState(true);
 
   // Guard de acciones no recuperables: login con contenido → no navegar sin aviso.
   useEffect(() => {
@@ -206,6 +207,7 @@ export default function LoginPage() {
       display_name: profile?.display_name || session.user?.email || 'MuzicMania',
       avatar_url: profile?.avatar_url || '',
       role: profile?.role || 'user',
+      remember: rememberMe,
     };
     window.location.href = `/launcher-auth?session=${encodeURIComponent(JSON.stringify(payload))}`;
     return true;
@@ -626,6 +628,12 @@ export default function LoginPage() {
                 {errors.captcha && <span className="text-red-500 text-[10px] font-bold">{errors.captcha}</span>}
               </div>
 
+              {!isForgotPassword && !needs2FA && (
+                <label className="flex items-center gap-2 text-[10px] font-bold text-gray-500 cursor-pointer select-none">
+                  <input type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} className="w-3.5 h-3.5 accent-neon-cyan" />
+                  Recordarme en este dispositivo
+                </label>
+              )}
               <div className="pt-2">
                 <Button type="submit" variant="neon" fullWidth size="lg" disabled={loading} className="hover:scale-[1.02] active:scale-[0.98] transition-all">
                   {loading ? 'PROCESANDO...' : isForgotPassword ? (forgotStep2 ? 'RESTABLECER CLAVE' : 'ENVIAR CÓDIGO') : (needs2FA ? 'VERIFICAR Y ACCEDER' : 'INICIALIZAR SESIÓN')}
@@ -681,3 +689,4 @@ export default function LoginPage() {
     </MainLayout>
   );
 }
+

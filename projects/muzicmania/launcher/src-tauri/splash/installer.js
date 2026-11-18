@@ -1,4 +1,4 @@
-window.INSTALLER_I18N = {
+﻿window.INSTALLER_I18N = {
   "1033": {
     "lbl-lang-title": "Language",
     "lbl-lang-desc": "Select your preferred installation language.",
@@ -864,21 +864,114 @@ var FALLBACK = {
   "error-connection": "Could not connect to the installation service.",
   "error-generic": "The installation could not be completed.",
   "maint-title": "MuzicMania is already installed",
-  "maint-desc": "An existing installation was found on this computer.",
+  "maint-desc": "An existing installation was found on this computer. Choose an action below.",
   "maint-version-label": "Installed version",
   "maint-path-label": "Location",
-  "maint-note": "Updating or reinstalling keeps your account and local settings. Uninstall opens the official uninstaller.",
+  "maint-local-label": "Local data",
+  "maint-note": "Updating changes application files without removing your account or local data. Reinstalling removes and installs the application again.",
+  "maint-help-label": "Need help?",
+  "maint-support": "WhatsApp support",
+  "maint-support-page": "Support page",
   "btn-maint-close": "Close",
   "btn-maint-uninstall": "Uninstall",
-  "btn-maint-update": "Update / Reinstall",
-  "maint-uninstall-warn": "The official uninstaller will open. Your account data is not affected; you can choose whether to keep or delete local app data."
+  "btn-maint-reinstall": "Reinstall",
+  "btn-maint-update": "Check for updates",
+  "maint-uninstall-warn": "The official uninstaller will open. Your account data is not affected; you can choose whether to keep or delete local app data.",
+  "running-title": "MuzicMania is running",
+  "running-desc": "Close MuzicMania from the system tray or Task Manager before continuing.",
+  "running-close": "Understood",
+  "maint-modal-cancel": "Cancel",
+  "maint-modal-confirm": "Accept",
+  "update-checking": "Checking for updates...",
+  "update-not-available": "MuzicMania is up to date.",
+  "update-error": "The update could not be checked.",
+  "update-local-newer": "This build is newer than the latest published release.",
+  "update-local-newer-desc": "No downgrade will be installed. Keep this build or publish it as the new release.",
+  "unknown": "Unknown",
+  "maint-state-current": "MuzicMania is up to date",
+  "maint-state-outdated": "MuzicMania is installed but outdated",
+  "maint-state-older": "This installer is older than the installed app",
+  "maint-state-unknown": "Installed version could not be verified",
+  "maint-desc-current": "The installed launcher matches this build. Reinstalling keeps your account and local data.",
+  "maint-desc-outdated": "Use Check for updates to install the latest launcher, or reinstall this build. Your local data is preserved.",
+  "maint-desc-older": "Reinstall is disabled to prevent a downgrade. Download the latest setup instead.",
+  "maint-desc-unknown": "The installed version could not be read. Check for updates or download the latest setup before reinstalling.",
+  "update-available": "Version {version} is available.",
+  "update-now": "Update now",
+  "error-title": "Error",
+  "update-progress": "Downloading update...",
+  "update-ready": "Update ready. The installer will close and apply it.",
+  "reinstall-confirm": "Reinstalling removes the current application and installs it again. Your account and local data will be preserved.",
+  "uninstall-confirm": "The official uninstaller will open. Your account data is not affected; you can choose whether to keep or delete local app data.",
+  "stage-lang": "Language",
+  "stage-welcome": "Welcome",
+  "stage-license": "License",
+  "stage-dir": "Directory",
+  "stage-install": "Install",
+  "stage-finish": "Finish",
+  "stage-maintenance": "Maintenance",
+  "reinstall-title": "Reinstalling MuzicMania",
+  "reinstall-desc": "The current application will be removed and installed again. Your local data will be preserved.",
+  "reinstall-step-uninstall": "Removing the previous version...",
+  "reinstall-step-install": "Installing the new version...",
+  "reinstall-step-finish": "Finalizing...",
+  "reinstall-status-preparing": "Preparing...",
+  "reinstall-status-done": "Reinstall completed",
+  "reinstall-close": "Close",
+  "reinstall-open": "Open MuzicMania",
+  "reinstall-stay": "Stay in the hub",
 };
 
+var MAINT_I18N = {
+  "1033": { "maint-title": "MuzicMania is already installed", "maint-desc": "An existing installation was found on this computer. Choose an action below.", "maint-version-label": "Installed version", "maint-path-label": "Location", "maint-local-label": "Local data", "maint-note": "Updating changes application files without removing your account or local data. Reinstalling removes and installs the application again.", "maint-help-label": "Need help?", "maint-support": "WhatsApp support", "maint-support-page": "Support page", "btn-maint-close": "Close", "btn-maint-uninstall": "Uninstall", "btn-maint-reinstall": "Reinstall", "btn-maint-update": "Check for updates", "running-title": "MuzicMania is running", "running-desc": "Close MuzicMania from the system tray or Task Manager before continuing.", "running-close": "Understood" },
+  "1034": { "error-title": "Error", "reinstall-title": "Reinstalando MuzicMania", "reinstall-desc": "Se eliminará la aplicación actual y se instalará de nuevo. Tus datos locales se conservarán.", "reinstall-step-uninstall": "Desinstalando la versión anterior...", "reinstall-step-install": "Instalando la nueva versión...", "reinstall-step-finish": "Finalizando...", "reinstall-status-preparing": "Preparando...", "reinstall-status-done": "Reinstalación completada", "reinstall-close": "Cerrar", "reinstall-open": "Abrir MuzicMania", "reinstall-stay": "Mantenerme en el hub", "stage-lang": "Idioma", "stage-welcome": "Bienvenido", "stage-license": "Licencia", "stage-dir": "Carpeta", "stage-install": "Instalar", "stage-finish": "Finalizar", "stage-maintenance": "Mantenimiento", "maint-title": "MuzicMania ya está instalado", "update-checking": "Buscando actualizaciones...", "update-not-available": "MuzicMania está actualizado.", "update-error": "No se pudo comprobar la actualización.", "update-local-newer": "Esta build es más reciente que la última release publicada.", "update-local-newer-desc": "No se instalará una desactualización. Conserva esta build o publícala como nueva release.", "unknown": "Desconocida", "maint-state-current": "MuzicMania está actualizado", "maint-state-outdated": "MuzicMania está instalado, pero desactualizado", "maint-state-older": "Este instalador es más antiguo que la app instalada", "maint-state-unknown": "No se pudo verificar la versión instalada", "maint-desc-current": "El launcher instalado coincide con esta build. Reinstalar conserva tu cuenta y tus datos locales.", "maint-desc-outdated": "Usa Buscar actualización para instalar el launcher más reciente o reinstala esta build. Tus datos locales se conservan.", "maint-desc-older": "La reinstalación está desactivada para evitar una desactualización. Descarga el setup más reciente.", "maint-desc-unknown": "No se pudo leer la versión instalada. Busca actualizaciones o descarga el último setup antes de reinstalar.", "update-available": "La versión {version} está disponible.", "update-now": "Actualizar ahora", "update-progress": "Descargando actualización...", "update-ready": "Actualización lista. El instalador se cerrará y la aplicará.", "maint-modal-cancel": "Cancelar", "maint-modal-confirm": "Aceptar", "reinstall-confirm": "Reinstalar elimina la aplicación actual y la instala de nuevo. Tu cuenta y tus datos locales se conservarán.", "uninstall-confirm": "Se abrirá el desinstalador oficial. Tu cuenta no se verá afectada; podrás elegir si conservar o eliminar los datos locales.",
+ "maint-desc": "Se encontró una instalación existente. Elige una acción.", "maint-version-label": "Versión instalada", "maint-path-label": "Ubicación", "maint-local-label": "Datos locales", "maint-note": "Actualizar cambia los archivos de la aplicación sin borrar tu cuenta ni tus datos locales. Reinstalar elimina e instala la aplicación de nuevo.", "maint-help-label": "¿Necesitas ayuda?", "maint-support": "Soporte por WhatsApp", "maint-support-page": "Página de soporte", "btn-maint-close": "Cerrar", "btn-maint-uninstall": "Desinstalar", "btn-maint-reinstall": "Reinstalar", "btn-maint-update": "Buscar actualización", "running-title": "MuzicMania está en ejecución", "running-desc": "Cierra MuzicMania desde la bandeja del sistema o el administrador de tareas antes de continuar.", "running-close": "Entendido" },
+  "2052": { "maint-title": "MuzicMania 已安装", "maint-desc": "检测到现有安装。请选择操作。", "maint-version-label": "已安装版本", "maint-path-label": "位置", "maint-local-label": "本地数据", "maint-note": "更新会更改应用程序文件，但不会删除你的账户或本地数据。重新安装会删除并再次安装应用程序。", "maint-help-label": "需要帮助？", "maint-support": "WhatsApp 支持", "maint-support-page": "支持页面", "btn-maint-close": "关闭", "btn-maint-uninstall": "卸载", "btn-maint-reinstall": "重新安装", "btn-maint-update": "检查更新", "running-title": "MuzicMania 正在运行", "running-desc": "继续之前，请从系统托盘或任务管理器关闭 MuzicMania。", "running-close": "了解" },
+  "1028": { "maint-title": "MuzicMania 已安裝", "maint-desc": "偵測到現有安裝。請選擇操作。", "maint-version-label": "已安裝版本", "maint-path-label": "位置", "maint-local-label": "本機資料", "maint-note": "更新會變更應用程式檔案，但不會刪除你的帳戶或本機資料。重新安裝會刪除並再次安裝應用程式。", "maint-help-label": "需要協助？", "maint-support": "WhatsApp 支援", "maint-support-page": "支援頁面", "btn-maint-close": "關閉", "btn-maint-uninstall": "解除安裝", "btn-maint-reinstall": "重新安裝", "btn-maint-update": "檢查更新", "running-title": "MuzicMania 正在執行", "running-desc": "繼續之前，請從系統匣或工作管理員關閉 MuzicMania。", "running-close": "了解" },
+  "1046": { "maint-title": "MuzicMania já está instalado", "maint-desc": "Foi encontrada uma instalação existente. Escolha uma ação.", "maint-version-label": "Versão instalada", "maint-path-label": "Localização", "maint-local-label": "Dados locais", "maint-note": "Atualizar altera os arquivos do aplicativo sem remover sua conta ou dados locais. Reinstalar remove e instala o aplicativo novamente.", "maint-help-label": "Precisa de ajuda?", "maint-support": "Suporte por WhatsApp", "maint-support-page": "Página de suporte", "btn-maint-close": "Fechar", "btn-maint-uninstall": "Desinstalar", "btn-maint-reinstall": "Reinstalar", "btn-maint-update": "Verificar atualizações", "running-title": "O MuzicMania está em execução", "running-desc": "Feche o MuzicMania pela bandeja do sistema ou pelo Gerenciador de Tarefas antes de continuar.", "running-close": "Entendido" },
+  "1051": { "maint-title": "MuzicMania уже установлена", "maint-desc": "Обнаружена существующая установка. Выберите действие.", "maint-version-label": "Установленная версия", "maint-path-label": "Расположение", "maint-local-label": "Локальные данные", "maint-note": "Обновление изменяет файлы приложения, не удаляя учетную запись и локальные данные. Переустановка удаляет и снова устанавливает приложение.", "maint-help-label": "Нужна помощь?", "maint-support": "Поддержка WhatsApp", "maint-support-page": "Страница поддержки", "btn-maint-close": "Закрыть", "btn-maint-uninstall": "Удалить", "btn-maint-reinstall": "Переустановить", "btn-maint-update": "Проверить обновления", "running-title": "MuzicMania запущена", "running-desc": "Закройте MuzicMania через системный трей или диспетчер задач, чтобы продолжить.", "running-close": "Понятно" },
+  "1041": { "maint-title": "MuzicMania は既にインストールされています", "maint-desc": "既存のインストールが見つかりました。操作を選択してください。", "maint-version-label": "インストール済みバージョン", "maint-path-label": "場所", "maint-local-label": "ローカルデータ", "maint-note": "更新はアカウントやローカルデータを削除せずにアプリのファイルを変更します。再インストールはアプリを削除して再度インストールします。", "maint-help-label": "ヘルプが必要ですか？", "maint-support": "WhatsApp サポート", "maint-support-page": "サポートページ", "btn-maint-close": "閉じる", "btn-maint-uninstall": "アンインストール", "btn-maint-reinstall": "再インストール", "btn-maint-update": "アップデートを確認", "running-title": "MuzicMania が実行中です", "running-desc": "続行する前に、システムトレイまたはタスクマネージャーから MuzicMania を閉じてください。", "running-close": "了解" },
+  "1050": { "maint-title": "MuzicMania가 이미 설치되어 있습니다", "maint-desc": "기존 설치가 발견되었습니다. 작업을 선택하세요.", "maint-version-label": "설치된 버전", "maint-path-label": "위치", "maint-local-label": "로컬 데이터", "maint-note": "업데이트는 계정이나 로컬 데이터를 삭제하지 않고 앱 파일을 변경합니다. 재설치는 앱을 제거한 후 다시 설치합니다.", "maint-help-label": "도움이 필요하신가요?", "maint-support": "WhatsApp 지원", "maint-support-page": "지원 페이지", "btn-maint-close": "닫기", "btn-maint-uninstall": "제거", "btn-maint-reinstall": "재설치", "btn-maint-update": "업데이트 확인", "running-title": "MuzicMania가 실행 중입니다", "running-desc": "계속하기 전에 시스템 트레이 또는 작업 관리자에서 MuzicMania를 닫으세요.", "running-close": "확인" },
+  "1036": { "maint-title": "MuzicMania est déjà installé", "maint-desc": "Une installation existante a été trouvée. Choisissez une action.", "maint-version-label": "Version installée", "maint-path-label": "Emplacement", "maint-local-label": "Données locales", "maint-note": "La mise à jour modifie les fichiers de l'application sans supprimer votre compte ni vos données locales. La réinstallation supprime puis réinstalle l'application.", "maint-help-label": "Besoin d'aide ?", "maint-support": "Assistance WhatsApp", "maint-support-page": "Page d'assistance", "btn-maint-close": "Fermer", "btn-maint-uninstall": "Désinstaller", "btn-maint-reinstall": "Réinstaller", "btn-maint-update": "Rechercher des mises à jour", "running-title": "MuzicMania est en cours d'exécution", "running-desc": "Fermez MuzicMania depuis la barre d'état ou le gestionnaire des tâches avant de continuer.", "running-close": "Compris" },
+  "1031": { "maint-title": "MuzicMania ist bereits installiert", "maint-desc": "Eine vorhandene Installation wurde gefunden. Wähle eine Aktion.", "maint-version-label": "Installierte Version", "maint-path-label": "Speicherort", "maint-local-label": "Lokale Daten", "maint-note": "Ein Update ändert die Anwendungsdateien, ohne dein Konto oder deine lokalen Daten zu löschen. Eine Neuinstallation entfernt und installiert die Anwendung erneut.", "maint-help-label": "Brauchst du Hilfe?", "maint-support": "WhatsApp-Support", "maint-support-page": "Supportseite", "btn-maint-close": "Schließen", "btn-maint-uninstall": "Deinstallieren", "btn-maint-reinstall": "Neu installieren", "btn-maint-update": "Nach Updates suchen", "running-title": "MuzicMania wird ausgeführt", "running-desc": "Schließe MuzicMania über das Systemtray oder den Task-Manager, bevor du fortfährst.", "running-close": "Verstanden" },
+  "1040": { "maint-title": "MuzicMania è già installato", "maint-desc": "È stata trovata un'installazione esistente. Scegli un'azione.", "maint-version-label": "Versione installata", "maint-path-label": "Posizione", "maint-local-label": "Dati locali", "maint-note": "L'aggiornamento modifica i file dell'applicazione senza rimuovere account o dati locali. La reinstallazione rimuove e installa di nuovo l'applicazione.", "maint-help-label": "Serve aiuto?", "maint-support": "Supporto WhatsApp", "maint-support-page": "Pagina di supporto", "btn-maint-close": "Chiudi", "btn-maint-uninstall": "Disinstalla", "btn-maint-reinstall": "Reinstalla", "btn-maint-update": "Controlla aggiornamenti", "running-title": "MuzicMania è in esecuzione", "running-desc": "Chiudi MuzicMania dalla barra delle applicazioni o dal Task Manager prima di continuare.", "running-close": "Ho capito" },
+  "1043": { "maint-title": "MuzicMania is al geïnstalleerd", "maint-desc": "Er is een bestaande installatie gevonden. Kies een actie.", "maint-version-label": "Geïnstalleerde versie", "maint-path-label": "Locatie", "maint-local-label": "Lokale gegevens", "maint-note": "Bijwerken wijzigt de toepassingsbestanden zonder je account of lokale gegevens te verwijderen. Opnieuw installeren verwijdert en installeert de toepassing opnieuw.", "maint-help-label": "Hulp nodig?", "maint-support": "WhatsApp-ondersteuning", "maint-support-page": "Ondersteuningspagina", "btn-maint-close": "Sluiten", "btn-maint-uninstall": "Verwijderen", "btn-maint-reinstall": "Opnieuw installeren", "btn-maint-update": "Controleren op updates", "running-title": "MuzicMania wordt uitgevoerd", "running-desc": "Sluit MuzicMania via het systeemvak of Taakbeheer voordat je doorgaat.", "running-close": "Begrepen" },
+  "1045": { "maint-title": "MuzicMania jest już zainstalowana", "maint-desc": "Znaleziono istniejącą instalację. Wybierz działanie.", "maint-version-label": "Zainstalowana wersja", "maint-path-label": "Lokalizacja", "maint-local-label": "Dane lokalne", "maint-note": "Aktualizacja zmienia pliki aplikacji bez usuwania konta ani danych lokalnych. Ponowna instalacja usuwa i ponownie instaluje aplikację.", "maint-help-label": "Potrzebujesz pomocy?", "maint-support": "Wsparcie WhatsApp", "maint-support-page": "Strona wsparcia", "btn-maint-close": "Zamknij", "btn-maint-uninstall": "Odinstaluj", "btn-maint-reinstall": "Zainstaluj ponownie", "btn-maint-update": "Sprawdź aktualizacje", "running-title": "MuzicMania jest uruchomiona", "running-desc": "Zamknij MuzicMania z zasobnika systemowego lub Menedżera zadań, aby kontynuować.", "running-close": "Rozumiem" },
+  "1025": { "maint-title": "MuzicMania مثبتة بالفعل", "maint-desc": "تم العثور على تثبيت موجود. اختر إجراءً.", "maint-version-label": "الإصدار المثبت", "maint-path-label": "الموقع", "maint-local-label": "البيانات المحلية", "maint-note": "التحديث يغيّر ملفات التطبيق دون حذف حسابك أو بياناتك المحلية. إعادة التثبيت تحذف التطبيق وتثبته مرة أخرى.", "maint-help-label": "هل تحتاج إلى مساعدة؟", "maint-support": "دعم WhatsApp", "maint-support-page": "صفحة الدعم", "btn-maint-close": "إغلاق", "btn-maint-uninstall": "إلغاء التثبيت", "btn-maint-reinstall": "إعادة التثبيت", "btn-maint-update": "التحقق من التحديثات", "running-title": "MuzicMania قيد التشغيل", "running-desc": "أغلق MuzicMania من علبة النظام أو مدير المهام قبل المتابعة.", "running-close": "فهمت" },
+  "1055": { "maint-title": "MuzicMania zaten yüklü", "maint-desc": "Mevcut bir kurulum bulundu. Bir işlem seçin.", "maint-version-label": "Yüklü sürüm", "maint-path-label": "Konum", "maint-local-label": "Yerel veriler", "maint-note": "Güncelleme, hesabınızı veya yerel verilerinizi silmeden uygulama dosyalarını değiştirir. Yeniden yükleme uygulamayı kaldırır ve yeniden yükler.", "maint-help-label": "Yardım gerekiyor mu?", "maint-support": "WhatsApp desteği", "maint-support-page": "Destek sayfası", "btn-maint-close": "Kapat", "btn-maint-uninstall": "Kaldır", "btn-maint-reinstall": "Yeniden yükle", "btn-maint-update": "Güncellemeleri denetle", "running-title": "MuzicMania çalışıyor", "running-desc": "Devam etmeden önce MuzicMania'yı sistem tepsisinden veya Görev Yöneticisi'nden kapatın.", "running-close": "Anladım" },
+  "1029": { "maint-title": "MuzicMania je již nainstalována", "maint-desc": "Byla nalezena existující instalace. Vyberte akci.", "maint-version-label": "Nainstalovaná verze", "maint-path-label": "Umístění", "maint-local-label": "Místní data", "maint-note": "Aktualizace mění soubory aplikace bez odstranění účtu nebo místních dat. Přeinstalace aplikaci odstraní a znovu nainstaluje.", "maint-help-label": "Potřebujete pomoc?", "maint-support": "Podpora WhatsApp", "maint-support-page": "Stránka podpory", "btn-maint-close": "Zavřít", "btn-maint-uninstall": "Odinstalovat", "btn-maint-reinstall": "Přeinstalovat", "btn-maint-update": "Zkontrolovat aktualizace", "running-title": "MuzicMania je spuštěna", "running-desc": "Před pokračováním zavřete MuzicMania ze systémové lišty nebo Správce úloh.", "running-close": "Rozumím" },
+  "1038": { "maint-title": "A MuzicMania már telepítve van", "maint-desc": "Meglévő telepítés található. Válasszon műveletet.", "maint-version-label": "Telepített verzió", "maint-path-label": "Hely", "maint-local-label": "Helyi adatok", "maint-note": "A frissítés módosítja az alkalmazásfájlokat anélkül, hogy törölné a fiókot vagy a helyi adatokat. Az újratelepítés eltávolítja és újra telepíti az alkalmazást.", "maint-help-label": "Segítségre van szüksége?", "maint-support": "WhatsApp-támogatás", "maint-support-page": "Támogatási oldal", "btn-maint-close": "Bezárás", "btn-maint-uninstall": "Eltávolítás", "btn-maint-reinstall": "Újratelepítés", "btn-maint-update": "Frissítések keresése", "running-title": "A MuzicMania fut", "running-desc": "A folytatás előtt zárja be a MuzicMania-t a rendszertálcáról vagy a Feladatkezelőből.", "running-close": "Értem" },
+  "1053": { "maint-title": "MuzicMania är redan installerad", "maint-desc": "En befintlig installation hittades. Välj en åtgärd.", "maint-version-label": "Installerad version", "maint-path-label": "Plats", "maint-local-label": "Lokala data", "maint-note": "Uppdatering ändrar programfilerna utan att ta bort ditt konto eller lokala data. Ominstallation tar bort och installerar programmet igen.", "maint-help-label": "Behöver du hjälp?", "maint-support": "WhatsApp-support", "maint-support-page": "Supportsida", "btn-maint-close": "Stäng", "btn-maint-uninstall": "Avinstallera", "btn-maint-reinstall": "Installera om", "btn-maint-update": "Sök efter uppdateringar", "running-title": "MuzicMania körs", "running-desc": "Stäng MuzicMania från systemfältet eller Aktivitetshanteraren innan du fortsätter.", "running-close": "Uppfattat" }
+};
+
+var STAGE_I18N = {
+  "1033": { "stage-lang": "Language", "stage-welcome": "Welcome", "stage-license": "License", "stage-dir": "Directory", "stage-install": "Install", "stage-finish": "Finish", "stage-maintenance": "Maintenance" },
+  "1034": { "error-title": "Error", "reinstall-title": "Reinstalando MuzicMania", "reinstall-desc": "Se eliminará la aplicación actual y se instalará de nuevo. Tus datos locales se conservarán.", "reinstall-step-uninstall": "Desinstalando la versión anterior...", "reinstall-step-install": "Instalando la nueva versión...", "reinstall-step-finish": "Finalizando...", "reinstall-status-preparing": "Preparando...", "reinstall-status-done": "Reinstalación completada", "reinstall-close": "Cerrar", "reinstall-open": "Abrir MuzicMania", "reinstall-stay": "Mantenerme en el hub", "stage-lang": "Idioma", "stage-welcome": "Bienvenido", "stage-license": "Licencia", "stage-dir": "Carpeta", "stage-install": "Instalar", "stage-finish": "Finalizar", "stage-maintenance": "Mantenimiento" },
+  "2052": { "stage-lang": "语言", "stage-welcome": "欢迎", "stage-license": "许可证", "stage-dir": "目录", "stage-install": "安装", "stage-finish": "完成", "stage-maintenance": "维护" },
+  "1028": { "stage-lang": "語言", "stage-welcome": "歡迎", "stage-license": "授權", "stage-dir": "目錄", "stage-install": "安裝", "stage-finish": "完成", "stage-maintenance": "維護" },
+  "1046": { "stage-lang": "Idioma", "stage-welcome": "Bem-vindo", "stage-license": "Licença", "stage-dir": "Diretório", "stage-install": "Instalar", "stage-finish": "Concluir", "stage-maintenance": "Manutenção" },
+  "1051": { "stage-lang": "Язык", "stage-welcome": "Добро пожаловать", "stage-license": "Лицензия", "stage-dir": "Папка", "stage-install": "Установить", "stage-finish": "Готово", "stage-maintenance": "Обслуживание" },
+  "1041": { "stage-lang": "言語", "stage-welcome": "ようこそ", "stage-license": "ライセンス", "stage-dir": "フォルダー", "stage-install": "インストール", "stage-finish": "完了", "stage-maintenance": "メンテナンス" },
+  "1050": { "stage-lang": "언어", "stage-welcome": "환영합니다", "stage-license": "라이선스", "stage-dir": "폴더", "stage-install": "설치", "stage-finish": "완료", "stage-maintenance": "유지 관리" },
+  "1036": { "stage-lang": "Langue", "stage-welcome": "Bienvenue", "stage-license": "Licence", "stage-dir": "Dossier", "stage-install": "Installer", "stage-finish": "Terminer", "stage-maintenance": "Maintenance" },
+  "1031": { "stage-lang": "Sprache", "stage-welcome": "Willkommen", "stage-license": "Lizenz", "stage-dir": "Ordner", "stage-install": "Installieren", "stage-finish": "Fertig", "stage-maintenance": "Wartung" },
+  "1040": { "stage-lang": "Lingua", "stage-welcome": "Benvenuto", "stage-license": "Licenza", "stage-dir": "Cartella", "stage-install": "Installa", "stage-finish": "Fine", "stage-maintenance": "Manutenzione" },
+  "1043": { "stage-lang": "Taal", "stage-welcome": "Welkom", "stage-license": "Licentie", "stage-dir": "Map", "stage-install": "Installeren", "stage-finish": "Voltooien", "stage-maintenance": "Onderhoud" },
+  "1045": { "stage-lang": "Język", "stage-welcome": "Witaj", "stage-license": "Licencja", "stage-dir": "Folder", "stage-install": "Zainstaluj", "stage-finish": "Zakończ", "stage-maintenance": "Konserwacja" },
+  "1025": { "stage-lang": "اللغة", "stage-welcome": "مرحبًا", "stage-license": "الترخيص", "stage-dir": "المجلد", "stage-install": "تثبيت", "stage-finish": "إنهاء", "stage-maintenance": "الصيانة" },
+  "1055": { "stage-lang": "Dil", "stage-welcome": "Hoş geldiniz", "stage-license": "Lisans", "stage-dir": "Klasör", "stage-install": "Yükle", "stage-finish": "Bitir", "stage-maintenance": "Bakım" },
+  "1029": { "stage-lang": "Jazyk", "stage-welcome": "Vítejte", "stage-license": "Licence", "stage-dir": "Složka", "stage-install": "Nainstalovat", "stage-finish": "Dokončit", "stage-maintenance": "Údržba" },
+  "1038": { "stage-lang": "Nyelv", "stage-welcome": "Üdvözöljük", "stage-license": "Licenc", "stage-dir": "Mappa", "stage-install": "Telepítés", "stage-finish": "Befejezés", "stage-maintenance": "Karbantartás" },
+  "1053": { "stage-lang": "Språk", "stage-welcome": "Välkommen", "stage-license": "Licens", "stage-dir": "Mapp", "stage-install": "Installera", "stage-finish": "Slutför", "stage-maintenance": "Underhåll" }
+};
 var I18N = (window.INSTALLER_I18N && typeof window.INSTALLER_I18N === "object") ? window.INSTALLER_I18N : { "1033": FALLBACK };
 if (!I18N["1033"]) I18N["1033"] = FALLBACK;
 var currentLang = "1033";
 var isFinished = false;
 var isInstalling = false;
+var isReinstalling = false;
+var buildInfo = window.MUZIC_BUILD || {};
+var reinstallStartedAt = 0;
 var logConsumed = 0;
 var selectedDir = "";
 var installedInfo = null;
@@ -895,7 +988,9 @@ function setText(id, text) {
 
 function T(key) {
   var dict = I18N[currentLang] || {};
-  return dict[key] || FALLBACK[key] || key;
+  var extra = MAINT_I18N[currentLang] || {};
+  var stage = STAGE_I18N[currentLang] || {};
+  return dict[key] || extra[key] || stage[key] || FALLBACK[key] || key;
 }
 
 function flagPath(lang) {
@@ -928,6 +1023,7 @@ function applyLang(lang) {
   for (var key in base) {
     if (Object.prototype.hasOwnProperty.call(base, key)) setText(key, T(key));
   }
+  updateRoadmapLabels();
   document.documentElement.lang = lang === "2052" ? "zh-CN" : lang === "1028" ? "zh-TW" : lang === "1034" ? "es" : lang === "1033" ? "en" : "und";
   document.body.classList.toggle("rtl", lang === "1025");
   var options = document.querySelectorAll(".lang-option");
@@ -962,7 +1058,7 @@ function decorateIcons() {
     "lbl-inst-title": "i-download",
     "lbl-finish-title": "i-check",
     "lbl-finish-desc": "i-info",
-    "lbl-system-detect": "i-monitor",
+    "lbl-system-detect": "i-check",
     "lbl-space": "i-disk",
     "lbl-modal-title": "i-warning",
     "maint-title": "i-warning",
@@ -984,7 +1080,8 @@ function decorateIcons() {
     "btn-finish": "i-check",
     "btn-maint-close": "i-x",
     "btn-maint-uninstall": "i-trash",
-    "btn-maint-update": "i-refresh",
+    "btn-maint-reinstall": "i-refresh",
+    "btn-maint-update": "i-download",
     "btn-modal-no": "i-arrow-left",
     "btn-modal-yes": "i-x"
   };
@@ -1187,6 +1284,7 @@ function showDirError(message) {
 
 function failInstall(message) {
   isInstalling = false;
+  document.body.classList.remove("installing");
   window.MuzicRoadmap.setAllError("install");
   if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
   if (progressTimer) { clearInterval(progressTimer); progressTimer = null; }
@@ -1196,8 +1294,100 @@ function failInstall(message) {
   if (btn) btn.disabled = false;
 }
 
+function versionParts(value) {
+  var match = String(value || "").match(/(\d+)\.(\d+)\.(\d+)/);
+  return match ? [Number(match[1]), Number(match[2]), Number(match[3])] : [0, 0, 0];
+}
+
+function compareVersions(left, right) {
+  var a = versionParts(left);
+  var b = versionParts(right);
+  for (var i = 0; i < 3; i += 1) {
+    if (a[i] !== b[i]) return a[i] > b[i] ? 1 : -1;
+  }
+  return 0;
+}
+
+function buildLabel() {
+  var launcher = buildInfo.launcherVersion || "2.3.2";
+  var game = buildInfo.gameVersion || "2.1.1";
+  var channel = String(buildInfo.channel || "beta").toUpperCase();
+  return "Launcher v" + launcher + " · MuzicMania v" + game + " · " + channel;
+}
+
+function applyBuildInfo(info) {
+  var launcher = (info && info.version) || buildInfo.launcherVersion || "2.3.2";
+  var game = (info && info.game_version) || buildInfo.gameVersion || "2.1.1";
+  var channel = String((info && info.channel) || buildInfo.channel || "beta").toUpperCase();
+  var date = (info && info.build_date) || buildInfo.buildDate || "";
+  var changelog = (info && info.changelog_url) || buildInfo.changelogUrl || "";
+  var meta = "Launcher v" + launcher + " · MuzicMania v" + game + " · " + channel + (date ? " · " + date : "");
+  setText("maint-build-meta", meta);
+  setText("installer-channel", channel);
+  setText("installer-version", "Launcher v" + launcher);
+  setText("installer-version-footer", "Launcher v" + launcher + " · " + channel);
+  setText("installer-game-version-footer", "v" + game);
+  var support = $("installer-changelog");
+  if (support && changelog) support.href = changelog;
+}
+
+function renderMaintenanceVersion(info) {
+  var installed = info && info.installed_version ? String(info.installed_version).trim() : "";
+  var current = (info && info.version) || buildInfo.launcherVersion || "";
+  var comparison = installed && current ? compareVersions(installed, current) : null;
+  var title = $("maint-state-title");
+  var desc = $("maint-state-desc");
+  var state = $("maint-version-state");
+  var reinstall = $("btn-maint-reinstall");
+  if (!title || !desc) return;
+  if (!installed) {
+    title.textContent = T("maint-state-unknown");
+    desc.textContent = T("maint-desc-unknown");
+    if (state) state.style.borderColor = "rgba(255,176,32,.45)";
+    setText("maint-version", T("unknown"));
+    return;
+  }
+  setText("maint-version", installed);
+  if (comparison === 0) {
+    title.textContent = T("maint-state-current");
+    desc.textContent = T("maint-desc-current");
+    if (state) state.style.borderColor = "rgba(46,213,115,.45)";
+    if (reinstall) reinstall.disabled = false;
+  } else if (comparison < 0) {
+    title.textContent = T("maint-state-outdated");
+    desc.textContent = T("maint-desc-outdated");
+    if (state) state.style.borderColor = "rgba(255,176,32,.55)";
+    if (reinstall) reinstall.disabled = false;
+  } else {
+    title.textContent = T("maint-state-older");
+    desc.textContent = T("maint-desc-older");
+    if (state) state.style.borderColor = "rgba(255,71,87,.55)";
+    if (reinstall) reinstall.disabled = true;
+  }
+}
+function showRunningModal() {
+  setText("running-title", T("running-title"));
+  setText("running-desc", T("running-desc"));
+  setText("running-close", T("running-close"));
+  $("running-modal").classList.add("active");
+}
+
+function ensureAppClosed(callback) {
+  tauriInvoke("installer_app_running").then(function(running) {
+    if (running) {
+      showRunningModal();
+      return;
+    }
+    callback();
+  }).catch(function() { callback(); });
+}
+
 function startInstall() {
   if (isInstalling || !allowAction("install", 900)) return;
+  ensureAppClosed(function() { beginInstall(); });
+}
+
+function beginInstall() {
   var dir = $("install-dir").value.trim();
   if (!validateDir(dir)) {
     showDirError("Choose a valid folder. Do not use a drive root or a Windows system directory.");
@@ -1210,10 +1400,12 @@ function startInstall() {
   goView("v-installing");
   resetProgress();
   isInstalling = true;
+  document.body.classList.add("installing");
   log(T("status-starting"), "info");
   setProgress(5, T("status-starting"));
   var attempts = 0;
   var maxAttempts = 1200;
+  var resentCommand = false;
 
   tauriInvoke("installer_set_dir", { dir: dir }).then(function() {
     return tauriInvoke("installer_start_install");
@@ -1227,6 +1419,11 @@ function startInstall() {
       tauriInvoke("installer_read_status").then(function(status) {
         var state = String(status === null || status === undefined ? "" : status).trim();
         readProgressAndLog().then(function() {
+          if (!resentCommand && attempts > 20 && targetPct <= 5) {
+            resentCommand = true;
+            log("Reenviando la orden de instalación...", "info");
+            tauriInvoke("installer_write_cmd", { cmd: "INSTALL" });
+          }
           if (state === "DONE") {
             finishInstall();
             return;
@@ -1237,6 +1434,7 @@ function startInstall() {
           }
           if (state === "CANCELLED") {
             isInstalling = false;
+            document.body.classList.remove("installing");
             goView("v-finish");
             return;
           }
@@ -1252,9 +1450,22 @@ function startInstall() {
   });
 }
 
+function fillFinishDetails() {
+  if (selectedDir) setText("finish-path", selectedDir);
+  if (appInfo) setText("finish-meta", "MuzicMania v" + appInfo.version + " · " + appInfo.arch);
+  tauriInvoke("installer_read_log").then(function(text) {
+    var full = $("finish-full-log");
+    if (full) full.textContent = String(text || "").trim() || "Installation log unavailable.";
+  }).catch(function() {
+    var full = $("finish-full-log");
+    if (full) full.textContent = "Installation log unavailable.";
+  });
+}
+
 function finishInstall() {
   if (!isInstalling && isFinished) return;
   isInstalling = false;
+  document.body.classList.remove("installing");
   isFinished = true;
   if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
   targetPct = 100;
@@ -1262,10 +1473,10 @@ function finishInstall() {
   renderProgress();
   window.MuzicRoadmap.setDone("install");
   window.MuzicRoadmap.setDone("finish");
+  window.MuzicRoadmap.setActive("finish");
   setText("inst-status", T("status-done"));
   log(T("status-done"), "ok");
-  if (selectedDir) setText("finish-path", selectedDir);
-  if (appInfo) setText("finish-meta", "MuzicMania v" + appInfo.version + " · " + appInfo.arch + " · Administrator install");
+  fillFinishDetails();
   setTimeout(function() { goView("v-finish"); }, 650);
 }
 
@@ -1282,6 +1493,7 @@ function onFinish() {
 }
 
 window.showCloseModal = function() {
+  if (isReinstalling) return;
   if (isFinished) {
     onFinish();
     return;
@@ -1324,8 +1536,276 @@ function roadmapNavigate(viewId) {
   goView(viewId, true);
 }
 
+function localizedStages(stages) {
+  return stages.map(function(stage) {
+    return { id: stage.id, label: T("stage-" + stage.id), icon: stage.icon, viewId: stage.viewId };
+  });
+}
+
+function updateRoadmapLabels() {
+  if (window.MuzicRoadmap && typeof window.MuzicRoadmap.setLabels === "function") {
+    var labels = {};
+    var stages = STAGES_NORMAL.concat(STAGES_INSTALLED);
+    stages.forEach(function(stage) { labels[stage.id] = T("stage-" + stage.id); });
+    window.MuzicRoadmap.setLabels(labels);
+  }
+}
+
 function initRoadmap(installed) {
-  window.MuzicRoadmap.init("roadmap", installed ? STAGES_INSTALLED : STAGES_NORMAL, "lang", roadmapNavigate);
+  var stages = localizedStages(installed ? STAGES_INSTALLED : STAGES_NORMAL);
+  window.MuzicRoadmap.init("roadmap", stages, installed ? "maintenance" : "lang", roadmapNavigate);
+  if (installed) window.MuzicRoadmap.setDone("lang");
+  updateRoadmapLabels();
+}
+
+var maintModalAction = null;
+
+function hideMaintModal() {
+  $("maint-modal").classList.remove("active");
+  maintModalAction = null;
+}
+
+function showMaintModal(title, desc, confirmLabel, action, options) {
+  options = options || {};
+  setText("maint-modal-title", title || "MuzicMania");
+  setText("maint-modal-desc", desc || "");
+  var confirm = $("maint-modal-confirm");
+  var cancel = $("maint-modal-cancel");
+  var progress = $("maint-modal-progress");
+  if (confirm) {
+    confirm.style.display = action ? "inline-flex" : "none";
+    confirm.disabled = false;
+    confirm.textContent = confirmLabel || T("maint-modal-confirm");
+  }
+  if (cancel) cancel.textContent = options.cancelLabel || T("maint-modal-cancel");
+  if (progress) progress.style.display = options.progress ? "block" : "none";
+  maintModalAction = action || null;
+  $("maint-modal").classList.add("active");
+}
+
+function setMaintProgress(value, status) {
+  var pct = Math.max(0, Math.min(100, Number(value) || 0));
+  var bar = $("maint-modal-bar");
+  if (bar) bar.style.width = pct + "%";
+  setText("maint-modal-status", status || T("update-progress"));
+  setText("maint-modal-pct", Math.round(pct) + "%");
+}
+
+function showMaintError(message) {
+  showMaintModal(T("error-title"), message || T("error-generic"), "", null, { cancelLabel: T("running-close") });
+}
+
+function policyReasonText(info) {
+  if (!info || !info.mandatory) return "";
+  var reason = String(info.reason || "support");
+  if (reason === "security") return "Bloqueo de seguridad: esta versión tiene una vulnerabilidad conocida.";
+  if (reason === "integrity") return "Bloqueo de integridad: esta build no coincide con la versión oficial.";
+  return "Bloqueo de soporte: esta versión ya no recibe mantenimiento.";
+}
+
+function renderMaintPolicy(info) {
+  var panel = $("maint-policy");
+  if (!panel || !info) return;
+  var hasOptions = Boolean(info.options && info.options.length);
+  var showPanel = Boolean(info.mandatory || hasOptions || info.releaseAvailable || info.error || info.platformError);
+  panel.style.display = showPanel ? "block" : "none";
+  if (!showPanel) return;
+  if (info.platformError) {
+    setText("maint-policy-title", "Instalador incompatible");
+    setText("maint-policy-desc", info.platformError + " Descarga el setup oficial para tu sistema o contacta a soporte.");
+    var incompatibleOptions = $("maint-policy-options");
+    if (incompatibleOptions) incompatibleOptions.innerHTML = "";
+    return;
+  }
+  setText("maint-policy-title", info.mandatory ? "Actualización obligatoria" : "Actualizaciones disponibles");
+  setText("maint-policy-desc", info.mandatory
+    ? policyReasonText(info) + " " + (info.message || "Instala una versión segura y compatible.")
+    : (info.error ? "No se pudo verificar online; se usó la política local." : "Elige una versión compatible o descarga manualmente."));
+  var downloads = $("maint-policy-downloads");
+  if (downloads && info.support && info.support.downloadsUrl) downloads.href = info.support.downloadsUrl;
+  var support = $("maint-policy-support");
+  if (support && info.support && info.support.supportUrl) support.href = info.support.supportUrl;
+  var options = $("maint-policy-options");
+  if (!options) return;
+  options.innerHTML = "";
+  var seen = {};
+  (info.options || []).forEach(function(option) {
+    if (seen[option.version]) return;
+    seen[option.version] = true;
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn btn-primary";
+    button.textContent = "Actualizar a " + option.version;
+    button.addEventListener("click", function() { beginUpdateOption(option, info); });
+    options.appendChild(button);
+  });
+  if (!options.children.length) {
+    var note = document.createElement("span");
+    note.style.fontSize = "11px";
+    note.style.color = "var(--text-muted)";
+    note.textContent = info.mandatory ? "No hay una build segura en el manifiesto. Usa la descarga manual." : "No hay actualizaciones disponibles.";
+    options.appendChild(note);
+  }
+  var reinstall = $("btn-maint-reinstall");
+  if (reinstall) reinstall.disabled = Boolean(info.mandatory);
+}
+
+function beginUpdateOption(option, info) {
+  beginUpdate({ url: option.url, size: option.size, latest: option.version, notes: option.changelogUrl || "", error: "" });
+}
+
+function checkForUpdate() {
+  showMaintModal(T("update-checking"), T("maint-note"), "", null, { progress: true, cancelLabel: T("maint-modal-cancel") });
+  setMaintProgress(8, T("update-checking"));
+  tauriInvoke("installer_check_update").then(function(info) {
+    if (!info) {
+      showMaintError(T("update-error"));
+      return;
+    }
+    hideMaintModal();
+    renderMaintPolicy(info);
+  }).catch(function(error) { showMaintError(String(error)); });
+}
+function beginUpdate(info) {
+  showMaintModal(T("update-progress"), T("update-progress"), T("maint-modal-confirm"), null, { progress: true, cancelLabel: T("maint-modal-cancel") });
+  var confirm = $("maint-modal-confirm");
+  if (confirm) confirm.style.display = "none";
+  tauriInvoke("installer_start_update", { url: info.url, size: info.size, version: info.latest }).then(function() {
+    var poll = function() {
+      tauriInvoke("installer_update_progress").then(function(status) {
+        if (!status || !status.state) {
+          setTimeout(poll, 350);
+          return;
+        }
+        var total = Number(status.total) || 0;
+        var downloaded = Number(status.downloaded) || 0;
+        var pct = total > 0 ? (downloaded / total) * 100 : 30;
+        setMaintProgress(Math.max(8, Math.min(98, pct)), T("update-progress"));
+        if (status.state === "ready") {
+          setMaintProgress(100, T("update-ready"));
+          tauriInvoke("installer_apply_update").catch(function(error) { showMaintError(String(error)); });
+          return;
+        }
+        if (status.state === "error") {
+          showMaintError(status.error || T("update-error"));
+          return;
+        }
+        setTimeout(poll, 350);
+      }).catch(function(error) { showMaintError(String(error)); });
+    };
+    poll();
+  }).catch(function(error) { showMaintError(String(error)); });
+}
+
+function confirmUninstall() {
+  if (!installedInfo || !installedInfo.installed_path) return;
+  ensureAppClosed(function() {
+    showMaintModal(T("btn-maint-uninstall"), T("uninstall-confirm"), T("btn-maint-uninstall"), function() {
+      var confirm = $("maint-modal-confirm");
+      if (confirm) confirm.disabled = true;
+      tauriInvoke("installer_run_uninstaller", { path: installedInfo.installed_path }).catch(function(error) {
+        showMaintError(String(error));
+      });
+    });
+  });
+}
+
+function setReinstallPhase(phase, done) {
+  var steps = document.querySelectorAll(".reinstall-step");
+  for (var i = 0; i < steps.length; i++) {
+    var stepPhase = parseInt(steps[i].getAttribute("data-reinstall-phase"), 10);
+    steps[i].classList.toggle("active", !done && stepPhase === phase);
+    steps[i].classList.toggle("done", done || stepPhase < phase);
+  }
+  var bar = $("reinstall-bar");
+  var pct = $("reinstall-pct");
+  if (bar && phase === 0) bar.style.width = "0%";
+  if (pct && phase === 0) pct.textContent = "0%";
+}
+
+function reinstallFailed(message) {
+  isReinstalling = false;
+  var error = $("reinstall-error");
+  if (error) {
+    error.textContent = message || T("error-generic");
+    error.style.display = "block";
+  }
+  setText("reinstall-status", T("error-title"));
+  var close = $("reinstall-close");
+  if (close) close.style.display = "inline-flex";
+}
+
+function pollReinstall() {
+  tauriInvoke("installer_reinstall_progress").then(function(status) {
+    if (!status || !status.state) {
+      setTimeout(pollReinstall, 350);
+      return;
+    }
+    var progress = Math.max(0, Math.min(100, Number(status.progress) || 0));
+    var phase = Number(status.phase) || 1;
+    var bar = $("reinstall-bar");
+    var pct = $("reinstall-pct");
+    if (bar) bar.style.width = progress + "%";
+    if (pct) pct.textContent = Math.round(progress) + "%";
+    setReinstallPhase(phase, status.state === "done");
+    if (status.state === "done") {
+      isReinstalling = false;
+      setText("reinstall-status", T("reinstall-status-done"));
+      var open = $("reinstall-open");
+      var stay = $("reinstall-stay");
+      if (open) open.style.display = "inline-flex";
+      if (stay) stay.style.display = "inline-flex";
+      return;
+    }
+    if (status.state === "error") {
+      reinstallFailed(status.error || T("error-generic"));
+      return;
+    }
+    setText("reinstall-status", phase === 0
+      ? T("reinstall-status-preparing")
+      : phase === 1 ? T("reinstall-step-uninstall")
+      : phase === 2 ? T("reinstall-step-install") : T("reinstall-step-finish"));
+    setTimeout(pollReinstall, 350);
+  }).catch(function(error) {
+    reinstallFailed(String(error));
+  });
+}
+
+function startReinstallFlow() {
+  hideMaintModal();
+  isReinstalling = true;
+  var error = $("reinstall-error");
+  if (error) {
+    error.textContent = "";
+    error.style.display = "none";
+  }
+  var close = $("reinstall-close");
+  if (close) close.style.display = "none";
+  var open = $("reinstall-open");
+  var stay = $("reinstall-stay");
+  if (open) open.style.display = "none";
+  if (stay) stay.style.display = "none";
+  setText("reinstall-title", T("reinstall-title"));
+  setText("reinstall-desc", T("reinstall-desc"));
+  setText("reinstall-step-uninstall", T("reinstall-step-uninstall"));
+  setText("reinstall-step-install", T("reinstall-step-install"));
+  setText("reinstall-step-finish", T("reinstall-step-finish"));
+  setText("reinstall-status", T("reinstall-status-preparing"));
+  setReinstallPhase(0, false);
+  $("reinstall-modal").classList.add("active");
+  tauriInvoke("installer_reinstall_start").then(function() {
+    pollReinstall();
+  }).catch(function(error) {
+    reinstallFailed(String(error));
+  });
+}
+
+function confirmReinstall() {
+  ensureAppClosed(function() {
+    showMaintModal(T("btn-maint-reinstall"), T("reinstall-confirm"), T("btn-maint-reinstall"), function() {
+      startReinstallFlow();
+    });
+  });
 }
 var eggClicks = 0;
 var eggTimer = null;
@@ -1342,10 +1822,23 @@ function bindEasterEgg() {
     }
     eggClicks += 1;
     clearTimeout(eggTimer);
-    eggTimer = setTimeout(function() { eggClicks = 0; }, 1400);
-    if (eggClicks >= 5) document.body.classList.add("easter-egg");
+    eggTimer = setTimeout(function() { eggClicks = 0; }, 1600);
+    if (eggClicks >= 3) {
+      document.body.classList.add("easter-egg");
+      if (cat) {
+        cat.title = "Haz clic en el gato para desactivar el easter egg";
+        cat.setAttribute("aria-label", cat.title);
+      }
+    }
   });
-  if (cat) cat.addEventListener("click", function() { document.body.classList.remove("easter-egg"); eggClicks = 0; });
+  if (cat) {
+    cat.title = "Click the cat to disable the easter egg";
+    cat.setAttribute("aria-label", cat.title);
+    cat.addEventListener("click", function() {
+      document.body.classList.remove("easter-egg");
+      eggClicks = 0;
+    });
+  }
 }
 
 function init() {
@@ -1359,21 +1852,26 @@ function init() {
   tauriInvoke("installer_info").then(function(info) {
     installedInfo = info || null;
     appInfo = info || null;
+    applyBuildInfo(info);
     if (info && info.dir) {
       selectedDir = info.dir;
       $("install-dir").value = info.dir;
     }
     if (info && info.version && info.os && info.arch) {
       $("sys-info").textContent = "MuzicMania v" + info.version + " (" + info.os + " " + info.arch + ")";
-      setText("installer-version", "v" + info.version);
+      setText("installer-version", "Launcher v" + info.version);
       setText("req-os", info.os + " · " + info.arch);
       if (info.webview2) setText("req-webview", "v" + info.webview2);
     }
     if (info && info.dir) updateDiskInfo(info.dir);
     if (info && info.installed) {
       initRoadmap(true);
-      setText("maint-version", info.installed_version || "—");
       setText("maint-path", info.installed_path || info.dir || "—");
+      renderMaintenanceVersion(info);
+      tauriInvoke("installer_check_update").then(function(policy) {
+        if (policy) renderMaintPolicy(policy);
+      }).catch(function() {});
+      goView("v-maintenance");
     }
   });
 
@@ -1405,27 +1903,44 @@ function init() {
     goView(installedInfo && installedInfo.installed ? "v-maintenance" : "v-welcome");
   });
   $("btn-maint-update").addEventListener("click", function() {
-    if (installedInfo && installedInfo.installed_path) {
-      selectedDir = installedInfo.installed_path;
-      $("install-dir").value = installedInfo.installed_path;
-      updateDiskInfo(installedInfo.installed_path);
-    }
-    window.MuzicRoadmap.reset(STAGES_NORMAL, "welcome", roadmapNavigate);
-    goView("v-welcome");
+    if (!allowAction("maint-update", 1200)) return;
+    ensureAppClosed(checkForUpdate);
+  });
+  $("btn-maint-reinstall").addEventListener("click", function() {
+    if (!allowAction("maint-reinstall", 1200)) return;
+    confirmReinstall();
   });
   $("btn-maint-uninstall").addEventListener("click", function() {
     if (!allowAction("maint-uninstall", 1200)) return;
-    if (!installedInfo || !installedInfo.installed_path) return;
-    if (!window.confirm(T("maint-uninstall-warn"))) return;
-    tauriInvoke("installer_run_uninstaller", { path: installedInfo.installed_path }).catch(function() {
-      window.alert(T("error-generic"));
+    confirmUninstall();
+  });
+  $("running-close").addEventListener("click", function() { $("running-modal").classList.remove("active"); });
+  $("reinstall-open").addEventListener("click", function() {
+    tauriInvoke("installer_open_app").catch(function(error) {
+      reinstallFailed(String(error));
     });
+  });
+  $("reinstall-stay").addEventListener("click", function() {
+    $("reinstall-modal").classList.remove("active");
+    goView("v-maintenance");
+  });
+  $("reinstall-close").addEventListener("click", function() {
+    tauriInvoke("installer_cancel").then(function() { window.close(); });
+  });
+  $("maint-modal-cancel").addEventListener("click", hideMaintModal);
+  $("maint-modal-confirm").addEventListener("click", function() {
+    if (!maintModalAction) return;
+    var action = maintModalAction;
+    this.disabled = true;
+    action();
   });
   $("btn-maint-close").addEventListener("click", function() {
     if (!allowAction("maint-close", 700)) return;
     tauriInvoke("installer_cancel").then(function() { window.close(); });
   });
   $("footer-lang").addEventListener("click", function() { if (!isInstalling && !isFinished) { window.MuzicRoadmap.setActive("lang"); goView("v-lang", true); } });
+  $("setup-minimize").addEventListener("click", function() { tauriInvoke("window_minimize").catch(function() {}); });
+  $("setup-close").addEventListener("click", function() { if (window.showCloseModal) window.showCloseModal(); });
   $("btn-welcome-back").addEventListener("click", function() { window.MuzicRoadmap.setActive("lang"); goView("v-lang", true); });
   $("btn-welcome-next").addEventListener("click", function() { if (!allowAction("welcome-next", 500)) return; window.MuzicRoadmap.complete("welcome"); goView("v-license"); });
   $("btn-license-back").addEventListener("click", function() { window.MuzicRoadmap.setActive("welcome"); goView("v-welcome", true); });
@@ -1461,3 +1976,13 @@ if (document.readyState === "complete" || document.readyState === "interactive")
 } else {
   document.addEventListener("DOMContentLoaded", init);
 }
+
+
+
+
+
+
+
+
+
+
