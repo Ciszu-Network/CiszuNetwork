@@ -223,5 +223,11 @@ bloquear instalaciones legítimas si el servidor no está disponible.
 
 ---
 
+## 16. Estado actual
+
+La política `policyVersion 2` marca `minimumSupported` **2.4.1** para launcher, beta y release.
+Las builds 2.3.1, 2.3.2 y 2.4.0 quedan `blocked_support`; 2.4.1 es la única soportada.
+Los usuarios deben actualizar o descargar el setup oficial.
+
 _Última revisión: 18 nov 2026._ Relacionado: `LAUNCHER_SYSTEM.md`, `INSTALLERS_SYSTEM.md`,
 `DESKTOP_SHELL_SYSTEM.md`, `SECURITY_PROTOCOLS.md`.
