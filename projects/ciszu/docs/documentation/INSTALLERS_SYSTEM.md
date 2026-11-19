@@ -320,7 +320,7 @@ downloads/<launcherVersion>/<channel>/<windows10|windows11>/
 - Se archiva el mismo artefacto en `projects/muzicmania/launcher/downloads/` y en
   `projects/muzicmania/website/public/downloads/`. La raíz de `downloads/` solo contiene
   `registry.json`, `latest.json` y carpetas `<version>/<canal>/<os>/`; no hay setups sueltos.
-- Las builds 2.3.1, 2.3.2, 2.4.0 y 2.4.1 viven en el esquema nuevo; la 2.3.1 se migró en `2.3.1/beta/windows{10,11}/`, conservando su
+- Las builds 2.3.1, 2.3.2, 2.4.0, 2.4.1 y 2.4.2 viven en el esquema nuevo; la 2.3.1 se migró en `2.3.1/beta/windows{10,11}/`, conservando su
   nombre remoto para el fallback de GitHub Releases.
 - `registry.json` conserva todas las builds (versión, juego, canal, OS, SHA256, tamaño,
   fecha y changelog); `latest.json` expone la build vigente y los ficheros por OS.
@@ -337,6 +337,7 @@ downloads/<launcherVersion>/<channel>/<windows10|windows11>/
 _Última revisión: 18 nov 2026._ Relacionado: `DESKTOP_SHELL_SYSTEM.md`,
 `LAUNCHER_SYSTEM.md`, `RELEASE_POLICY_SYSTEM.md`, `FRAMEWORKS_SYSTEM.md`,
 `CDN_SYSTEM.md`, `PROJECTS_SYSTEM.md`, `FULL_STACK_SYSTEM.md`.
+
 
 
 

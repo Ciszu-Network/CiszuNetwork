@@ -106,6 +106,25 @@ CiszuBot envía `bot_ready` y `command_used` (comando, guild, canal, prefijo) me
 
 ---
 
-_Última revisión: 18 nov 2026._ Relacionado: `LAUNCHER_SYSTEM.md`, `INSTALLERS_SYSTEM.md`,
-`SECURITY_PROTOCOLS.md`, `ACCESS_CONTROL_SYSTEM.md`, `STAFF_SYSTEM.md`.
+## 11. Estado de implementación (19 nov 2026)
 
+- Launcher **2.4.2** incluye `telemetry-client.js`, heartbeat, actividad online/offline, cola offline
+  y toggle en ajustes (`telemetry_enabled`).
+- Setup y desinstalador cargan el mismo cliente; sus eventos son obligatorios y no existe interruptor.
+- Las cuatro webs montan `TelemetryTracker` desde `@ciszu/ui`; el toggle de cuenta es
+  `TelemetryPreference`. Ciszubot envía eventos de bot desde `src/services/telemetry.ts`.
+- El endpoint central vive en el proyecto MuzicMania porque es el que tiene
+  `SUPABASE_SERVICE_ROLE_KEY` configurado. Se probó localmente con `202` y persistencia real.
+- La migración se aplicó al proyecto Supabase remoto. El SQL y los scripts de Staffcon viven en
+  rutas locales ignoradas por el repo público (`services/`, `scripts/`, `tools/`), por diseño del
+  guard de seguridad.
+- Staffcon permite `telemetry --user` / `--ip`, y el menú interactivo incluye la opción.
+- **Bloqueo de producción**: Vercel está pausado; el endpoint no está disponible públicamente
+  hasta reactivar el deploy. El launcher/setup guardan en cola; la web no tiene cola persistente.
+- `is_official` y `reason: integrity` están preparados, pero la verificación criptográfica de
+  builds oficiales y la licencia premium/antipiratería siguen en standby.
+- El parser de `version` del endpoint de acceso usa parseo numérico acotado (sin regex
+  polinómica) para cerrar la alerta CodeQL #73.
+
+_Última revisión: 19 nov 2026._ Relacionado: `LAUNCHER_SYSTEM.md`, `INSTALLERS_SYSTEM.md`,
+`SECURITY_PROTOCOLS.md`, `ACCESS_CONTROL_SYSTEM.md`, `STAFF_SYSTEM.md`.

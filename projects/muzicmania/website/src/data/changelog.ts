@@ -40,6 +40,7 @@ export const CHANGELOG_DATA: ChangelogItem[] = [
       { text: 'Launcher con heartbeat, online/offline, sesión y cola de eventos; se puede desactivar en ajustes.', type: 'add' },
       { text: 'Setup y desinstalador registran instalación, actualización y motivo de desinstalación sin opt-out.', type: 'sec' },
       { text: 'Webs y bot envían uso, dispositivo, versión y comandos; la web permite desactivar telemetría en cuenta.', type: 'add' },
+      { text: 'Parser de versiones e IP sin regex polinómicas para cerrar la alerta CodeQL de acceso.', type: 'sec' },
     ],
   },
   {
@@ -350,6 +351,7 @@ export const CHANGELOG_DATA: ChangelogItem[] = [
     ]
   }
 ];
+
 
 
 

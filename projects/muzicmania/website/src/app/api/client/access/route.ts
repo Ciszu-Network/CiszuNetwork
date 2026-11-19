@@ -6,8 +6,22 @@ interface Block { from: string; to: string; reason: string; message: string; }
 interface ManifestShape { minimumSupported: Record<string, string>; blocks: Block[]; releases: Release[]; support: unknown; }
 const data = manifest as unknown as ManifestShape;
 
+// Parseo manual y acotado: evita regex polinómicas sobre parámetros de URL.
+function numericPart(value: string): number {
+  if (!value || value.length > 9) return 0;
+  for (let index = 0; index < value.length; index += 1) {
+    const code = value.charCodeAt(index);
+    if (code < 48 || code > 57) return 0;
+  }
+  return Number(value);
+}
+
 function parts(value: string) {
-  return String(value || '').match(/(\d+)\.(\d+)\.(\d+)/)?.slice(1).map(Number) || [0, 0, 0];
+  let normalized = String(value || '').trim().slice(0, 32);
+  if (normalized.startsWith('v')) normalized = normalized.slice(1);
+  const release = normalized.split('-')[0].split('+')[0];
+  const segments = release.split('.');
+  return [numericPart(segments[0] || ''), numericPart(segments[1] || ''), numericPart(segments[2] || '')];
 }
 
 function compare(left: string, right: string) {
@@ -52,5 +66,7 @@ export async function GET(request: Request) {
     support: data.support,
   });
 }
+
+
 
 

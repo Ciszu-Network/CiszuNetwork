@@ -309,7 +309,7 @@ MuzicMania es la referencia canónica; cualquier producto nuevo parte de
 
 ## 17. Versionado, canales y comparación de builds
 
-Desde el 18 nov 2026 la versión de referencia es **launcher 2.4.1**, juego **2.1.1** y canal
+Desde el 18 nov 2026 la versión de referencia es **launcher 2.4.2**, juego **2.1.1** y canal
 **beta**. La fuente única es `projects/muzicmania/launcher/build.config.json`; `build.rs` la
 inyecta en Rust y `build-installer.ps1` genera `splash/build-info.js`, archiva los setups y
 actualiza el registro de descargas.
@@ -347,6 +347,7 @@ muestra “BIENVENIDO A MUZICMANIA · ¿PRIMERA VEZ?” durante la primera sesi�
 _Última revisión: 18 nov 2026._
 _Última revisión: 18 nov 2026._ Relacionado: `DESKTOP_SHELL_SYSTEM.md`,
 `INSTALLERS_SYSTEM.md`, `RELEASE_POLICY_SYSTEM.md`, `AUTH_SYSTEM.md`, `FRONTEND_SYSTEM.md`.
+
 
 
 

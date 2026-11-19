@@ -68,7 +68,22 @@ function uuid(value: unknown): string | null {
 
 function ip(value: string): string | null {
   const clean = value.split(',')[0].trim();
-  return /^[0-9a-f:.]+$/i.test(clean) && (clean.includes(':') || /^\d{1,3}(\.\d{1,3}){3}$/.test(clean)) ? clean : null;
+  if (!clean || clean.length > 64) return null;
+  if (clean.includes(':')) {
+    const allowed = '0123456789abcdefABCDEF:.';
+    return Array.from(clean).every((char) => allowed.includes(char)) ? clean : null;
+  }
+  const segments = clean.split('.');
+  if (segments.length !== 4) return null;
+  for (const segment of segments) {
+    if (!segment || segment.length > 3) return null;
+    for (let index = 0; index < segment.length; index += 1) {
+      const code = segment.charCodeAt(index);
+      if (code < 48 || code > 57) return null;
+    }
+    if (Number(segment) > 255) return null;
+  }
+  return clean;
 }
 
 export async function OPTIONS(request: Request) {
@@ -203,3 +218,5 @@ export async function POST(request: Request) {
   }
   return NextResponse.json({ ok: true, accepted: events.length }, { status: 202, headers });
 }
+
+
