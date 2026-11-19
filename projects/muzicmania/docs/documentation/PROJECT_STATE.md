@@ -4,6 +4,16 @@
 **Autor y Propietario:** Ciszuko Antony (Francisco Garcia)
 **Stack:** Next.js 15 + TypeScript + Tailwind CSS v4 + Supabase + Tauri
 
+## Launcher 2.4.2, política y telemetría (19 Nov 2026)
+
+- Build beta 2.4.2 publicada en GitHub con SHA256 `B728BACA0F9F8B11C224DD2AD78FCD2D5FC1578E6B83A5AE549DF005B5F95B0E`.
+- Política firmada activa: mínimo soportado 2.4.1; builds anteriores bloqueadas por soporte.
+- Telemetría implementada en launcher, setup, desinstalador, cuatro webs y bot: eventos por dispositivo/sesión, heartbeat, estado online/offline, país/IP, versión y motivo de desinstalación.
+- Migración `ciszu.telemetry_events/devices/sessions` aplicada en Supabase; Staffcon consulta por usuario o IP.
+- Toggle de telemetría en launcher y en la configuración de cuenta web; setup/desinstalador son obligatorios.
+- Documentación: `RELEASE_POLICY_SYSTEM.md`, `TELEMETRY_SYSTEM.md`, `LAUNCHER_SYSTEM.md`, `INSTALLERS_SYSTEM.md`.
+- Bloqueo externo: Vercel pausado; el endpoint de telemetría no está público hasta reactivar el deploy. CodeQL: 0 alertas abiertas.
+
 ## Tienda y economía MuziPoints (4 Nov 2026)
 
 - Fase 1 implementada: wallet/ledger, catálogo de cosméticos, compra/equipamiento, paquetes MZP, invoice NOWPayments, webhook firmado, estado de orden y gate 18+.

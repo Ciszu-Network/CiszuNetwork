@@ -108,7 +108,7 @@ CiszuBot envía `bot_ready` y `command_used` (comando, guild, canal, prefijo) me
 
 ## 11. Estado de implementación (19 nov 2026)
 
-- Launcher **2.4.2** incluye `telemetry-client.js`, heartbeat, actividad online/offline, cola offline
+- Launcher **2.4.2** (`B728BACA0F9F8B11C224DD2AD78FCD2D5FC1578E6B83A5AE549DF005B5F95B0E`) incluye `telemetry-client.js`, heartbeat, actividad online/offline, cola offline
   y toggle en ajustes (`telemetry_enabled`).
 - Setup y desinstalador cargan el mismo cliente; sus eventos son obligatorios y no existe interruptor.
 - Las cuatro webs montan `TelemetryTracker` desde `@ciszu/ui`; el toggle de cuenta es
@@ -128,3 +128,4 @@ CiszuBot envía `bot_ready` y `command_used` (comando, guild, canal, prefijo) me
 
 _Última revisión: 19 nov 2026._ Relacionado: `LAUNCHER_SYSTEM.md`, `INSTALLERS_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `ACCESS_CONTROL_SYSTEM.md`, `STAFF_SYSTEM.md`.
+

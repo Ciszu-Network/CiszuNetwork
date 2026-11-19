@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import LegalPage from '@/components/LegalPage';
@@ -24,10 +24,18 @@ export default function TermsPage() {
           </Link>
         </div>
       </section>
-      <div className="mx-auto max-w-3xl px-4 pb-10">
+      <section className="mx-auto max-w-3xl px-4 pb-10">
+        <div className="rounded-2xl border border-neon-cyan/20 bg-neon-cyan/5 p-5 text-sm text-white/60">
+          <h2 className="font-header text-sm font-black uppercase tracking-widest text-neon-cyan">Telemetría</h2>
+          <p className="mt-2">
+            CiszuBot registra eventos técnicos de uso (comandos, servidores, versión, errores y estado del bot) para seguridad, soporte y mejora del servicio. Las webs del ecosistema registran eventos de uso y dispositivo; el launcher y la web permiten desactivar la telemetría opcional, mientras que instaladores, desinstaladores y eventos operativos del bot son necesarios. No se venden datos personales. Consulta la Política de Privacidad para finalidad, retención y derechos.
+          </p>
+        </div>
+      </section>      <div className="mx-auto max-w-3xl px-4 pb-10">
         <SupportPolicy mode="support" siteName="CiszuBot" lang={lang.startsWith('en') ? 'en' : 'es'} />
       </div>
       <QuickDocks />
     </>
   );
 }
+
