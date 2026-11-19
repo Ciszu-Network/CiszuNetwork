@@ -8,8 +8,14 @@
   let timer = null;
 
   function randomId() {
-    try { if (crypto && crypto.randomUUID) return crypto.randomUUID(); } catch (e) {}
-    return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+    try {
+      if (crypto && crypto.randomUUID) return crypto.randomUUID();
+      const bytes = new Uint8Array(16);
+      crypto.getRandomValues(bytes);
+      return Array.from(bytes, function (byte) { return byte.toString(16).padStart(2, '0'); }).join('');
+    } catch (e) {
+      return 'fallback-' + Date.now().toString(36);
+    }
   }
   function get(store, key) { try { return store.getItem(key); } catch (e) { return null; } }
   function set(store, key, value) { try { if (value === null) store.removeItem(key); else store.setItem(key, value); } catch (e) {} }
@@ -100,4 +106,5 @@
   function setActivity(activity) { cfg.activity = String(activity || 'launcher'); }
   window.CiszuTelemetry = { track: track, start: start, setActivity: setActivity, flush: flush, configure: function (options) { Object.assign(cfg, options || {}); } };
 })();
+
 

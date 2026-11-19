@@ -5,7 +5,7 @@
  */
 export const TELEMETRY_ENDPOINT =
   (typeof process !== 'undefined' && process.env.NEXT_PUBLIC_TELEMETRY_ENDPOINT) ||
-  'https://ciszunetwork.vercel.app/api/telemetry/ingest';
+  'https://muzicmania.vercel.app/api/telemetry/ingest';
 
 const DEVICE_KEY = 'ciszu-telemetry-device';
 const SESSION_KEY = 'ciszu-telemetry-session';
@@ -16,8 +16,16 @@ export type TelemetryApp = 'muzicmania' | 'ciszunetwork' | 'ciszukoantony' | 'ci
 export type TelemetryProperties = Record<string, unknown>;
 
 function randomId(): string {
-  if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+  try {
+    const webCrypto: Crypto | undefined = typeof globalThis !== 'undefined' ? globalThis.crypto : undefined;
+    if (webCrypto?.randomUUID) return webCrypto.randomUUID();
+    if (webCrypto?.getRandomValues) {
+      const bytes = new Uint8Array(16);
+      webCrypto.getRandomValues(bytes);
+      return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+    }
+  } catch { /* fallback */ }
+  return `fallback-${Date.now().toString(36)}`;
 }
 
 function storageGet(storage: Storage | undefined, key: string): string | null {
@@ -201,3 +209,6 @@ export function startWebTelemetry(app: TelemetryApp): () => void {
     void trackWebEvent(app, 'session_end');
   };
 }
+
+
+

@@ -9,9 +9,15 @@ const ENABLED_KEY = 'ciszu-telemetry-enabled';
 
 function id(): string {
   try {
-    if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID();
+    const webCrypto: Crypto | undefined = typeof globalThis !== 'undefined' ? globalThis.crypto : undefined;
+    if (webCrypto?.randomUUID) return webCrypto.randomUUID();
+    if (webCrypto?.getRandomValues) {
+      const bytes = new Uint8Array(16);
+      webCrypto.getRandomValues(bytes);
+      return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
+    }
   } catch { /* fallback */ }
-  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+  return `fallback-${Date.now().toString(36)}`;
 }
 
 function get(key: string, storage: Storage): string | null {
@@ -127,4 +133,6 @@ export function TelemetryPreference() {
     </section>
   );
 }
+
+
 
