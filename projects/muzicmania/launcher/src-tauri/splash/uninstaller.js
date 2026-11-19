@@ -263,6 +263,7 @@ function startUninstall() {
 }
 
 function beginUninstall() {
+  window.CiszuTelemetry?.track("uninstall_started", { reason: selectedReason, rating: selectedRating, delete_data: $("chk-delete").checked });
   isRunning = true;
   document.body.classList.add("uninstall-busy");
   setProgress(5, uT("preparingAction"));
@@ -289,6 +290,7 @@ function beginUninstall() {
           if (progressTimer) clearInterval(progressTimer);
           isRunning = false;
           isDone = true;
+          window.CiszuTelemetry?.track("uninstall_completed", { reason: selectedReason, rating: selectedRating, delete_data: $("chk-delete").checked });
           document.body.classList.remove("uninstall-busy");
           setProgress(100, uT("complete"));
           window.MuzicRoadmap.setDone("uninstall");
@@ -397,6 +399,10 @@ function bindEasterEgg() {
 
 function init() {
   applyLanguage(currentLang);
+  if (window.CiszuTelemetry) {
+    window.CiszuTelemetry.configure({ app: "muzicmania", source: "uninstaller", version: (window.MUZIC_BUILD || {}).launcherVersion || "unknown", channel: (window.MUZIC_BUILD || {}).channel || "beta" });
+    window.CiszuTelemetry.start();
+  }
   var setupBuild = window.MUZIC_BUILD || {};
   var setupChannel = String(setupBuild.channel || "beta").toUpperCase();
   setText("uninstaller-channel", setupChannel);
@@ -479,5 +485,6 @@ function init() {
 
 if (document.readyState === "complete" || document.readyState === "interactive") init();
 else document.addEventListener("DOMContentLoaded", init);
+
 
 

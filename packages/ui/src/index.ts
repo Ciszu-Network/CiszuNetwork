@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Paquete de UI compartido para Ciszu Network
  *
  * Componentes reutilizables que siguen el sistema de diseño de Ciszu Network.
@@ -307,3 +307,5 @@ export type { PaymentTrustBadgesProps } from './PaymentTrustBadges';
 
 export { PublicProfileView } from './PublicProfileView';
 export type { PublicProfileData, PublicProfileViewProps } from './PublicProfileView';
+export { TelemetryTracker, TelemetryPreference, trackWebEvent, setWebTelemetryEnabled, isWebTelemetryEnabled } from './TelemetryTracker';
+

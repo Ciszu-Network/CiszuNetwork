@@ -1396,6 +1396,10 @@ function beginInstall() {
   var warning = $("dir-warning");
   if (warning) warning.style.display = "none";
   selectedDir = dir;
+  window.CiszuTelemetry?.track("install_started", {
+    version: (window.MUZIC_BUILD || {}).launcherVersion,
+    channel: (window.MUZIC_BUILD || {}).channel,
+  });
   window.MuzicRoadmap.complete("dir");
   goView("v-installing");
   resetProgress();
@@ -1463,6 +1467,7 @@ function fillFinishDetails() {
 }
 
 function finishInstall() {
+  window.CiszuTelemetry?.track("install_completed", { version: (window.MUZIC_BUILD || {}).launcherVersion });
   if (!isInstalling && isFinished) return;
   isInstalling = false;
   document.body.classList.remove("installing");
@@ -1655,6 +1660,7 @@ function beginUpdateOption(option, info) {
 }
 
 function checkForUpdate() {
+  window.CiszuTelemetry?.track("update_check", { source: "setup" });
   showMaintModal(T("update-checking"), T("maint-note"), "", null, { progress: true, cancelLabel: T("maint-modal-cancel") });
   setMaintProgress(8, T("update-checking"));
   tauriInvoke("installer_check_update").then(function(info) {
@@ -1699,6 +1705,7 @@ function beginUpdate(info) {
 
 function confirmUninstall() {
   if (!installedInfo || !installedInfo.installed_path) return;
+  window.CiszuTelemetry?.track("uninstaller_opened", { source: "setup" });
   ensureAppClosed(function() {
     showMaintModal(T("btn-maint-uninstall"), T("uninstall-confirm"), T("btn-maint-uninstall"), function() {
       var confirm = $("maint-modal-confirm");
@@ -1801,6 +1808,7 @@ function startReinstallFlow() {
 }
 
 function confirmReinstall() {
+  window.CiszuTelemetry?.track("reinstall_started", { version: (window.MUZIC_BUILD || {}).launcherVersion });
   ensureAppClosed(function() {
     showMaintModal(T("btn-maint-reinstall"), T("reinstall-confirm"), T("btn-maint-reinstall"), function() {
       startReinstallFlow();
@@ -1843,6 +1851,10 @@ function bindEasterEgg() {
 
 function init() {
   bindEasterEgg();
+  if (window.CiszuTelemetry) {
+    window.CiszuTelemetry.configure({ app: "muzicmania", source: "installer", version: (window.MUZIC_BUILD || {}).launcherVersion || "unknown", channel: (window.MUZIC_BUILD || {}).channel || "beta" });
+    window.CiszuTelemetry.start();
+  }
   var saved = null;
   try { saved = localStorage.getItem("muzicmania-installer-lang-v2"); } catch (e) {}
   if (!saved) saved = "1033";
@@ -1976,6 +1988,7 @@ if (document.readyState === "complete" || document.readyState === "interactive")
 } else {
   document.addEventListener("DOMContentLoaded", init);
 }
+
 
 
 

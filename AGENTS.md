@@ -93,7 +93,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `MODELS_SKILLS_SYSTEM` (galería de skills del agente opencode: 34 instaladas en `.opencode/skills/`, MCP ausente) ·
   `AI_AGENT_ORCHESTRATION_REPORT` (herramientas y patrones de agentes/orquestación) ·
   `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `ACCESS_CONTROL_SYSTEM` (autorizacion: staff en DB, umbrales por consola, gobernanza GitHub) · `NTFY_SYSTEM` (notificaciones push: ntfy.sh) · `KNOWLEDGE_SYSTEM` (educación) ·
-  `INSTALLERS_SYSTEM` (build/releases/update/reinstall/uninstall) · `DESKTOP_SHELL_SYSTEM` (shell reutilizable instalador/hub/launcher + plantilla) · `RELEASE_POLICY_SYSTEM` (manifiesto firmado, canales, rangos y bloqueos) · `LAUNCHER_SYSTEM` (launcher: auth/offline/bandeja/idioma) · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
+  `INSTALLERS_SYSTEM` (build/releases/update/reinstall/uninstall) · `DESKTOP_SHELL_SYSTEM` (shell reutilizable instalador/hub/launcher + plantilla) · `RELEASE_POLICY_SYSTEM` (manifiesto firmado, canales, rangos y bloqueos) · `TELEMETRY_SYSTEM` (eventos de launcher/setup/web/bot, staffcon) · `LAUNCHER_SYSTEM` (launcher: auth/offline/bandeja/idioma) · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
   `VISUAL_BUILDERS_SYSTEM` (editores visuales UI/UX: Puck-first) ·
   `PROJECTS_SYSTEM` · `STATUS_SYSTEM` · `ACTIONS_RUNNERS_SYSTEM` (CI/deploys locales sin GH Actions) ·
   `DEV_CONSOLE_SYSTEM` (TUI/CLI dev local) · `DEBUGGING_SYSTEM` (depuración local) ·
@@ -527,4 +527,5 @@ cambia de sesión, y con modelos más potentes el umbral efectivo es mayor. Regl
 
 _Última revisión: 16 nov 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
 Estándar de docs: `DOCUMENTATION_SYSTEM.md`. Operación diaria: `WORKFLOW_SYSTEM.md`.
+
 

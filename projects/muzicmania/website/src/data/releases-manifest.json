@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "policyVersion": 2,
   "issuedAt": "2026-11-18T00:00:00Z",
-  "generatedAt": "2026-11-18T21:42:02.829Z",
+  "generatedAt": "2026-11-19T06:23:29.040Z",
   "product": "muzicmania",
   "minimumSupported": {
     "launcher": "2.4.1",
@@ -17,7 +17,7 @@
   },
   "channels": {
     "beta": {
-      "latest": "2.4.1",
+      "latest": "2.4.2",
       "minimumSupported": "2.4.1"
     },
     "release": {
@@ -26,6 +26,44 @@
     }
   },
   "releases": [
+    {
+      "launcherVersion": "2.4.2",
+      "gameVersion": "2.1.1",
+      "channel": "beta",
+      "os": "windows10",
+      "osLabel": "Windows 10",
+      "arch": "x64",
+      "minimumWindows": "10",
+      "fileName": "MuzicMania_Game-v2.1.1_Launcher-v2.4.2_beta_windows10_x64.exe",
+      "remoteFileName": "MuzicMania_Game-v2.1.1_Launcher-v2.4.2_beta_windows10_x64.exe",
+      "path": "2.4.2/beta/windows10/MuzicMania_Game-v2.1.1_Launcher-v2.4.2_beta_windows10_x64.exe",
+      "size": 11827437,
+      "sha256": "533DFAA7436A8F8F5FC3D01A5364779829C4B84C1F0742BEFC186BA38AD542B8",
+      "buildDate": "2026-11-18",
+      "changelogUrl": "https://muzicmania.vercel.app/changelog/launcher-v2.4.2-beta",
+      "releaseTag": "launcher-v2.4.2-beta",
+      "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/launcher-v2.4.2-beta/MuzicMania_Game-v2.1.1_Launcher-v2.4.2_beta_windows10_x64.exe",
+      "status": "supported"
+    },
+    {
+      "launcherVersion": "2.4.2",
+      "gameVersion": "2.1.1",
+      "channel": "beta",
+      "os": "windows11",
+      "osLabel": "Windows 11",
+      "arch": "x64",
+      "minimumWindows": "10",
+      "fileName": "MuzicMania_Game-v2.1.1_Launcher-v2.4.2_beta_windows11_x64.exe",
+      "remoteFileName": "MuzicMania_Game-v2.1.1_Launcher-v2.4.2_beta_windows11_x64.exe",
+      "path": "2.4.2/beta/windows11/MuzicMania_Game-v2.1.1_Launcher-v2.4.2_beta_windows11_x64.exe",
+      "size": 11827437,
+      "sha256": "533DFAA7436A8F8F5FC3D01A5364779829C4B84C1F0742BEFC186BA38AD542B8",
+      "buildDate": "2026-11-18",
+      "changelogUrl": "https://muzicmania.vercel.app/changelog/launcher-v2.4.2-beta",
+      "releaseTag": "launcher-v2.4.2-beta",
+      "downloadUrl": "https://github.com/Ciszu-Network/CiszuNetwork/releases/download/launcher-v2.4.2-beta/MuzicMania_Game-v2.1.1_Launcher-v2.4.2_beta_windows11_x64.exe",
+      "status": "supported"
+    },
     {
       "launcherVersion": "2.4.1",
       "gameVersion": "2.1.1",

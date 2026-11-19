@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { useT } from '@/hooks/useT';
@@ -15,6 +15,12 @@ const I = {
 };
 
 const POLICY_ARTICLES = [
+  {
+    id: 99,
+    title: 'TELEMETRÍA Y DATOS TÉCNICOS',
+    content: 'Telemetría y datos técnicos: para operar, proteger y mejorar el servicio tratamos eventos de uso, versión, sistema operativo, arquitectura, idioma, país aproximado derivado de la IP, identificadores anónimos de dispositivo y sesión, y estado online/offline. La telemetría de instaladores y desinstaladores es necesaria para seguridad, soporte y conteo de descargas; la del launcher y la web puede desactivarse en la configuración correspondiente. Los datos se almacenan en el entorno restringido de Ciszu Network, no se venden y se conservan según la política de retención. La IP también se usa para seguridad de sesiones y diagnóstico.',
+  },
+
   { id: 1, title: "COMPROMISO DE PRIVACIDAD Y ÉTICA DE DATOS", content: "MuzicMania se compromete a proteger la privacidad de sus usuarios mediante el cumplimiento de normativas aplicables de protección de datos. Nuestra prioridad es garantizar que tu experiencia rítmica sea segura y transparente. Esta política explica qué datos tratamos, para qué, con quién los compartimos y cómo puedes ejercer tus derechos." },
   { id: 2, title: "CATEGORÍAS DE DATOS RECOPILADOS", content: "Tratamos datos de identificación y cuenta (correo, nombre de usuario, identificador CISZU ID, avatar, biografía y país), datos técnicos (navegador, sistema operativo, dirección IP, registros de seguridad), datos de juego (puntuaciones, precisión, combos, dificultad, historial y récords), contenido que publicas (niveles, charts, textos y fotos), datos de compras (órdenes, MZP, promociones, reembolsos y retiros) y datos de anticheat. No solicitamos datos sensibles que no sean necesarios para el servicio." },
   { id: 3, title: "DATOS DE IDENTIFICACIÓN Y AUTENTICACIÓN", content: "El registro se gestiona mediante CISZU ID y Supabase Auth. Podemos usar correo y contraseña o proveedores OAuth (Google, Microsoft, Discord o Apple, según disponibilidad), que nos facilitan datos básicos de perfil como correo, nombre e identificador. Usamos esta información para autenticarte, verificar tu cuenta, recuperar el acceso y proteger la plataforma. Puedes activar la verificación por código temporal; los códigos expiran y los reenvíos están limitados." },
@@ -139,4 +145,5 @@ export default function PolicyPage() {
     </MainLayout>
   );
 }
+
 

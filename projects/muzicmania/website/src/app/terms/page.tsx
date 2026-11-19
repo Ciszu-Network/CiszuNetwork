@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { useT } from '@/hooks/useT';
@@ -16,6 +16,8 @@ const I = {
 };
 
 const TERMS_ARTICLES = [
+  { id: 26, title: 'TELEMETRÍA Y DATOS TÉCNICOS', content: 'Telemetría y datos técnicos: para operar, proteger y mejorar MuzicMania tratamos eventos de uso, versión, sistema operativo, arquitectura, idioma, país aproximado derivado de la IP, identificadores anónimos de dispositivo y sesión, y estado online/offline. La telemetría de instaladores y desinstaladores es necesaria para seguridad, soporte y conteo de descargas; la del launcher y la web puede desactivarse en la configuración correspondiente. Los datos se almacenan en el entorno restringido de Ciszu Network, no se venden y se conservan según la política de retención. La IP también se usa para seguridad de sesiones y diagnóstico.' },
+
   { id: 1, title: "ACUERDO VINCULANTE DE USO", content: "Al acceder, registrarse o utilizar MuzicMania, usted acepta quedar vinculado legalmente por los términos y condiciones de este documento. Este contrato rige toda interacción entre el usuario y la plataforma oficial de la Red Ciszu." },
   { id: 2, title: "REQUISITOS DE EDAD Y CAPACIDAD", content: "El juego base está disponible para usuarios con la capacidad legal mínima exigida en su país. Las compras con dinero real (paquetes MZP, cosméticos, suscripciones o propinas), los retiros y las funciones sujetas a verificación requieren ser mayor de 18 años y aceptar las condiciones de compra. Los menores de edad solo podrán usar funciones con registro bajo consentimiento verificable de sus padres o tutores y no podrán realizar compras ni retiros. Podemos solicitar confirmación de edad y suspender funciones si no se acredita." },
   { id: 3, title: "REGISTRO Y RESPONSABILIDAD DE CUENTA", content: "Usted es el único responsable de mantener la seguridad y confidencialidad de sus credenciales de acceso. Cualquier actividad realizada bajo su perfil de MuzicMania se considerará efectuada por usted directamente. Debe notificar de inmediato cualquier acceso no autorizado." },
@@ -157,4 +159,5 @@ export default function TermsPage() {
     </MainLayout>
   );
 }
+
 

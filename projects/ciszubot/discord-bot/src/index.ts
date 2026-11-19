@@ -1,4 +1,4 @@
-import {
+﻿import {
   Client,
   EmbedBuilder,
   Events,
@@ -28,6 +28,7 @@ import { startAutopostLoop } from './services/autoposts';
 import { startNewsLoop } from './services/news';
 import { startSocialFeedsLoop } from './services/socialFeeds';
 import { startPremiumLifecycleLoop } from './services/premiumLifecycle';
+import { trackBotEvent } from './services/telemetry';
 
 initErrorTracking();
 
@@ -56,6 +57,7 @@ client.once(Events.ClientReady, async (readyClient) => {
   logger.info(`${readyClient.user.tag} está en línea!`);
   logger.info(`El bot está sirviendo a ${readyClient.guilds.cache.size} servidor(es)`);
   readyClient.user.setActivity(config.activity.name, { type: config.activity.type as never });
+  void trackBotEvent('bot_ready', { guilds: readyClient.guilds.cache.size, users: readyClient.users.cache.size });
 
   updateStats(readyClient);
   setInterval(() => updateStats(readyClient), 30000);
@@ -206,6 +208,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       if (!allowed) return;
 
       await command.execute(simulatedMessage as never, args, interaction.commandName);
+      void trackBotEvent('command_used', { command: interaction.commandName, guild_id: interaction.guildId || null, channel_type: interaction.channel?.type || null, prefix: false });
       incrementCommands();
       logCommand(
         interaction.guildId ?? 'DM',
@@ -413,6 +416,7 @@ client.on('messageCreate', async (message) => {
 
     try {
       logger.info(`Comando '${commandName}' ejecutado por ${message.author.tag} en ${message.guild?.name || 'DM'}`);
+      void trackBotEvent('command_used', { command: commandName, guild_id: message.guild?.id || null, channel_type: message.channel.type, prefix: true });
       const allowed = await gateCommand({
         command,
         guildId: message.guild?.id ?? null,
@@ -480,3 +484,4 @@ void setupStatsServer(client);
 client.login(BOT_TOKEN).catch((err) => {
   logger.error('Error al iniciar sesión con el token del bot:', err);
 });
+

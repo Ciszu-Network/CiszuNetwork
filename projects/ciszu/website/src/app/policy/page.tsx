@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+﻿import type { Metadata } from 'next';
 import { LegalDocument, type LegalArticle, type InfoTheme } from '@ciszu/ui';
 import QuickDocks from '@/components/molecules/QuickDocks';
 import PageAmbience from '@/components/layout/PageAmbience';
@@ -22,6 +22,12 @@ const THEME: InfoTheme = {
 };
 
 const ARTICLES: LegalArticle[] = [
+  {
+    id: 99,
+    title: 'TELEMETRÍA Y DATOS TÉCNICOS',
+    content: 'Telemetría y datos técnicos: para operar, proteger y mejorar el servicio tratamos eventos de uso, versión, sistema operativo, arquitectura, idioma, país aproximado derivado de la IP, identificadores anónimos de dispositivo y sesión, y estado online/offline. La telemetría de instaladores y desinstaladores es necesaria para seguridad, soporte y conteo de descargas; la del launcher y la web puede desactivarse en la configuración correspondiente. Los datos se almacenan en el entorno restringido de Ciszu Network, no se venden y se conservan según la política de retención. La IP también se usa para seguridad de sesiones y diagnóstico.',
+  },
+
   {
     id: 1,
     title: 'PRIVACIDAD',
@@ -123,3 +129,4 @@ export default async function PolicyPage() {
     </div>
   );
 }
+

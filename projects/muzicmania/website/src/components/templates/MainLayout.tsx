@@ -1,5 +1,6 @@
-import React from 'react';
+﻿import React from 'react';
 import type { ReactNode } from 'react';
+import { TelemetryTracker } from '@ciszu/ui';
 import { DesktopGuard } from '@/components/desktop/DesktopGuard';
 
 interface MainLayoutProps {
@@ -10,6 +11,7 @@ export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <DesktopGuard>
       <div className="flex flex-col min-h-screen bg-token text-token selection:bg-neon-blue/30 selection:text-neon-cyan">
+        <TelemetryTracker app="muzicmania" />
         <main className="flex-grow">
           {children}
         </main>
@@ -17,3 +19,4 @@ export default function MainLayout({ children }: MainLayoutProps) {
     </DesktopGuard>
   );
 }
+

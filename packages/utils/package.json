@@ -23,6 +23,7 @@
     "./two-factor": "./src/twoFactor.ts",
     "./i18n-audit": "./src/i18nAudit.ts",
     "./i18n-coverage": "./src/i18nCoverage.ts",
+    "./telemetry": "./src/telemetry.ts",
     "./contact-support": "./src/contactSupport.ts",
     "./support-server": "./src/supportServer.ts",
     "./support-client": "./src/supportClient.ts"

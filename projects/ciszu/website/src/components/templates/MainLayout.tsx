@@ -1,5 +1,6 @@
-import React from 'react';
+﻿import React from 'react';
 import type { ReactNode } from 'react';
+import { TelemetryTracker } from '@ciszu/ui';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -8,9 +9,11 @@ interface MainLayoutProps {
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="relative isolate flex flex-col min-h-screen bg-black text-white">
-      <main className="flex-grow">
+      <TelemetryTracker app="ciszunetwork" />
+        <main className="flex-grow">
         {children}
       </main>
     </div>
   );
 }
+

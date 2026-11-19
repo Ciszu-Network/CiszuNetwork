@@ -51,6 +51,8 @@ struct DesktopSettings {
     auto_switch_release: bool,
     #[serde(default)]
     release_prompted_version: String,
+    #[serde(default = "default_true")]
+    telemetry_enabled: bool,
 }
 
 fn default_language() -> String {
@@ -74,6 +76,7 @@ impl Default for DesktopSettings {
             update_channel: String::new(),
             auto_switch_release: false,
             release_prompted_version: String::new(),
+            telemetry_enabled: true,
         }
     }
 }
@@ -2267,6 +2270,7 @@ fn main() {
         .run(tauri::generate_context!())
         .expect("Error al inicializar el ejecutable de MuzicMania");
 }
+
 
 
 

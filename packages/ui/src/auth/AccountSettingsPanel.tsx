@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 /**
  * AccountSettingsPanel — configuración de CUENTA común a las 4 webs.
@@ -82,6 +82,7 @@ const btnGhost =
 
 import { AccountStatusPanel } from './AccountStatusPanel';
 import { VideoVoicePanel } from './VideoVoicePanel';
+import { TelemetryPreference } from '../TelemetryTracker';
 
 export default function AccountSettingsPanel({
   supabase,
@@ -736,6 +737,7 @@ export default function AccountSettingsPanel({
         <AccountStatusPanel supabase={supabase} apiBase={apiBase} site={site} />
       </Section>
 
+      <TelemetryPreference />
       <Section title="Debug" description="Información técnica de tu cuenta (útil para soporte).">
         <button type="button" className={btnGhost} onClick={() => setDebugOpen((v) => !v)}>
           {debugOpen ? 'Ocultar' : 'Mostrar'} detalles
@@ -879,3 +881,4 @@ build: ${typeof window !== 'undefined' ? window.location.host : ''}`}
     </div>
   );
 }
+

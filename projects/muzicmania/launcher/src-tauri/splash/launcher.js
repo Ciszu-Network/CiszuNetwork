@@ -361,6 +361,7 @@ function updateTitlebarState() {
 }
 
 async function showHub() {
+  window.CiszuTelemetry?.setActivity('hub');
   if (state.policy?.mandatory) return;
   if (!state.boot?.tutorial_done) return;
   if (state.online && !state.forcedOffline && (!state.session || state.session.guest)) return;
@@ -377,6 +378,8 @@ function stopOfflineGame() {
 }
 
 function openOfflineScreen() {
+  window.CiszuTelemetry?.setActivity('offline');
+  window.CiszuTelemetry?.track('play_offline', { mode: 'offline' });
   if (state.policy?.mandatory) return;
   invoke('launcher_offline_game').catch(() => {});
   show('view-offline');
@@ -477,6 +480,17 @@ async function boot() {
       state.settings = { ...(state.settings || {}), language: navigator.language.startsWith('es') ? '1034' : '1033' };
     }
     applyLanguage(state.settings.language);
+    window.CiszuTelemetry?.configure({
+      app: 'muzicmania',
+      source: 'launcher',
+      version: state.boot?.version || BUILD.launcherVersion,
+      channel: state.boot?.channel || BUILD.channel,
+    });
+    window.CiszuTelemetry?.start({
+      activity: 'booting',
+      enabled: () => state.settings?.telemetry_enabled !== false,
+      userId: () => (state.session && !state.session.guest ? state.session.user_id : null),
+    });
     setText('splash-version', `V${state.boot?.version || '2.1.1'}`);
     setText('hub-version', state.boot?.version || '2.1.1');
     const offlineLaunch = new URLSearchParams(window.location.search).get('offline') === '1' || window.location.hash === '#offline';
@@ -668,6 +682,8 @@ async function continueAfterUpdateCheck() {
 }
 
 async function runUpdateFlow(fromBoot) {
+  window.CiszuTelemetry?.setActivity('updating');
+  window.CiszuTelemetry?.track('update_check', { from_boot: Boolean(fromBoot) });
   state.updateFromBoot = Boolean(fromBoot);
   await invoke('launcher_show_small');
   show('view-update');
@@ -974,6 +990,8 @@ function syncSettingsForm() {
   if (auto) auto.checked = state.settings.auto_update !== false;
   const link = $('modal-link-confirm');
   if (link) link.checked = state.settings.link_confirm !== false;
+  const telemetry = $('modal-telemetry');
+  if (telemetry) telemetry.checked = state.settings.telemetry_enabled !== false;
   const startup = $('modal-startup');
   if (startup) startup.checked = Boolean(state.settings.launch_on_startup);
   const updateChannel = $('modal-update-channel');
@@ -1131,6 +1149,8 @@ function bind() {
   });
 
   $('hub-play-online')?.addEventListener('click', () => {
+    window.CiszuTelemetry?.setActivity('online');
+    window.CiszuTelemetry?.track('play_online', { mode: 'online' });
     if (state.policy?.mandatory) return;
     if (!state.online || state.forcedOffline) {
       toast('El servicio online no está disponible. Usa el modo offline.', 'error');
@@ -1293,6 +1313,7 @@ function bind() {
       close_confirm: closeAction !== 'background',
       close_action: closeAction,
       link_confirm: $('modal-link-confirm')?.checked !== false,
+      telemetry_enabled: $('modal-telemetry')?.checked !== false,
     });
     $('settings-modal')?.classList.add('hidden');
     renderHub();
@@ -1301,6 +1322,10 @@ function bind() {
 
 bind();
 boot();
+
+
+
+
 
 
 

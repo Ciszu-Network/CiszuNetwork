@@ -1,4 +1,4 @@
-export * from './src/cache';
+﻿export * from './src/cache';
 export * from './src/rateLimit';
 export * from './src/iast';
 export * from './src/csp';
@@ -18,3 +18,5 @@ export * from './src/i18nCoverage';
 export * from './src/anticheat';
 export * from './src/premiumPlans';
 export * from './src/sms';
+export * from './src/telemetry';
+

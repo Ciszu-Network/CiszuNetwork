@@ -26,6 +26,23 @@ export interface ChangelogItem {
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
+    id: 'launcher-v2.4.2-beta',
+    version: 'LAUNCHER V2.4.2 BETA',
+    code: 'L-242-BETA',
+    title: 'Telemetría del Ecosistema',
+    description: 'Launcher, instaladores, webs y bot envían eventos técnicos verificables para analítica, seguridad y soporte, con opt-out en launcher y web.',
+    date: '2026-11-18',
+    author: 'CiszukoAntony',
+    types: ['add', 'build', 'sec', 'ux'],
+    likes: 0,
+    details: [
+      { text: 'Endpoint central de telemetría con validación, rate limit, IP/país y almacenamiento server-only.', type: 'build' },
+      { text: 'Launcher con heartbeat, online/offline, sesión y cola de eventos; se puede desactivar en ajustes.', type: 'add' },
+      { text: 'Setup y desinstalador registran instalación, actualización y motivo de desinstalación sin opt-out.', type: 'sec' },
+      { text: 'Webs y bot envían uso, dispositivo, versión y comandos; la web permite desactivar telemetría en cuenta.', type: 'add' },
+    ],
+  },
+  {
     id: 'launcher-v2.4.1-beta',
     version: 'LAUNCHER V2.4.1 BETA',
     code: 'L-241-BETA',
@@ -333,5 +350,7 @@ export const CHANGELOG_DATA: ChangelogItem[] = [
     ]
   }
 ];
+
+
 
 

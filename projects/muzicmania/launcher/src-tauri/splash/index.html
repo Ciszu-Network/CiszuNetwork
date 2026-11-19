@@ -315,6 +315,7 @@
     <div class="settings-line"><span><svg class="icon"><use href="#i-download"></use></svg> <span>Canal de actualizaciones</span></span><select id="modal-update-channel" class="settings-select"><option value="beta">Beta</option><option value="release">Release</option></select></div>
     <div class="settings-line"><span><svg class="icon"><use href="#i-shield"></use></svg> <span>Cambiar a release automáticamente</span></span><label class="switch"><input id="modal-auto-release" type="checkbox"><span></span></label></div>
     <div class="settings-line"><span><svg class="icon"><use href="#i-help"></use></svg> <span data-i18n="confirmLinks">Confirmar enlaces externos</span></span><label class="switch"><input id="modal-link-confirm" type="checkbox"><span></span></label></div>
+    <div class="settings-line"><span><svg class="icon"><use href="#i-shield"></use></svg> <span>Telemetría del launcher</span></span><label class="switch"><input id="modal-telemetry" type="checkbox"><span></span></label></div>
     <div class="settings-subtitle" data-i18n="actions">Acciones</div>
     <div class="settings-actions">
       <button id="settings-check-update" class="btn"><svg class="icon"><use href="#i-refresh"></use></svg> <span data-i18n="checkUpdate">Buscar actualización</span></button>
@@ -344,9 +345,12 @@
 
 <div id="toast"></div>
 <script src="build-info.js"></script>
+<script src="telemetry-client.js"></script>
 <script src="launcher.js"></script>
 </body>
 </html>
+
+
 
 
 
