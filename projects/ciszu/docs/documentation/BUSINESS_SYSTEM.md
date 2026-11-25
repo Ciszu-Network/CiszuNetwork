@@ -1,4 +1,4 @@
-﻿# BUSINESS_SYSTEM — Modelos, Estrategia y Estructura de negocio
+# BUSINESS_SYSTEM — Modelos, Estrategia y Estructura de negocio
 
 Versión: 2.0.0
 Actualización: 2026-11-10
@@ -61,7 +61,7 @@ Marco completo del negocio de Ciszu Network (ago 2026): modelos de referencia e 
 ## Estrategia empresarial
 
 - **Fase 0 legal sin costo** (RIF persona natural, SENIAT, WhatsApp) — ver `COMPANY_REGISTRATION_PLAN.md`.
-- **Monetización**: NOWPayments (invoices crypto) + donaciones (métodos env `DONATE_*`); madurar a LLC/18 años (ver `PAYMENTS_SYSTEM.md`, `INTERNATIONAL_LLC_PLAN.md`).
+- **Monetización**: NOWPayments (invoices crypto) + donaciones (métodos env `DONATE_*`); madurar a LLC (18 cumplidos el 11 nov 2026) (ver `PAYMENTS_SYSTEM.md`, `INTERNATIONAL_LLC_PLAN.md`).
 - **Costo controlado**: Free tiers (Supabase 1 GB, Vercel Hobby, Cloudflare Fase A gratis, UptimeRobot 50 monitores, PostHog 1M eventos) — ver `ONLINE_SERVICES.md`.
 - **Retención de usuario**: sistema de niveles/XP en el bot, leaderboard de MuzicMania, rewards por votos.
 
@@ -108,7 +108,7 @@ Los rangos aplican esquema en-discord (roles con color neon cian/rosa y permisos
 ## Reglas de decisión
 
 - **Primero gratis, luego monetizar**: la monetización nunca debe romper la utilidad free (evitar paywall en funciones que definen el producto).
-- **Fase por edad/legal**: nada de suscripciones o LLC hasta mayoría de edad (ver `COMPANY_REGISTRATION_PLAN.md`, `PAYMENTS_SYSTEM.md`).
+- **Fase por edad/legal**: mayoría de edad cumplida (18, 11 nov 2026); faltan registro e identidad legal para suscripciones/LLC (ver `COMPANY_REGISTRATION_PLAN.md`, `PAYMENTS_SYSTEM.md`).
 - Cada nuevo modelo se valida con datos (PostHog, loyalty) antes de implementar.
 - **1 sola fuente de verdad**: la estructura oficial vive aquí + `ORGANIZATIONAL_SCALABILITY_PLAN.md`; no duplicar en varios docs.
 - **Acceso = rol mínimo**: no dar acceso de infra a quien no lo requiere (lección del PAT y service_role — ver `VAULT_SYSTEM.md`).
@@ -143,7 +143,7 @@ Los rangos aplican esquema en-discord (roles con color neon cian/rosa y permisos
 ## Reglas de decisión (resumen ejecutivo)
 
 1. **Gratis primero**; monetizar sin romper la utilidad free.
-2. **Nada legal/pagos hasta mayoría de edad** y registro (ver `COMPANY_REGISTRATION_PLAN.md`).
+2. **Nada legal/pagos sin registro e identidad legal** (la edad ya está cumplida) (ver `COMPANY_REGISTRATION_PLAN.md`).
 3. **Datos antes de invertir**: validar con PostHog/votos antes de escalar.
 4. **Una fuente de verdad** por tema (este doc + `ORGANIZATIONAL_SCALABILITY_PLAN.md`).
 5. **Acceso mínimo por rol**: nadie con acceso que no lo requiera (seguridad).
@@ -176,7 +176,7 @@ Los rangos aplican esquema en-discord (roles con color neon cian/rosa y permisos
 
 ## Preguntas frecuentes de negocio
 
-**¿Cuándo monetizar con suscripciones?** Tras la mayoría de edad y con identidad legal
+**¿Cuándo monetizar con suscripciones?** Con la mayoría de edad ya cumplida, en cuanto exista identidad legal (RIF) y validación
 (LLC o empresa) que permita cobrar formalmente (Fase 2).
 
 **¿Cómo medir si un producto funciona?** Por los KPIs de la tabla §Métricas: visitas,
@@ -192,7 +192,7 @@ ecosistema es `ciszunetwork@outlook.com`.
 ## Decisiones tomadas (registro)
 
 - Priorizar los free tiers hasta tener datos que justifiquen un plan pagado.
-- No abrir suscripciones ni crear LLC antes de la mayoría de edad y de ingresos sostenidos.
+- No abrir suscripciones ni crear LLC sin registro/identidad legal e ingresos sostenidos (la edad ya no bloquea).
 - Todas las decisiones de costo/servicio se documentan en `ONLINE_SERVICES.md`.
 
 ## Relación con otros sistemas

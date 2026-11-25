@@ -17,7 +17,7 @@ Identificador: CV_CISZUKO_V1.0.0_2026_10_03
 | ------------ | --------------------------------------------------------- |
 | Nombre       | Ciszuko Antony                                            |
 | Nombre legal | Francisco Antonio García Menolascina                     |
-| Edad         | 17 años                                                  |
+| Edad         | 18 años                                                  |
 | Cumpleaños  | 11 de noviembre                                           |
 | País        | Venezuela (Coro, Falcón)                                 |
 | Zona horaria | GMT-4                                                     |

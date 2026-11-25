@@ -1,4 +1,4 @@
-﻿# ONLINE_SERVICES_SYSTEM — Servicios y sitios en línea usados (Ciszu Network)
+# ONLINE_SERVICES_SYSTEM — Servicios y sitios en línea usados (Ciszu Network)
 
 Versión: 2.1.0
 Actualización: 2026-11-10
@@ -42,7 +42,7 @@ Identificador: ONLINE_SERVICES_SYSTEM_V2.1.0_2026_09_05_ciszunetwork
 | Servicio | Uso | Estado |
 |---|---|---|
 | **NOWPayments** | Invoices/donaciones crypto (IPN HMAC) | ✅ Activo |
-| **Lemon Squeezy** | Stub a futuro (18 años) | ⏳ Futuro |
+| **Lemon Squeezy** | Stub; elegible desde el 11 nov 2026 (18) | ⏳ Verificación |
 | **Binance P2P / Zinli / MetaMask** | Rieles VE | ✅ Activo |
 | **Resend** | Emails transaccionales (`@ciszunetwork/email`, ver `EMAILS_SYSTEM.md`; requiere dominio Fase B) | ⏳ Futuro |
 | **Brevo** | DESCARTADO (cuenta suspendida + teléfono no VE) | ❌ |

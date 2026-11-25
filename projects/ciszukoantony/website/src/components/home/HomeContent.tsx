@@ -252,7 +252,7 @@ export default function HomeContent() {
 
           {/* Chips de datos reales */}
           <div className="flex flex-wrap justify-center gap-2 mb-9">
-            {['Venezuela', '17 años', 'Full-stack', 'UPTAG Falcón', 'CEO · Ciszu Network', 'Desde 2022'].map((chip) => (
+            {['Venezuela', '18 años', 'Full-stack', 'UPTAG Falcón', 'CEO · Ciszu Network', 'Desde 2022'].map((chip) => (
               <span key={chip} className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold uppercase tracking-widest text-gray-400">
                 {chip}
               </span>

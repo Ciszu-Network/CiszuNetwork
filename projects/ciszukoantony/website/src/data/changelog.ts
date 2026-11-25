@@ -25,6 +25,22 @@ export type {
 
 export const CHANGELOG_DATA: ChangelogItem[] = [
   {
+    id: 'patch-v2.9.0',
+    version: 'PATCH V2.9.0',
+    code: 'P-290-ADULT',
+    title: 'Mayoría de Edad, RIF y CV 2027',
+    description: 'El portfolio refleja la mayoría de edad de Ciszuko Antony (18 años, 11/11/2008), el CV 2027 actualizado y los nuevos porcentajes de habilidades sincronizados con el documento oficial.',
+    date: '2026-11-24',
+    author: 'CiszukoAntony',
+    types: ['feat', 'docs', 'ui'],
+    likes: 0,
+    details: [
+      { text: 'Perfil actualizado a 18 años y contexto de mayoría de edad; RIF disponible para trámites legales y de pago.', type: 'docs' },
+      { text: 'CV 2027: nuevas imágenes en WEBP, tamaños y fecha de actualización corregidos en la página de currículum.', type: 'docs' },
+      { text: 'Habilidades del portfolio y del CV sincronizadas con el documento: Python/Julia 90%, JavaScript/TypeScript/Lua 70%, React/Node/Express/Next 55%, SQL/SQLite 66%, Linux/Bash 90%.', type: 'feat' },
+    ],
+  },
+  {
     id: 'patch-v2.8.0',
     version: 'PATCH V2.8.0',
     code: 'P-280-PORT',

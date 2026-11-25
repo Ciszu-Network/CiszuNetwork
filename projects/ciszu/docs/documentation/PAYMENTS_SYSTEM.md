@@ -8,17 +8,17 @@ Identificador: PAYMENTS_SYSTEM_V2.1.0_2026_10_27_ciszunetwork
 > rieles por país (VE), roadmap por edad, integración NOWPayments (paquete `@ciszunetwork/
 > payments`), retiros y seguridad.
 
-**Estado (12 ago 2026)**: **NOWPayments ACTIVO** — cuenta del usuario creada (11 ago 2026), credenciales en vault, env vars en Vercel (ciszunetworkpage), rutas API de invoice + webhook IPN desplegadas y verificadas con firma real. Paquete `@ciszunetwork/payments` completo (NOWPayments + Lemon Squeezy stub) + 9 tests. **Plan de monetización PENDIENTE hasta los 18** (decisión del usuario 12 ago 2026: problemas de verificación de identidad en PayPal/Zinli/TrustWallet; las apps móviles de Zinli y TrustWallet no funcionan en su teléfono). La infraestructura de recepción (wallets + DONATE_*) ya está lista y configurada, solo falta activarla. Complementa a `COMPANY_REGISTRATION_PLAN.md` (legal).
+**Estado (12 ago 2026)**: **NOWPayments ACTIVO** — cuenta del usuario creada (11 ago 2026), credenciales en vault, env vars en Vercel (ciszunetworkpage), rutas API de invoice + webhook IPN desplegadas y verificadas con firma real. Paquete `@ciszunetwork/payments` completo (NOWPayments + Lemon Squeezy stub) + 9 tests. **Plan de monetización pendiente de activación (mayoría de edad cumplida el 11 nov 2026)** (decisión del usuario 12 ago 2026: problemas de verificación de identidad en PayPal/Zinli/TrustWallet; las apps móviles de Zinli y TrustWallet no funcionan en su teléfono). La infraestructura de recepción (wallets + DONATE_*) ya está lista y configurada, solo falta activarla. Complementa a `COMPANY_REGISTRATION_PLAN.md` (legal).
 
 ## 1. Contexto y reglas de la financiación
 
 - Sin tarjeta de crédito, sin plan de pago hasta que haya ingresos (regla del ecosistema).
-- El dueño es **menor de 18 años**: algunos rieles (PayPal, Payoneer, Lemon Squeezy, Stripe) exigen mayoría de edad → el roadmap es **por edades**.
-- Objetivo: **empezar a recibir pagos reales HOY** con crypto (NOWPayments, sin KYC de merchant y sin edad mínima) y formalizar todo a los 18.
+- El dueño **cumplió 18 años el 11 nov 2026** (RIF disponible): PayPal, Payoneer, Lemon Squeezy y Stripe ya son elegibles por edad; el bloqueo pasa a verificación, historial y decisión.
+- Objetivo: **empezar a recibir pagos reales HOY** con crypto (NOWPayments, sin KYC de merchant y sin edad mínima) y formalizar todo con la mayoría de edad ya cumplida.
 
 ## 2. Matriz producto × método
 
-| Producto | Hoy (<18) | A los 18 | Futuro (LLC/dominio) |
+| Producto | Hoy (18 desde 11 nov 2026) | Al formalizar | Futuro (LLC/dominio) |
 | --- | --- | --- | --- |
 | Donaciones | **USDT-TRC20 / BTC / ETH** (NOWPayments o direcciones directas) | + PayPal (paypal.me), + Lemon Squeezy | Stripe directo |
 | Compras digitales (MuzicMania, juegos) | NOWPayments invoice (0.5-1%) | Lemon Squeezy (MoR: tarjetas/PayPal globales, 5% + $0.50, IVA/impuestos/facturas los gestiona él) | Stripe |
@@ -37,17 +37,17 @@ Identificador: PAYMENTS_SYSTEM_V2.1.0_2026_10_27_ciszunetwork
 | **TrustWallet** | Wallet multi-cadena (USDT-TRC20/TRON) | Ninguno | ⚠️ App en teléfono con errores — pospuesta |
 | **Zinli** | Tarjeta virtual $ (compras online, pagos de servicios VE) | Cédula | ⚠️ No carga en web/teléfono — pospuesta |
 | **NOWPayments** | Pasarela crypto sin KYC merchant | Email | ✅ Activo |
-| PayPal | Pagos internacionales | **18 años** | ❌ **Cuenta desactivada permanentemente** (ago 2026) — no crear hasta los 18 |
-| Payoneer | Recibir pagos de freelancing (clientes US/EU) | **18 años** | ⏳ A los 18 |
-| Lemon Squeezy | MoR: cobrar tarjetas/PayPal global sin LLC | **18 años** (payout PayPal) | ⏳ Cuenta creada, bloqueada por edad |
+| PayPal | Pagos internacionales | **Cumplidos** | ❌ Cuenta antigua desactivada permanentemente (ago 2026); evaluar una cuenta nueva con identidad real |
+| Payoneer | Recibir pagos de freelancing (clientes US/EU) | **Cumplidos** | ⏳ Elegible desde 11 nov 2026 |
+| Lemon Squeezy | MoR: cobrar tarjetas/PayPal global sin LLC | **Cumplidos** (payout PayPal) | ⏳ Elegible desde 11 nov 2026; verificación pendiente |
 | Stripe | Procesador directo | País soportado/LLC (VE no soporta) | ⏳ Solo modo test (12 ago) |
 | Coinbase | Exchange/billetera | KYC (edad 18 en VE) | ⏳ 18 |
 | Revolut | Cuenta multi-divisa europea | VE no soportado (solo con residencia EU) | ❌ Descartado hasta residencia EU |
 
 ## 4. Fases (roadmap por edad)
 
-- **Fase 0 (HOY, <18)**: wallets propias (MetaMask, Binance) + cuenta NOWPayments + Zinli. Cobrar donaciones y ventas digitales en USDT/BTC/ETH. Contabilidad manual en `archives/legal` (herramienta `tools/legal-ai`).
-- **Fase 1 (18 años)**: PayPal + Payoneer + Lemon Squeezy (MoR) → cobrar tarjetas/PayPal con facturas e impuestos gestionados. Keygen API para licencias.
+- **Fase 0 (HOY, crypto)**: wallets propias (MetaMask, Binance) + cuenta NOWPayments + Zinli. Cobrar donaciones y ventas digitales en USDT/BTC/ETH. Contabilidad manual en `archives/legal` (herramienta `tools/legal-ai`).
+- **Fase 1 (18 cumplidos, 11 nov 2026)**: PayPal + Payoneer + Lemon Squeezy (MoR) → cobrar tarjetas/PayPal con facturas e impuestos gestionados. Keygen API para licencias.
 - **Fase 2 (con dominio propio, Fase B Cloudflare)**: Resend para emails transaccionales, verificación de marca, mejor entregabilidad.
 - **Fase 3 (LLC o SAPI — `COMPANY_REGISTRATION_PLAN.md` y `INTERNATIONAL_LLC_PLAN.md`)**: Stripe directo + cuenta bancaria corporativa + distribuidores de música/arte.
 
@@ -59,7 +59,7 @@ Identificador: PAYMENTS_SYSTEM_V2.1.0_2026_10_27_ciszunetwork
 packages/payments/
   src/types.ts        PaymentProvider (createInvoice / verifyWebhook), PaymentOrder, PaymentResult, PaymentStatus
   src/nowpayments.ts  createNowPaymentsProvider() → POST /v1/invoice (x-api-key) + IPN HMAC-SHA512 (x-nowpayments-sig)
-  src/lemonsqueezy.ts createLemonSqueezyProvider() → POST /v1/checkouts (Bearer) + webhook HMAC-SHA256 (X-Signature) — STUB hasta los 18
+  src/lemonsqueezy.ts createLemonSqueezyProvider() → POST /v1/checkouts (Bearer) + webhook HMAC-SHA256 (X-Signature) — STUB; elegible desde la mayoría de edad
   src/donations.ts    getDonationMethods() → direcciones desde env (nunca hardcodeadas)
   src/index.ts        getPaymentProvider('nowpayments' | 'lemonsqueezy')
   tests/              8 tests (invoice, HMAC válido/inválido, errores, donaciones por env)
@@ -117,7 +117,7 @@ packages/payments/
 
 ## 7. Tareas del usuario (para activar)
 
-**⚠️ Decisión 12 ago 2026**: el plan de monetización queda **PENDIENTE hasta los 18** por problemas de verificación de identidad y apps móviles que no funcionan (Zinli, TrustWallet). La infraestructura ya está lista; solo falta activarla cuando toque.
+**⚠️ Decisión 12 ago 2026**: el plan de monetización queda **PENDIENTE de activación** (la edad ya no es bloqueo: 18 desde el 11 nov 2026) por problemas de verificación de identidad y apps móviles que no funcionan (Zinli, TrustWallet). La infraestructura ya está lista; solo falta activarla cuando toque.
 
 1. ✅ **Cuenta NOWPayments creada** (11 ago 2026, `ciszunetwork`) → API key + IPN secret + public key en vault y Vercel.
 2. ⏳ **Configurar wallet de retiro en NOWPayments** (Settings → Payouts): dirección USDT-TRC20/BTC de la wallet propia — sin esto los pagos quedan retenidos en la cuenta de NOWPayments.
@@ -127,7 +127,7 @@ packages/payments/
 6. ⏳ **TrustWallet** (USDT-TRC20/TRON) — **pospuesta** (extensión con errores en su PC).
 7. ⏳ Poner las direcciones públicas en `DONATE_*` del vault y en las webs (sección Apoyar). — **ETH/ERC-20 YA configurados** (12 ago): `DONATE_USDT_ERC20` + `DONATE_ETH` en vault y Vercel, mostrados en `/support`.
 8. ✅ **Dominio verificado en Trustpilot** (11 ago 2026) — ver `REVIEWS_SYSTEM.md`.
-9. A los 18: PayPal, Payoneer, Lemon Squeezy, Keygen (con la lista de §3). — **Nota PayPal**: la cuenta antigua fue desactivada permanentemente (ago 2026); abrir una limpia a los 18 con datos reales.
+9. Con 18 cumplidos (11 nov 2026): PayPal, Payoneer, Lemon Squeezy, Keygen (con la lista de §3). — **Nota PayPal**: la cuenta antigua fue desactivada permanentemente (ago 2026); abrir una limpia a los 18 con datos reales.
 10. Cuando se quiera vender: crear la migración del schema `pagos` (orders/transactions con RLS — regla `SECURITY_PROTOCOLS.md` #1) y rutas de entrega de producto.
 
 ## 8. Verificación de la implementación (11-12 ago 2026)
@@ -191,7 +191,7 @@ packages/payments/
 | Pregunta | Respuesta |
 |---|---|
 | ¿Puedo cobrar hoy? | Donaciones directas (ETH/USDT-ERC20) activadas; invoice NOWPayments desplegado |
-| ¿Por qué no PayPal? | Cuenta desactivada y minoría de edad: abrir una limpia a los 18 |
+| ¿Por qué no PayPal? | Cuenta desactivada; con 18 cumplidos se puede abrir una nueva con identidad real |
 | ¿Cómo se entrega un producto? | Futuro schema `pagos` con RLS + entrega cuando se venda |
 | ¿Los webhooks son fiables? | Sí: HMAC-SHA512 (timing-safe) verificado ANTES de parsear |
 | ¿Dónde viven las keys? | Vault (`services/supabase/.env`) + Vercel para `ciszunetworkpage` |

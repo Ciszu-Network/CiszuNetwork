@@ -1,4 +1,4 @@
-﻿# HISTORICAL_CONTEXT_PROTOCOLS — Contexto histórico y tiempos actuales
+# HISTORICAL_CONTEXT_PROTOCOLS — Contexto histórico y tiempos actuales
 
 Versión: 2.0.0
 Actualización: 2026-11-10
@@ -38,7 +38,7 @@ Documento de referencia de dónde encaja Ciszu Network en el tiempo (ago 2026): 
 ## Tiempos actuales (relevante para el producto)
 
 - **Audiencia**: gamers + creadores de contenido + música (MuzicMania, bot de Discord Lounge, portfolios). En 2026, Discord sigue fuerte en comunidad; TikTok/Instagram forman la red social central para tráfico.
-- **Modelo económico**: freemium + donaciones (NOWPayments), bots para monetización en comunidades; el plan de madurar hacia LLC (18 años) está documentado.
+- **Modelo económico**: freemium + donaciones (NOWPayments), bots para monetización en comunidades; el plan de madurar hacia LLC (18 cumplidos el 11 nov 2026) está documentado.
 
 ## Cómo usar este doc
 

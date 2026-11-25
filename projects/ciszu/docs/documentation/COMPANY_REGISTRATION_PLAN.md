@@ -1,4 +1,4 @@
-﻿# Plan de Registro Legal — Ciszu Network (Venezuela)
+# Plan de Registro Legal — Ciszu Network (Venezuela)
 
 Versión: 2.0.0
 Actualización: 2026-11-10
@@ -19,7 +19,7 @@ crédito** (efectivo, depósito bancario en Bs., PayPal).
 
 | Activo | Qué es | Dónde se obtiene | ¿Cuándo? |
 | --- | --- | --- | --- |
-| **Identidad fiscal** | RIF (quién eres para el fisco) | SENIAT | **HOY — $0** |
+| **Identidad fiscal** | RIF (quién eres para el fisco) | SENIAT | **HECHO (nov 2026) — $0** |
 | **Marca** | Derecho sobre el nombre/logo (Propiedad Intelectual) | SAPI | Fase 1 (~$410 en efectivo) |
 | **Persona jurídica** | La "empresa" como entidad legal distinta de ti | SAREN / Registro Mercantil | Fase 2 (~$50–300 en efectivo) |
 

@@ -127,7 +127,7 @@ local/remoto más barato.
 2. Elegir New Mexico (barato) o Wyoming (reputado).
 3. EIN por fax planificar 8–12 semanas.
 4. Form 5472 obligatorio — presupuestar CPA.
-5. Stripe/PayPal business solo bajo la LLC (a los 18).
+5. Stripe/PayPal business solo bajo la LLC (18 cumplidos el 11 nov 2026).
 
 ## Fases de dependencia
 

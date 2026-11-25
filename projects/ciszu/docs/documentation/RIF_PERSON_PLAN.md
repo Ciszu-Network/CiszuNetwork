@@ -1,4 +1,4 @@
-﻿# RIF_PERSON_PLAN — RIF de Persona Natural (SENIAT) — 100% Gratis
+# RIF_PERSON_PLAN — RIF de Persona Natural (SENIAT) — 100% Gratis
 
 Versión: 2.0.0
 Actualización: 2026-11-10
@@ -13,6 +13,8 @@ García (Ciszuko Antony)** como contribuyente y permite facturar, abrir cuentas 
 hacer trámites legales. **El trámite es GRATUITO y se inicia en línea — sin tarjeta.**
 
 > ⚠️ Guía informativa. Confirmar requisitos vigentes en `declaraciones.seniat.gob.ve`.
+
+> **Estado (24 nov 2026)**: RIF de persona natural **obtenido**. La mayoría de edad se cumplió el 11 nov 2026.
 
 ## 1. Estructura del RIF (10 caracteres)
 
@@ -102,7 +104,7 @@ Si todo está en orden, el RIF se emite el mismo día. **Coste: $0.**
 - [ ] Cargas familiares (si aplica) documentadas.
 - [ ] Inscripción en línea en `declaraciones.seniat.gob.ve`.
 - [ ] Formalización presencial en ≤30 días.
-- [ ] RIF emitido ($0) + portal SENIAT registrado.
+- [x] RIF emitido ($0) + portal SENIAT registrado (nov 2026).
 - [ ] Renovar a los 3 años.
 
 ## Errores comunes del trámite

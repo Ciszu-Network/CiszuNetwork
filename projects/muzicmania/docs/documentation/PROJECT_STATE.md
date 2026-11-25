@@ -21,7 +21,7 @@
 - La tienda está integrada en `/play` y las skins premium `prism`, `ember` y `void` requieren compra; las skins clásicas siguen gratis.
 - NOWPayments cripto está activo en producción (`PAYMENTS_CRYPTO_ENABLED=true`); se validó invoice real e idempotencia. Tarjetas y PayPal siguen bloqueados.
 - Fases 2–3 implementadas: login diario, rachas, tareas, XP, recompensas por publicar niveles/likes, regalos de MZP, donaciones a creadores y código de creador (5% de MZP base).
-- Fase 4 pendiente por bloqueo externo: tarjetas/PayPal requieren proveedor MoR aprobado y mayoría de edad; la UI muestra “próximamente” y los flags están en false.
+- Fase 4 pendiente por bloqueo externo: tarjetas/PayPal requieren proveedor MoR aprobado (la edad ya está cumplida: 18 el 11 nov 2026); la UI muestra “próximamente” y los flags están en false.
 - Documentación: `STORE_ECONOMY_PLAN.md` y `STORE_ECONOMY_PHASE1_IMPLEMENTATION_PLAN.md`.
 
 ## 🖥️ Portabilidad desktop (14 Nov 2026)

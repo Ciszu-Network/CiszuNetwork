@@ -10,7 +10,7 @@
 
 **Spec:** `projects/muzicmania/docs/documentation/STORE_ECONOMY_PLAN.md`
 
-> **Estado de ejecución (4 nov 2026):** Fases 1–3 implementadas y desplegadas. Las migraciones 08 (`purchase_credentials`), 09 (`fulfill_points_order` acepta `review`), 10 (`daily_streaks`, `tasks`, `xp_ledger`, likes) y 11 (regalos, donaciones, creadores) se aplicaron. El flag `PAYMENTS_CRYPTO_ENABLED` quedó activo en producción el 7 nov 2026; se validó invoice real e idempotencia. La fase 4 (tarjetas/PayPal) sigue bloqueada por proveedor MoR y mayoría de edad.
+> **Estado de ejecución (4 nov 2026):** Fases 1–3 implementadas y desplegadas. Las migraciones 08 (`purchase_credentials`), 09 (`fulfill_points_order` acepta `review`), 10 (`daily_streaks`, `tasks`, `xp_ledger`, likes) y 11 (regalos, donaciones, creadores) se aplicaron. El flag `PAYMENTS_CRYPTO_ENABLED` quedó activo en producción el 7 nov 2026; se validó invoice real e idempotencia. La fase 4 (tarjetas/PayPal) sigue bloqueada por proveedor MoR; la edad ya está cumplida (18 el 11 nov 2026).
 
 ## Global Constraints
 

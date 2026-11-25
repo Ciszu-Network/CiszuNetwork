@@ -1,5 +1,5 @@
 /**
- * Resumen validado del CV Custom de Ciszuko Antony (oct 2026).
+ * Resumen validado del CV Custom de Ciszuko Antony (nov 2026).
  *
  * Extraído del documento `CV-Curriculum-Custom-...-2026-Oficial.pdf` (fuente de
  * verdad en `shared/docs/cv/`) y del catálogo real de la web. Se usa en la
@@ -26,7 +26,7 @@ export const CV_CUSTOM_SUMMARY: CvSummaryBlock[] = [
     title: 'Perfil',
     tone: 'purple',
     highlights: [
-      { icon: 'user', label: 'Identidad', body: 'Ciszuko Antony (Francisco Antonio García Menolascina), 17 años, Venezuela.' },
+      { icon: 'user', label: 'Identidad', body: 'Ciszuko Antony (Francisco Antonio García Menolascina), 18 años, Venezuela.' },
       { icon: 'server', label: 'Cargo', body: 'CEO y fundador de Ciszu Network, desarrollador full-stack y artista digital.' },
       { icon: 'graduation', label: 'Formación', body: 'UPTAG Falcón — Ingeniería de Información y Sistemas (en curso).' },
     ],
@@ -46,7 +46,7 @@ export const CV_CUSTOM_SUMMARY: CvSummaryBlock[] = [
     title: 'Habilidades destacadas',
     tone: 'pink',
     highlights: [
-      { icon: 'chip', label: 'Stack', body: 'Python 80% · HTML/CSS 85% · Git/GitHub 90% · React 45% · SQL 60%.' },
+      { icon: 'chip', label: 'Stack', body: 'Python 90% · HTML/CSS 80% · Git/GitHub 90% · React 55% · SQL 66%.' },
       { icon: 'palette', label: 'Diseño', body: 'Adobe, Affinity, Corel, DaVinci Resolve, Filmora y CapCut.' },
       { icon: 'certificates', label: 'Certificados', body: '55+ documentos reales de Cisco, Microsoft, IBM, HP, EF SET, Penn y más.' },
     ],

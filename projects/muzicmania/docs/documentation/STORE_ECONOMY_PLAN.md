@@ -16,7 +16,7 @@ Este plan implementa una economía **cerrada**: los MuziPoints solo se compran, 
 Decisiones aprobadas con Ciszuko Antony:
 
 1. Los pagos con cripto se activan ahora mediante NOWPayments.
-2. Las tarjetas y PayPal existirán en la tienda, pero permanecerán bloqueadas por feature flag hasta que exista un proveedor aprobado y mayoría de edad.
+2. Las tarjetas y PayPal existirán en la tienda, pero permanecerán bloqueadas por feature flag hasta que exista un proveedor aprobado (la edad ya está cumplida).
 3. La verificación 18+ es autodeclarada, con bloqueo del lado del servidor y registro de aceptación de términos.
 4. Los creadores reciben MZP de uso interno, sin retiro ni conversión a dinero.
 5. El ledger será append-only con claves de idempotencia y saldo materializado.
@@ -25,7 +25,7 @@ Decisiones aprobadas con Ciszuko Antony:
 
 ### 2.1 Restricciones
 
-- El dueño del ecosistema es menor de 18 años. PayPal está desactivado y Lemon Squeezy/Stripe no están disponibles en esta fase.
+- El dueño cumplió 18 años el 11 nov 2026. PayPal sigue desactivado y Lemon Squeezy/Stripe se reevalúan con identidad real (RIF).
 - NOWPayments es el único riel de pago activo.
 - El repo es público: no se guardan claves, tokens ni URLs con credenciales en docs, código o migraciones.
 - Los pagos reales no pueden depender del estado del cliente: el webhook firmado es la única fuente de verdad.
@@ -200,8 +200,8 @@ Rarezas y precios orientativos:
 Variables de entorno:
 
 - `PAYMENTS_CRYPTO_ENABLED` — activo en fase 1.
-- `PAYMENTS_CARD_ENABLED` — desactivado hasta los 18/proveedor.
-- `PAYMENTS_PAYPAL_ENABLED` — desactivado hasta los 18/proveedor.
+- `PAYMENTS_CARD_ENABLED` — desactivado hasta proveedor aprobado (edad cumplida).
+- `PAYMENTS_PAYPAL_ENABLED` — desactivado hasta proveedor aprobado (edad cumplida).
 - `NOWPAYMENTS_API_KEY`.
 - `NOWPAYMENTS_IPN_SECRET`.
 - `MUZICMANIA_PUBLIC_URL`.
@@ -509,7 +509,7 @@ Todas las mutaciones requieren autenticación, rate limit y body validado con Zo
 
 ### Fase 4 — Tarjetas/PayPal
 
-- Solo cuando exista proveedor aprobado y mayoría de edad.
+- Solo cuando exista proveedor aprobado (la edad ya está cumplida).
 - Adaptador Lemon Squeezy o Stripe.
 - KYC, reembolsos, impuestos y términos actualizados.
 - Activar flags y retirar “próximamente”.
@@ -543,4 +543,4 @@ Todas las mutaciones requieren autenticación, rate limit y body validado con Zo
 
 ---
 
-_Última revisión: 10 nov 2026. Fases 1–3 implementadas y desplegadas; fase 4 (tarjetas/PayPal) bloqueada por proveedor y mayoría de edad._
+_Última revisión: 10 nov 2026. Fases 1–3 implementadas y desplegadas; fase 4 (tarjetas/PayPal) bloqueada por proveedor; la edad ya está cumplida (18 el 11 nov 2026)._

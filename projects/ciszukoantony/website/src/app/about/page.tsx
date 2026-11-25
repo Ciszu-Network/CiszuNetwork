@@ -78,7 +78,7 @@ export default function AboutPage() {
                 . {PROFILE.summary}
               </p>
               <p className="text-gray-400 leading-relaxed">
-                Soy de Venezuela (Coro, Falcón), tengo 17 años y estudio en la UPTAG orientado a
+                Soy de Venezuela (Coro, Falcón), tengo 18 años y estudio en la UPTAG orientado a
                 Ingeniería de Información y Sistemas. Trabajo como programador, publisher, diseñador,
                 editor e ilustrador, y produzco contenido gaming, tutoriales, mods y música con FL Studio.
                 Cada proyecto es una oportunidad para aprender, innovar y compartir con la comunidad.
