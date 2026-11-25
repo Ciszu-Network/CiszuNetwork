@@ -10,7 +10,7 @@ http:
     - name: apikey
       value: "{{SUPABASE_ANON_KEY}}"
     - name: Authorization
-      value: "Bearer {{SUPABASE_ANON_KEY}}"
+      value: Bearer {{SUPABASE_ANON_KEY}}
     - name: Accept-Profile
       value: muzicmania
 
@@ -24,3 +24,9 @@ runtime:
         test("is an array", function() {
           expect(Array.isArray(res.body)).to.be.true;
         });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

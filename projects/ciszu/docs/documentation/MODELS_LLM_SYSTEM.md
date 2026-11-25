@@ -60,7 +60,7 @@ El 3 de septiembre de 2026, Ciszuko Antony incorporó **Freebuff** como agente s
 - **Knowledge files**: Lee `AGENTS.md` / `CLAUDE.md` / `*.knowledge.md` al inicio de cada sesión (reutiliza el mismo AGENTS.md del monorepo; no requiere archivo de reglas propio).
 - **Skills**: 34 skills copiadas localmente desde `.opencode/skills/` a `~/.agents/skills/` (mismo formato `SKILL.md`; el origen de opencode no se modifica).
 - **MCP**: Config opcional vía `.agents/mcp.json` (formato estándar `mcpServers`, stdio/http/sse, refs `$VAR`). Activados localmente (2026-09-03): `sequential-thinking`, `memory`, `playwright` (headless) y `filesystem` (restringido a `E:\Ciszu Network`). opencode mantiene su decisión de MCP ausente.
-- **Entorno**: Freebuff no posee servidor headless/SSH propio (a diferencia de `opencode serve` en `127.0.0.1:4096`); para uso remoto desde el móvil se ejecuta la TUI dentro de la sesión SSH (Termius → Tailscale) o directamente en local.
+- **Entorno**: Freebuff no posee servidor headless/SSH propio (a diferencia de `opencode serve` en `127.0.0.1:7777`); para uso remoto desde el móvil se usa la OpenCode App sobre Tailscale o la TUI local.
 - **Motivo de la época**: Evaluar un agente gratuito de nivel secundario para tareas de prueba y apoyo, sin comprometer la estabilidad de OpenCode ni su configuración.
 
 ### 2.8 Época 8: Kilo CLI — Interfaz Actual (OpenCode + StepFun)

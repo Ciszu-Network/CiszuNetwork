@@ -92,7 +92,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `MODELS_LLM_SYSTEM` (historial y facturación de modelos LLM) ·
   `MODELS_SKILLS_SYSTEM` (galería de skills del agente opencode: 34 instaladas en `.opencode/skills/`, MCP ausente) ·
   `AI_AGENT_ORCHESTRATION_REPORT` (herramientas y patrones de agentes/orquestación) ·
-  `REMOTE_CONTROL_SYSTEM` (SSH/Tailscale/ciszu-ai) · `ACCESS_CONTROL_SYSTEM` (autorizacion: staff en DB, umbrales por consola, gobernanza GitHub) · `NTFY_SYSTEM` (notificaciones push: ntfy.sh) · `KNOWLEDGE_SYSTEM` (educación) ·
+  `REMOTE_CONTROL_SYSTEM` (OpenCode App/Tailscale/ciszu-ai) · `ACCESS_CONTROL_SYSTEM` (autorizacion: staff en DB, umbrales por consola, gobernanza GitHub) · `NTFY_SYSTEM` (notificaciones push: ntfy.sh) · `KNOWLEDGE_SYSTEM` (educación) ·
   `INSTALLERS_SYSTEM` (build/releases/update/reinstall/uninstall) · `DESKTOP_SHELL_SYSTEM` (shell reutilizable instalador/hub/launcher + plantilla) · `RELEASE_POLICY_SYSTEM` (manifiesto firmado, canales, rangos y bloqueos) · `TELEMETRY_SYSTEM` (eventos de launcher/setup/web/bot, staffcon) · `LAUNCHER_SYSTEM` (launcher: auth/offline/bandeja/idioma) · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
   `VISUAL_BUILDERS_SYSTEM` (editores visuales UI/UX: Puck-first) ·
   `PROJECTS_SYSTEM` · `STATUS_SYSTEM` · `ACTIONS_RUNNERS_SYSTEM` (CI/deploys locales sin GH Actions) ·
@@ -249,6 +249,13 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
 - Tono profesional y directo, sin introducciones ni cortesías.
 - **No preguntes por defecto**: ejecuta scripts y comandos automáticamente si son seguros.
   Solo informa si hay bloqueo o ambigüedad real.
+- **Permisos**: el usuario configuró `allow` total en `permissions`; no pedir aprobación de
+  herramientas ni usar la tool `question` para confirmar acciones. Proceder con la tarea.
+- **Sin turnos de seguimiento**: al terminar una tarea, cerrar con una sola respuesta y
+  detenerse. No iniciar otro turno ni enviar mensajes adicionales por iniciativa propia.
+- **Sin trabajos en segundo plano innecesarios**: no dejar comandos o procesos en background
+  que puedan generar una notificación y provocar otro turno. Si se usa uno, no responder a su
+  finalización salvo que la tarea lo requiera.
 - Responde conciso. Identidad del creador: Ciszuko Antony (nunca IAs).
 
 ### 6.2 Git
@@ -349,31 +356,19 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
   replicar el contenido del SECRET_TEMP (lo que esté destinado a persistir) porque es la copia
   cifrada de la que se alimenta Bitwarden.
 
-### 6.7 LSP (Language Server Protocol) del agente — estado actual
+### 6.7 LSP y verificación en OpenCode V2 — estado actual
 
-**El agente usa LSP** (activado 19 ago 2026). Cómo está configurado:
+**OpenCode V2 no ejecuta LSP.** Acepta el campo `lsp` por compatibilidad, pero no arranca
+language servers, no expone tools LSP ni entrega diagnósticos al agente. Por eso:
 
-- `opencode.json` (raíz del monorepo) define `"lsp": true`, que habilita los LSP servers
-  built-in de opencode (typescript, eslint, yaml, bash, etc.).
-- La activación exige que las deps estén resueltas **desde la raíz del workspace**:
-  opencode arranca el server `typescript` solo si `typescript` es resoluble en el proyecto, y
-  `eslint` solo con `eslint` resoluble. Por eso `package.json` (raíz) tiene `typescript
-  ^6.0.3` y `eslint ^9.0.0` en `devDependencies` (los workspaces de las webs traen TS, pero
-  pnpm no hoista sus deps al root).
-- La config se carga **al arranque**: cualquier cambio en `opencode.json` o nuevo server
-  requiere reiniciar opencode. Si la UI muestra el LSP "disabled", verificar primero que
-  `node -e "require.resolve('typescript')"` resuelve desde la raíz y que opencode se reinició
-  **después** de la instalación de deps.
-- `permission.lsp: allow` en `opencode.json` habilita al agente las **tools LSP
-  experimentales** (queries de definitions, hover, references). Para activarlas por completo
-  hace falta además la env var `OPENCODE_EXPERIMENTAL_LSP_TOOL=true` **antes** de arrancar la
-  sesión (p. ej. en el perfil PowerShell o con `$env:` en la terminal de lanzamiento);
-  `OPENCODE_DISABLE_LSP_DOWNLOAD=true` evita descargas de servers en redes restringidas.
-- Los diagnósticos LSP (tipos/errores vía typescript y eslint) alimentan al agente de forma
-  proactiva, pero **no sustituyen** la verificación de compilación por comando:
-  ejecutar `tsc --noEmit` / `pnpm --filter <web> exec tsc --noEmit`, `eslint`, `next build`
-  y `pnpm test` documentadas aquí y en `LOCAL_TESTING_PROTOCOLS.md` §3.3. No asumir que el
-  código "tipo bien" solo por no ver errores LSP: verificar con build real.
+- No configurar `lsp` ni `permission.lsp` en `opencode.json`; en V2 no existen
+  `OPENCODE_EXPERIMENTAL_LSP_TOOL` ni descargas de LSP del agente.
+- Los editores (VS Code) conservan sus propios servidores LSP; no son los del agente.
+- La verificación es **siempre por comando**: `pnpm --filter <web> exec tsc --noEmit`,
+  `eslint`, `next build` y `pnpm test` (ver `LOCAL_TESTING_PROTOCOLS.md` §3.3). No asumir
+  que el código "tipo bien" solo porque el editor no marca errores.
+- `typescript` y `eslint` de la raíz se conservan para tooling/CLI y typecheck; ya no son
+  requisito de LSP del agente.
 
 ### 6.8 Skills del agente (estado actual)
 
@@ -383,9 +378,10 @@ gitignored): 33 instaladas el 31 ago 2026 desde 4 fuentes clonadas en `clones/`
 `puck`. Catálogo completo, links de descarga y protocolo de instalación:
 `MODELS_SKILLS_SYSTEM.md`. **MCP clients: ausentes** (decisión documentada en ese doc).
 
-- **Cómo se activan**: el loader de opencode escanea `**/SKILL.md` al arranque. Cualquier
-  skill nueva/borrada requiere **reiniciar opencode**. Se invocan bajo demanda vía la tool
-  `skill` (el modelo decide por `name` + `description`).
+- **Cómo se activan**: el loader de OpenCode V2 escanea `.opencode/skills/**/SKILL.md` y
+  recarga skills/config/comandos al guardar; no hace falta reiniciar. Se invocan bajo demanda
+  vía la tool `skill` (el modelo decide por `name` + `description`). El plugin de voz V2 está
+  cargado desde `cli.json` y registra 14 comandos (ver `OPENCODE_SYSTEM.md`).
 - **Reglas**: nunca instalar una skill con secretos (es markdown legible); verificar que
   `name` coincida con el folder y tenga `description`; clonar repos en `clones/` (gitignored,
   shallow); no instalar libs de runtime sin confirmar (`AGENTS.md` §7.1).
@@ -525,7 +521,7 @@ cambia de sesión, y con modelos más potentes el umbral efectivo es mayor. Regl
 
 ---
 
-_Última revisión: 16 nov 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
+_Última revisión: 22 nov 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
 Estándar de docs: `DOCUMENTATION_SYSTEM.md`. Operación diaria: `WORKFLOW_SYSTEM.md`.
 
 

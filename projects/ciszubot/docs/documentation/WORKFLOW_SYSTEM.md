@@ -103,7 +103,7 @@ Puntos del Dockerfile a recordar:
 
 ### 5.1 Docker Compose (recomendado para VPS)
 
-Aunque hoy no hay `docker-compose.yml` commiteado, el despliegue recomendado en el VPS (ver `VPS_PLAN.md`, ciszu) usa Compose con `restart: unless-stopped`, `env_file` y bind-mount de `logs/`.
+El repo sí incluye `docker-compose.yml` en la raíz: levanta `ciszu-bot` y, con el perfil `supabase`, la base local. El despliegue recomendado en el VPS (ver `VPS_PLAN.md`, ciszu) usa Compose con `restart: unless-stopped`, `env_file` y bind-mount de `logs/`.
 
 ## 6. Pipeline de documentación
 

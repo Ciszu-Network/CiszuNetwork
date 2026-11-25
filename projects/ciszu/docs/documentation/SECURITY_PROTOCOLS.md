@@ -1,8 +1,8 @@
 ﻿# SECURITY_PROTOCOLS — Protocolos de Seguridad del Ecosistema
 
-Versión: 2.0.0
-Actualización: 2026-11-10
-Identificador: SECURITY_PROTOCOLS_V2.0.0_2026_08_13_ciszunetwork
+Versión: 2.0.1
+Actualización: 2026-11-22
+Identificador: SECURITY_PROTOCOLS_V2.0.1_2026_11_22_ciszunetwork
 
 > **Qué es este documento**: protocolos **permanentes y accionables** de seguridad para el
 > ecosistema Ciszu Network — las 4 websites (muzicmania, ciszunetwork, ciszubot,
@@ -332,9 +332,11 @@ secretos.
 - **Detección**: tarea programada **"Ciszu SSH Login Alert"** (cada 5 min) alerta por ntfy ante
   nuevos logins SSH (Security 4624 con sshd). Usa un stub en `C:\Users\fplay\ciszu-tasks\ciszu-ssh-alert.vbs`
   que sale en silencio (exit 0) si E: está bloqueada por BitLocker.
-- **opencode**: sin servidor expuesto (TUI local); regla: `opencode serve` jamás en interfaces
-  públicas (solo localhost/Tailscale). `.opencode/data/auth.json` contiene credenciales de
-  proveedores del agente: tratar como secreto.
+- **opencode**: servidor headless V2 en `127.0.0.1:7777`; `ciszu-ai pair` puede abrirlo en
+  `0.0.0.0` temporalmente para la app móvil. Usa Basic auth (`opencode` + `OPENCODE_PASSWORD`) y
+  nunca debe exponerse a Internet: solo localhost, Wi-Fi de confianza o Tailscale. Regla:
+  `opencode serve` jamás en interfaces públicas. `.opencode/data/auth.json` contiene credenciales
+  de proveedores del agente: tratar como secreto.
 - **Endpoint extra**: Defender con PUA + Network Protection; bloqueo al despertar (CONSOLELOCK) y
   pantalla 10/15 min; ACL de `.opencode/data` (209 archivos) y vault solo fplay+SYSTEM; BitLocker **activo en E:**; C: y D: sin cifrar (verificado 09 oct 2026). 
 - **Tailscale (pendiente manual en el panel)**: MFA en la cuenta, device approval, ACL de solo

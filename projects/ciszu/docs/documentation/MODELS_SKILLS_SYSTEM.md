@@ -1,8 +1,8 @@
 # MODELS_SKILLS_SYSTEM — Galería de Skills del Agente OpenCode
 
-Versión: 1.0.0
-Actualización: 2026-11-10
-Identificador: MODELS_SKILLS_SYSTEM_V1.0.0_2026_08_31_ciszunetwork
+Versión: 2.0.0
+Actualización: 2026-11-22
+Identificador: MODELS_SKILLS_SYSTEM_V2.0.0_2026_11_22_ciszunetwork
 
 > **Definición**: sistema que documenta las **skills instalables** para el agente opencode
 > (modelo DeepSeek V4 Flash, suscripción OpenCode Go): catálogo de las mejores skills
@@ -13,9 +13,10 @@ Identificador: MODELS_SKILLS_SYSTEM_V1.0.0_2026_08_31_ciszunetwork
 
 ## 1. Contexto: el agente y su estado
 
-El agente de este ecosistema corre **opencode v1.18.21** (TUI en Windows) con el modelo
-`opencode-go/deepseek-v4-flash`. Config: `E:\Ciszu Network\opencode.json` (raíz del
-monorepo) + `C:\Users\fplay\.config\opencode\opencode.json` (global).
+El agente de este ecosistema corre **OpenCode V2 (v2.3.2)** (TUI en Windows) con el modelo
+`opencode-go/deepseek-v4-flash`. Config de servidor: `E:\Ciszu Network\opencode.json` (raíz del
+monorepo) + `C:\Users\fplay\.config\opencode\opencode.json` (global); preferencias del cliente:
+`C:\Users\fplay\.config\opencode\cli.json`.
 
 ### 1.1 Estado antes de esta tarea (2026-08-31)
 
@@ -23,23 +24,27 @@ monorepo) + `C:\Users\fplay\.config\opencode\opencode.json` (global).
 |---|---|---|
 | **Skills** | ❌ **Vanilla** | Solo existía `puck` (carpeta `E:\Ciszu Network\.opencode\skills\puck\`) |
 | **MCP clients** | ❌ **Ausentes** | Sin `mcp:` en ningún `opencode.json` (ni raíz ni global). Verificado en `opencode.json`, `opencode.jsonc` y global |
-| **LSP** | ✅ Activo | `"lsp": true` + `permission.lsp: allow` (ver `AGENTS.md` §6.7) |
-| **Plugins** | ❌ Ausentes | Sin `plugin:` en config; carpeta `.opencode/plugins/` vacía |
+| **LSP** | ✅ Activo (V1) | `"lsp": true` + `permission.lsp: allow`; **retirado en V2** (ver `LSP_PROTOCOLS.md`) |
+| **Plugins** | ✅ Voz V2 activa | `tools/tts-stt-ai` cargado desde `cli.json`; 14 comandos `/stt-*` y `/tts-*` |
 | **Referencias** | ❌ Ausentes | Sin `references:` en config |
+
+> **Nota V2 (22 nov 2026)**: la tabla describe el estado histórico del 31 ago 2026. En OpenCode
+> V2 el agente no ejecuta LSP; el plugin de voz fue portado y sí aparece en `opencode plugin list`.
 
 ### 1.2 Estado después de esta tarea
 
 | Componente | Estado | Detalle |
 |---|---|---|
 | **Skills** | ✅ **34 skills** | Instaladas en `E:\Ciszu Network\.opencode\skills\` (local, gitignored). 33 nuevas + `puck` existente |
-| **MCP clients** | ❌ Ausentes (por diseño) | Se decide NO añadir MCP por ahora: las skills cubren las necesidades sin deps externas; MCP se evalúa en §8 |
+| **MCP clients** | ❌ Ausentes (por diseño) | Se decide NO añadir MCP por ahora: las skills cubren las necesidades sin deps externas; MCP se evalúa en §7 |
 | **Fuentes clonadas** | ✅ 4 repos | `clones/superpowers`, `clones/anthropic-skills`, `clones/jjmartres-opencode`, `clones/opencode-agents` (gitignored) |
 
 > **Dónde viven**: las skills se cargan desde `.opencode/skills/<nombre>/SKILL.md`
 > (proyecto), `~/.config/opencode/skills/<nombre>/SKILL.md` (global) o las compatibles
 > `.claude/skills/` y `.agents/skills/`. Este repo usa la ruta de **proyecto**; está
 > gitignored (`AGENTS.md` §6.4), es decir **solo local, no se comparten por git**.
-> Requieren **reiniciar opencode** para que el loader las detecte (no son hot-reload).
+> OpenCode V2 descubre `.opencode/skills/` y `.opencode/skill/` y **recarga al guardar**;
+> no requiere reiniciar.
 
 ---
 
@@ -207,7 +212,8 @@ Los clones son solo **fuente de instalación**; los cambios activos viven en
 1. Clonar el repo fuente (ver §5) o descargar el folder de la skill.
 2. Copiar el folder completo a `E:\Ciszu Network\.opencode\skills\<nombre>\`.
 3. Verificar el `SKILL.md`: que el `name:` coincida con el folder y tenga `description:`.
-4. **Reiniciar opencode** (el loader escanea al arranque).
+4. **Guardar y verificar**; V2 recarga y descubre la skill sin reiniciar. Si no aparece, usar
+   `/reload` para forzar la recarga.
 
 ### 6.2 Verificar validez
 
@@ -221,17 +227,19 @@ hiphens simples, coincidente con el folder; `description` 1-1024 chars.
 
 ### 6.3 Desinstalar
 
-Borrar el folder `E:\Ciszu Network\.opencode\skills\<nombre>\` y reiniciar opencode.
+Borrar el folder `E:\Ciszu Network\.opencode\skills\<nombre>\`; V2 recarga al guardar. Si la
+skill sigue en memoria, usar `/reload`.
 
 ### 6.4 Permisos (opcional)
 
 Las skills se cargan con permiso `allow` por defecto. Para restringir por patrón:
 
-```json
+```jsonc
 {
-  "permission": {
-    "skill": { "*": "allow", "internal-*": "deny" }
-  }
+  "permissions": [
+    { "action": "skill", "resource": "*", "effect": "allow" },
+    { "action": "skill", "resource": "internal-*", "effect": "deny" }
+  ]
 }
 ```
 
@@ -251,9 +259,9 @@ Razones:
 
 **Cuándo reconsiderar MCP** (futuro): si se necesita acceso estructurado en vivo a un
 servicio externo (p. ej. una API de analytics, búsqueda semántica o un navegador
-controlado). En ese caso se configuraría `"mcp": { "<name>": { "type": "local",
-"command": [...], "enabled": true } }` (ver `opencode.json`). Skills que requieren MCP
-puntual (como `context7`) se instalarán solo si se añade ese servidor.
+controlado). En ese caso se configuraría `mcp.servers.<name>` con `type: "local"`,
+`command: [...]` (V2 no usa `enabled`) en `opencode.json`. Skills que requieren MCP puntual
+(como `context7`) se instalarán solo si se añade ese servidor.
 
 ---
 
@@ -261,7 +269,7 @@ puntual (como `context7`) se instalarán solo si se añade ese servidor.
 
 1. Identificar el repo fuente (verificar stars, licencia MIT/Apache, mantenimiento).
 2. Clonar en `clones/` y revisar el `SKILL.md` (frontmatter válido, sin secretos).
-3. Copiar a `.opencode/skills/`, validar nombre/descripción, reiniciar opencode.
+3. Copiar a `.opencode/skills/`, validar nombre/descripción y guardar; V2 recarga sin reiniciar.
 4. Actualizar este doc: añadir la fila a la galería (§3) y al índice de clones (§5).
 5. (Si el repo aporta el activo completo) actualizar §4 con el link de lote.
 
@@ -288,9 +296,10 @@ claro).
 |---|---|
 | 2026-08-31 | Doc creada (v1.0.0). Estado vanilla verificado (solo skill `puck`, sin MCP). 33 skills instaladas desde 4 fuentes clonadas; `MODELS_SKILLS_SYSTEM.md` + enlace en `AGENTS.md` |
 | 2026-08-31 | Refs cruzadas en docs operativos: `GLOBAL_SYSTEM.md` (tabla skills por fase del ciclo de tarea), `DEBUGGING_SYSTEM.md` §8, `TESTING_SYSTEM.md` §9, `CODE_PRINCIPLES_PROTOCOLS.md` §0 y §9.2 |
+| 2026-11-22 | Migración a OpenCode V2 (2.3.2): skills con recarga al guardar, permisos `permissions`/`skill`, MCP `mcp.servers`, LSP retirado del agente y fork de voz portado a `@opencode/plugin/tui` (14 comandos) |
 
 ---
 
-_Última revisión: 10 nov 2026._ Relacionado: `OPENCODE_SYSTEM.md` (voz + comandos),
+_Última revisión: 22 nov 2026._ Relacionado: `OPENCODE_SYSTEM.md` (voz + comandos),
 `MODELS_LLM_SYSTEM.md` (historial/facturación de modelos), `TOOLS_SYSTEM.md` (clones y
 herramientas), `VAULT_SYSTEM.md`, `AGENTS.md` (raíz), `DOCUMENTATION_SYSTEM.md`.

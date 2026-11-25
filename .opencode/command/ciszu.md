@@ -17,7 +17,7 @@ Enumera los archivos de `E:\Ciszu Network\.opencode\command\*.md` (y reflejos en
 - `/dev` — las 4 webs locales: start/stop/status/log
 - `/e2e` — smoke E2E de Playwright contra producción
 - `/test-ui` — panel visual de Vitest
-- `/server-start` · `/server-stop` · `/server-reset` — server headless de opencode (127.0.0.1:4096)
+- `/server-start` · `/server-stop` · `/server-reset` — server headless de opencode (127.0.0.1:7777) · `/pair` — enlace para la app móvil de OpenCode
 - `/ssh-fix` — diagnóstico/reparación SSH remoto
 - `/storybook` — opera Storybook: `run|test|watch|build|chromatic`
 - `/vitest` — tests unitarios: `all|watch|ui|<filtro>`
