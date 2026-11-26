@@ -1,13 +1,35 @@
 ---
-description: Diagnostica y repara el SSH remoto (Termius/Tailscale) — firewall Profile=Any + restart sshd si hace falta.
+description: Diagnostica y repara el acceso remoto (OpenCode App/Tailscale/SSH) en Windows o Linux.
 ---
 
-Diagnostica y repara el acceso SSH desde el móvil (Termius → Tailscale → OpenSSH) en este PC. Si el usuario reporta timeout SSH, "conectando..." sin respuesta o caídas de sesión post-auth, ejecuta esto:
+Diagnostica y repara el acceso remoto desde el móvil (OpenCode App → Tailscale →
+OpenSSH) en este PC. Si el usuario reporta timeout SSH, "conectando..." sin
+respuesta o caídas post-auth:
 
-1. Lanza el health-check: `powershell -ExecutionPolicy Bypass -File scripts/ensure-ssh.ps1` (modo diagnóstico + fix automático; usa `-CheckOnly` para solo comprobar).
+**Windows**:
+
+1. `powershell -ExecutionPolicy Bypass -File scripts/ensure-ssh.ps1` (diagnóstico
+   + fix; `-CheckOnly` para solo comprobar).
 2. Interpreta la salida:
-   - `firewall = Allow / Profile Any` → OK. Si dice que lo reparó, el fix de Profile=Any se aplicó (lección 8 ago 2026: con Profile Private el tráfico por el adaptador Tailscale se bloquea en silencio).
-   - `no hay listener en :22` → el script reinicia sshd (`Restart-Service sshd -Force`) para limpiar listeners zombis.
-   - `probe local :22 = False` → sshd muerto; reintentar restart o ver `services.msc`.
-3. Si sigue fallando, verifica el lado móvil: `tailscale ping <ip-móvil>` y que Termius tenga la clave correcta. Revisa `C:\ProgramData\ssh\logs\sshd.log` por errores de handshake.
-4. Reporta resumen: qué se reparó y estado final de cada check.
+   - `firewall = Allow / Profile Any` → OK. Si lo reparó, se aplicó Profile=Any
+     (con Profile Private el tráfico por Tailscale se bloquea).
+   - `no hay listener en :22` → reinicia sshd.
+   - `probe local :22 = False` → sshd muerto; revisar `services.msc`.
+3. Revisa `C:\ProgramData\ssh\logs\sshd.log`.
+
+**Linux (Fedora)**:
+
+```bash
+sudo systemctl status sshd
+sudo systemctl restart sshd
+ss -ltnp | grep ':22'
+sudo tailscale status
+tailscale ping <ip-movil>
+sudo journalctl -u sshd -n 50 --no-pager
+```
+
+Comprueba que el firewall permite Tailscale: `sudo firewall-cmd --get-active-zones`
+y que la interfaz `tailscale0` esté en la zona correcta. En Fedora, `sshd` no
+escucha por defecto hasta `systemctl enable --now sshd`.
+
+Reporta qué se reparó y el estado final de cada check. No imprimas claves.

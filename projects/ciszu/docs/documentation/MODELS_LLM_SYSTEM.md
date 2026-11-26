@@ -244,7 +244,7 @@ depende de convenciones y revisiones humanas.
    otras IAs. Borrar solo lo **claramente antiguo y sin referencias**; ante la duda, preguntar.
 5. **Temporales por agente**: cada interfaz debe usar su propio subdirectorio dentro de
    `.opencode/temp/<agent>/` o `tmp/<agent>/`. El directorio global `tmp/` es zona común.
-6. **Sesiones y handovers**: dejar siempre un resumen en `PROJECT_STATE.md` y/o en el chat con:
+6. **Sesiones y handovers**: dejar siempre un resumen en `PROJECTS_SYSTEM.md` y/o en el chat con:
    archivos modificados, comandos ejecutados, estado de build/lint, y próximo paso recomendado.
 7. **Validar antes de declarar listo**: no dar por terminada una tarea solo porque el código
    “parece” completo; verificar build real (`next build`, `tsc --noEmit`, `pnpm lint`).
@@ -255,7 +255,7 @@ depende de convenciones y revisiones humanas.
 |---|---|
 | Dos agentes editan el mismo archivo | Revisar `git status`/`git diff` antes de editar; en conflicto, detener y coordinar |
 | Un agente borra archivos que otro necesita | Preguntar antes de borrar; revisar `git log` para ver última modificación |
-| Tareas duplicadas entre agentes | Leer `TODO.md` y `PROJECT_STATE.md` antes de iniciar trabajo |
+| Tareas duplicadas entre agentes | Leer `TODO.md` y `PROJECTS_SYSTEM.md` antes de iniciar trabajo |
 | Inyección de skills/prompts maliciosas | Solo instalar skills desde fuentes confiables; inspeccionar `SKILL.md` |
 | Consumo excesivo de cuota | Respetar límites de sesión (§9) y cerrar/archivar tareas terminadas |
 | Secretos compartidos entre agentes | Nunca compartir `.env` ni vault; cada agente accede por referencia, no por valor |

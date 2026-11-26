@@ -194,7 +194,7 @@ trivy image ciszubot:latest       # escaneo de seguridad
 
 - `TOOLS_SYSTEM.md` — trivy, WSL2 y el resto de herramientas instaladas.
 - `DEVSECOPS_SYSTEM.md` — escaneo de imágenes y shift-left en la cadena del contenedor.
-- `WORKFLOW_SYSTEM.md` — CI/CD de GitHub Actions (pendiente el `docker build` del bot).
+- `GLOBAL_SYSTEM.md` — CI/CD de GitHub Actions (pendiente el `docker build` del bot).
 - `VPS_PLAN.md` — el mismo `docker-compose.yml` se usa en el VPS con solo el servicio bot.
 - `REMOTE_CONTROL_SYSTEM.md` — acceso SSH/Tailscale al futuro VPS donde Docker corre igual.
 
@@ -223,4 +223,4 @@ build falla con "checksum", `docker build --no-cache` o limpiar volúmenes de ca
 - [ ] Actualizar este documento y el mapa de contenedores.
 
 _Última revisión: 10 nov 2026._ Relacionado: `TOOLS_SYSTEM.md`, `DEVSECOPS_SYSTEM.md`,
-`WORKFLOW_SYSTEM.md`, `PROJECTS_SYSTEM.md`.
+`GLOBAL_SYSTEM.md`, `PROJECTS_SYSTEM.md`.

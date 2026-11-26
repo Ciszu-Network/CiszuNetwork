@@ -1,0 +1,65 @@
+# CISZU Network - perfil personal de zsh (Linux).
+# Minimalista: historial, completado, fastfetch y prompt.
+# El perfil corporativo se carga con el comando: ciszu
+
+CISZU_SHELL_DIR="${${(%):-%x}:A:h}"
+export CISZU_REPO="${CISZU_REPO:-${CISZU_SHELL_DIR:h:h}}"
+[[ -f "$CISZU_SHELL_DIR/env.sh" ]] && source "$CISZU_SHELL_DIR/env.sh"
+
+# --- Historial --------------------------------------------------------------
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_DUPS HIST_IGNORE_SPACE HIST_REDUCE_BLANKS
+setopt SHARE_HISTORY INC_APPEND_HISTORY
+setopt AUTO_CD AUTO_PUSHD PUSHD_IGNORE_DUPS
+
+# --- Edicion y completado ---------------------------------------------------
+bindkey -e
+autoload -Uz compinit && compinit
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+for _plugin in \
+  /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+do
+  [[ -f "$_plugin" ]] && source "$_plugin"
+done
+unset _plugin
+
+# --- Fastfetch --------------------------------------------------------------
+if command -v fastfetch >/dev/null 2>&1; then
+  _ff="$CISZU_REPO/shared/fastfetch/config.jsonc"
+  if [[ -f "$_ff" ]]; then
+    fastfetch --config "$_ff"
+  else
+    fastfetch
+  fi
+  unset _ff
+fi
+
+# --- Prompt -----------------------------------------------------------------
+if command -v starship >/dev/null 2>&1; then
+  eval "$(starship init zsh)"
+else
+  PROMPT='%F{cyan}%n@%m%f %F{magenta}%~%f %# '
+fi
+
+# --- Atajos personales ------------------------------------------------------
+alias g='git'
+alias pn='pnpm'
+alias ll='ls -lah --color=auto'
+alias ..='cd ..'
+alias q='exit'
+
+# --- Perfil corporativo -----------------------------------------------------
+ciszu() {
+  if [[ -f "$CISZU_SHELL_DIR/ciszu.zsh" ]]; then
+    source "$CISZU_SHELL_DIR/ciszu.zsh"
+  else
+    echo "No se encontro shared/shell/ciszu.zsh" >&2
+    return 1
+  fi
+}

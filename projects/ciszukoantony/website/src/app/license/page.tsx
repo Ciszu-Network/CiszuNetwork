@@ -30,7 +30,7 @@ const ARTICLES: LegalArticle[] = [
     id: 2,
     title: 'CONCESIÓN DE LICENCIA DE USO',
     content:
-      'Se otorga permiso para el uso personal, educativo y no comercial del software de este portfolio. La modificación de los archivos fuente se permite bajo los términos de la Licencia MIT detallados en el Artículo 4, siempre que se mantenga el aviso de copyright y la atribución al autor.',
+      'Se concede permiso, de forma gratuita, para usar, copiar, modificar, distribuir, sublicenciar y/o vender copias del software bajo la Licencia MIT, conservando el aviso de copyright. El texto completo está en el Artículo 4.',
   },
   {
     id: 3,
@@ -59,15 +59,15 @@ const ARTICLES: LegalArticle[] = [
   },
   {
     id: 7,
-    title: 'ATRIBUCIÓN OBLIGATORIA',
+    title: 'ATRIBUCIÓN Y AVISO DE COPYRIGHT',
     content:
-      'Toda redistribución o uso derivado del código fuente debe incluir de forma visible la atribución a Ciszuko Antony y un enlace al portfolio oficial (ciszukoantony.vercel.app) o a los repositorios de la organización Ciszu-Network en GitHub.',
+      'Las copias o partes sustanciales del Software deben conservar el aviso de copyright y el texto de la Licencia MIT.',
   },
   {
     id: 8,
-    title: 'RESTRICCIONES DE COMERCIALIZACIÓN',
+    title: 'MARCAS Y CONTENIDO DE TERCEROS',
     content:
-      'Queda estrictamente prohibida la venta, el sub-licenciamiento comercial o la inclusión del software, la música o las piezas gráficas en paquetes de pago sin un acuerdo de licencia comercial previo y por escrito con el autor.',
+      'La Licencia MIT cubre el código. La música y las piezas gráficas propias conservan sus derechos y licencias; las marcas y contenidos de terceros pertenecen a sus titulares.',
   },
   {
     id: 9,
@@ -77,9 +77,9 @@ const ARTICLES: LegalArticle[] = [
   },
   {
     id: 10,
-    title: 'JURISDICCIÓN Y MODIFICACIONES',
+    title: 'VIGENCIA Y DERECHOS IRRENUNCIABLES',
     content:
-      'Ciszuko Antony se reserva el derecho de modificar los términos de esta licencia en cualquier momento. El uso continuado del portfolio tras dichos cambios implica la aceptación de los nuevos términos de licenciamiento, cuya versión vigente es siempre la publicada en esta página.',
+      'La Licencia MIT se aplica a las copias del Software que se distribuyan con ella y no puede revocarse retroactivamente para esas copias.',
   },
 ];
 

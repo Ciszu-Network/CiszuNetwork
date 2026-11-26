@@ -24,13 +24,13 @@ const ARTICLES: LegalArticle[] = [
     id: 1,
     title: 'PROPIEDAD INTELECTUAL Y AUTORÍA',
     content:
-      'El software, la identidad visual y los contenidos del ecosistema Ciszu Network son obra intelectual cuya propiedad y derechos de autor pertenecen íntegramente a Ciszu Network y Ciszuko Antony (Francisco Garcia). Todos los derechos no concedidos explícitamente en este documento quedan reservados.',
+      'El software, la identidad visual y los contenidos del ecosistema Ciszu Network son obra intelectual cuya propiedad y derechos de autor pertenecen íntegramente a Ciszu Network y Ciszuko Antony (Francisco Garcia). El código se distribuye bajo la Licencia MIT; el aviso de copyright y la atribución a Ciszu Network se conservan.',
   },
   {
     id: 2,
     title: 'CONCESIÓN DE LICENCIA DE USO',
     content:
-      'Se otorga permiso para el uso personal, educativo y no comercial de este software. La modificación de los archivos fuente se permite bajo los términos de la Licencia MIT detallados en el Artículo 4, siempre que se mantenga el aviso de copyright.',
+      'Se concede permiso, de forma gratuita, para usar, copiar, modificar, distribuir, sublicenciar y/o vender copias del software bajo la Licencia MIT, conservando el aviso de copyright. El texto completo está en el Artículo 4.',
   },
   {
     id: 3,
@@ -53,15 +53,15 @@ const ARTICLES: LegalArticle[] = [
   },
   {
     id: 6,
-    title: 'ATRIBUCIÓN OBLIGATORIA',
+    title: 'ATRIBUCIÓN Y AVISO DE COPYRIGHT',
     content:
-      'Toda redistribución o uso derivado del código fuente debe incluir de forma visible la atribución a Ciszu Network — Ciszuko Antony y un enlace a los repositorios oficiales de la organización en GitHub.',
+      'Las copias o partes sustanciales del Software deben conservar el aviso de copyright y el texto de la Licencia MIT.',
   },
   {
     id: 7,
-    title: 'RESTRICCIONES DE COMERCIALIZACIÓN',
+    title: 'MARCAS Y CONTENIDO DE TERCEROS',
     content:
-      'Queda estrictamente prohibida la venta, sub-licenciamiento comercial o inclusión del software en paquetes de pago sin un acuerdo de licencia comercial previo y por escrito con el autor.',
+      'La Licencia MIT no concede derechos sobre las marcas, logotipos o nombres comerciales de Ciszu Network o Ciszuko Antony. Las dependencias y el contenido multimedia de terceros conservan sus propias licencias.',
   },
   {
     id: 8,
@@ -71,9 +71,9 @@ const ARTICLES: LegalArticle[] = [
   },
   {
     id: 9,
-    title: 'JURISDICCIÓN Y MODIFICACIONES',
+    title: 'VIGENCIA Y DERECHOS IRRENUNCIABLES',
     content:
-      'Ciszu Network se reserva el derecho de modificar los términos de esta licencia en cualquier momento. El uso continuado de la plataforma tras dichos cambios implica la aceptación de los nuevos términos de licenciamiento.',
+      'La Licencia MIT se aplica a las copias del Software que se distribuyan con ella y no puede revocarse retroactivamente para esas copias.',
   },
 ];
 

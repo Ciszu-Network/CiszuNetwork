@@ -499,6 +499,10 @@ fn launcher_ready(app: tauri::AppHandle) {
     .build()
     .expect("Failed to create main window");
 
+    let _ = main.unminimize();
+    let _ = main.show();
+    let _ = main.set_focus();
+
     let main_handle = main.clone();
     let _ = main.on_window_event(move |event| {
         if let tauri::WindowEvent::CloseRequested { api, .. } = event {
@@ -627,11 +631,16 @@ fn launcher_minimize(app: tauri::AppHandle) {
 #[tauri::command]
 fn launcher_toggle_maximize(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("launcher") {
+        let _ = window.set_resizable(true);
+        let _ = window.set_maximizable(true);
+        let _ = window.unminimize();
+        let _ = window.show();
         if window.is_maximized().unwrap_or(false) {
             let _ = window.unmaximize();
         } else {
             let _ = window.maximize();
         }
+        let _ = window.set_focus();
     }
 }
 
@@ -783,6 +792,8 @@ fn launcher_show_hub(app: tauri::AppHandle) {
         let _ = window.set_always_on_top(false);
         let _ = window.set_resizable(true);
         let _ = window.set_maximizable(true);
+        let _ = window.unminimize();
+        let _ = window.show();
         let _ = window.maximize();
         let _ = window.set_focus();
     }
@@ -803,10 +814,12 @@ fn launcher_pin_taskbar(app: tauri::AppHandle) {
 fn launcher_show_small(app: tauri::AppHandle) {
     if let Some(window) = app.get_webview_window("launcher") {
         let _ = window.set_always_on_top(true);
+        let _ = window.set_resizable(true);
+        let _ = window.set_maximizable(true);
         let _ = window.unmaximize();
-        let _ = window.set_resizable(false);
         let _ = window.set_size(tauri::LogicalSize::new(560.0, 700.0));
         center_window(&window);
+        let _ = window.show();
         let _ = window.set_focus();
     }
 }
@@ -830,8 +843,11 @@ fn launcher_open_login(app: tauri::AppHandle) -> Result<(), String> {
     let auth_url = LAUNCHER_AUTH_URL
         .parse()
         .map_err(|error| format!("auth_url: {error}"))?;
+    if let Some(launcher) = app.get_webview_window("launcher") {
+        let _ = launcher.set_always_on_top(false);
+    }
     let auth_app = app.clone();
-    WebviewWindowBuilder::new(&app, "launcher-auth", WebviewUrl::External(auth_url))
+    let auth = WebviewWindowBuilder::new(&app, "launcher-auth", WebviewUrl::External(auth_url))
         .inner_size(560.0, 760.0)
         .min_inner_size(460.0, 620.0)
         .center()
@@ -858,6 +874,9 @@ fn launcher_open_login(app: tauri::AppHandle) -> Result<(), String> {
         })
         .build()
         .map_err(|error| error.to_string())?;
+    let _ = auth.unminimize();
+    let _ = auth.show();
+    let _ = auth.set_focus();
     Ok(())
 }
 
@@ -1263,7 +1282,7 @@ fn installer_info() -> InstallerInfo {
         channel: BUILD_CHANNEL.to_string(),
         build_date: BUILD_DATE.to_string(),
         changelog_url: CHANGELOG_URL.to_string(),
-        os: detect_windows_version(),
+        os: detect_os(),
         arch: detect_architecture(),
         dir: dir.clone(),
         install_path: dir,
@@ -1923,6 +1942,7 @@ fn installer_read_status() -> String {
         .unwrap_or_else(|| "READY".to_string())
 }
 
+#[cfg(target_os = "windows")]
 fn detect_windows_version() -> String {
     let output = hidden_command("cmd")
         .args(["/c", "ver"])
@@ -1949,14 +1969,64 @@ fn detect_windows_version() -> String {
     label.to_string()
 }
 
-fn detect_architecture() -> String {
-    let arch = std::env::var("PROCESSOR_ARCHITECTURE").unwrap_or_default();
-    if arch.contains("64") || arch == "AMD64" {
-        "64 bits".to_string()
-    } else if arch.contains("ARM") {
-        "ARM".to_string()
+/// Etiqueta legible del sistema para la UI (Windows, Linux, macOS).
+fn detect_os() -> String {
+    #[cfg(target_os = "windows")]
+    let os = detect_windows_version();
+    #[cfg(target_os = "linux")]
+    let os = "Linux".to_string();
+    #[cfg(target_os = "macos")]
+    let os = "macOS".to_string();
+    #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
+    let os = std::env::consts::OS.to_string();
+    os
+}
+
+/// Clave de plataforma que usa el manifiesto de releases (windows10, windows11, linux, macos).
+fn detect_os_key() -> String {
+    #[cfg(target_os = "windows")]
+    let key = if detect_windows_version().contains("11") {
+        "windows11".to_string()
     } else {
-        "32 bits".to_string()
+        "windows10".to_string()
+    };
+    #[cfg(target_os = "linux")]
+    let key = "linux".to_string();
+    #[cfg(target_os = "macos")]
+    let key = "macos".to_string();
+    #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
+    let key = std::env::consts::OS.to_string();
+    key
+}
+
+/// Arquitectura legible (64 bits, ARM, 32 bits).
+fn detect_architecture() -> String {
+    #[cfg(target_os = "windows")]
+    let label = {
+        let arch = std::env::var("PROCESSOR_ARCHITECTURE").unwrap_or_default();
+        if arch.contains("64") || arch == "AMD64" {
+            "64 bits".to_string()
+        } else if arch.contains("ARM") {
+            "ARM".to_string()
+        } else {
+            "32 bits".to_string()
+        }
+    };
+    #[cfg(not(target_os = "windows"))]
+    let label = match std::env::consts::ARCH {
+        "x86_64" => "64 bits".to_string(),
+        "aarch64" => "ARM".to_string(),
+        _ => "32 bits".to_string(),
+    };
+    label
+}
+
+/// Arquitectura que usa el manifiesto de releases (x64, arm64).
+fn detect_arch_key() -> String {
+    match std::env::consts::ARCH {
+        "x86_64" => "x64".to_string(),
+        "aarch64" => "arm64".to_string(),
+        other => other.to_string(),
     }
 }
 
@@ -2095,13 +2165,16 @@ fn main() {
             )
             .inner_size(520.0, 560.0)
             .center()
-            .resizable(false)
-            .maximizable(false)
-            .always_on_top(true)
+            .resizable(true)
+            .maximizable(true)
+            .always_on_top(false)
             .title("MuzicMania")
             .decorations(false)
             .build()
             .expect("Failed to create launcher window");
+            let _ = launcher.unminimize();
+            let _ = launcher.show();
+            let _ = launcher.set_focus();
             center_window(&launcher);
 
             let launcher_handle = launcher.clone();

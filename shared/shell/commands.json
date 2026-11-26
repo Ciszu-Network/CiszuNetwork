@@ -1,0 +1,19 @@
+{
+  "shared": [
+    "repo", "dev", "devall", "devstop", "buildall", "lintall", "testall",
+    "gs", "gd", "glog", "gpull", "gp", "gc", "gcp",
+    "doctor", "cmds", "cdnupload", "cdnverify",
+    "cleannext", "cleanlogs", "cleanall",
+    "test", "testwatch", "e2e",
+    "sb", "sbtest", "sbwatch", "sbbuild",
+    "art", "music", "video", "removebg", "textart",
+    "profile-edit", "profile-reload", "profile-path"
+  ],
+  "windowsOnly": [
+    "devcon", "testui", "e2egui", "sbchrom",
+    "pwopen", "pwcode", "pwinst",
+    "opsstatus", "opsdigest", "opsreport",
+    "osint", "osint-mai", "osint-sher", "osint-slo", "osint-sfx", "maltego"
+  ],
+  "linuxOnly": ["staffcon", "customerscon", "tui"]
+}

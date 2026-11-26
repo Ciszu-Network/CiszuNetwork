@@ -13,10 +13,10 @@ LICENCIA / LICENSE
 
 ARTÍCULO 1: PROPIEDAD INTELECTUAL
 Ciszubot es propiedad de Ciszu Network y Ciszuko Antony (Francisco Garcia).
-Todos los derechos no concedidos explícitamente quedan reservados.
+El código se distribuye bajo la Licencia MIT; el aviso de copyright se conserva.
 
 ARTÍCULO 2: LICENCIA DE USO
-Se otorga permiso para el uso personal y educativo del bot y su código fuente.
+Se concede permiso, de forma gratuita, para usar, copiar, modificar, distribuir, sublicenciar y/o vender copias del código fuente bajo la Licencia MIT, conservando el aviso de copyright.
 La modificación está permitida bajo los términos de la Licencia MIT.
 
 ARTÍCULO 3: TEXTO DE LA LICENCIA MIT
@@ -50,11 +50,10 @@ SOFTWARE.
 
 ARTICLE 1: INTELLECTUAL PROPERTY
 Ciszubot is owned by Ciszu Network and Ciszuko Antony (Francisco Garcia).
-All rights not explicitly granted are reserved.
+The source code is distributed under the MIT License; the copyright notice is preserved.
 
 ARTICLE 2: USE LICENSE
-Permission is granted for personal and educational use of the bot and its
-source code. Modification is permitted under the terms of the MIT License.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies, subject to keeping the copyright notice. Modification is permitted under the terms of the MIT License.
 
 ARTICLE 3: MIT LICENSE TEXT
 MIT License

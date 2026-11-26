@@ -8,7 +8,7 @@ Identificador: LICENSE_V1.0.0_2026_07_06_ciszukoantonypage
 # LICENCIA / LICENSE
 
 [ESPAÑOL]
-CiszukoAntonyPage es un software cuya propiedad intelectual pertenece íntegramente a sus desarrolladores. Se otorga una licencia de uso personal y no comercial.
+CiszukoAntonyPage es software libre y de código abierto bajo la Licencia MIT. La propiedad intelectual pertenece a Ciszu Network y Ciszuko Antony (Francisco Garcia).
 
 Licencia MIT (en inglés abajo)
 
@@ -17,7 +17,7 @@ Copyright (c) 2026 CiszukoAntony
 ------------------------------------------------------------
 
 [ENGLISH]
-CiszukoAntonyPage is software whose intellectual property belongs entirely to its developers. A personal and non-commercial use license is granted.
+CiszukoAntonyPage is free and open-source software under the MIT License. The intellectual property belongs to Ciszu Network and Ciszuko Antony (Francisco Garcia).
 
 MIT License
 

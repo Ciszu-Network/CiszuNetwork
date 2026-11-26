@@ -273,4 +273,4 @@ La prioridad no es “más agentes”, sino **menos trabajo manual repetitivo co
 - OpenAI Agents SDK: https://github.com/openai/openai-agents-python
 
 _Última revisión: 14 nov 2026._ Relacionado: `OPENCODE_SYSTEM.md`, `MODELS_LLM_SYSTEM.md`,
-`MODELS_SKILLS_SYSTEM.md`, `MCP_PROTOCOLS.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.
+`MODELS_SKILLS_SYSTEM.md`, `MCP_PROTOCOLS.md`, `GLOBAL_SYSTEM.md`, `AGENTS.md`.

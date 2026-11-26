@@ -103,7 +103,7 @@ Los anuncios son la forma "pasiva" de monetizar sin pedir dinero:
 - GA4 mide el tráfico y el rendimiento de los anuncios (`ad_impression/click/dismiss`).
 - PostHog mide el comportamiento de producto (ej. cuántos llegan al modal de donación).
 - Los ingresos (NowPayments, Patreon) se registran en la documentación de pagos y en las
-  revisiones mensuales (`PROJECT_STATE.md` / `STATUS_SYSTEM.md`).
+  revisiones mensuales (`PROJECTS_SYSTEM.md` / `STATUS_SYSTEM.md`).
 - **Nunca** exponer montos por usuario; solo agregados.
 
 ---

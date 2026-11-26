@@ -67,7 +67,7 @@ haya usado antes. Esperar puede costar la marca.
 
 ## 4. Fase 1 — Protección de marca en SAPI (~$410 USD, sin tarjeta)
 
-Pasos (detalle en `SAPI_TRADEMARK_PLAN.md`):
+Pasos (detalle en `TRADEMARK_PLAN.md`):
 
 1. **Búsqueda de antecedentes** (obligatoria, se inicia antes de la solicitud): fonética para
    "CISZU NETWORK" vía **WEBPI** (sistema en línea del SAPI). Coste **~$100 USD** (depósito
@@ -198,8 +198,8 @@ Detalle completo y costes reales: `INTERNATIONAL_LLC_PLAN.md`.
 
 - `RIF_PERSON_PLAN.md` — trámite del RIF gratis, paso a paso.
 - `COMMERCIAL_REGISTRATION_PLAN.md` — constitución de la empresa (SAREN).
-- `SAPI_TRADEMARK_PLAN.md` — registro de la marca + clases de Niza.
-- `FREELANCER_TAX_PLAN.md` — impuestos y facturación de persona natural.
+- `TRADEMARK_PLAN.md` — registro de la marca + clases de Niza.
+- `TAX_PLAN.md` — impuestos y facturación de persona natural.
 - `INTERNATIONAL_LLC_PLAN.md` — fase internacional (con capital real).
 - `plantillas/` — acta constitutiva S.R.L., solicitud FM-02, declaración jurada de uso,
   reserva de nombre y checklist por fases (formato MD + PDF).

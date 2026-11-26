@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Shim de powershell.exe para pwsh/Linux: reenvia a PowerShell 7.
+exec pwsh "$@"

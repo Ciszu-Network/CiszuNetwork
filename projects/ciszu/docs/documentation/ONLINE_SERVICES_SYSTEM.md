@@ -182,7 +182,7 @@ borrar cuentas y registrar el cierre en `PROJECT_HISTORY`.
    variables de `.env.local`, `.env` y Vercel (production+preview+development).
 3. **Actualizar docs**: quitar el servicio de este inventario (§11), de `AGENTS.md`,
    `FULL_STACK_SYSTEM.md` y de las referencias cruzadas.
-4. **Registrar el cierre** en `PROJECT_HISTORY.md` con fecha y motivo.
+4. **Registrar el cierre** en `PROJECTS_SYSTEM.md` con fecha y motivo.
 5. Si afecta a las webs (CSP, widgets, fuentes): actualizar middleware/CSP y validar en un build.
 
 ## Rotación de credenciales (recomendación)

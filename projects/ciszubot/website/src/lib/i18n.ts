@@ -259,7 +259,7 @@ const es = {
     communityServer: 'Servidor de Discord · Ciszugamens',
     openSource: 'Open Source · Repositorio en GitHub',
     backedBy: 'respaldado por',
-    rights: 'Todos los derechos reservados.',
+    rights: 'Licencia MIT.',
     madeBy: 'Hecho con amor por',
   },
   cookiesBanner: {
@@ -2095,7 +2095,7 @@ const en = {
     communityServer: 'Discord server · Ciszugamens',
     openSource: 'Open source · GitHub repository',
     backedBy: 'backed by',
-    rights: 'All rights reserved.',
+    rights: 'MIT License.',
     madeBy: 'Made with love by',
   },
   cookiesBanner: {

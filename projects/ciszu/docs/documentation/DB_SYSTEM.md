@@ -217,8 +217,8 @@ const cache = createClient(URL, KEY, { db: { schema: 'ciszu' } })
   pueden servirse desde ahí en vez de pegar a Postgres en cada request.
 - `AUTH_SYSTEM.md` — el schema `auth.*` (no tocar) y el flujo de sesiones/JWT que alimenta
   `(SELECT auth.uid())` en las policies.
-- `CDN_MIGRATIONS.md` — los buckets de `storage.*` y la gestión de assets vía Dashboard/CLI.
-- `MIGRATION_HANDOVER.md` — estado de las migraciones y su aplicación entre sesiones.
+- `CDN_SYSTEM.md` — los buckets de `storage.*` y la gestión de assets vía Dashboard/CLI.
+- `GLOBAL_SYSTEM.md` — estado de las migraciones y su aplicación entre sesiones.
 - `TOOLS_SYSTEM.md` §9 — **ERD Editor**: diagramas versionables (`services/supabase/*/*.erd.json`)
   generados con `scripts/generate-erd.js` a partir del SQL (formato vuerd v3.0.0).
 

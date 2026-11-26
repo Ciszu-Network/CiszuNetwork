@@ -1,31 +1,55 @@
 #!/bin/sh
-# Pre-commit (Husky): Lint-Staged (eslint) + detección de secretos (secretlint + gitleaks)
+# Pre-commit (Husky): Lint-Staged (eslint) + detección de secretos (secretlint + gitleaks).
 # Ignora el hook con: git commit --no-verify
+# Compatible Windows (Git Bash) y Linux/Fedora.
 
 # 1. Lint-Staged: ejecuta ESLint sobre los archivos staged de los paquetes CON eslint
-npx lint-staged
+npx --no-install lint-staged
 rc=$?
 if [ $rc -ne 0 ]; then
   echo "Lint-Staged encontro errores de lint. Abortando commit."
   exit 1
 fi
 
-# 2. Secretlint (scripts staged no versionados como global)
-secretlint="C:/Users/fplay/AppData/Roaming/npm/node_modules/secretlint/bin/secretlint.js"
+# 2. Secretlint: local, global o ruta histórica de Windows.
+SECRETLINT=""
+if command -v secretlint >/dev/null 2>&1; then
+  SECRETLINT="secretlint"
+elif [ -f node_modules/secretlint/bin/secretlint.js ]; then
+  SECRETLINT="node node_modules/secretlint/bin/secretlint.js"
+elif [ -f "C:/Users/fplay/AppData/Roaming/npm/node_modules/secretlint/bin/secretlint.js" ]; then
+  SECRETLINT='node C:/Users/fplay/AppData/Roaming/npm/node_modules/secretlint/bin/secretlint.js'
+fi
+
+# 3. Gitleaks: PATH o ruta histórica de Windows.
+GITLEAKS=""
+if command -v gitleaks >/dev/null 2>&1; then
+  GITLEAKS="gitleaks"
+elif [ -f "C:/Users/fplay/AppData/Local/Programs/Gitleaks/gitleaks.exe" ]; then
+  GITLEAKS="C:/Users/fplay/AppData/Local/Programs/Gitleaks/gitleaks.exe"
+fi
+
 if git diff --cached --name-only --diff-filter=ACM | grep -q .; then
-  git diff --cached --name-only --diff-filter=ACM -z | xargs -0 -n 200 node "$secretlint" --secretlintrc .secretlintrc.json
-  rc=$?
-  if [ $rc -ne 0 ]; then
-    echo "Secretlint detecto posibles secretos. Abortando commit."
-    exit 1
+  if [ -n "$SECRETLINT" ]; then
+    git diff --cached --name-only --diff-filter=ACM -z | xargs -0 -n 200 $SECRETLINT --secretlintrc .secretlintrc.json
+    rc=$?
+    if [ $rc -ne 0 ]; then
+      echo "Secretlint detecto posibles secretos. Abortando commit."
+      exit 1
+    fi
+  else
+    echo "Aviso: secretlint no esta instalado; se omite el escaneo de secretos." >&2
   fi
 
-  # 3. Gitleaks (protect --staged)
-  "C:/Users/fplay/AppData/Local/Programs/Gitleaks/gitleaks.exe" protect --staged --redact --config .gitleaks.toml
-  rc=$?
-  if [ $rc -ne 0 ]; then
-    echo "Gitleaks detecto posibles secretos. Abortando commit."
-    exit 1
+  if [ -n "$GITLEAKS" ]; then
+    $GITLEAKS protect --staged --redact --config .gitleaks.toml
+    rc=$?
+    if [ $rc -ne 0 ]; then
+      echo "Gitleaks detecto posibles secretos. Abortando commit."
+      exit 1
+    fi
+  else
+    echo "Aviso: gitleaks no esta instalado; se omite el escaneo de secretos." >&2
   fi
 fi
 exit 0

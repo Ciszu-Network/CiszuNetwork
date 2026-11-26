@@ -8,7 +8,7 @@ Identificador: AI_ART_PLAN_V2.0.0_2026_08_13_ciszunetwork
 > (banners, assets de MuzicMania, logos, iconos). Documenta la decisión final (proveedores
 > free + licencia comercial), los scripts de generación y la remoción de fondo.
 
-Tarea del TO_DO_LIST (alta prioridad): integrar generación de arte IA en el ecosistema (banners, assets de MuzicMania, logos, iconos) siguiendo la biblia `projects/ciszu/docs/documentation/ART_GUIDE.md` (§8 plantillas). **Completado (5 ago 2026)** — ver "Cierre de la tarea".
+Tarea del TO_DO_LIST (alta prioridad): integrar generación de arte IA en el ecosistema (banners, assets de MuzicMania, logos, iconos) siguiendo la biblia `projects/ciszu/docs/documentation/ART_PROTOCOLS.md` (§8 plantillas). **Completado (5 ago 2026)** — ver "Cierre de la tarea".
 
 ## Decisión final (usuario, 4 ago 2026)
 
@@ -72,7 +72,7 @@ node tools/image-ai/generate-art.js --provider hf --subject "a cute cyberpunk fe
 
 - Script ampliado y probado (`tools/image-ai/generate-art.js`): nomenclatura separada PNG/JSON, `--transparent` encadenado opt-in (corregido `--bg-method` con guión), `--format`, `--prompt`, `--no-log`. Plantilla con **full body** por defecto (`full body shot, whole character visible from head to toe, not cropped`) — FLUX recortaba a la cintura sin esa directriz.
 - `test/art/` regenerado (antes `downloads/test/art/`): 3 personajes full body con transparencia BiRefNet (aventurera, hechicera, androide) + volcán con escena completa sin transparencia (gitignored).
-- **Biblia de prompts añadida** en `ART_GUIDE.md` §9: 10 bancos modulares (sujetos fem/masc/no-humano, ropa, expresiones, poses, cámaras con full body, fondos con/sin, estilos, negativos extra, personalidades) + 10 prompts completos listos para copiar (A-J).
+- **Biblia de prompts añadida** en `ART_PROTOCOLS.md` §9: 10 bancos modulares (sujetos fem/masc/no-humano, ropa, expresiones, poses, cámaras con full body, fondos con/sin, estilos, negativos extra, personalidades) + 10 prompts completos listos para copiar (A-J).
 - El sistema de transparencia queda **desacoplado y opt-in**: solo `--transparent` cuando se pide personaje sin fondo/para recortar; escenas con fondo no se recortan. **Método recomendado: `birefnet`** (chroma solo para fondos planos sin huecos).
 
 ## Glosario del sistema (contexto informático)
@@ -119,7 +119,7 @@ node tools/image-ai/generate-art.js --provider hf --subject "a cute cyberpunk fe
 ## Flujo de trabajo completo de generación
 
 1. **Escribir la especificación** (sujeto, atuendo, expresión, fondo) siguiendo la biblia
-   de prompts de `ART_GUIDE.md` §9.
+   de prompts de `ART_PROTOCOLS.md` §9.
 2. **Generar** con `generate-art.js` (HF primario; retry automático ante 503).
 3. **Revisar** el resultado (manos, consistencia, dimensiones en el JSON de log).
 4. **Regenerar** si hace falta con prompt correctivo (igual que la aventurera regenerada).
@@ -147,7 +147,7 @@ para assets de producción (criterio que descartó Leonardo, Recraft y RMBG-2.0)
 | `tools/image-ai/generate-art.js` | CLI de generación multi-proveedor |
 | `tools/removebg-ai/remove-bg.js` | Remoción de fondo (chroma/BiRefNet) |
 | `test/art/` | Assets de prueba (gitignored) |
-| `ART_GUIDE.md` | Biblia de prompts (§8 plantillas, §9 bancos) |
+| `ART_PROTOCOLS.md` | Biblia de prompts (§8 plantillas, §9 bancos) |
 
 ## Buenas prácticas de nomenclatura y versionado
 
@@ -198,8 +198,8 @@ comercial; revisar siempre la licencia vigente de cada recurso.
 | `MEDIA_FORMATS_SYSTEM.md` | Formatos, tamaños y optimización de salida |
 | `TOOLS_SYSTEM.md` | Scripts del repositorio y su operación |
 | `VAULT_SYSTEM.md` | Keys de los proveedores (gitignored) |
-| `ART_GUIDE.md` | Biblia de prompts y dirección artística |
-| `CDN_MIGRATIONS.md` | Subida y referencia de assets |
+| `ART_PROTOCOLS.md` | Biblia de prompts y dirección artística |
+| `CDN_SYSTEM.md` | Subida y referencia de assets |
 
-_Última revisión: 10 nov 2026._ Relacionado: `ART_GUIDE.md`, `ART_PROTOCOLS.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `ART_PROTOCOLS.md`, `ART_PROTOCOLS.md`,
 `MEDIA_FORMATS_SYSTEM.md`, `TOOLS_SYSTEM.md`, `VAULT_SYSTEM.md`.

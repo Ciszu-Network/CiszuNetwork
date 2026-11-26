@@ -9,3 +9,7 @@ Genera un enlace para conectar la app de OpenCode del telefono al servidor compa
 3. Indica que pegue el enlace en el campo de direccion del servidor de la app (o lo escanee si la app lo ofrece).
 4. Si falla, revisa `.opencode/temp/opencode-server-err.log`, que el telefono este en la misma Wi-Fi o en Tailscale, y que `opencode.exe` tenga regla de entrada en el Firewall.
 5. No reveles ni imprimas `OPENCODE_PASSWORD`; la app se autentica con el enlace de emparejamiento.
+
+**Linux** (dentro del perfil `ciszu`): `ciszu-ai pair` genera los enlaces
+Wi-Fi/LAN, Tailscale y loopback desde el servidor local. Misma regla: no imprimir
+secretos.

@@ -129,7 +129,7 @@ final de la jornada.
 | Limpieza de CDN | Con plan previo y verificación posterior |
 
 Regla general: nada destructivo sin un punto de restauración y sin avisar (ver
-`WORKFLOW_SYSTEM.md`).
+`GLOBAL_SYSTEM.md`).
 
 ## Energía y cronotipo
 
@@ -202,4 +202,4 @@ Con las métricas de seguimiento: si los pendientes arrastrados bajan y hay día
 descanso respetados, la agenda funciona; si no, ajustar bloques o prioridades.
 
 _Última revisión: 10 nov 2026._ Relacionado: `GEOGRAPHIC_CONTEXT_PROTOCOLS.md`,
-`HEALTH_AND_SAFETY_PROTOCOLS.md`, `WORKFLOW_SYSTEM.md`, `VPS_PLAN.md`.
+`HEALTH_AND_SAFETY_PROTOCOLS.md`, `GLOBAL_SYSTEM.md`, `VPS_PLAN.md`.

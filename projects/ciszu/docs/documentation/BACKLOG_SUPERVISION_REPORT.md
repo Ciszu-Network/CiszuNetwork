@@ -92,5 +92,5 @@ Auditoría del 14 nov:
 
 No se modificó ningún `TODO.md`.
 
-_Última revisión: 14 nov 2026._ Relacionado: `TODO.md` de cada proyecto, `PROJECT_STATE.md`,
-`TAURI_SYSTEM.md`, `STATUS_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`.
+_Última revisión: 14 nov 2026._ Relacionado: `TODO.md` de cada proyecto, `PROJECTS_SYSTEM.md`,
+`INSTALLERS_SYSTEM.md`, `STATUS_SYSTEM.md`, `LOCAL_TESTING_PROTOCOLS.md`.

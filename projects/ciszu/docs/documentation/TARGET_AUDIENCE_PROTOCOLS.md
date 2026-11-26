@@ -34,7 +34,7 @@ Definición del público al que apunta Ciszu Network por producto (ago 2026). Ba
 
 ## Datos de uso actuales (para refinar)
 
-- Analítica: PostHog 1M eventos/mes free (comenzó ago 2026); Cloudflare Web Analytics en todas las webs (sin números históricos aún — ver `STATISTICS.md`).
+- Analítica: PostHog 1M eventos/mes free (comenzó ago 2026); Cloudflare Web Analytics en todas las webs (sin números históricos aún — ver `STATISTICS_SYSTEM.md`).
 - Monitor UptimeRobot: 5 endpoints UP.
 - Leaderboard de MuzicMania: tabla `scores` con récord global (scores por `track_id`).
 

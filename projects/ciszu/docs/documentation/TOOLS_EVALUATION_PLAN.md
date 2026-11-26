@@ -502,7 +502,7 @@ Estado resueltos: ArkType retirado del cuadro (zod gana por ecosistema, ver §3.
 - Datos y ORM: `DB_SYSTEM.md`, `ORM_SYSTEM.md`, `PACKAGES_SYSTEM.md`.
 - Seguridad y RLS: `SECURITY_PROTOCOLS.md`.
 - Hosting del bot: `DOCKER_SYSTEM.md`, `VPS_PLAN.md`.
-- Tooling y operación: `TOOLS_SYSTEM.md`, `WORKFLOW_SYSTEM.md`.
+- Tooling y operación: `TOOLS_SYSTEM.md`, `GLOBAL_SYSTEM.md`.
 - Viabilidad comercial (por qué no contratar clouds de pago aún): `BUSINESS_SYSTEM.md`, `TAX_PLAN.md`, `PAYMENTS_SYSTEM.md`.
 
 _Última revisión: 10 nov 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `TESTING_SYSTEM.md`, `MONITORING_SYSTEM.md`, `VPS_PLAN.md`, `UI_COMPONENTS_SYSTEM.md`.

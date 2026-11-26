@@ -215,7 +215,7 @@ música puede no sobrevivir (transcodificación); para probar:
   `src/components/dashboard/PreQuickDocks.tsx` · `src/app/explore/page.tsx` ·
   `src/lib/i18n.ts` (bloques `premiumPage`, `premiumPromo`, `legalPage`).
 - Deploy: `scripts/build-bot-standalone.mjs` · `scripts/standalone-postbuild.mjs` ·
-  `deploy/ciszubot-standalone.zip` (no versionado).
+  `projects/ciszubot/discord-bot/deploy/ciszubot-standalone.zip` (no versionado).
 
 ## 9. Seguridad
 

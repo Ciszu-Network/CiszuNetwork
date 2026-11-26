@@ -25,4 +25,4 @@ pnpm build
 
 ---
 
-&copy; 2026 Ciszuko Network. Todos los derechos reservados.
+&copy; 2026 Ciszuko Network — Ciszuko Antony. MIT License.

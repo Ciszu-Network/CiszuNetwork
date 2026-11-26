@@ -69,8 +69,8 @@ Si todo está en orden, el RIF se emite el mismo día. **Coste: $0.**
 
 ## 6. Qué viene después
 
-- Con el RIF activo: **facturar** servicios digitales (ver `FREELANCER_TAX_PLAN.md`).
-- Registrar la **marca** en el SAPI como persona natural (ver `SAPI_TRADEMARK_PLAN.md`).
+- Con el RIF activo: **facturar** servicios digitales (ver `TAX_PLAN.md`).
+- Registrar la **marca** en el SAPI como persona natural (ver `TRADEMARK_PLAN.md`).
 - Cuando haya ingresos recurrentes: constituir la **empresa** (ver `COMMERCIAL_REGISTRATION_PLAN.md`).
 
 ## Conceptos fiscales VE (contexto informático)
@@ -210,4 +210,4 @@ Este cálculo permite validar un RIF manualmente antes de usarlo en sistemas pro
 | `COMPANY_REGISTRATION_PLAN.md` | Hoja de ruta global (Fase 0) |
 
 _Última revisión: 10 nov 2026._ Relacionado: `COMPANY_REGISTRATION_PLAN.md`,
-`FREELANCER_TAX_PLAN.md`, `SAPI_TRADEMARK_PLAN.md`, `COMMERCIAL_REGISTRATION_PLAN.md`.
+`TAX_PLAN.md`, `TRADEMARK_PLAN.md`, `COMMERCIAL_REGISTRATION_PLAN.md`.

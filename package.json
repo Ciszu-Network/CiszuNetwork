@@ -86,6 +86,7 @@
     "vault:bw": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/vault-bitwarden.ps1",
     "ciszuhelp": "node scripts/ciszuhelp.js",
     "commands": "node shared/scripts/commands.mjs",
+    "shell:check": "node shared/scripts/shell/check-parity.mjs",
     "shell:new": "node shared/scripts/scaffold-desktop-shell.mjs",
     "doctor": "node shared/scripts/doctor.mjs",
     "clean:next": "node shared/scripts/clean.mjs --next",

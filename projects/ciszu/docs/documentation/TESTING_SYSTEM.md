@@ -193,7 +193,7 @@ pnpm test:watch   # modo watch
 pnpm test:ui      # panel VISUAL en el navegador (http://localhost:51204/__vitest__/)
 pnpm e2e          # Playwright: 4 smoke tests contra producción
 ```
-> ⚠️ `pnpm e2e` local usa `PLAYWRIGHT_BROWSERS_PATH` fijado en el config a `E:\Ciszu Network\.opencode\temp\playwright-browsers` (ya no hace falta exportarlo).
+> ⚠️ `pnpm e2e` local usa `PLAYWRIGHT_BROWSERS_PATH` fijado en el config a `<repo>/.opencode/temp/playwright-browsers` (ya no hace falta exportarlo; en Windows queda en `E:\Ciszu Network\.opencode\temp\playwright-browsers`).
 
 **CI** (`.github/workflows/ci.yml`): nuevo job `unit-tests` (pnpm install + `pnpm test`) en ubuntu-latest. El E2E se queda local para no depender de producción desde CI.
 

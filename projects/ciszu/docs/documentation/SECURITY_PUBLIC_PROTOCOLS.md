@@ -263,7 +263,7 @@ required_pull_request_reviews:
 | `ACTIONS_RUNNERS_SYSTEM.md` | Configuración runners (self-hosted → GitHub-hosted)            |
 | `DEVSECOPS_SYSTEM.md`       | Pipeline SAST/DAST/SCA (shift-left)                            |
 | `DOCUMENTATION_SYSTEM.md`   | Estándar de docs (este archivo sigue convención`_PROTOCOLS`)   |
-| `WORKFLOW_SYSTEM.md`        | Operación diaria, git, commits, deploys                        |
+| `GLOBAL_SYSTEM.md`        | Operación diaria, git, commits, deploys                        |
 | `CIBERSECURITY_SYSTEM.md`   | OSINT, hardening, respuesta a incidentes                       |
 
 ---
@@ -280,7 +280,7 @@ required_pull_request_reviews:
 - [x] Vercel projects vinculados a GitHub repo público
 - [x] Branch protection `main` activada
 - [x] Dependabot + Security alerts habilitados
-- [x] Documentar en `PROJECT_HISTORY.md` la fecha de publicación pública
+- [x] Documentar en `PROJECTS_SYSTEM.md` la fecha de publicación pública
 - [x] Notificar al equipo (solo Ciszuko Antony) — cambio completado
 
 ---

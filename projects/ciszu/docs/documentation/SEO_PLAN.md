@@ -435,7 +435,7 @@ comandos ya automatizados (ver §14) y se revisan en cada ciclo.
 1. `pnpm seo:compare:<web> <mes-anterior> <mes-actual>` → reporte de progreso.
 2. Revisar Lighthouse CI del mes (auto).
 3. Actualizar la tabla de seguimiento (§4) con los scores.
-4. Documentar en `PROJECT_STATE.md` / `STATUS_SYSTEM.md` el estado mensual.
+4. Documentar en `PROJECTS_SYSTEM.md` / `STATUS_SYSTEM.md` el estado mensual.
 
 ### 5.2 Mejoras continuas (no bloqueantes, cuando toque)
 

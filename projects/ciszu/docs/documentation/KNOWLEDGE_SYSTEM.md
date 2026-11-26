@@ -26,7 +26,7 @@ Guía de cómo Ciszu Network (fundador único) aprende, investiga y se mantiene 
 - **BD/Supabase**: Supabase Docs + Guides; SQL reales con `dbvr`.
 - **Diseño/marca**: tutoriales de Adobe Illustrator/Photoshop (identidad visual con masters `.ai`/`.psd` propios), teoría de color, tipografía (Geomanist).
 - **Música/audio**: producción digital (AV), teoría básica — el ecosistema incluye MuzicMania con música propia.
-- **Empresa/finanzas**: cursos de SENIAT (impuestos y facturación VE), SAREN (marcas/registro mercantil), CFA/Market basics — ver docs legales (`COMPANY_REGISTRATION_PLAN.md`, `FREELANCER_TAX_PLAN.md`).
+- **Empresa/finanzas**: cursos de SENIAT (impuestos y facturación VE), SAREN (marcas/registro mercantil), CFA/Market basics — ver docs legales (`COMPANY_REGISTRATION_PLAN.md`, `TAX_PLAN.md`).
 - **IA/herramientas**: aprendizaje continuo de las herramientas de desarrollo y generación IA usadas (ver `TOOLS_SYSTEM.md`, `ANALYTICS_SYSTEM.md`).
 
 ### Cursos de inglés oficiales de Ciszu Network
@@ -224,7 +224,7 @@ Esta tabla evita redes de búsqueda: ir directo a la fuente primaria de cada tem
   tiempo puntual y documentar el resultado en el doc del sistema afectado.
 
 El aprendizaje no compite con el roadmap: se integra como mejora concreta del
-repo (ver `WORKFLOW_SYSTEM.md`).
+repo (ver `GLOBAL_SYSTEM.md`).
 
 ## Preguntas frecuentes (FAQ)
 
@@ -246,7 +246,7 @@ Marcarla como pendiente en `TODO.md` con referencia a la fuente; no escribirla
 como hecho confirmado en los docs hasta verificarla empíricamente.
 
 _Última revisión: 10 nov 2026._ Relacionado: `FULL_STACK_SYSTEM.md`, `TOOLS_SYSTEM.md`,
-`WORKFLOW_SYSTEM.md`, `CODE_PRINCIPLES_PROTOCOLS.md`.
+`GLOBAL_SYSTEM.md`, `CODE_PRINCIPLES_PROTOCOLS.md`.
 
 ## AC3 — Aprendizaje Completo Cruzado Continuo (C3L)
 
@@ -341,4 +341,4 @@ Permite usar y compartir libremente, obliga a reconocer al autor original y proh
 la monetización por terceros sin autorización expresa.
 
 _Última revisión: 10 nov 2026._ Relacionado: `KNOWLEDGE_SYSTEM.md`, `FULL_STACK_SYSTEM.md`,
-`TOOLS_SYSTEM.md`, `WORKFLOW_SYSTEM.md`.
+`TOOLS_SYSTEM.md`, `GLOBAL_SYSTEM.md`.

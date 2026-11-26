@@ -198,9 +198,9 @@ Si se supera el 60% de cualquier métrica, revisar antes de hacer más cambios.
 
 ## 9. Relacionados
 
-- `STORE_ECONOMY_PLAN.md` — economía y tienda.
-- `STORE_ECONOMY_PHASE1_IMPLEMENTATION_PLAN.md` — implementación de tienda.
-- `PROJECT_STATE.md` — estado vivo.
+- `projects/muzicmania/docs/documentation/STORE_ECONOMY_PLAN.md` — economía y tienda.
+- `projects/muzicmania/docs/documentation/STORE_ECONOMY_PHASE1_IMPLEMENTATION_PLAN.md` — implementación de tienda.
+- `PROJECTS_SYSTEM.md` — estado vivo.
 - `TODO.md` — hoja de ruta de Ciszuko Antony.
 - `MONITORING_SYSTEM.md` — uptime y alertas.
 

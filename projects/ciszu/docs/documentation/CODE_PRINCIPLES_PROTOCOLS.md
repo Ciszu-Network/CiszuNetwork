@@ -24,8 +24,8 @@ Reglas operativas que todo agente debe cumplir al tocar el monorepo:
 5. **Proponer librerías nuevas y esperar aprobación**; nunca instalar sin validar.
 6. **Mensajes de commit en español**, descriptivos, una línea, sin emojis.
 7. Tras cambios en policies/funciones de Supabase: verificar Security + Performance Advisors.
-8. **Cerrar sesión**: actualizar `STATUS_SYSTEM.md`, `PROJECTS_SYSTEM.md`, `PROJECT_HISTORY.md`
-   (historial dentro de `PROJECTS_SYSTEM.md`) y dejar instrucciones en `WORKFLOW_SYSTEM.md`.
+8. **Cerrar sesión**: actualizar `STATUS_SYSTEM.md`, `PROJECTS_SYSTEM.md`
+   (historial dentro de `PROJECTS_SYSTEM.md`) y dejar instrucciones en `GLOBAL_SYSTEM.md`.
 
 > **Skills del agente opcionales** (catálogo: `MODELS_SKILLS_SYSTEM.md`): el ingeniero puede
 > cargar `brainstorming`/`writing-plans` (diseño previo), `test-driven-development`
@@ -210,7 +210,7 @@ Un componente debe comportarse como la mayoría de los desarrolladores esperan:
 - `SECURITY_PROTOCOLS.md` — checklist no negociable de seguridad por implementación.
 - `DEVSECOPS_SYSTEM.md` — SAST/DAST, shift-left.
 - `TESTING_SYSTEM.md` — cómo se prueba cada capa.
-- `WORKFLOW_SYSTEM.md` — protocolo de tarea, inicio y cierre de sesión.
+- `GLOBAL_SYSTEM.md` — protocolo de tarea, inicio y cierre de sesión.
 
 _Última revisión: 10 nov 2026._ Relacionado: `SECURITY_PROTOCOLS.md`, `DEVSECOPS_SYSTEM.md`,
-`WORKFLOW_SYSTEM.md`, `TESTING_SYSTEM.md`, `DB_SYSTEM.md`.
+`GLOBAL_SYSTEM.md`, `TESTING_SYSTEM.md`, `DB_SYSTEM.md`.

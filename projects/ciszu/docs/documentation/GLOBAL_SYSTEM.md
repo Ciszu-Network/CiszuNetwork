@@ -1,8 +1,8 @@
 ﻿# GLOBAL_SYSTEM — Sistema Global y Flujo de Trabajo (Ciszu Network)
 
-Versión: 2.0.0
-Actualización: 2026-11-10
-Identificador: GLOBAL_SYSTEM_V2.0.0_2026_08_26_ciszunetwork
+Versión: 2.0.1
+Actualización: 2026-11-25
+Identificador: GLOBAL_SYSTEM_V2.0.1_2026_11_25_ciszunetwork
 
 > **Definición**: sistema global del ecosistema (antiguo WORKFLOW_SYSTEM): operación diaria del
 > monorepo, comandos, pipelines, convenciones git, CI/CD y protocolos de equipo. Además del
@@ -247,6 +247,21 @@ curl -sI https://ciszunetwork.vercel.app | Select-String -Pattern "200"  # prod
 | ¿Puedo usar `--no-verify`? | Solo con falso positivo justificado y aviso |
 | ¿Quién hace push? | El usuario manualmente (DNS) |
 | ¿Qué hago si un deploy falla? | Revisar logs de Vercel, build y el path tocado |
+
+## Entorno híbrido (Windows + Fedora)
+
+El repo ya no asume PowerShell como único shell:
+
+- `shared/shell/` contiene la capa POSIX (`env.sh`, `aliases.sh`, `zshrc`) y el
+  instalador para Fedora; `shared/powershell/CiszuNetwork.Profile.ps1` es el
+  espejo en Windows.
+- Los comandos de proyecto (`repo`, `dev`, `gs`, `gc`, `gcp`, `doctor`,
+  `cdnupload`, `test*`, `sb*`) están en ambos shells. Los exclusivos de Windows
+  (`devcon`, `osint*`, `ports`) están marcados en `shared/shell/README.md`.
+- La raíz del repo se resuelve con `CISZU_REPO` (`$env:CISZU_REPO` en PowerShell,
+  `$CISZU_REPO` en zsh). No hardcodear `C:\`, `E:\` ni rutas absolutas en scripts.
+- Fedora se prepara con `bash shared/scripts/linux/fedora-setup.sh`; detalles, OpenCode
+  y el port de MuzicMania en `LINUX_SYSTEM.md`.
 
 ## Relación con otros sistemas
 

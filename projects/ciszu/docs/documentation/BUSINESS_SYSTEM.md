@@ -8,7 +8,7 @@ Identificador: BUSINESS_SYSTEM_V2.0.0_2026_08_13_ciszunetwork
 > referencia e ingresos, estrategias de producto/marketing/empresarial/relaciones, y
 > estructura organizacional.
 
-Marco completo del negocio de Ciszu Network (ago 2026): modelos de referencia e ingresos, estrategias de producto/marketing/empresarial/relaciones, y estructura organizacional. Complementa `ORGANIZATIONAL_SCALABILITY_PLAN.md`, `COMPANY_REGISTRATION_PLAN.md`, `PAYMENTS_SYSTEM.md`, `ONLINE_SERVICES.md`.
+Marco completo del negocio de Ciszu Network (ago 2026): modelos de referencia e ingresos, estrategias de producto/marketing/empresarial/relaciones, y estructura organizacional. Complementa `ORGANIZATIONAL_SCALABILITY_PLAN.md`, `COMPANY_REGISTRATION_PLAN.md`, `PAYMENTS_SYSTEM.md`, `ONLINE_SERVICES_SYSTEM.md`.
 
 ## Modelos de negocio de referencia
 
@@ -33,7 +33,7 @@ Marco completo del negocio de Ciszu Network (ago 2026): modelos de referencia e 
 
 - **Operación remota 24/7**: Vercel + Supabase + GitHub Actions (infra en la nube).
 - **Bootstrap/costo-cero**: Free tiers cuidados (límites monitoreados — cuota storage 1 GB conocida, ver `AGENTS.md`).
-- **Única fuente de verdad**: decisiones de costo/servicio en `ONLINE_SERVICES.md`.
+- **Única fuente de verdad**: decisiones de costo/servicio en `ONLINE_SERVICES_SYSTEM.md`.
 
 ## Referentes de negocio a estudiar
 
@@ -62,7 +62,7 @@ Marco completo del negocio de Ciszu Network (ago 2026): modelos de referencia e 
 
 - **Fase 0 legal sin costo** (RIF persona natural, SENIAT, WhatsApp) — ver `COMPANY_REGISTRATION_PLAN.md`.
 - **Monetización**: NOWPayments (invoices crypto) + donaciones (métodos env `DONATE_*`); madurar a LLC (18 cumplidos el 11 nov 2026) (ver `PAYMENTS_SYSTEM.md`, `INTERNATIONAL_LLC_PLAN.md`).
-- **Costo controlado**: Free tiers (Supabase 1 GB, Vercel Hobby, Cloudflare Fase A gratis, UptimeRobot 50 monitores, PostHog 1M eventos) — ver `ONLINE_SERVICES.md`.
+- **Costo controlado**: Free tiers (Supabase 1 GB, Vercel Hobby, Cloudflare Fase A gratis, UptimeRobot 50 monitores, PostHog 1M eventos) — ver `ONLINE_SERVICES_SYSTEM.md`.
 - **Retención de usuario**: sistema de niveles/XP en el bot, leaderboard de MuzicMania, rewards por votos.
 
 ## Estrategia de relaciones
@@ -73,7 +73,7 @@ Marco completo del negocio de Ciszu Network (ago 2026): modelos de referencia e 
 
 ## Métricas y decisiones
 
-- KPIs: eventos PostHog (~1M free), visitas (Web Analytics), votos top.gg/DBL (contadores `ciszu.counters`), récords/scores MuzicMania, crecimiento de servidores del bot (heartbeat `bot_status.guilds`). Ver `ANALYTICS_SYSTEM.md`, `STATISTICS.md`.
+- KPIs: eventos PostHog (~1M free), visitas (Web Analytics), votos top.gg/DBL (contadores `ciszu.counters`), récords/scores MuzicMania, crecimiento de servidores del bot (heartbeat `bot_status.guilds`). Ver `ANALYTICS_SYSTEM.md`, `STATISTICS_SYSTEM.md`.
 - Revisar trimestralmente para decidir dónde invertir tiempo; 0 ads hasta tener datos suficientes.
 
 ## Estructura organizacional
@@ -98,7 +98,7 @@ Inspirado en jerarquías de comunidades/discord y startups, ajustado a VE (ver `
 4. **Mods / Marketing / Soporte** — comunidad y redes.
 5. **Colaboradores / beta-testers** — comunidad y feedback.
 
-Los rangos aplican esquema en-discord (roles con color neon cian/rosa y permisos por nivel). Cada rango revisa quién es visible en `CONTACTS.md`.
+Los rangos aplican esquema en-discord (roles con color neon cian/rosa y permisos por nivel). Cada rango revisa quién es visible en `CONTACTS_PROTOCOLS.md`.
 
 ### Esquema visual (propuesta)
 
@@ -182,7 +182,7 @@ Los rangos aplican esquema en-discord (roles con color neon cian/rosa y permisos
 **¿Cómo medir si un producto funciona?** Por los KPIs de la tabla §Métricas: visitas,
 eventos, votos, servidores y scores; revisión trimestral.
 
-**¿Qué hacer si un free tier se agota?** Consultar `ONLINE_SERVICES.md` antes de pagar;
+**¿Qué hacer si un free tier se agota?** Consultar `ONLINE_SERVICES_SYSTEM.md` antes de pagar;
 migrar solo si el límite es bloqueante.
 
 **¿Cuál es el canal de contacto oficial del negocio?** Soporte en Discord + WhatsApp
@@ -193,7 +193,7 @@ ecosistema es `ciszunetwork@outlook.com`.
 
 - Priorizar los free tiers hasta tener datos que justifiquen un plan pagado.
 - No abrir suscripciones ni crear LLC sin registro/identidad legal e ingresos sostenidos (la edad ya no bloquea).
-- Todas las decisiones de costo/servicio se documentan en `ONLINE_SERVICES.md`.
+- Todas las decisiones de costo/servicio se documentan en `ONLINE_SERVICES_SYSTEM.md`.
 
 ## Relación con otros sistemas
 
@@ -204,6 +204,6 @@ ecosistema es `ciszunetwork@outlook.com`.
 | `ORGANIZATIONAL_SCALABILITY_PLAN.md` | Estructura y delegación al crecer |
 | `ANALYTICS_SYSTEM.md` | KPIs y métricas de decisión |
 | `REVIEWS_SYSTEM.md` | Reputación y confianza social |
-| `ONLINE_SERVICES.md` | Fuente de verdad de costos/servicios |
+| `ONLINE_SERVICES_SYSTEM.md` | Fuente de verdad de costos/servicios |
 
 _Última revisión: 10 nov 2026._

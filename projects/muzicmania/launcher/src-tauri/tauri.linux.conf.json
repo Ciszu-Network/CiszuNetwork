@@ -1,18 +1,40 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "bundle": {
-    "targets": ["deb", "appimage"],
+    "targets": ["deb", "rpm", "appimage"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
+      "icons/256x256.png",
+      "icons/512x512.png",
       "icons/icon.icns",
       "icons/icon.ico"
     ],
     "shortDescription": "Ecosistema rítmico de alto rendimiento",
     "longDescription": "MuzicMania es un juego rítmico de alto rendimiento desarrollado por Ciszu Network. La edición Linux usa el WebView del sistema y carga el juego online; el instalador nativo se distribuye como DEB o AppImage.",
     "publisher": "Ciszu Network",
-    "copyright": "© 2026 Ciszu Network. Todos los derechos reservados.",
-    "licenseFile": "LICENSE.txt"
+    "copyright": "© 2026 Ciszu Network — Ciszuko Antony. MIT License.",
+    "licenseFile": "LICENSE.txt",
+    "linux": {
+      "appimage": {
+        "files": {
+          "usr/share/metainfo/network.ciszu.muzicmania.metainfo.xml": "linux/network.ciszu.muzicmania.metainfo.xml",
+          "usr/share/licenses/muzicmania/LICENSE": "LICENSE.txt"
+        }
+      },
+      "deb": {
+        "files": {
+          "/usr/share/metainfo/network.ciszu.muzicmania.metainfo.xml": "linux/network.ciszu.muzicmania.metainfo.xml",
+          "/usr/share/doc/muzicmania/copyright": "LICENSE.txt"
+        }
+      },
+      "rpm": {
+        "files": {
+          "/usr/share/metainfo/network.ciszu.muzicmania.metainfo.xml": "linux/network.ciszu.muzicmania.metainfo.xml",
+          "/usr/share/licenses/muzicmania/LICENSE": "LICENSE.txt"
+        }
+      }
+    }
   }
 }

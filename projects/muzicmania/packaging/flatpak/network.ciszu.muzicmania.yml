@@ -1,0 +1,33 @@
+app-id: network.ciszu.muzicmania
+runtime: org.gnome.Platform
+runtime-version: '49'
+sdk: org.gnome.Sdk
+sdk-extensions:
+  - org.freedesktop.Sdk.Extension.rust-stable
+command: muzicmania
+finish-args:
+  - --share=ipc
+  - --share=network
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --socket=pulseaudio
+  - --device=dri
+  - --talk-name=org.freedesktop.portal.Desktop
+  - --filesystem=xdg-download
+modules:
+  - name: muzicmania
+    buildsystem: simple
+    build-options:
+      append-path: /usr/lib/sdk/rust-stable/bin
+      env:
+        CARGO_HOME: /run/build/muzicmania/cargo
+    build-commands:
+      - cargo build --release --manifest-path launcher/src-tauri/Cargo.toml
+      - install -Dm755 launcher/src-tauri/target/release/muzicmania /app/bin/muzicmania
+      - install -Dm644 packaging/assets/network.ciszu.muzicmania.desktop /app/share/applications/network.ciszu.muzicmania.desktop
+      - install -Dm644 packaging/assets/network.ciszu.muzicmania.metainfo.xml /app/share/metainfo/network.ciszu.muzicmania.metainfo.xml
+      - install -Dm644 launcher/src-tauri/icons/512x512.png /app/share/icons/hicolor/512x512/apps/network.ciszu.muzicmania.png
+      - install -Dm644 launcher/src-tauri/LICENSE.txt /app/share/licenses/network.ciszu.muzicmania/LICENSE
+    sources:
+      - type: dir
+        path: ../..

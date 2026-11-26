@@ -199,7 +199,7 @@ packages/payments/
 ## Reglas fiscales y de registro (resumen)
 
 - Sin ingresos reales todavía → sin obligación de facturación inmediata; contabilidad manual en `archives/legal`.
-- A partir de ingresos se aplica el criterio de `FREELANCER_TAX_PLAN.md` y `COMPANY_REGISTRATION_PLAN.md`.
+- A partir de ingresos se aplica el criterio de `TAX_PLAN.md` y `COMPANY_REGISTRATION_PLAN.md`.
 - Toda donación/venta se registra en `archives/legal` (privado, gitignored) para conciliar después.
 - Cuando se active la venta, activar también el schema `pagos` (orders/transactions con RLS).
 

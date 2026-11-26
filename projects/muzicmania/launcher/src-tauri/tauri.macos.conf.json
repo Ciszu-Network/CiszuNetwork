@@ -12,7 +12,7 @@
     "shortDescription": "Ecosistema rítmico de alto rendimiento",
     "longDescription": "MuzicMania es un juego rítmico de alto rendimiento desarrollado por Ciszu Network. La edición macOS usa WKWebView y carga el juego online; se distribuye como app y DMG sin firmar hasta disponer de Developer ID.",
     "publisher": "Ciszu Network",
-    "copyright": "© 2026 Ciszu Network. Todos los derechos reservados.",
+    "copyright": "© 2026 Ciszu Network — Ciszuko Antony. MIT License.",
     "licenseFile": "LICENSE.txt"
   }
 }

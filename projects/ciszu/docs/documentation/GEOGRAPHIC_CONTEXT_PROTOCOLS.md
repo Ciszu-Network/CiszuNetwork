@@ -25,7 +25,7 @@ Contexto de dónde opera Ciszuko Network. Como empresa unipersonal registrada en
 ## Zona horaria y agenda
 
 - Todo cron/CI está en **UTC** (pipeline de seguridad 06:00 UTC, DAST lunes 06:30 UTC); convertir a hora local (UTC−4) al planificar (es decir, 02:00/02:30 hora de Caracas).
-- La agenda semanal de `SCHEDULE.md` se refiere a hora local de Falcón (UTC−4).
+- La agenda semanal de `SCHEDULE_PROTOCOLS.md` se refiere a hora local de Falcón (UTC−4).
 
 ## Ventajas del contexto
 
@@ -42,7 +42,7 @@ Contexto de dónde opera Ciszuko Network. Como empresa unipersonal registrada en
 
 | Área | Impacto | Documento |
 |---|---|---|
-| Fiscal | RIF persona natural VE, facturación digital | `COMPANY_REGISTRATION_PLAN.md`, `FREELANCER_TAX_PLAN.md` |
+| Fiscal | RIF persona natural VE, facturación digital | `COMPANY_REGISTRATION_PLAN.md`, `TAX_PLAN.md` |
 | Pagos | PayPal/Binance P2P/Zinli/cripto; sin tarjeta internacional | `PAYMENTS_SYSTEM.md` |
 | Legal | Marcas SAPI, registro SAREN en línea | `TRADEMARK_PLAN.md`, `COMMERCIAL_REGISTRATION_PLAN.md` |
 | Infra | Hosting en la nube (no local); bot 24/7 depende del PC hoy | `VPS_PLAN.md`, `REMOTE_CONTROL_SYSTEM.md` |

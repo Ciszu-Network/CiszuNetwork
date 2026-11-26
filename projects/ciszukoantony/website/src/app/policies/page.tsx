@@ -72,7 +72,7 @@ const sections = [
     id: 'legal', title: 'Legal Notice',
     content: [
       NETWORK_LINK,
-      { text: '® is a registered trademark. All rights reserved. The content of this website may not be reproduced, distributed or used without prior written authorization. Product names, logos and brands mentioned are the property of their respective owners.' },
+      { text: '® is a registered trademark. The source code is MIT licensed and may be reused with its copyright notice. The editorial content, music and graphic assets remain the property of their respective owners; product names, logos and brands belong to their respective holders.' },
     ] as RichPart[],
   },
   {

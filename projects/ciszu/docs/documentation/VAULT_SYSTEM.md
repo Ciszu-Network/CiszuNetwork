@@ -1,8 +1,8 @@
 # VAULT_SYSTEM — Protección del vault de credenciales — plan y estado (10 ago 2026)
 
-Versión: 2.2.0
-Actualización: 2026-11-10
-Identificador: VAULT_SYSTEM_V2.2.0_2026_08_18_ciszunetwork
+Versión: 2.3.0
+Actualización: 2026-11-25
+Identificador: VAULT_SYSTEM_V2.3.0_2026_11_25_ciszunetwork
 
 > **Definición**: protección de los archivos locales de credenciales (`.env`/vault) de Ciszu
 > Network contra robo físico, acceso no autorizado, filtraciones y pérdida. Plan maestro con
@@ -44,9 +44,9 @@ y el vault de la nube asegura la **recuperación**.
 | `projects/ciszubot/discord-bot/.env` | Token bot Discord, TOP_GG, DBL | gitignored + incluido en bundle cifrado |
 | `archives/backups/envs/vault-*.env.age` | **Bundle cifrado** de TODOS los `.env` (zip + age) | ACL fplay/SYSTEM |
 | `services/supabase/.env` (14 ago 2026) | +2 vars: **`TANSTACK_API_KEY`** (ts_, cuenta /account/submissions, proyecto "Ciszu Network", en revisión) y **`CHROMATIC_PROJECT_TOKEN`** (chpt_, Storybook visual testing) | Incluidas en re-cifrado age (`crypt` 14 ago) y bundle |
-| `services/supabase/.env` (15 ago 2026) | +13 vars **Better Stack**: `BETTERSTACK_API_TOKEN` (API Telemetry/Uptime), `BETTERSTACK_TELEMETRY_TOKEN` (source token de logs, usado por `@logtail/pino` en `@ciszunetwork/utils/logger`), `BETTERSTACK_UPTIME_TOKEN` (Uptime) y `BETTERSTACK_BACKUP_1..10` (cupos reservados para tokens de respaldo) | Incluidas en re-cifrado age (`crypt` 15 ago) — bundle pendiente |
-| `C:\Users\fplay\.ciszu\ciszu-vault-key.txt` | **Identity age** (clave privada) | ACL fplay/SYSTEM + copia en Bitwarden (usuario) |
-| `C:\Users\fplay\Tools\age\` | Binario age v1.2.1 | — |
+| `services/supabase/.env` (15 ago 2026) | +13 vars **Better Stack**: `BETTERSTACK_API_TOKEN` (API Telemetry/Uptime), `BETTERSTACK_TELEMETRY_TOKEN` (source token de logs, usado por `@logtail/pino` en `@ciszunetwork/utils/logger`), `BETTERSTACK_UPTIME_TOKEN` (Uptime) y `BETTERSTACK_BACKUP_1..10` (cupos reservados para tokens de respaldo) | Incluidas en re-cifrado age (`crypt` 15 ago); bundle regenerado 25 nov 2026 |
+| `C:\Users\fplay\.ciszu\ciszu-vault-key.txt` + `~/.ciszu/…` | **Identity age** (clave privada) | ACL fplay/SYSTEM (Windows) + 0600 (Linux) + copia en Bitwarden (usuario) |
+| `C:\Users\fplay\Tools\age\` (Windows) / `age` dnf (Linux) | Binario age 1.2.1 / 1.3.2 | — |
 | Bitwarden (nube) | Copia maestra de secrets + identity age (org Ciszu + vault personal) | Org "Ciszu Network" + cuenta Francisco Garcia (Free) |
 
 ### Eliminados en la limpieza (10 ago 2026)
@@ -63,20 +63,24 @@ y el vault de la nube asegura la **recuperación**.
 
 ### 3.1 IMPLEMENTADA — age (cifrado de archivo) ✅
 
-**age v1.2.1** (`C:\Users\fplay\Tools\age\`, añadido al PATH de usuario) cifra los archivos
+**age 1.2.1 (Windows) / 1.3.2 (Fedora, dnf)** cifra los archivos
 de credenciales con X25519. El flujo diario no cambia: los scripts siguen leyendo el `.env`
 en claro; lo cifrado son las **copias maestras y backups**.
 
-- **Identity**: `C:\Users\fplay\.ciszu\ciszu-vault-key.txt`
+- **Identity**: `C:\Users\fplay\.ciszu\ciszu-vault-key.txt` (Windows) y
+  `~/.ciszu/ciszu-vault-key.txt` (Linux, 0600; `vault.ps1` la copia desde Windows la primera vez).
   - Public key: `age1jut59wen44w4r7e92c9faxqxk7wdlkpyhdutf9p8980xvg359utqj4xl32`
   - ⚠️ **El usuario debe guardar una copia en Bitwarden/Proton Pass** (si se pierde la
     identity, las copias `.age` son irrecuperables).
-- **Copia maestra**: `services/supabase/.env.age` (descifrable con identity).
+- **Copia maestra**: `services/supabase/.env.age` (descifrable con identity). Regenerada y
+  verificada en Fedora el 25 nov 2026 (SHA256 `B2D27052…7BCE0A`).
 - **Bundle periódico**: `archives/backups/envs/vault-<fecha>.env.age` (zip cifrado con
   todos los `.env` del repo).
-- **`scripts/vault.ps1`** — gestión: `crypt | decrypt | verify | backup | keygen | lock-acl`.
+- **`scripts/vault.ps1`** — gestión multiplataforma (Windows PowerShell/pwsh y pwsh en Linux):
+  `crypt | decrypt | verify | backup | keygen | lock-acl`.
   - `verify` comprueba integridad (roundtrip + hash SHA256).
   - `backup` regenera el bundle cifrado de todos los `.env`.
+  - `lock-acl` usa `icacls` en Windows y `chmod 600/700` en Linux.
 - **`scripts/update-env-keys.js`** — desde el 10 ago cifra automáticamente los backups que
   genera antes de cada rotación (archivo por archivo, con age).
 
@@ -89,7 +93,7 @@ en claro; lo cifrado son las **copias maestras y backups**.
 - `.env.local` (raíz)
 - `archives/backups/envs/vault-*.env.age`
 
-Re-aplicar tras cambios con: `.\scripts\vault.ps1 lock-acl`.
+Re-aplicar tras cambios con: `pwsh scripts/vault.ps1 lock-acl`.
 ✅ `projects/ciszubot/discord-bot/.env` — ACL aplicada 10 ago 2026 (takeown + icacls
 elevado, UAC aceptado): propiedad fplay, permisos solo fplay + SYSTEM. Docker lo sigue
 leyendo (corre con privilegios de SYSTEM/fplay).

@@ -40,7 +40,7 @@ By using Ciszupy, you agree to these terms. If you do not agree,
 do not use the package.
 
 ARTICLE 2: PACKAGE USAGE
-Ciszupy is provided "as is" for personal and educational purposes.
+Ciszupy is provided "as is" under the MIT License, including commercial use.
 Continuous availability is not guaranteed.
 
 ARTICLE 3: PRIVACY

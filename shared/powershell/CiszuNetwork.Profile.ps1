@@ -1,10 +1,11 @@
 # CISZU Network portable PowerShell profile.
 # Windows PowerShell 5.1+ / PowerShell 7+. ASCII-safe for legacy consoles.
+# Espejo POSIX: shared/shell/ (zsh/bash). Mantener la paridad de comandos.
 
 $script:CiszuRepo = if ($env:CISZU_REPO -and (Test-Path -LiteralPath $env:CISZU_REPO)) {
   (Resolve-Path -LiteralPath $env:CISZU_REPO).Path
 } else {
-  (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+  Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 }
 
 $script:CiszuApps = [ordered]@{
@@ -43,6 +44,7 @@ try {
 } catch {}
 
 if ($script:CiszuShowBanner -and $Host.Name -match 'ConsoleHost') {
+  Clear-Host
   Write-Host "${c_cyan}☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰${c_reset}"
   Write-Host "                 ${c_blue}CISZU NETWORK${c_reset} ${c_purple}| PORTABLE PROFILE | CLI | TUI${c_reset}"
   Write-Host "${c_cyan}☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰☰${c_reset}"
@@ -100,7 +102,9 @@ function prompt {
   if ($p.StartsWith($HOME)) { $p = $p.Replace($HOME, '~') }
   if ($script:CiszuRepo -and $p.Contains($script:CiszuRepo)) { $p = $p.Replace($script:CiszuRepo, '[repo]') }
   $time = Get-Date -Format 'HH:mm'
-  $user = "$env:USERNAME@$env:COMPUTERNAME"
+  $userName = if ($env:USERNAME) { $env:USERNAME } elseif ($env:USER) { $env:USER } else { 'user' }
+  $hostName = if ($env:COMPUTERNAME) { $env:COMPUTERNAME } else { [System.Net.Dns]::GetHostName() }
+  $user = "$userName@$hostName"
   $branch = Get-CiszuGitBranch
   $g = if ($branch) { "${c_pink}($branch) ⛕${c_reset}" } else { "${c_red} No git branch ✘${c_reset}" }
   "${c_cyan} ✦ BIENVENIDO CISZU ✦ ${c_reset} 〔Repo: $g ︙ Time: [$time] ✇ ︙ Usuario: [$user] ㋡〕 ${c_reset}${c_cyan}✦${c_reset}${c_purple} `n
@@ -326,7 +330,20 @@ Register-ArgumentCompleter -Native -CommandName git -ScriptBlock {
 }
 
 function Show-CiszuHeader {
-  $artFile = Join-Path $HOME '.config\powershell-banners-custom\ciszu-banner-logo.ansi'
+  # Misma fuente de temas ANSI que el perfil de Linux (repo primero).
+  #   CISZU_BANNER_FILE  ruta explicita al .ansi
+  #   CISZU_BANNER_THEME logo | rainbow | pastel | darksky
+  $theme = if ($env:CISZU_BANNER_THEME) { $env:CISZU_BANNER_THEME } else { 'logo' }
+  $artFile = if ($env:CISZU_BANNER_FILE) {
+    $env:CISZU_BANNER_FILE
+  } elseif ($script:CiszuRepo) {
+    Join-Path $script:CiszuRepo "shared\powershell\banners\ciszu-banner-$theme.ansi"
+  } else {
+    ''
+  }
+  if (-not $artFile -or -not (Test-Path -LiteralPath $artFile)) {
+    $artFile = Join-Path $HOME ".config\powershell-banners-custom\ciszu-banner-$theme.ansi"
+  }
   if (Test-Path -LiteralPath $artFile) {
     Get-Content -LiteralPath $artFile -Encoding UTF8 | ForEach-Object { Write-Host $_ }
   }

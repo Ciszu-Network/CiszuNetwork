@@ -385,6 +385,6 @@ node scripts/generate-erd.js services/supabase/seeds/seed.sql -o services/supaba
 | Bruno CLI no encontrado | `pnpm setup` + `PNPM_HOME` en PATH |
 | DBeaver no ve la conexión | Refrescar; comparte workspace con dbvr |
 
-_Última revisión: 10 nov 2026._ Relacionado: `DB_SYSTEM.md`, `WORKFLOW_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `DB_SYSTEM.md`, `GLOBAL_SYSTEM.md`,
 `FULL_STACK_SYSTEM.md`, `KNOWLEDGE_SYSTEM.md`, `STATUS_SYSTEM.md`, `CIBERSECURITY_SYSTEM.md`,
 `ONLINE_SERVICES_SYSTEM.md`, `MODELS_LLM_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`, `PACKAGES_SYSTEM.md`.

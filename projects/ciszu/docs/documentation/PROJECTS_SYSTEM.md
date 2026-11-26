@@ -1,8 +1,8 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
-Versión: 2.1.3
-Actualización: 2026-11-13
-Identificador: PROJECTS_SYSTEM_V2.1.3_2026_11_13_ciszunetwork
+Versión: 2.2.0
+Actualización: 2026-11-25
+Identificador: PROJECTS_SYSTEM_V2.2.0_2026_11_25_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
 > general (Projects), el estado detallado (Project State) y el historial cronológico
@@ -20,7 +20,9 @@ Identificador: PROJECTS_SYSTEM_V2.1.3_2026_11_13_ciszunetwork
 | **MuzicMania** | `projects/muzicmania` | Juego de ritmo: web + Tauri desktop + mobile (placeholder) | muzicmania.vercel.app | `muzicmania-website` |
 | **CiszuBot** | `projects/ciszubot` | Bot Discord.js + landing Next.js 15 | ciszubot.vercel.app | `ciszubot-website`, `ciszubot` |
 | **CiszuGamens** | `projects/ciszugamens` | Comunidad gaming + Discord server + Landing Next.js 15 | ciszugamens.vercel.app (por crear) | `ciszugamens-website` |
-| **Ciszuko Antony (brand)** | `ciszukoantony/` | Identidad personal / content creator (Twitch, YouTube) | — | — |
+| **CiszuPy** | `projects/ciszupy` | CLI + librería Python (Typer/Rich) publicada en PyPI | — | — |
+| **CiszuAI** | `projects/ciszuai` | Capa de IA: permisos de modelos Gemini para los agentes (GCP `gen-lang-client-0885445248`) | — | — |
+| **Ciszuko Antony (brand)** | `projects/ciszukoantony/` | Identidad personal / content creator (Twitch, YouTube) | — | — |
 | **@ciszunetwork/cdn** | `packages/cdn` | Resolver de assets + iconos + deliveryVariants | — | — |
 
 ### 1.1 CiszuNetwork Page
@@ -82,24 +84,25 @@ Identificador: PROJECTS_SYSTEM_V2.1.3_2026_11_13_ciszunetwork
 
 ---
 
-## 2. Estado del ecosistema (13 nov 2026)
+## 2. Estado del ecosistema (25 nov 2026)
 
 ### 2.1 Sistemas
 
 | Sistema | Estado |
 |---|---|
 | 4 websites en producción (Vercel) | ⏸️ Pausadas por fair use hasta el 7 dic 2026; las 4 URLs responden HTTP 402 `DEPLOYMENT_DISABLED` (13 nov 2026) |
-| CDN Supabase Storage `ciszu-cdn` | ✅ 7.353 objetos / 160.6 MB (16% de cuota; bucket legacy `ciszu-assets` eliminado 10 ago 2026) |
+| CDN Supabase Storage `ciszu-cdn` | ✅ 7.577 objetos (verificado 25 nov 2026; bucket legacy `ciszu-assets` eliminado 10 ago 2026) |
 | Sistema de formatos (avif/webp/opus) | ✅ Implementado (8 ago 2026) + `SmartImage` en las webs |
 | PWA (manifest + sw + botón instalar) | ✅ Las 4 webs |
 | Auth Supabase (MuzicMania) | ✅ REST corregido, RLS activo |
 | Bot de Discord | ✅ v3.4.0, 72 comandos, Supabase conectado (heartbeat `bot_status`) + feature flags globales y Premium beta (10 oct 2026); Top.gg denegó la verificación el 13 nov 2026 por el dashboard caído |
 | Caché multi-tienda | ✅ Implementado (9 ago 2026) — memoria → KV Upstash (`upstash-kv-ciszunetwork`) → Postgres `ciszu.cache` |
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
+| Fedora 45 KDE (Linux) | ✅ Operativo (25 nov 2026): toolchain, shell, OpenCode, consolas y vault; repo en `/mnt/CiscoData2/Ciszu Network` (`E:\Ciszu Network`) |
 | Cloudflare (standalone) | ✅ Web Analytics + Turnstile en las 4 webs |
 | Seguridad | ✅ RLS 28/28 tablas, migración 16 aplicada, rate limits, robots.ts ×4 |
 | Testing | ✅ Vitest (157 tests, 11 ago 2026) + Playwright E2E |
-| Backups BD | ✅ PostgreSQL 18.4 instalado + primer backup OK (10 ago 2026) |
+| Backups BD | ✅ PostgreSQL 18.4 instalado + primer backup OK (10 ago 2026); Fedora 18.3 (`pg_dump`) desde 25 nov 2026 |
 | Ciszubot OAuth dashboard | ⏳ Pendiente registrar callback en Discord Developer Portal |
 
 ### 2.2 Documentación
@@ -149,6 +152,19 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
+
+### 25 de Noviembre, 2026 — Fedora 45 operativo y repo consolidado
+
+- **Entorno dual**: Fedora 45 KDE junto a Windows 11; un solo repo en NTFS (`E:\Ciszu Network` = `/mnt/CiscoData2/Ciszu Network`), con el data dir de OpenCode dentro de `.opencode/data`. Residuo del árbol duplicado eliminado.
+- **Toolchain Linux**: Node 24.22.3 (fnm), pnpm 12.16.1, Rust 1.100, pwsh 7.7, Podman 6.2, gh y Tailscale autenticados; `pnpm doctor`, `shell:check` (36) y tests/build verdes en la puesta en marcha.
+- **Shell híbrido**: perfiles zsh personal/corporativo, 34 skills y config de OpenCode por symlink, `ciszu-ai` (7777); corregidos `dev`, `devall` y `devstop`.
+- **Vault**: `scripts/vault.ps1` multiplataforma (age 1.3.2 en Fedora, identity 0600 en `~/.ciszu`); `.env.age` regenerado y verificado.
+- **Docs**: AGENTS.md con §1.1 de máquinas/rutas; estado movido a `PROJECTS_SYSTEM`/`STATUS_SYSTEM`; rutas corregidas en `GLOBAL_SYSTEM` y `LINUX_SYSTEM`; consolidación en un solo repo y `deploy` de ciszubot reubicado.
+- **Espacio**: `/` al 100% → ~4,2 GB libres (VSIX de VS Code, store pnpm huérfano, cachés npm/dnf/mozilla, journal).
+- **Apps**: OBS con perfil/escenas portados (fuentes Windows remapeadas a PipeWire/V4L2/Pulse/FT2) y VS Code con settings de Windows, Doki (fondo/chibi/wallpaper) y Python del sistema.
+- **Instaladores**: DEB/RPM reconstruidos con AppStream, licencia MIT e iconos 512; empaquetado Flatpak/Snap/AUR/DNF/DEB preparado en `projects/muzicmania/packaging/`. AppImage queda fuera de este pase.
+- **Licencia**: ecosistema migrado a MIT/open source y eliminadas las cláusulas no comerciales contradictorias en webs, docs y metadatos.
+- **Ventanas MuzicMania**: corregidos maximize/drag/minimizado con capabilities de Tauri, flags del launcher y foco; KDE `FocusStealingPreventionLevel` ajustado a 0.
 
 ### 13 de Noviembre, 2026 — Vercel sigue pausado y Top.gg deniega CiszuBot
 
@@ -685,7 +701,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 - Renombrados a convención: `ART_PROTOCOLS`, `CODE_PRINCIPLES_PROTOCOLS`, `CONTACTS_PROTOCOLS`,
   `DEVSECOPS_SYSTEM`, `TAX_PLAN`, `MATERIAL_ICONS_PROTOCOLS`, `ONLINE_SERVICES_SYSTEM`,
   `TRADEMARK_PLAN`, `STATISTICS_SYSTEM`, `STATUS_SYSTEM`.
-- Eliminado: `MIGRATION_HANDOVER.md` (redundante con AGENTS.md + WORKFLOW_SYSTEM).
+- Eliminado: `GLOBAL_SYSTEM.md` (redundante con AGENTS.md + WORKFLOW_SYSTEM).
 - Creados: `COLOR_SYSTEM`, `IT_GLOSSARY_PROTOCOLS`, `FRAMEWORKS_SYSTEM`, `INSTALLERS_SYSTEM`,
   `STYLES_SYSTEM`, `BACKEND_SYSTEM`.
 
@@ -698,8 +714,8 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 10 nov 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
-`ARCHITECTURE.md`, `WORKFLOW_SYSTEM.md`, `AGENTS.md`.
+_Última revisión: 25 nov 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+`ARCHITECTURE.md`, `GLOBAL_SYSTEM.md`, `AGENTS.md`.
 
 ## Historial — Sesión 21-22 oct 2026
 

@@ -1,0 +1,40 @@
+name: muzicmania
+base: core24
+version: '2.4.2'
+summary: Ecosistema rítmico de alto rendimiento
+description: |
+  MuzicMania es un juego rítmico de alto rendimiento de Ciszu Network.
+  Incluye el launcher nativo y carga el juego desde la web oficial.
+grade: stable
+confinement: strict
+icon: ../../launcher/src-tauri/icons/512x512.png
+
+apps:
+  muzicmania:
+    command: bin/muzicmania
+    extensions:
+      - gnome
+    plugs:
+      - network
+      - network-bind
+      - audio-playback
+      - opengl
+      - wayland
+      - x11
+      - home
+
+parts:
+  muzicmania:
+    plugin: rust
+    source: ../../launcher/src-tauri
+    rust-channel: stable
+    build-packages:
+      - libwebkit2gtk-4.1-dev
+      - libgtk-3-dev
+      - libayatana-appindicator3-dev
+      - librsvg2-dev
+      - libssl-dev
+      - pkg-config
+    override-build: |
+      cargo build --release
+      install -Dm755 target/release/muzicmania "$SNAPCRAFT_PART_INSTALL/bin/muzicmania"

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Shim de explorer.exe para pwsh/Linux: abre rutas con el gestor de archivos.
+exec xdg-open "$@" >/dev/null 2>&1

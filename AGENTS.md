@@ -6,6 +6,8 @@ Este archivo es la **primera lectura de toda sesión** y se relee en cada compac
 un sistema, **lee su doc** antes de codificar; no guardes el detalle aquí.
 
 Regla de oro de este archivo: **contexto suficiente para saber qué leer, no para saberlo todo**.
+Antes de tocar nada, identifica el sistema operativo y la máquina donde corres (§1.1): el repo es
+el mismo, pero los comandos, shells y rutas cambian.
 
 ---
 
@@ -23,6 +25,31 @@ Ecosistema digital y masivo de **Ciszuko Antony** (Francisco García, alias **Ci
   personales. Los secretos viven solo en el vault cifrado local + Bitwarden; en el repo
   solo pueden existir referencias por nombre (ver §6.5 y §7.1).
 
+### 1.1 Máquinas, rutas y shells (arranque dual)
+
+El repo vive en un disco NTFS y se ve desde los dos sistemas: **Windows `E:\Ciszu Network\`**
+= **Fedora `/mnt/CiscoData2/Ciszu Network`** (`ntfs3`; `~/Ciszu Network` es un symlink). Es un
+**único working tree**: los cambios de un SO aparecen en el otro al instante, así que no correr
+builds pesados desde ambos a la vez ni editar el mismo archivo en caliente. No hay copia legacy:
+el data dir de OpenCode de Windows (`E:\Ciszu Network\.opencode\data`) vive dentro del repo.
+
+| Entorno | Shell / consolas | Notas |
+| --- | --- | --- |
+| **Windows 11** (`C:` es el disco del sistema) | PowerShell con perfil portable; `devcon`/`staffcon`/`customerscon`/`tui` | `dev_console.ps1` (puertos 3000-3003); `pnpm dev:all`/`dev:stop`/`dev:status` |
+| **Fedora 45 KDE** (`/` btrfs 38,5 GB, ~4 GB libres) | zsh + kitty + fastfetch; perfil corporativo `ciszu` | `dev start/stop/status/log` (CLI nativo); consolas con `pwsh` + `PlatformCompat.ps1`; `ciszu-ai` (OpenCode 7777) solo tras `ciszu` |
+
+- Toolchain Fedora ya instalada: Node 24 (fnm), pnpm 12.16.1, Rust, pwsh 7, Podman, gh y
+  Tailscale. Los `node_modules`, `target` y artefactos viven en NTFS porque `/` está ajustado.
+- OpenCode: cada SO mantiene su data dir y su DB (Windows lo resuelve con `opencode debug paths`;
+  históricamente un junction a `.opencode/data/`). Linux usa `~/.local/share/opencode/opencode.db`.
+  No compartir la SQLite entre sistemas.
+- Detalle durable: `LINUX_SYSTEM.md`. Runbook y resultado real de la puesta en marcha:
+  `shared/docs/linux/AGENT_LINUX_SETUP_REPORT.md` y `..._RESULT.md`.
+- Regla: todo comando de proyecto se implementa en ambos shells o se marca **Windows-only**
+  (`shared/shell/README.md`; `pnpm shell:check` valida la paridad).
+- **Shells no interactivas** (scripts y el propio agente) no cargan `~/.zshrc`: ejecutar
+  `source shared/shell/env.sh` antes de usar `node 24`/`pnpm` (el `node` del sistema es v22).
+
 ## 2. Visión general
 
 Monorepo pnpm con 4 webs Next.js, un bot de Discord, un juego de música y paquetes compartidos.
@@ -33,14 +60,18 @@ Monorepo pnpm con 4 webs Next.js, un bot de Discord, un juego de música y paque
 | **CiszukoAntony** | `ciszukoantony.vercel.app` | `projects/ciszukoantony/` | Portfolio personal (logos, medios, música)                            |
 | **MuzicMania**    | `muzicmania.vercel.app`    | `projects/muzicmania/`    | Juego de ritmo — scores en schema`muzicmania`, auth, app Tauri + NSIS |
 | **CiszuBot**      | `ciszubot.vercel.app`      | `projects/ciszubot/`      | Landing del bot + estado en vivo (`ciszubot.bot_status`)              |
-| **CiszuAI**       | (no Vercel)                | `projects/ciszuai/`        | Capa de IA: permisos de modelos Gemini para los agentes. Proyecto GCP `gen-lang-client-0885445248` |
+| **CiszuAI**       | (no Vercel)                | `projects/ciszuai/`       | Capa de IA: permisos de modelos Gemini para los agentes. Proyecto GCP `gen-lang-client-0885445248` |
+| **CiszuGamens**   | (solo Discord)             | `projects/ciszugamens/`   | Comunidad gaming: reglas, guías y assets del servidor                 |
+| **CiszuPy**       | (PyPI)                     | `projects/ciszupy/`       | CLI + librería Python (`pipx install ciszupy`)                        |
 
 > **Nota de nombre**: la carpeta del portfolio se transcribe mal desde la terminal (nombre
-> ambiguo). Resuélvela SIEMPRE en runtime: `Get-ChildItem projects -Directory | Where-Object { $_.Name -match 'antony' }`. No la escribas a mano.
+> ambiguo). Resuélvela SIEMPRE en runtime: `ls projects | grep -i antony` (zsh) o
+> `Get-ChildItem projects -Directory | Where-Object { $_.Name -match 'antony' }` (PowerShell).
+> No la escribas a mano.
 
 ## 3. La documentación es la fuente de verdad
 
-La documentación oficial vive en `projects/ciszu/docs/documentation/` (62 docs, estándar
+La documentación oficial vive en `projects/ciszu/docs/documentation/` (127 docs a nov 2026, estándar
 `<NOMBRE>_<SUFIJO>.md`). Cada proyecto puede tener su propia copia adaptada
 (`projects/<name>/docs/documentation/`), pero **lo genérico se referencia a ciszu, no se
 duplica**. Las reglas del propio sistema de docs viven en `DOCUMENTATION_SYSTEM.md`.
@@ -54,9 +85,9 @@ duplica**. Las reglas del propio sistema de docs viven en `DOCUMENTATION_SYSTEM.
 | `_SYSTEM`    | Sistema que ya funciona (mantener) | `DB_SYSTEM.md`                                      |
 | `_PLAN`      | Plan/roadmap/guía a implementar    | `BRAND_PLAN.md`                                     |
 | `_PROTOCOLS` | Normas obligatorias                | `SECURITY_PROTOCOLS.md`                             |
-| (especial)   | Docs de estado vivos               | `PROJECT_STATE.md`, `PROJECT_HISTORY.md`, `TODO.md` |
+| (especial)   | Docs de estado vivos               | `PROJECTS_SYSTEM.md`, `STATUS_SYSTEM.md`, `TODO.md` |
 
-Reglas: ; Cabecera estándar (Versión / Actualización / Identificador / Definición); ≥200 líneas salvo
+Reglas: cabecera estándar (Versión / Actualización / Identificador / Definición); ≥200 líneas salvo
 estado e índices; cierre `_Última revisión: ..._` con relacionados.
 
 ### 3.2 Dónde investigar por tarea
@@ -75,15 +106,16 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
 | Assets/CDN           | `CDN_SYSTEM` · `MEDIA_FORMATS_SYSTEM` · `ICON_SYSTEM`                                      |
 | Legal/fiscal         | `COMPANY_REGISTRATION_PLAN` · `TAX_PLAN` · `RIF_PERSON_PLAN`                               |
 | Imagen/multimedia    | `BRAND_PLAN` · `AI_ART_PLAN` · `ART_PROTOCOLS`                                             |
-| Operación diaria     | `WORKFLOW_SYSTEM` · `TOOLS_SYSTEM`                                                         |
+| Operación diaria     | `GLOBAL_SYSTEM` · `TOOLS_SYSTEM`                                                           |
 | Testing/Dev local    | `LOCAL_TESTING_PROTOCOLS` · `DEBUGGING_SYSTEM` · `DEV_CONSOLE_SYSTEM` · `TESTING_SYSTEM`   |
+| Entorno híbrido      | `LINUX_SYSTEM` · `APP_ALTERNATIVES_PLAN` · `LOCAL_TESTING_PROTOCOLS`                        |
 | Editor visual UI     | `VISUAL_BUILDERS_SYSTEM` · `UI_COMPONENTS_SYSTEM` · `GLOBAL_COMPONENTS_SYSTEM` · `STYLES_SYSTEM` · `COLOR_SYSTEM`        |
 
 ### 3.3 Índice de la documentación de ciszu
 
 - **Sistemas**: `ARCHITECTURE.md` · `FULL_STACK_SYSTEM` (stack) · `DB_SYSTEM` · `ORM_SYSTEM` (Drizzle) ·
   `AUTH_SYSTEM` · `ACCOUNT_SYSTEM` (cuentas: verificacion C-XXX XXX, eliminacion 15d, roles/tags, bots) · `CACHING_SYSTEM` · `CDN_SYSTEM` · `ICON_SYSTEM` · `MEDIA_FORMATS_SYSTEM` · `DOCKER_SYSTEM` ·
-  `TESTING_SYSTEM` · `TOOLS_SYSTEM` · `WORKFLOW_SYSTEM` · `VAULT_SYSTEM` (credenciales) ·
+  `TESTING_SYSTEM` · `TOOLS_SYSTEM` · `GLOBAL_SYSTEM` (flujo de trabajo; antiguo `WORKFLOW_SYSTEM`) · `VAULT_SYSTEM` (credenciales) ·
   `DOMAINS_SYSTEM` · `MONITORING_SYSTEM` (UptimeRobot + ntfy) · `ANALYTICS_SYSTEM` ·
   `ERRORS_SYSTEM` (Sentry) · `EMAILS_SYSTEM` · `PAYMENTS_SYSTEM` · `REVIEWS_SYSTEM` ·
   `GOOGLE_SYSTEM` (negocio y reseñas de Google) · `GLOBAL_ADVISOR_SYSTEM` (mensajes globales del admin a las webs) ·
@@ -93,7 +125,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `MODELS_SKILLS_SYSTEM` (galería de skills del agente opencode: 34 instaladas en `.opencode/skills/`, MCP ausente) ·
   `AI_AGENT_ORCHESTRATION_REPORT` (herramientas y patrones de agentes/orquestación) ·
   `REMOTE_CONTROL_SYSTEM` (OpenCode App/Tailscale/ciszu-ai) · `ACCESS_CONTROL_SYSTEM` (autorizacion: staff en DB, umbrales por consola, gobernanza GitHub) · `NTFY_SYSTEM` (notificaciones push: ntfy.sh) · `KNOWLEDGE_SYSTEM` (educación) ·
-  `INSTALLERS_SYSTEM` (build/releases/update/reinstall/uninstall) · `DESKTOP_SHELL_SYSTEM` (shell reutilizable instalador/hub/launcher + plantilla) · `RELEASE_POLICY_SYSTEM` (manifiesto firmado, canales, rangos y bloqueos) · `TELEMETRY_SYSTEM` (eventos de launcher/setup/web/bot, staffcon) · `LAUNCHER_SYSTEM` (launcher: auth/offline/bandeja/idioma) · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
+  `INSTALLERS_SYSTEM` (build/releases/update/reinstall/uninstall) · `DESKTOP_SHELL_SYSTEM` (shell reutilizable instalador/hub/launcher + plantilla) · `RELEASE_POLICY_SYSTEM` (manifiesto firmado, canales, rangos y bloqueos) · `TELEMETRY_SYSTEM` (eventos de launcher/setup/web/bot, staffcon) · `LAUNCHER_SYSTEM` (launcher: auth/offline/bandeja/idioma) · `LINUX_SYSTEM` (ecosistema híbrido Windows + Fedora: shell, toolchain, OpenCode, MuzicMania) · `APP_ALTERNATIVES_PLAN` (inventario de apps Windows y alternativas Linux) · `ONLINE_SERVICES_SYSTEM` · `STATISTICS_SYSTEM` ·
   `VISUAL_BUILDERS_SYSTEM` (editores visuales UI/UX: Puck-first) ·
   `PROJECTS_SYSTEM` · `STATUS_SYSTEM` · `ACTIONS_RUNNERS_SYSTEM` (CI/deploys locales sin GH Actions) ·
   `DEV_CONSOLE_SYSTEM` (TUI/CLI dev local) · `DEBUGGING_SYSTEM` (depuración local) ·
@@ -106,7 +138,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
   `ORGANIZATIONAL_SCALABILITY_PLAN` · `RAG_VECTORS_PLAN` · `AI_ART_PLAN` · `BRAND_PLAN` · `VPS_PLAN` ·
   `SEO_PLAN` (pipeline automatizado: Screaming Frog CLI + scripts `seo-*`, carpetas `website/seo/`)
   `TOOLS_EVALUATION_PLAN` (investigación de servicios/herramientas candidatas) ·
-  `STORE_ECONOMY_PLAN` + `STORE_ECONOMY_PHASE1_IMPLEMENTATION_PLAN` (MuziPoints, tienda, pagos cripto, edad 18+; fases 2–4 pendientes) ·
+  `STORE_ECONOMY_PLAN` + `STORE_ECONOMY_PHASE1_IMPLEMENTATION_PLAN` (en `projects/muzicmania/docs/documentation/`: MuziPoints, tienda, pagos cripto, edad 18+; fases 2–4 pendientes) ·
   `VERCEL_USAGE_PLAN` (límites, pausa por fair use, consumo CPU/ISR/build y prevención)
 - **Protocolos de contexto**: `GEOGRAPHIC_CONTEXT_PROTOCOLS` · `HISTORICAL_CONTEXT_PROTOCOLS` ·
   `TARGET_AUDIENCE_PROTOCOLS` · `HEALTH_AND_SAFETY_PROTOCOLS` · `SCHEDULE_PROTOCOLS` ·
@@ -114,7 +146,7 @@ Antes de codificar, lee el doc del área que tocas. Mapa por tipo de tarea:
 - **Protocolos (testing/operación)**: `LOCAL_TESTING_PROTOCOLS` (pruebas locales obligatorias) ·
   `LSP_PROTOCOLS` (servidores LSP del agente) · `MCP_PROTOCOLS` (servidores MCP del ecosistema)
 - **Protocolos de identidad**: `LOGIN_REGISTER_PROTOCOLS` (UI/branding/reglas CISZU ID)
-- **Estado (vivo)**: `PROJECT_STATE.md` · `PROJECT_HISTORY.md` · `TODO.md` · `BACKLOG_SUPERVISION_REPORT.md`
+- **Estado (vivo)**: `PROJECTS_SYSTEM.md` (historial + estado) · `STATUS_SYSTEM.md` (foto operativa) · `TODO.md` · `BACKLOG_SUPERVISION_REPORT.md`
 - **Estándares**: `CODE_PRINCIPLES_PROTOCOLS` (DRY/KISS/YAGNI/SOLID) · `DEVSECOPS_SYSTEM`
   (SAST/DAST, shift-left) · `DOCUMENTATION_SYSTEM` (reglas de docs)
 
@@ -126,23 +158,26 @@ matriz completa de qué se replica a qué proyecto está en `DOCUMENTATION_SYSTE
 ## 4. Estructura del monorepo
 
 ```
-E:\Ciszu Network\
-├── projects/            # Aplicaciones: ciszu, ciszukoantony, muzicmania, ciszubot, ciszugamens, ciszuai
-├── packages/            # Paquetes compartidos: cdn, config, db, email, payments, ui, utils
-├── services/            # Infraestructura: supabase (migraciones), vercel
-├── shared/              # Assets + perfiles/scripts portables + templates/desktop-shell (shell reutilizable)
+$CISZU_REPO   # Windows: E:\Ciszu Network\  ·  Fedora: /mnt/CiscoData2/Ciszu Network
+├── projects/            # Apps: ciszu, ciszukoantony, muzicmania, ciszubot, ciszugamens, ciszupy, ciszuai
+├── packages/            # Paquetes compartidos: cdn, db, email, payments, ui, utils
+├── services/            # Infraestructura: supabase (migraciones)
+├── shared/              # Assets + perfiles/scripts portables (shell, powershell, opencode, docs/linux, templates)
 ├── scripts/             # Scripts de automatización (txt2md, upload-cdn, vault, ...)
-├── tools/               # Herramientas locales IA/ops (ascii-ai, ciszou-ai, convert, ...)
+├── tools/               # Herramientas locales IA/ops (ascii-ai, ciszou-ai, convert, consolas, ...)
 ├── apis/                # Colecciones Bruno (health/, rest/)
 ├── archives/            # Backups y archivos grandes (gitignored parcialmente); staff/ = empleados
+├── clones/              # Repos de terceros (gitignored); mismos clones en ambos SO
 ├── test/                # Tests E2E Playwright
+├── .opencode/           # skills (34), command (29), temp/ por agente y data/ (OpenCode Windows)
 ├── .github/workflows/   # CI/CD: ci.yml, codeql, dast, deploys ×4, uptime-watch
 └── AGENTS.md            # Este archivo
 ```
 
-La consola de dev local vive en `test/website/debug/` (TUI `dev_console.ps1` + guías
-`dev_console.{md,txt}`); los logs de dev en `test/website/debug/local-logs/`. Detalle:
-`DEV_CONSOLE_SYSTEM.md`.
+La consola de dev local de Windows vive en `test/website/debug/` (TUI `dev_console.ps1` + guías
+`dev_console.{md,txt}`); logs en `test/website/debug/local-logs/`. En Fedora el equivalente es el
+CLI `dev` (`shared/scripts/linux/dev.sh`, logs en `.opencode/temp/dev-logs/`). Detalle:
+`DEV_CONSOLE_SYSTEM.md` y `LINUX_SYSTEM.md`.
 
 **STAFFCON** (Staff Console, `tools/consoles/staffcon.ps1`) gestiona los empleados reales de
 la organización: estructura `archives/staff/` (general → cargo → empleado, 5 formatos por nivel),
@@ -153,9 +188,12 @@ autoridad en DB (`internal.staff` + `internal.console_access`; `staff.json` es e
 clientes reales: estructura `archives/customers/` (global → cliente, 5 formatos por nivel +
 carpeta `asunto/`), fuente de verdad `archives/customers/data/customers.json`, motor
 `scripts/customerscon.js` + generador `scripts/customersgen.js`. Detalle: `CUSTOMERS_SYSTEM.md`.
-Ambas consolas se lanzan desde el perfil de PowerShell con `staffcon` y `customerscon` (wrapper
-`tools/consoles/devcon.ps1` para el devcon), piden identidad (ID de empresa) y validan el rango de acceso (`internal.console_access` en DB: staffcon ≤4, devcon ≤6, customerscon ≤7; `staff.json` solo vista); el operador queda
-registrado como `actor` en los logs de sesión (`tools/consoles/local-logs/`).
+Ambas consolas se lanzan con `staffcon` y `customerscon` (el `devcon` usa el wrapper
+`tools/consoles/devcon.ps1`): en Windows desde el perfil PowerShell y en Fedora desde los
+wrappers `shared/scripts/linux/consoles.sh` (pwsh + `PlatformCompat.ps1`). Piden identidad (ID de
+empresa) y validan el rango de acceso (`internal.console_access` en DB: staffcon ≤4, devcon ≤6,
+customerscon ≤7; `staff.json` solo vista); el operador queda registrado como `actor` en los logs
+de sesión (`tools/consoles/local-logs/`).
 
 ### 4.1 Workspaces pnpm y entry points
 
@@ -170,6 +208,8 @@ registrado como `actor` en los logs de sesión (`tools/consoles/local-logs/`).
 
 Package manager: **pnpm v12.16.1**, Node >=24. Todas las webs: Next.js 15 (App Router) +
 Tailwind 4 + PostCSS + ESLint. Assets vía resolver/CDN (`public/` solo docs/pwa/sw.js).
+`node_modules` y `target/` viven en NTFS y son compartidos por ambos SO: instalar o compilar
+desde un solo sistema a la vez.
 
 ### 4.2 Paquetes compartidos (`packages/`)
 
@@ -189,7 +229,8 @@ re-despliega las 4 webs (los workflows escuchan ese path).
 
 - **Supabase** (`services/supabase/`) — proyecto `obwzzmbvkrcscqwptlqo`: auth, Postgres,
   Storage CDN `ciszu-cdn`. Las migraciones SQL viven ahí (`migrations/`) y se aplican con
-  `scripts/apply-migration-XX.js`. Consultas: `dbvr sql -ds=supabase "..."`. **RLS obligatorio
+  `scripts/apply-migration-XX.js`. Consultas: `dbvr sql -ds=supabase "..."` en Windows; en
+  Fedora usar `psql` o DBeaver (`dbvr` no está instalado). **RLS obligatorio
   en toda tabla nueva.**
 - **Vercel** — 4 proyectos, deploys vía GitHub Actions desde la raíz
   (`vercel --prod --yes --archive=tgz`; nunca `vercel pull/prebuilt` dentro de `projects/*/website`).
@@ -203,38 +244,59 @@ re-despliega las 4 webs (los workflows escuchan ese path).
 
 ## 5. Quick start
 
+**Común a ambos SO** (desde la raíz del repo):
+
 ```bash
 pnpm install              # instala todos los workspaces
-pnpm dev                  # turbo: todas las apps en dev
-pnpm build                # turbo: build de todas las apps
-pnpm lint                 # turbo: lint de todas las apps
+pnpm build:all            # turbo: build de todas las apps
+pnpm lint:all             # turbo: eslint de todas las apps
+pnpm typecheck            # tsc --noEmit (ui + 4 webs)
 pnpm test                 # unit tests (Vitest)
+pnpm test:all             # Vitest + interacción de Storybook
 pnpm e2e                  # Playwright E2E
 pnpm --filter <name> dev  # una app individual
 pnpm notify "Mensaje"     # push ntfy
-pnpm commands             # catálogo pnpm + opencode + PowerShell
-pnpm shell:new --target <ruta> --config <json> --kind installer  # genera instalador/hub/launcher desde la plantilla oficial
-pnpm run doctor           # diagnóstico del entorno (Node, pnpm, puertos, discos)
-pnpm profile:install      # instala el perfil PowerShell portable (nuevo dispositivo)
-pnpm clean:all            # limpia .next, .turbo y logs de dev
+pnpm commands             # catálogo pnpm + opencode + shells
+pnpm shell:check          # paridad PowerShell ↔ zsh
+pnpm doctor               # diagnóstico (Node, pnpm, puertos, discos)
+pnpm clean:all            # limpia .next, .turbo y logs
 pnpm cdn:upload           # sube assets a Supabase Storage (ciszu-cdn)
 pnpm api:test             # tests de API con Bruno (prod)
 ```
 
-**Dev local de las webs** (consola `test/website/debug/dev_console.ps1`, puertos fijos):
-`devcon` (TUI) · `pnpm dev:all` / `dev:stop` · `pnpm dev:status` · `devlog <web>`.
-Por web: `pnpm web:dev` (3000) · `antony:dev` (3001) · `ciszubot:web:dev` (3002) ·
-`muzicmania:dev` (3003). Detalle en `LOCAL_TESTING_PROTOCOLS` y `DEV_CONSOLE_SYSTEM`.
+`pnpm dev`, `pnpm build` y `pnpm lint` de la raíz son placeholders: imprimen el filtro real a usar.
 
-Comandos de Storybook/fert (wrapper `scripts/storybook.ps1` y funciones del perfil PowerShell:
-`sb`/`sbtest`/`sbwatch`/`sbbuild`/`sbchrom`/`checkall`):
+**Windows (PowerShell)**:
+
+```powershell
+pnpm profile:install      # perfil portable (dispositivo nuevo)
+pnpm dev:all              # dev_console.ps1 -Action start -Web all (3000-3003)
+pnpm dev:status           # también dev:stop y dev:log
+devcon                    # TUI; staffcon / customerscon / tui para consolas
+```
+
+**Fedora (zsh)**:
+
+```bash
+bash shared/shell/install.sh      # una vez: ~/.zshrc, kitty, consolas
+bash shared/opencode/install.sh   # skills + config global de OpenCode
+ciszu                             # perfil corporativo (banner, comandos, ciszu-ai)
+dev start all | dev status | dev stop all | dev log muzic
+devcon | staffcon | customerscon | tui   # pwsh + PlatformCompat
+ciszu-ai                          # servidor OpenCode 7777 (solo tras `ciszu`)
+```
+
+Por web (ambos SO): `pnpm web:dev` (3000) · `antony:dev` (3001) · `ciszubot:web:dev` (3002) ·
+`muzicmania:dev` (3003). Detalle en `LOCAL_TESTING_PROTOCOLS`, `DEV_CONSOLE_SYSTEM` y
+`LINUX_SYSTEM`.
+
+Storybook (`@ciszu/ui`):
 
 | Comando          | Acción                                                                 |
 | ---------------- | ---------------------------------------------------------------------- |
 | `pnpm --filter @ciszu/ui storybook` | Arranca Storybook dev            |
-| `pnpm --filter @ciszu/ui test:storybook` | Ejecuta los tests de interacción de stories (Vitest browser + Playwright) |
-| `sb` / `sbtest` etc. | Atajos PowerShell (ver `scripts/storybook.ps1` y perfil)            |
-| `checkall`       | lint + type-check + tests + build de todas las apps                    |
+| `pnpm --filter @ciszu/ui test:storybook` | Tests de interacción (Vitest browser + Playwright) |
+| `sb` / `sbtest` / `sbwatch` / `sbbuild` / `sbchrom` / `checkall` | Atajos **solo PowerShell** (`scripts/storybook.ps1`); en Fedora usar los filtros pnpm |
 
 Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts/md2office.js`
 (md→docx) · `python scripts/txt2pdf.py` (txt→pdf) · `node scripts/sync-public-docs.js`
@@ -262,7 +324,7 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
 
 - Commits en español, descriptivos, una línea, **sin emojis**. Trabajo directo en `main`.
 - **No commitear ni pushear sin solicitud explícita.** Trabajo directo en `main`; el push
-  puede hacerse desde este PC.
+  puede hacerse desde Windows o Fedora (`gh` ya autenticado en ambos).
 - **Convención de comandos (branch protection activa desde 09 oct 2026)**: `push` = commitear y
   empujar la rama actual (la cuenta de Ciszuko conserva el push directo a `main` vía bypass).
   `PR` = crear una rama + Pull Request. Si un push a `main` es **rechazado por GitHub**, el
@@ -282,10 +344,13 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
   proyectos y secrets. Al añadir un patrón nuevo: `git rm -r --cached <ruta>`.
 - Pre-commit hooks: secretlint + gitleaks sobre `--staged`. `--no-verify` solo con falso
   positivo justificado.
+- **NTFS + CRLF**: al commitear desde Fedora, `core.autocrlf=input` normaliza CRLF→LF y Git
+  puede mostrar archivos completos como cambiados. Revisar `git diff --stat` y commitear solo
+  los archivos propios; no reescribir de golpe archivos tocados por el otro SO.
 
 ### 6.3 Sesiones (handover)
 
-- **Iniciar**: leer `PROJECT_STATE.md`, `PROJECT_HISTORY.md` y `TODO.md`
+- **Iniciar**: leer `PROJECTS_SYSTEM.md` (historial + estado), `STATUS_SYSTEM.md` y `TODO.md`
   (`projects/ciszu/docs/documentation/`) + este AGENTS.md. Después el `_SYSTEM` del área a tocar.
   Confirmar disponibilidad en 1 línea: "CISZU AI listo. [proveedor/modelo]."
 - **Cerrar**: actualizar `PROJECTS_SYSTEM.md` (historial + estado) y `STATUS_SYSTEM.md` con los
@@ -300,17 +365,23 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
 
 ### 6.4 Disco y temporales
 
-- Disco C limitado. Temporales SIEMPRE en `E:\Ciszu Network\.opencode\temp/` (gitignored);
-  borrarlos al terminar o limpiar los >1 semana. Nunca usar `C:\Users\fplay\AppData\Local\Temp`.
-  Verificar espacio (`Get-PSDrive C,E`) antes de descargas grandes.
-- El data dir global de opencode (`C:\Users\fplay\.local\share\opencode`, db de sesiones + snapshots)
-  se migró a `E:\Ciszu Network\.opencode\data/` con un junction en la ruta original (historia intacta,
-  sin env vars). Script de migración: `.opencode/temp/migrate-opencode-data.ps1` (correr con opencode
-  cerrado). Nunca mover/borrar ese junction ni el data dir directamente.
-- **Clones de repositorios externos**: todo repo de terceros que se clone y deba persistir vive en
-  `E:\Ciszu Network\clones/<nombre>/`, **gitignored** (`clones/`). Uno por carpeta, nunca en
-  `tools/`. Protocolo y estado: `TOOLS_SYSTEM.md` §6.6. Primer clon: `clones/spiderfoot` (SpiderFoot
-  4.0.0, 18 ago 2026).
+- **Temporales**: dentro del repo, `.opencode/temp/<agent>/` (gitignored); borrarlos al terminar
+  o limpiar los >1 semana. En Fedora puede usarse además `/tmp/opencode` (tmp de sesión del
+  harness); nunca `/tmp` global sin subcarpeta ni `C:\Users\<usuario>\AppData\Local\Temp`.
+- **Espacio**: Windows `C:` es el disco del sistema; en Fedora `/` es btrfs de 38,5 GB con
+  `/home` en el mismo filesystem (~90% usado, ~4 GB libres). Todo lo pesado (repo, `node_modules`,
+  `target`, artefactos) vive en NTFS (`/mnt/CiscoData2`). Verificar con `df -h`
+  (Linux) o `Get-PSDrive C,E` (Windows) antes de descargas o builds grandes.
+- **Permisos**: el usuario es dueño del repo y de las unidades NTFS. Si una carpeta creada por
+  Windows queda en `555`, ejecutar `ciszu` y `fixperms` (o `chmod u+rwx`). No se da permiso
+  total a `/`, `/etc` ni `/usr`: para eso está `sudo`.
+- **OpenCode data dir**: cada SO mantiene su DB local; en Fedora es
+  `~/.local/share/opencode/opencode.db` (ver `opencode debug paths`). En Windows el junction
+  `C:\Users\fplay\.local\share\opencode` apunta a `E:\Ciszu Network\.opencode\data` (dentro del
+  repo); no moverlo sin recrear el junction. No usar los dos SO con la misma SQLite a la vez.
+- **Clones de repositorios externos**: todo repo de terceros vive en `$CISZU_REPO/clones/<nombre>/`,
+  **gitignored**. Se conservó el `clones/` original en Linux; crear ahí los nuevos. Uno por
+  carpeta, nunca en `tools/`. Protocolo y estado: `TOOLS_SYSTEM.md` §6.6.
 
 ### 6.5 Puente de secretos de documentación (SECRET_TEMP.env)
 
@@ -337,6 +408,9 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
 - **Regla para docs**: al terminar una tarea que usó secretos, verificar que ningún `.md`
   haya quedado con valores en claro (solo referencias). `gitleaks`/`secretlint` bloquean en
   pre-commit.
+- **Linux**: `pwsh scripts/vault.ps1 crypt|verify|backup` ya funciona con `age` 1.3.2
+  (`sudo dnf install age`); la identity se copia a `~/.ciszu/ciszu-vault-key.txt` (0600) la
+  primera vez. Windows y Linux comparten el mismo `.env.age` sobre NTFS.
 
 ### 6.6 El vault de secrets (`services/supabase/.env`) — edición con permiso
 
@@ -355,6 +429,10 @@ Pipeline de documentación: `node scripts/txt2md.js` (txt→md) · `node scripts
 - El `SECRET_TEMP.env` es el canal de ENTRADA; el **vault cifrado es el oficial**: debe
   replicar el contenido del SECRET_TEMP (lo que esté destinado a persistir) porque es la copia
   cifrada de la que se alimenta Bitwarden.
+- **Fedora**: `vault.ps1` detecta Linux, usa `age` del sistema y `chmod 600/700` (sin ACL
+  NTFS). Los secretos locales de las herramientas viven fuera del repo:
+  `~/.config/ciszu/secrets.env` y `~/.config/ciszu-ai/password` (0600), cargados por
+  `shared/shell/env.sh`.
 
 ### 6.7 LSP y verificación en OpenCode V2 — estado actual
 
@@ -364,15 +442,18 @@ language servers, no expone tools LSP ni entrega diagnósticos al agente. Por es
 - No configurar `lsp` ni `permission.lsp` en `opencode.json`; en V2 no existen
   `OPENCODE_EXPERIMENTAL_LSP_TOOL` ni descargas de LSP del agente.
 - Los editores (VS Code) conservan sus propios servidores LSP; no son los del agente.
-- La verificación es **siempre por comando**: `pnpm --filter <web> exec tsc --noEmit`,
-  `eslint`, `next build` y `pnpm test` (ver `LOCAL_TESTING_PROTOCOLS.md` §3.3). No asumir
+- La verificación es **siempre por comando**: `pnpm typecheck`, `pnpm lint:all`,
+  `pnpm --filter <web> exec tsc --noEmit`, `next build` y `pnpm test` (ver
+  `LOCAL_TESTING_PROTOCOLS.md` §3.3). No asumir
   que el código "tipo bien" solo porque el editor no marca errores.
+- En Fedora no hay `dbvr`: para DB usar `psql`/DBeaver y para validar producción `curl` +
+  output de build (ver §7.9).
 - `typescript` y `eslint` de la raíz se conservan para tooling/CLI y typecheck; ya no son
   requisito de LSP del agente.
 
 ### 6.8 Skills del agente (estado actual)
 
-**El agente tiene 34 skills instaladas** en `E:\Ciszu Network\.opencode\skills/` (local,
+**El agente tiene 34 skills instaladas** en `$CISZU_REPO/.opencode/skills/` (local,
 gitignored): 33 instaladas el 31 ago 2026 desde 4 fuentes clonadas en `clones/`
 (superpowers, anthropic-skills, jjmartres-opencode, opencode-agents) + la pre-existente
 `puck`. Catálogo completo, links de descarga y protocolo de instalación:
@@ -385,6 +466,10 @@ gitignored): 33 instaladas el 31 ago 2026 desde 4 fuentes clonadas en `clones/`
 - **Reglas**: nunca instalar una skill con secretos (es markdown legible); verificar que
   `name` coincida con el folder y tenga `description`; clonar repos en `clones/` (gitignored,
   shallow); no instalar libs de runtime sin confirmar (`AGENTS.md` §7.1).
+- **Linux (Fedora)**: `bash shared/opencode/install.sh` enlaza las mismas 34 skills en
+  `~/.config/opencode/skills` y `~/.agents/skills`, y genera `cli.json` con la ruta Linux del
+  plugin de voz. El servidor compartido se arranca con `ciszu-ai` **solo dentro del perfil
+  `ciszu`** (puerto 7777, misma sesion para TUI/escritorio/movil).
 
 ### 6.9 Multiagencia y coexistencia de IAs
 
@@ -412,12 +497,12 @@ automatizados. Esta multiplicidad exige reglas explícitas de coordinación.
    Muchos archivos viejos pueden ser knowledge files, skills, datos de sesión o migraciones
    diferidas de otras IAs.
 6. **Temporales por agente**: cada IA debe usar su propio subdirectorio dentro de
-   `E:\Ciszu Network\.opencode\temp/<agent>/` para evitar colisiones. `tmp/` global es
-   compartido y debe tratarse como zona común.
+   `$CISZU_REPO/.opencode/temp/<agent>/` (o `/tmp/opencode/<agent>/` en Fedora) para evitar
+   colisiones. `tmp/` global es compartido y debe tratarse como zona común.
 7. **Sesiones y handovers**: cuando un agente ceda el turno a otro, dejar un resumen en
-   `PROJECT_STATE.md` y/o el chat con: archivos modificados, comandos ejecutados, estado de
-   build/lint, y próximos pasos sugeridos. No dar por terminada una tarea solo porque el
-   código “parece” listo; verificar build real.
+   `PROJECTS_SYSTEM.md`/`STATUS_SYSTEM.md` y/o el chat con: archivos modificados, comandos
+   ejecutados, estado de build/lint, y próximos pasos sugeridos. No dar por terminada una tarea
+   solo porque el código “parece” listo; verificar build real.
 
 #### 6.9.2 Riesgos multiagente y mitigaciones
 
@@ -425,12 +510,12 @@ automatizados. Esta multiplicidad exige reglas explícitas de coordinación.
 |---|---|
 | Dos agentes editan el mismo archivo | Verificar `git status`/`git diff` antes de editar; si hay conflicto, coordinar |
 | Recreación de archivos borrados por otro agente | Preguntar antes de borrar; usar `git log` para ver quién eliminó qué |
-| Duplicación de tareas | Leer `TODO.md` y `PROJECT_STATE.md` antes de iniciar una tarea |
+| Duplicación de tareas | Leer `TODO.md` y `PROJECTS_SYSTEM.md` antes de iniciar una tarea |
 | Inyección de prompts o skills maliciosas | Solo instalar skills desde fuentes confiables; inspeccionar `SKILL.md` |
 | Consumo excesivo de contexto/cuota | Respetar límites de sesión (§9) y cerrar/archivar tareas terminadas |
 | Secretos compartidos entre agentes | Nunca compartir `.env` ni vault; cada agente accede por referencia, no por valor |
 | Workflows de CI/CD solapados | Los deploys pasan por GitHub Actions; no ejecutar deploys locales en paralelo |
-| Locking no declarado | Registrar en `PROJECT_STATE.md` o chat el archivo/carpeta bloqueada y el motivo |
+| Locking no declarado | Registrar en `PROJECTS_SYSTEM.md` o chat el archivo/carpeta bloqueada y el motivo |
 | Resolución de conflictos | El agente que llegue segundo debe pedir el diff del primero y reaplicar sus cambios sobre esa base |
 
 ##### Reglas adicionales de locking
@@ -438,7 +523,7 @@ automatizados. Esta multiplicidad exige reglas explícitas de coordinación.
 1. Antes de modificar un archivo, verificar si está siendo editado por otro agente mediante
    `git status`, `git diff` o consulta en el chat.
 2. Si un agente va a modificar un archivo por más de 10 minutos, debe registrar el lock en
-   `PROJECT_STATE.md` o en el chat compartido.
+   `PROJECTS_SYSTEM.md` o en el chat compartido.
 3. Los directorios `.opencode/temp/<agent>/` y `tmp/<agent>/` son de uso exclusivo por agente.
    No tocar el directorio de otro agente sin confirmación.
 4. Si se detecta un conflicto de edición, detener la escritura y solicitar una base común
@@ -465,8 +550,8 @@ Checklist completo: `SECURITY_PROTOCOLS.md`. Reglas no negociables:
    `(SELECT auth.X())`.
 8. **Webs nuevas**: `robots.ts` (allow `/`, disallow `/api/`), middleware con cabeceras de
    seguridad + CSP (`buildCsp()`) + sensor IAST (`createIast()`).
-9. **Verificar con fuentes externas** (dbvr, curl a producción, output de build) — no confiar
-   en el propio estado.
+9. **Verificar con fuentes externas** (dbvr en Windows o `psql` en Fedora, curl a producción,
+   output de build) — no confiar en el propio estado.
 10. Tras cambios en policies/funciones, verificar Security + Performance Advisors en Dashboard.
 
 ### 7.1 Dependencias y secretos
@@ -492,9 +577,10 @@ Normas para mantenerlo correcto:
    documenta", y el detalle vive en el doc de ciszu. Nunca dupliques contenido de un doc aquí.
 2. **YAGNI sobre tokens**: al inicio de sesión se relee por completo; lo que no sirva a esa
    lectura, bórralo de AGENTS y capéralo en su doc `_SYSTEM`. Mantenlo ≤1000 líneas.
-3. **No to-do's aquí**: tareas → `TODO.md` (solo edita Ciszuko Antony). Estado → `PROJECT_STATE.md`.
+3. **No to-do's aquí**: tareas → `TODO.md` (solo edita Ciszuko Antony). Estado →
+   `PROJECTS_SYSTEM.md` + `STATUS_SYSTEM.md`.
 4. **Verifica las rutas**: cada `projects/<nombre>/`, URL y filtro pnpm debe ser real
-   (comprueba con `Get-ChildItem`/`git ls-files`). No inventes carpetas ni nombres.
+   (`ls`/`Get-ChildItem` + `git ls-files`). No inventes carpetas ni nombres.
 5. **Sesión vs tarea**: actualiza este archivo solo cuando cambie. Estructura (catálogo de
    rutas/servicios/mapas) o reglas; no por cada entregable.
 6. **Convenciones que deben vivir aquí**: nombres de carpeta ambiguos (como la del portfolio),
@@ -521,7 +607,8 @@ cambia de sesión, y con modelos más potentes el umbral efectivo es mayor. Regl
 
 ---
 
-_Última revisión: 22 nov 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
-Estándar de docs: `DOCUMENTATION_SYSTEM.md`. Operación diaria: `WORKFLOW_SYSTEM.md`.
+_Última revisión: 25 nov 2026._ Fuente de verdad: `projects/ciszu/docs/documentation/`.
+Estándar de docs: `DOCUMENTATION_SYSTEM.md`. Operación diaria: `GLOBAL_SYSTEM.md`.
+Entorno híbrido: `LINUX_SYSTEM.md` y `shared/docs/linux/AGENT_LINUX_SETUP_REPORT.md`.
 
 

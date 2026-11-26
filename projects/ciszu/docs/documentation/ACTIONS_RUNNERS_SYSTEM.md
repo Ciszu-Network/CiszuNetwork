@@ -369,7 +369,7 @@ semgrep usa `setup-python` en Linux, gitleaks descarga el binario de cada OS).
 3. Los deploys locales son **secuenciales** (comparten `.vercel/` en la raíz). No paralelizar.
 4. Un cambio en `packages/**` implica re-desplegar las 4 webs (igual que los workflows).
 5. Las 4 webs tienen lint (`eslint .`); `lint:all` y la matriz del CI las cubren a las 4.
-6. Toda nueva automatización del ecosistema debe documentarse aquí o en `WORKFLOW_SYSTEM.md`,
+6. Toda nueva automatización del ecosistema debe documentarse aquí o en `GLOBAL_SYSTEM.md`,
    no quedarse solo en GH Actions.
 7. Si el billing de GitHub se regulariza, los workflows de GH **siguen existiendo**; el sistema
    local es complementario (fallback y control), no excluyente.
@@ -405,6 +405,6 @@ semgrep usa `setup-python` en Linux, gitleaks descarga el binario de cada OS).
 - [ ] (Futuro) Decidir runner Windows nativo vs Linux/WSL2 para los jobs de seguridad
       (CodeQL, DAST, Semgrep) — ver §5.4.
 
-_Última revisión: 10 nov 2026._ Relacionado: `WORKFLOW_SYSTEM.md`, `DOCKER_SYSTEM.md`,
+_Última revisión: 10 nov 2026._ Relacionado: `GLOBAL_SYSTEM.md`, `DOCKER_SYSTEM.md`,
 `MONITORING_SYSTEM.md`, `SECURITY_PROTOCOLS.md`, `VAULT_SYSTEM.md`, `VPS_PLAN.md`,
 `DEVSECOPS_SYSTEM.md`, `PROJECTS_SYSTEM.md`, `STATUS_SYSTEM.md`.

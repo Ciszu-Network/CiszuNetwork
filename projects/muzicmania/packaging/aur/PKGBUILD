@@ -1,0 +1,31 @@
+# Maintainer: Ciszu Network <fplayersoffcial@gmail.com>
+pkgname=muzicmania
+pkgver=2.4.2
+pkgrel=1
+pkgdesc="Ecosistema rítmico de alto rendimiento"
+arch=('x86_64')
+url="https://muzicmania.vercel.app"
+license=('MIT')
+depends=('webkit2gtk-4.1' 'gtk3' 'libayatana-appindicator')
+makedepends=('rust' 'cargo' 'pkgconf' 'openssl')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/Ciszu-Network/CiszuNetwork/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd "CiszuNetwork-$pkgver"
+  cargo build --release --manifest-path projects/muzicmania/launcher/src-tauri/Cargo.toml
+}
+
+package() {
+  cd "CiszuNetwork-$pkgver"
+  install -Dm755 projects/muzicmania/launcher/src-tauri/target/release/muzicmania \
+    "$pkgdir/usr/bin/muzicmania"
+  install -Dm644 projects/muzicmania/packaging/assets/network.ciszu.muzicmania.desktop \
+    "$pkgdir/usr/share/applications/network.ciszu.muzicmania.desktop"
+  install -Dm644 projects/muzicmania/packaging/assets/network.ciszu.muzicmania.metainfo.xml \
+    "$pkgdir/usr/share/metainfo/network.ciszu.muzicmania.metainfo.xml"
+  install -Dm644 projects/muzicmania/launcher/src-tauri/icons/512x512.png \
+    "$pkgdir/usr/share/icons/hicolor/512x512/apps/network.ciszu.muzicmania.png"
+  install -Dm644 projects/muzicmania/launcher/src-tauri/LICENSE.txt \
+    "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

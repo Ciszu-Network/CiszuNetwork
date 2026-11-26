@@ -1,74 +1,67 @@
 ﻿MUZICMANIA - DOCUMENTACIÓN OFICIAL
 Nombre: LICENSE
-Versión: 2.0.0
-Actualización: 2026-06-10
-Identificador: LICENSE_V2.0.0_2026_06_10_muzicmania
+Versión: 3.0.0
+Actualización: 2026-11-25
+Identificador: LICENSE_V3.0.0_2026_11_25_muzicmania
 ------------------------------------------------------------
 
 # LICENCIA / LICENSE
 
-[ESPAÑOL]
+MuzicMania es software libre y de código abierto bajo la **Licencia MIT**.
+Copyright (c) 2026 Ciszu Network — Ciszuko Antony (Francisco Garcia).
 
-**ARTÍCULO 1: PROPIEDAD INTELECTUAL Y AUTORÍA**
-MuzicMania es una obra intelectual cuya propiedad y derechos de autor pertenecen íntegramente a Ciszu Network y Ciszuko Antony (Francisco Garcia). Todos los derechos no concedidos explícitamente en este documento quedan reservados.
+## Español
 
-**ARTÍCULO 2: CONCESIÓN DE LICENCIA DE USO**
-Se otorga permiso para el uso personal, educativo y no comercial de este software. La modificación de los archivos fuente se permite bajo los términos de la Licencia MIT detallados en el Artículo 4, siempre que se mantenga el aviso de copyright.
+Se concede permiso, de forma gratuita, a cualquier persona que obtenga una copia
+de este software y de los archivos de documentación asociados (el "Software"),
+para utilizar el Software sin restricción, incluyendo sin limitación los derechos
+de usar, copiar, modificar, fusionar, publicar, distribuir, sublicenciar y/o
+vender copias del Software, y para permitir a las personas a las que se les
+proporcione el Software que lo hagan también, sujeto a las siguientes condiciones:
 
-**ARTÍCULO 3: SOFTWARE DE TERCEROS Y DEPENDENCIAS**
-MuzicMania utiliza frameworks y librerías de terceros, incluyendo pero no limitado a React, Next.js, Tailwind CSS y Framer Motion. Cada una de estas herramientas opera bajo sus propias licencias de software libre (MIT/Apache).
+El aviso de copyright anterior y este aviso de permiso se incluirán en todas las
+copias o partes sustanciales del Software.
 
-**ARTÍCULO 4: TEXTO ÍNTEGRO DE LA LICENCIA MIT**
+EL SOFTWARE SE PROPORCIONA "TAL CUAL", SIN GARANTÍA DE NINGÚN TIPO, EXPRESA O
+IMPLÍCITA, INCLUYENDO PERO NO LIMITADO A LAS GARANTÍAS DE COMERCIABILIDAD,
+IDONEIDAD PARA UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS
+AUTORES O TITULARES DEL COPYRIGHT SERÁN RESPONSABLES DE NINGUNA RECLAMACIÓN,
+DAÑO U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DE CONTRATO, AGRAVIO O DE OTRO
+MODO, QUE SURJA DE, FUERA DE O EN CONEXIÓN CON EL SOFTWARE O EL USO U OTROS
+TRATOS EN EL SOFTWARE.
+
+## English
+
 MIT License
-Copyright (c) 2026 Ciszu Network — Ciszuko Antony
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-**ARTÍCULO 5: LICENCIAS DE CONTENIDO MULTIMEDIA**
-La música utilizada en la plataforma proviene mayoritariamente de NoCopyrightSounds (NCS) o artistas bajo licencia Creative Commons.
+Copyright (c) 2026 Ciszu Network — Ciszuko Antony (Francisco Garcia)
 
-**ARTÍCULO 6: ATRIBUCIÓN OBLIGATORIA**
-Toda redistribución o uso derivado del código fuente de MuzicMania debe incluir de forma visible la atribución a Ciszu Network — Ciszuko Antony.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-**ARTÍCULO 7: RESTRICCIONES DE COMERCIALIZACIÓN**
-Queda estrictamente prohibida la venta, sub-licenciamiento comercial o inclusión de MuzicMania en paquetes de software de pago.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-**ARTÍCULO 8: LIMITACIÓN JURÍDICA DE RESPONSABILIDAD**
-En ningún caso el autor o los titulares del copyright serán responsables de ninguna reclamación, daños u otras responsabilidades.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
-**ARTÍCULO 9: JURISDICCIÓN Y MODIFICACIONES**
-MuzicMania se reserva el derecho de modificar los términos de esta licencia en cualquier momento.
+## Terceros y contenido multimedia
 
-------------------------------------------------------------
+- Las dependencias de terceros (React, Next.js, Tailwind CSS, Tauri, WebKitGTK,
+  etc.) conservan sus propias licencias MIT/Apache/BSD.
+- La música y los assets de terceros mantienen las licencias de sus autores
+  (NoCopyrightSounds, Creative Commons u otras). La licencia MIT de MuzicMania
+  no sustituye ni amplía esos derechos.
+- La atribución a Ciszu Network — Ciszuko Antony debe conservarse en las copias
+  del Software, tal como exige el aviso de copyright de la licencia MIT.
 
-[ENGLISH]
-
-**ARTICLE 1: INTELLECTUAL PROPERTY AND AUTHORSHIP**
-MuzicMania is an intellectual work whose property and copyright belong entirely to Ciszu Network and Ciszuko Antony (Francisco Garcia).
-
-**ARTICLE 2: GRANT OF USE LICENSE**
-Permission is granted for personal, educational, and non-commercial use of this software.
-
-**ARTICLE 3: THIRD-PARTY SOFTWARE AND DEPENDENCIES**
-MuzicMania uses third-party frameworks and libraries, including but not limited to React, Next.js, Tailwind CSS, and Framer Motion.
-
-**ARTICLE 4: FULL TEXT OF THE MIT LICENSE**
-MIT License
-Copyright (c) 2026 Ciszu Network — Ciszuko Antony
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction...
-
-**ARTICLE 5: MULTIMEDIA CONTENT LICENSES**
-The music used on the platform comes mainly from NoCopyrightSounds (NCS) or artists under Creative Commons license.
-
-**ARTICLE 6: MANDATORY ATTRIBUTION**
-Any redistribution or derivative use of the MuzicMania source code must visibly include attribution to Ciszu Network — Ciszuko Antony.
-
-**ARTICLE 7: COMMERCIALIZATION RESTRICTIONS**
-The sale, commercial sub-licensing, or inclusion of MuzicMania in paid software packages is strictly prohibited.
-
-**ARTICLE 8: LEGAL LIMITATION OF LIABILITY**
-In no event shall the author or copyright holders be liable for any claim, damages, or other liability.
-
-**ARTICLE 9: JURISDICTION AND MODIFICATIONS**
-MuzicMania reserves the right to modify the terms of this license at any time.
+_Última revisión: 25 nov 2026._

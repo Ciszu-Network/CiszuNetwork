@@ -10,7 +10,7 @@ POLÃTICAS LEGALES / LEGAL POLICIES
 [ESPAÑOL]
 Última actualización: 10 de Junio, 2026
 
-1. Licencia del Software: Uso personal y no comercial. Prohibida redistribución.
+1. Licencia del Software: MIT. Uso, copia, modificación y redistribución permitidos conservando el aviso de copyright.
 2. Derechos de Autor (Música): Las pistas pertenecen a sus respectivos artistas.
 3. Protección de Datos: Recolectamos Username, Avatar y Stats para el Leaderboard.
 4. Almacenamiento Local: Usamos LocalStorage para ajustes y récords locales.
@@ -23,7 +23,7 @@ POLÃTICAS LEGALES / LEGAL POLICIES
 [ENGLISH]
 Last updated: June 10, 2026
 
-1. Software License: Personal and non-commercial use only. Redistribution prohibited.
+1. Software License: MIT. Use, copying, modification and redistribution are permitted provided the copyright notice is kept.
 2. Copyright (Music): Tracks belong to their respective artists.
 3. Data Protection: We collect Username, Avatar, and Stats for the Leaderboard.
 4. Local Storage: We use LocalStorage for settings and local records.

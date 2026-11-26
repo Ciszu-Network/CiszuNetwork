@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>network.ciszu.muzicmania</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <name>MuzicMania</name>
+  <summary>Ecosistema rítmico de alto rendimiento</summary>
+  <description>
+    <p>MuzicMania es un juego rítmico de alto rendimiento desarrollado por Ciszu Network.</p>
+    <ul>
+      <li>Juego online con WebView nativo y baja latencia.</li>
+      <li>Launcher nativo para Windows, Linux y macOS.</li>
+      <li>Descargas por canal beta y actualizaciones integradas.</li>
+    </ul>
+  </description>
+  <launchable type="desktop-id">network.ciszu.muzicmania.desktop</launchable>
+  <url type="homepage">https://muzicmania.vercel.app</url>
+  <url type="bugtracker">https://github.com/Ciszu-Network/CiszuNetwork/issues</url>
+  <developer id="network.ciszu">
+    <name>Ciszu Network</name>
+  </developer>
+  <categories>
+    <category>Game</category>
+  </categories>
+  <icon type="stock">network.ciszu.muzicmania</icon>
+  <releases>
+    <release version="2.4.2" date="2026-11-25"/>
+  </releases>
+  <content_rating type="oars-1.1"/>
+</component>

@@ -112,7 +112,7 @@ host): `dist/` + `node_modules` de producción **para Linux** + `public/` +
 `bot-config.json`.
 
 - **Actualizar el bot**:
-  1. `cd deploy/ciszubot-standalone && npm install --ignore-scripts && npm run build`
+  1. `cd projects/ciszubot/discord-bot/deploy/ciszubot-standalone && npm install --ignore-scripts && npm run build`
   2. Copiar `dist/ public/ bot-config.json package.json` a `.opencode/temp/bot-bundle/`
   3. `npm install --omit=dev --ignore-scripts --os=linux --cpu=x64` ahí dentro
   4. Añadir el binding `@snazzah/davey-linux-x64-{gnu,musl}` desde el registry

@@ -246,6 +246,6 @@ Notas:          <señales residuales, logs, pendientes>
 - `DEBUGGING_SYSTEM.md` — interpretación de señales y solución de problemas.
 - `TESTING_SYSTEM.md` — framework de tests (unit/component/e2e).
 - `FRONTEND_SYSTEM.md`, `STYLES_SYSTEM.md`, `UI_COMPONENTS_SYSTEM.md`.
-- `WORKFLOW_SYSTEM.md` — operación diaria general.
+- `GLOBAL_SYSTEM.md` — operación diaria general.
 
 _Última revisión: 10 nov 2026._ Relacionado: `DEV_CONSOLE_SYSTEM.md`, `DEBUGGING_SYSTEM.md`, `TESTING_SYSTEM.md`.

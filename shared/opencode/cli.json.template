@@ -1,0 +1,47 @@
+{
+  "$schema": "https://opencode.ai/v2/cli.json",
+  "theme": {
+    "name": "mercury",
+    "mode": "dark"
+  },
+  "diffs": {
+    "wrap": "word",
+    "view": "unified"
+  },
+  "session": {
+    "sidebar": "auto",
+    "scrollbar": true,
+    "thinking": "show",
+    "permissions": "autoaccept",
+    "verbosity": "high",
+    "image_preview": true
+  },
+  "animations": true,
+  "plugins": [
+    {
+      "package": "@CISZU_REPO@/tools/tts-stt-ai",
+      "options": {
+        "endpoint": "https://generativelanguage.googleapis.com/v1beta/openai/",
+        "model": "gemini-3.6-flash",
+        "apiKeyEnv": "GEMINI_API_KEY"
+      }
+    }
+  ],
+  "prompt": {
+    "image_preview": true
+  },
+  "attention": {
+    "notifications": true,
+    "sound": true
+  },
+  "highlights": true,
+  "debug": {
+    "devtools": true,
+    "turn_tokens": "verbose",
+    "timing": true
+  },
+  "experimental": {
+    "client-mcp": true,
+    "new-designs": true
+  }
+}

@@ -1,8 +1,8 @@
 # DOCUMENTATION_SYSTEM — Sistema de Documentación de los Proyectos (Ciszu Network)
 
-Versión: 1.0.0
-Actualización: 2026-11-10
-Identificador: DOCUMENTATION_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
+Versión: 1.1.0
+Actualización: 2026-11-25
+Identificador: DOCUMENTATION_SYSTEM_V1.1.0_2026_11_25_ciszunetwork
 
 > **Definición**: sistema que define **cómo funciona la documentación** del ecosistema: normas
 > de cabecera, nomenclatura de archivos, sufijos y prefijos, reglas de formato, orden y
@@ -66,7 +66,7 @@ carpeta `docs/documentation/` de los proyectos de Ciszu Network (hoy: el monorep
 
 ### 3.3 Reglas del nombre
 
-- **Siempre en mayúsculas**: `COLOR_SYSTEM.md`, no `color_system.md`.
+- **Siempre en mayúsculas**: `COLOR_SYSTEM.md`, no `COLOR_SYSTEM.md`.
 - **Separador único**: guion bajo `_` (nunca `-` ni espacio).
 - **Sin plurales innecesarios** ni abreviaturas ambiguas.
 - **Único**: el nombre identifica unívocamente el doc (buscar duplicados antes de crear).
@@ -161,14 +161,15 @@ Identificador: AUTH_SYSTEM_V1.0.0_2026_08_13_ciszunetwork
 
 ## 7. Convención de docs de estado
 
-Los docs `PROJECT_STATE.md` (unificado: resumen + detalle), `PROJECT_HISTORY.md` y `TODO.md` son **documentos
-vivos** que se actualizan en cada sesión:
+Los docs `PROJECTS_SYSTEM.md` (estado + historial del monorepo), `STATUS_SYSTEM.md` (foto
+operativa) y `TODO.md` son **documentos vivos** que se actualizan en cada sesión:
 
 | Archivo | Contenido |
 |---|---|
-| `PROJECT_STATE.md` | Estado actual del proyecto (unificado: resumen ejecutivo + detalle por componente) |
-| `PROJECT_HISTORY.md` | Changelog cronológico (historial) |
+| `PROJECTS_SYSTEM.md` | Estado por proyecto + historial cronológico (absorbe los antiguos `PROJECT_STATE`/`PROJECT_HISTORY` del monorepo) |
+| `STATUS_SYSTEM.md` | Estado operativo: versiones, servicios, validaciones y bloqueos |
 | `TODO.md` | Lista de tareas pendientes (solo edita Ciszuko Antony) |
+| `PROJECT_STATE.md` (por proyecto) | Solo en proyectos que lo mantienen (`ciszubot`, `muzicmania`, `ciszukoantony`, `ciszugamens`, `ciszupy`, `ciszuai`); el monorepo no lo usa |
 
 - Suelen ser más cortos que 200 líneas; el límite de líneas no aplica a estos (excepción).
 - Siguen el cierre `_Última revisión: ..._` cuando procede.
@@ -242,7 +243,7 @@ Se organiza en **categorías** (secciones del `AGENTS.md`):
 - Cambiar el nombre del archivo + la cabecera (título e identificador) + **todas las
   referencias** (docs, AGENTS, README, scripts).
 - Buscar referencias con `rg "<NOMBRE>"` antes y después del cambio.
-- Ejemplo real: `FULL_STACK.md` → `FULL_STACK_SYSTEM.md` (nombre, cabecera, identificador,
+- Ejemplo real: `FULL_STACK_SYSTEM.md` → `FULL_STACK_SYSTEM.md` (nombre, cabecera, identificador,
   refs en 11 archivos y AGENTS).
 
 ### 10.4 Retirar
@@ -405,4 +406,4 @@ solo por Ciszuko Antony.
   reemplaza el sistema antiguo de documentación.
 
 _Última revisión: 10 nov 2026._ Relacionado: `FRONTEND_SYSTEM.md`, `BACKEND_SYSTEM.md`,
-`PACKAGES_SYSTEM.md`, `WORKFLOW_SYSTEM.md`, `STATUS_SYSTEM.md`, `AGENTS.md`.
+`PACKAGES_SYSTEM.md`, `GLOBAL_SYSTEM.md`, `STATUS_SYSTEM.md`, `AGENTS.md`.

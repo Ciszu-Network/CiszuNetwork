@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=MuzicMania
+GenericName=Rhythm Game
+Comment=Ecosistema rítmico de alto rendimiento
+Exec=muzicmania
+Icon=network.ciszu.muzicmania
+Terminal=false
+Type=Application
+Categories=Game;
+StartupWMClass=muzicmania
+Keywords=rhythm;music;game;muzicmania;

@@ -16,8 +16,7 @@ El portfolio de Ciszuko Antony y su código fuente son propiedad de
 Ciszu Network y Ciszuko Antony (Francisco Garcia).
 
 ARTÍCULO 2: LICENCIA DE USO
-El código fuente está disponible bajo licencia MIT para uso personal,
-educativo y no comercial.
+El código fuente está disponible bajo la Licencia MIT, sin restricción de uso comercial.
 
 ARTÍCULO 3: TEXTO DE LA LICENCIA MIT
 MIT License
@@ -53,8 +52,7 @@ The Ciszuko Antony portfolio and its source code are owned by
 Ciszu Network and Ciszuko Antony (Francisco Garcia).
 
 ARTICLE 2: USE LICENSE
-Source code is available under the MIT license for personal, educational,
-and non-commercial use.
+Source code is available under the MIT License, without commercial-use restrictions.
 
 ARTICLE 3: MIT LICENSE TEXT
 MIT License

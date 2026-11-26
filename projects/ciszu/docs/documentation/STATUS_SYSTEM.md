@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.2.7
-Actualización: 2026-11-22
-Identificador: STATUS_SYSTEM_V2.2.7_2026_11_22_ciszunetwork
+Versión: 2.3.0
+Actualización: 2026-11-25
+Identificador: STATUS_SYSTEM_V2.3.0_2026_11_25_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -20,16 +20,16 @@ Identificador: STATUS_SYSTEM_V2.2.7_2026_11_22_ciszunetwork
 | CiszuGamens | — | — | ✅ Histórico | ✅ | — |
 | @ciszunetwork/cdn | — | ✅ Activo | — | — | — |
 
-### Estado real (13 nov 2026)
+### Estado real (actualizado 25 nov 2026)
 
 | Sistema | Estado |
 |---|---|
-| OpenCode V2 (agente) | ✅ `opencode 2.3.2` (API v2); servidor headless en `7777` (loopback; `0.0.0.0` durante `pair`); LSP retirado del agente; plugin de voz V2 cargado (14 comandos) |
-| Consola dev local | ✅ `test/website/debug/dev_console.ps1` (TUI + CLI, puertos fijos 3000-3003) — 16 ago 2026 |
+| OpenCode V2 (agente) | ✅ `opencode 2.4.1` (API v2); servidor headless en `7777` (loopback; `0.0.0.0` durante `pair`); LSP retirado del agente; plugin de voz V2 cargado (14 comandos); Windows y Fedora (`ciszu-ai`) |
+| Consola dev local | ✅ Windows: `test/website/debug/dev_console.ps1` (TUI + CLI, 3000-3003); Fedora: CLI `dev` (`shared/scripts/linux/dev.sh`) + consolas por `pwsh` — 25 nov 2026 |
 | 4 websites en producción (Vercel) | ⏸️ Pausadas por fair use hasta el 7 dic 2026 (`VERCEL_PAUSED=true`); verificado el 13 nov 2026: las 4 URLs responden HTTP 402 `DEPLOYMENT_DISABLED`. Top.gg denegó la verificación de CiszuBot por el dashboard caído |
-| CDN Supabase Storage `ciszu-cdn` | ✅ 7.353 objetos / 160.6 MB (16% de cuota; bucket legacy `ciszu-assets` eliminado 10 ago 2026) |
+| CDN Supabase Storage `ciszu-cdn` | ✅ 7.577 objetos (verificado 25 nov 2026; bucket legacy `ciszu-assets` eliminado 10 ago 2026) |
 | Sistema de formatos (avif/webp/opus) | ✅ Implementado (8 ago 2026) + `SmartImage` en las webs |
-| PDWA (manifest + sw + botón instalar) | ✅ Las 4 webs |
+| PWA (manifest + sw + botón instalar) | ✅ Las 4 webs |
 | Sistema de invitados | ✅ Invitado local (`Invitado` + 6 dígitos, localStorage) en las 4 webs; en muzicmania ID unificado header/`/play` (`play_guest_name`) — 19 ago 2026 |
 | Preferencias locales | ✅ En **modal centrado** (botón "Preferencias locales" del dropdown AUTH) en las 4 webs; idioma, tema, ayuda, zoom y silenciar pestaña con botones iguales al hamburguesa/footer; localStorage siempre + sync a `profiles` si sesión — 20 ago 2026 |
 | Auth Supabase (MuzicMania) | ✅ REST corregido, RLS activo |
@@ -40,6 +40,7 @@ Identificador: STATUS_SYSTEM_V2.2.7_2026_11_22_ciszunetwork
 | Monitoreo externo | ✅ UptimeRobot 5 monitores + watcher ntfy (10 ago 2026) |
 | Logging centralizado | ✅ Better Stack Telemetry conectado (15 ago 2026) — `@logtail/pino` en `@ciszunetwork/utils/logger`, envía en producción con `BETTERSTACK_TELEMETRY_TOKEN` |
 | Docker Desktop | ✅ Operativo (15 ago 2026, engine 29.6.2) tras reparar WSL2 (vhdx engine y de datos corruptos) |
+| Fedora 45 KDE (Linux) | ✅ Operativo (25 nov 2026): Node 24 + pnpm 12.16.1 + Rust + pwsh 7.7 + Podman 6.2; shell zsh/`ciszu`; OpenCode 2.4.1 + `ciszu-ai`; vault age 1.3.2; repo en `/mnt/CiscoData2/Ciszu Network` |
 | Directus GUI local | ✅ `tools/directus/docker-compose.yml`, `http://localhost:8055` (admin ciszunetwork@gmail.com, 2FA, proyecto `ciszunetwork`) — credenciales en vault |
 | Compilación local de webs | ✅ Las 4 webs compilan y cargan assets correctamente en dev (puertos 3000–3003, CDN local 8788); el reporte previo de "assets no cargan" en ciszukoantony correspondía a servers viejos con puertos cruzados — 19 ago 2026 |
 | Navbar ciszubot (orden botones) | ✅ Botón AUTH movido **después** del botón hamburguesa — 19 ago 2026 |
@@ -49,7 +50,7 @@ Identificador: STATUS_SYSTEM_V2.2.7_2026_11_22_ciszunetwork
 | Editor visual UI/UX multi-web | ✅ Las 4 webs (ciszu/ciszukoantony/ciszubot/muzicmania) con `app` en BD (migración 19 + PK compuesta), token `PUCK_EDIT_TOKEN`, 404 en producción (`/edit/*` y `/api/puck/*`), chrome del sitio oculto en `/edit/*` — 19 ago 2026; ver `VISUAL_BUILDERS_SYSTEM.md` |
 | Storybook `@ciszu/ui` | ✅ Chromatic (builds 1–5, visual) + a11y + addon-vitest + addon-designs (Figma) + themes/dark-mode/tag-badges/Visual Tests/MSW |
 | Testing | ✅ Vitest (171 unit) + Playwright E2E + Storybook (component + a11y + visual) |
-| Backups BD | ⏳ Requiere PostgreSQL 17 (pg_dump ≥17) instalado |
+| Backups BD | ✅ Fedora: `pg_dump 18.3` instalado (25 nov 2026); el comando sigue requiriendo credenciales del vault |
 | Ciszubot OAuth dashboard | ⏳ Pendiente registrar callback en Discord Developer Portal |
 
 ### Documentación
@@ -105,7 +106,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 
 | Bloqueo | Detalle | Doc |
 |---|---|---|
-| Push a GitHub | DNS de este PC no resuelve github.com → push manual del usuario | `WORKFLOW_SYSTEM.md` |
+| Push a GitHub | ✅ DNS resuelve github.com y `git ls-remote` funciona (verificado 25 nov 2026) | `GLOBAL_SYSTEM.md` |
 | R2 Cloudflare | Requiere tarjeta → CDN activo = Supabase `ciszu-cdn` | `CDN_SYSTEM.md` |
 | Ciszubot OAuth | Pendiente registrar callback en Discord Developer Portal | `PROJECTS_SYSTEM.md` |
 | Top.gg CiszuBot | Verificación denegada el 13 nov 2026 por el dashboard caído; reintentar cuando Vercel vuelva | `PROJECT_STATE.md` (ciszubot) |
@@ -127,7 +128,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 | CiszukoAntony | Pausado temporalmente | Último deploy válido; Vercel en pausa por fair use hasta el 7 dic 2026 |
 | MuzicMania | Pausado temporalmente | Juego + app Tauri 2.1.1 (NSIS 2.3.1); Vercel en pausa hasta el 7 dic 2026 |
 | CiszuBot | Operativo con web pausada | Bot Discord v3.4.0 activo; landing y dashboard caídos por Vercel (HTTP 402). Top.gg denegó la verificación el 13 nov 2026 por el dashboard no disponible |
-| CDN Supabase | Operativo | `ciszu-cdn`, 7.353 objetos |
+| CDN Supabase | Operativo | `ciszu-cdn`, 7.577 objetos |
 | CI/CD | Operativo | GitHub Actions: CI, CodeQL, DAST, deploy ×4, uptime-watch. **3 runners self-hosted online** (servicios Windows en `E:\actions-runners\CISZU-PC`, `CISZU-PC-2`, `CISZU-PC-3`) desde 15 ago 2026: jobs portables del CI y deploys ×4 en `self-hosted`, sin consumir minutos de la org |
 
 ## Estado por sistema (resumen)
@@ -302,7 +303,7 @@ Este doc es una **foto del estado** del ecosistema; al cerrar sesión:
 - [ ] `ÚLTIMA ACTUALIZACIÓN` fechada y `PROJECTS_SYSTEM.md` con historia.
 
 _Última revisión: 14 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
-`WORKFLOW_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
+`GLOBAL_SYSTEM.md`, `ARCHITECTURE.md`, `FULL_STACK_SYSTEM.md`.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-10-23
 ## Sesión 21-22 oct 2026 — seguridad, buscador global y estabilidad
@@ -388,4 +389,21 @@ _Última revisión: 14 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Datos**: migraciones locales `20261114000001_service_role_metrics_select.sql` y `20261114000002_ops_monitor_state.sql`; grants solo a `service_role`.
 - **Validación**: scripts con `node --check`, dry-run de system/stats/status, YAML de 24 workflows, baseline de `ops_monitor_state` y perfil instalado/cargado OK.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-11-14
+## Sesión 25 nov 2026 — Fedora 45 operativo (arranque dual)
+
+- **Entorno**: Fedora 45 KDE + Windows 11; un solo repo en NTFS (`E:\Ciszu Network` = `/mnt/CiscoData2/Ciszu Network`), con el data dir de OpenCode (6,6 GB) dentro de `.opencode/data`.
+- **Toolchain**: Node 24.22.3 (fnm), pnpm 12.16.1, Rust 1.100, pwsh 7.7, Podman 6.2; gh y Tailscale autenticados.
+- **Shell**: perfiles zsh personal (fastfetch) y corporativo (`ciszu`), paridad 36 comandos y banner ANSI compartido; corregido `dev` (la función tapaba al CLI) y `devall/devstop`.
+- **OpenCode**: 2.4.1; 34 skills por symlink desde el repo; `ciszu-ai` en 7777; DB local por SO.
+- **Vault**: `vault.ps1` multiplataforma; age 1.3.2 en Fedora; identity en `~/.ciszu` (0600); `.env.age` regenerado y `verify` OK (SHA256 `B2D27052…7BCE0A`).
+- **Validación**: `pnpm doctor` OK; `pnpm shell:check` 36; `pnpm lint:all` 9/9; `pnpm test` 414 tests; `pnpm build:all` 5/5; `dev status` 3000-3003 libres (puesta en marcha del 25 nov).
+- **Documentación**: AGENTS.md §1.1 (máquinas/rutas); estado movido a `PROJECTS_SYSTEM`/`STATUS_SYSTEM`; `GLOBAL_SYSTEM` y `LINUX_SYSTEM` sin rutas rotas (`shared/scripts/linux/...`).
+- **Consolidación**: residuo `Ciszu Network` eliminado; un solo repo (`E:\Ciszu Network` = `/mnt/CiscoData2/Ciszu Network`) con `clones/` y `.opencode/data` dentro; `deploy` de ciszubot en `projects/ciszubot/discord-bot/deploy` y referencias corregidas.
+- **Espacio**: `/` estaba al 100% (11 MB); liberados ~4,2 GB (caché de VSIX de VS Code, store pnpm huérfano, cachés npm/mozilla/dnf, journal). Quedan ~4 GB libres.
+- **Apps**: OBS (perfil `CiszukoAntony` y escenas `Stream`/`Video` portados con rutas Linux y fuentes remapeadas) y VS Code (settings de Windows fusionados, Doki fondo/chibi/wallpaper y Python `/usr/bin/python3`).
+- **Instaladores Linux**: añadidos AppStream (`network.ciszu.muzicmania`), licencia y iconos 512 a DEB/RPM; AppImage queda fuera de este pase; reconstruidos y publicados en `downloads/linux/x64/2.4.2/beta/`.
+- **Licencia**: todo el ecosistema pasa a MIT/open source; corregidas las cláusulas no comerciales en ciszu, ciszubot, ciszukoantony y MuzicMania, incluidas webs legales, docs y copias públicas. La música/assets de terceros conservan sus licencias.
+- **Ventanas MuzicMania**: launcher con `resizable/maximizable` desde el inicio, `always_on_top` desactivado en el hub, `unminimize/show/set_focus`, capabilities de Tauri para drag/maximize/minimize y main window enfocada; probado el arranque.
+- **KDE**: `FocusStealingPreventionLevel=2` pasó a `0` y se recargó KWin; no era un bug de KDE, era la prevención de robo de foco. Backup en `~/.config/kwinrc.bak-20261125`.
+
+ÚLTIMA ACTUALIZACIÓN: 2026-11-25

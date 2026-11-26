@@ -26,10 +26,10 @@ ARTÍCULO 5: CÓDIGO DE CONDUCTA (REGLAS DE ORO)
 Los usuarios deben adherirse a los principios de Fair Play descritos en la sección de Reglas. El acoso, la discriminación y la toxicidad en los espacios comunitarios resultarán en la terminación inmediata del servicio.
 
 ARTÍCULO 6: PROPIEDAD INTELECTUAL Y DERECHOS DE AUTOR
-Todo el código fuente, diseño de interfaz, artes gráficos y logotipos son propiedad exclusiva de Ciszu Network y Ciszuko Antony. La música está sujeta a las licencias individuales de sus respectivos autores (NCS/Creative Commons).
+El código fuente se distribuye bajo la Licencia MIT; el diseño de interfaz, artes gráficos y logotipos son propiedad de Ciszu Network y Ciszuko Antony. La música está sujeta a las licencias individuales de sus respectivos autores (NCS/Creative Commons).
 
 ARTÍCULO 7: LICENCIA DE USUARIO FINAL (EULA)
-El acceso a MuzicMania no constituye una venta de su software. Se le concede una licencia revocable, no exclusiva e intransferible para ejecutar el cliente del juego dentro de los navegadores compatibles.
+El acceso a MuzicMania no constituye una venta del servicio. El código del cliente se distribuye bajo la Licencia MIT; el uso de la plataforma se rige por estos términos y puede suspenderse por incumplimiento.
 
 ARTÍCULO 8: BIENES VIRTUALES Y PROGRESIÓN
 Cualquier moneda virtual, ítem estético o progresión obtenida dentro de MuzicMania no posee valor monetario real y no es canjeable por dinero. El autor se reserva el derecho de equilibrar o modificar estos valores en cualquier momento.

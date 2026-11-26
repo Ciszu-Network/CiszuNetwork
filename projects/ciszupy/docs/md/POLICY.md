@@ -37,7 +37,7 @@ PRIVACY POLICY
 - No information is sent to external servers
 
 USAGE POLICY
-- The package may be used for personal and educational purposes
+- The package is MIT licensed and may be used for any purpose, including commercial use.
 - Using Ciszupy for malicious or illegal activities is prohibited
 - Users are responsible for their use of the package
 

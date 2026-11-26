@@ -6,7 +6,15 @@ Abre la consola interactiva de debugging local (`Console Dev Debugging`) para pr
 4 webs en el navegador. Es un TUI de PowerShell navegable con flechas:
 
 ```powershell
+# Windows
 powershell -NoProfile -ExecutionPolicy Bypass -File test/website/debug/dev_console.ps1
+```
+
+```bash
+# Linux (requiere pwsh; el wrapper carga PlatformCompat)
+devcon
+# Alternativa sin TUI:
+dev status
 ```
 
 Qué permite:

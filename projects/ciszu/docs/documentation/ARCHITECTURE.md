@@ -95,9 +95,9 @@ Detalle operativo y de seguridad: `FEATURE_FLAGS_SYSTEM.md` §3.1.
 
 - `FULL_STACK_SYSTEM.md` — stack tecnológico completo
 - `FEATURE_FLAGS_SYSTEM.md` — kill switches, Premium y subsistema +18
-- `WORKFLOW_SYSTEM.md` — flujos de trabajo y comandos diarios
+- `GLOBAL_SYSTEM.md` — flujos de trabajo y comandos diarios
 - `DB_SYSTEM.md` — base de datos y consultas
-- `CDN_MIGRATIONS.md` — historial de migraciones del CDN
+- `CDN_SYSTEM.md` — historial de migraciones del CDN
 - `SECURITY_PROTOCOLS.md` — protocolos de seguridad del ecosistema
 - `AGENTS.md` — reglas y convenciones del agente (raíz del repo)
 
@@ -209,7 +209,7 @@ Bot: Docker (node:24-alpine) ──► Discord ──► Supabase
 - **Assets por resolver, no por path duro**: todas las webs usan `@ciszunetwork/cdn`; `public/` solo docs, pwa y sw.
 - **Seguridad shift-left**: pre-commit (gitleaks/secretlint) → CI (semgrep/CodeQL/audit) → DAST semanal (ZAP) → IAST en prod.
 - **Deploy desde la raíz**: cada deploy de Vercel sube el repo completo con `--archive=tgz` y se activa solo su proyecto.
-- **Cierre de sesión obligatorio**: estado + historial + estadísticas se actualizan antes de terminar (ver `WORKFLOW_SYSTEM.md`).
+- **Cierre de sesión obligatorio**: estado + historial + estadísticas se actualizan antes de terminar (ver `GLOBAL_SYSTEM.md`).
 - **Evitar servidores propios**: si Supabase o un servicio gestionado lo cubre, no montar infraestructura propia.
 
 ## Riesgos y mitigaciones a nivel de arquitectura
@@ -217,10 +217,10 @@ Bot: Docker (node:24-alpine) ──► Discord ──► Supabase
 | Riesgo | Mitigación |
 |---|---|
 | Cuota Free de Supabase (Storage ≈1 GB) | Limpieza periódica + `check-cdn-mimes.js` (ver `STATISTICS_SYSTEM.md`) |
-| Deploy roto por cambio en `packages/**` | Los 4 deploys hacen build; revisar `WORKFLOW_SYSTEM.md` antes de tocar packages |
+| Deploy roto por cambio en `packages/**` | Los 4 deploys hacen build; revisar `GLOBAL_SYSTEM.md` antes de tocar packages |
 | Dependencias con CVE | `pnpm audit --prod` en CI + Dependabot + `DEVSECOPS_SYSTEM.md` |
 | Dependencia de un solo hosting | Monitores UptimeRobot + ntfy; Cloudflare como futura capa DNS/CDN |
-| Pérdida de contexto entre sesiones | Protocolos de inicio/cierre y handover en `WORKFLOW_SYSTEM.md` |
+| Pérdida de contexto entre sesiones | Protocolos de inicio/cierre y handover en `GLOBAL_SYSTEM.md` |
 
 ## Checklist de alineación de arquitectura
 

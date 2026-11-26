@@ -210,5 +210,5 @@ Nunca se comparte `service_role`. Patrón de acceso:
 - `docs/documentation/REMOTE_CONTROL_SYSTEM.md` — infraestructura Tailscale+SSH actual (base para multi-persona)
 - `docs/documentation/VPS_PLAN.md` — hosting del bot (punto de partida para entornos de equipo)
 - `docs/documentation/TOOLS_SYSTEM.md` — decisión de herramientas de desarrollo
-- `docs/documentation/DEVSECOPS.md` — políticas de seguridad (XSS, SQLi, RLS)
+- `docs/documentation/DEVSECOPS_SYSTEM.md` — políticas de seguridad (XSS, SQLi, RLS)
 - `GH org` → `Ciszu-Network` (ya creada, ADMIN: yo)

@@ -694,7 +694,7 @@ el acumulado. Objetivos diarios equivalentes: **CPU ≤3 min/día** (1,5 h/30 d)
 | ISR de `/donate` con env en runtime | Activo: la página lee configuración de entorno al revalidar; el ISR depende de que el env esté presente en runtime | Revisar si conviene fijar el valor en build o mantener runtime |
 | `#418` preexistentes | Activo: hidratación React previa a la migración (no ligada a F3/F4), documentada para ciszubot en `NAVIGATION_SYSTEM.md` | Investigar aparte; F3 verificó 0 hidrataciones nuevas |
 
-_Última revisión: 10 nov 2026._ Relacionado: `PROJECT_STATE.md`, `PROJECT_HISTORY.md`,
+_Última revisión: 25 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATUS_SYSTEM.md`,
 `FRAMEWORKS_SYSTEM.md`, `FRONTEND_SYSTEM.md`, `STYLES_SYSTEM.md`, `CACHING_SYSTEM.md`,
 `SECURITY_PROTOCOLS.md`, `ACTIONS_RUNNERS_SYSTEM.md`, `MONITORING_SYSTEM.md`, `TODO.md`,
 `DOCUMENTATION_SYSTEM.md`.

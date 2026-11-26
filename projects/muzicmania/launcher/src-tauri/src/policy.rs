@@ -434,17 +434,7 @@ fn to_option(release: &ReleaseRecord) -> PolicyOption {
 }
 
 pub fn platform() -> (String, String) {
-    let os = if super::detect_windows_version().contains("11") {
-        "windows11".to_string()
-    } else {
-        "windows10".to_string()
-    };
-    let arch = if super::detect_architecture().contains("ARM") {
-        "arm64".to_string()
-    } else {
-        "x64".to_string()
-    };
-    (os, arch)
+    (super::detect_os_key(), super::detect_arch_key())
 }
 
 pub fn check(
@@ -506,7 +496,13 @@ pub fn check(
         .filter(|release| release.os == os && release.arch == arch)
         .collect();
 
-    let platform_error = if !manifest.releases.is_empty() && platform_releases.is_empty() {
+    // Las builds de Linux/macOS se distribuyen como paquetes nativos (deb/rpm/AppImage,
+    // app/dmg) y todavia no entran en el manifiesto de releases de Windows. No bloquear
+    // el launcher por eso: simplemente no habra actualizaciones automaticas aun.
+    let platform_error = if !manifest.releases.is_empty()
+        && platform_releases.is_empty()
+        && os.starts_with("windows")
+    {
         format!(
             "No hay builds compatibles para {} {}. Descarga el instalador oficial o contacta a soporte.",
             os, arch

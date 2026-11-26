@@ -172,8 +172,8 @@ Si Oracle pide tarjeta y no tienes o no quieres darla:
 - `DOCKER_SYSTEM.md` — el mismo `docker-compose.yml` y Dockerfile del repo sirven en el VPS.
 - `REMOTE_CONTROL_SYSTEM.md` — acceso remoto (SSH/Tailscale) al servidor una vez creado.
 - `MONITORING_SYSTEM.md` — alta del monitor del bot y alerta de proceso muerto (pendiente).
-- `WORKFLOW_SYSTEM.md` — el deploy al VPS puede automatizarse con un workflow de GitHub Actions.
-- `PROJECT_STATE.md` / toDo "24/7 pendiente" — estado de la migración en cada sesión.
+- `GLOBAL_SYSTEM.md` — el deploy al VPS puede automatizarse con un workflow de GitHub Actions.
+- `PROJECTS_SYSTEM.md` / toDo "24/7 pendiente" — estado de la migración en cada sesión.
 
 ## Preguntas frecuentes
 
@@ -255,7 +255,7 @@ ffmpeg en el host ⇒ probar sin Lavalink y, si falla, apagar con el feature fla
 
 ### Paquete standalone (verificado 10 oct 2026)
 
-`node scripts/build-bot-standalone.mjs` genera `deploy/ciszubot-standalone.zip` (no versionado):
+`node scripts/build-bot-standalone.mjs` genera `projects/ciszubot/discord-bot/deploy/ciszubot-standalone.zip` (no versionado):
 
 - Incluye el bot + los paquetes `@ciszunetwork/db` y `@ciszunetwork/utils` con `tsconfig`
   de `paths`; el **postbuild** (`scripts/standalone-postbuild.mjs` → `scripts/postbuild.mjs`

@@ -102,7 +102,7 @@ function Copy-Download {
         [string]$FileName
     )
 
-    $archiveDir = Join-Path (Join-Path $DestinationRoot $LauncherVersion) (Join-Path $Channel $RelativePath)
+    $archiveDir = Join-Path (Join-Path $DestinationRoot $RelativePath) (Join-Path $LauncherVersion $Channel)
     New-Item -ItemType Directory -Path $archiveDir -Force | Out-Null
     $archivePath = Join-Path $archiveDir $FileName
     Copy-Item -LiteralPath $Source -Destination $archivePath -Force
@@ -157,8 +157,8 @@ New-Item -ItemType Directory -Path $WebsiteDownloads -Force | Out-Null
 New-Item -ItemType Directory -Path $LauncherDownloads -Force | Out-Null
 
 $Targets = @(
-    [ordered]@{ Os = "windows10"; Relative = "windows10"; Label = "Windows 10" },
-    [ordered]@{ Os = "windows11"; Relative = "windows11"; Label = "Windows 11" }
+    [ordered]@{ Os = "windows10"; Relative = "windows/x64"; Label = "Windows 10" },
+    [ordered]@{ Os = "windows11"; Relative = "windows/x64"; Label = "Windows 11" }
 )
 $Hash = (Get-FileHash -LiteralPath $Installer -Algorithm SHA256).Hash
 $Entries = @()
@@ -168,7 +168,7 @@ foreach ($Target in $Targets) {
     $FileName = "MuzicMania_Game-v${GameVersion}_Launcher-v${LauncherVersion}_${Channel}_$($Target.Os)_x64.exe"
     $WebsiteArchive = Copy-Download -Source $Installer -DestinationRoot $WebsiteDownloads -RelativePath $Target.Relative -FileName $FileName
     $LauncherArchive = Copy-Download -Source $Installer -DestinationRoot $LauncherDownloads -RelativePath $Target.Relative -FileName $FileName
-    $RelativeUrl = "$LauncherVersion/$Channel/$($Target.Relative)/$FileName"
+    $RelativeUrl = "windows/x64/$LauncherVersion/$Channel/$FileName"
 
     $entry = [ordered]@{
         launcherVersion = $LauncherVersion

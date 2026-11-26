@@ -14,8 +14,13 @@ Gestiona el arranque local de las 4 webs del monorepo (Next.js dev) usando la co
 
 Sintaxis: `/dev <accion> [web]`
 
+Plataforma:
+
+- **Windows**: `powershell -NoProfile -ExecutionPolicy Bypass -File test/website/debug/dev_console.ps1 -Action <accion> -Web <key>`
+- **Linux**: `dev <accion> [web]` (CLI nativo, `shared/scripts/linux/dev.sh`). Con `pwsh` instalado, `devcon` abre el TUI.
+
 - **`status`** → muestra qué webs responden en sus puertos:
-  `powershell -NoProfile -ExecutionPolicy Bypass -File test/website/debug/dev_console.ps1 -Action status`
+  `dev status` (Linux) o `powershell ... dev_console.ps1 -Action status` (Windows).
 - **`start network|antony|ciszubot|muzic`** → encender una web concreta
   (`.ps1 -Action start -Web <key>`).
 - **`restart <key>`** → detener y volver a encender (`.ps1 -Action restart -Web <key>`).

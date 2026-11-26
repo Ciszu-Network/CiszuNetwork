@@ -92,7 +92,7 @@ Inventario actual (ago 2026) de lenguajes, frameworks, sistemas operativos, herr
 - **Secrets:** gitleaks 8.30.1 (pre-commit + diff CI), secretlint 13.0.4 (pre-commit)
 - **Supply chain:** `pnpm audit --prod`, `cargo audit`, trivy 0.72.0
 - **Configs:** `.gitleaks.toml`, `.semgrepignore`, `trivy.yaml`, `.secretlintrc.json`
-- **Doctrina:** `DEVSECOPS.md`, `CODE_PRINCIPLES.md`, `SECURITY_PROTOCOLS.md`
+- **Doctrina:** `DEVSECOPS_SYSTEM.md`, `CODE_PRINCIPLES_PROTOCOLS.md`, `SECURITY_PROTOCOLS.md`
 
 ## Shared Packages
 
@@ -242,7 +242,7 @@ global por defecto. Ver también `TOOLS_SYSTEM.md`.
 
 ## Checklist para introducir tecnología nueva
 
-- [ ] ¿Resuelve un problema real? (YAGNI/KISS — ver `CODE_PRINCIPLES.md`).
+- [ ] ¿Resuelve un problema real? (YAGNI/KISS — ver `CODE_PRINCIPLES_PROTOCOLS.md`).
 - [ ] ¿Existe alternativa en el stack actual? Documentar la diferencia antes de instalarla.
 - [ ] Instalar solo tras aprobación y ejecutar `pnpm audit --prod`.
 - [ ] Si reemplaza algo existente, mover la fila a "¿Qué NO está en el stack?" con el motivo.

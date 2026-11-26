@@ -159,6 +159,7 @@ interface ReleaseEntry {
   os: string;
   osLabel: string;
   arch: string;
+  format?: string;
   status?: string;
   fileName: string;
   path: string;
@@ -194,6 +195,8 @@ export default function DownloadPage() {
   }, []);
 
   const latestBuild = releases.find((entry) => entry.channel === 'beta' && entry.status !== 'blocked_security' && entry.status !== 'blocked_support') || releases.find((entry) => entry.status === 'supported') || releases[0];
+  const linuxEntries = releases.filter((entry) => entry.os === 'linux' && entry.arch === 'x64');
+  const linuxEntry = linuxEntries.find((entry) => entry.format === 'appimage') || linuxEntries[0];
   const releaseRows = releases
     .filter((entry) => {
       const query = releaseQuery.trim().toLowerCase();
@@ -237,6 +240,24 @@ export default function DownloadPage() {
     toast(`[SISTEMA]: La descarga de MuzicMania para ${os} es una función beta cerrada y estará disponible próximamente.`, 'warning');
   };
 
+  const hasLinuxFormat = (format: string) =>
+    releases.some((entry) => entry.os === 'linux' && entry.arch === 'x64' && entry.format === format);
+
+  const handleDownloadLinux = (format: 'appimage' | 'deb' | 'rpm') => {
+    if (!hasLinuxFormat(format)) {
+      toast(`[SISTEMA]: El paquete Linux ${format.toUpperCase()} aún no ha sido compilado.`, 'warning');
+      return;
+    }
+    setIsDownloading(`linux-${format}`);
+    toast('¡Gracias por descargar MuzicMania! Gracias por apoyar a Ciszu Network.', 'success');
+    const url = new URL('/api/download/linux', window.location.origin);
+    url.searchParams.set('arch', 'x64');
+    url.searchParams.set('format', format);
+    setTimeout(() => {
+      window.location.href = url.toString();
+    }, 2000);
+  };
+
   const handleCloseOverlay = () => {
     if (!isDownloading) return;
     setIsDownloading(null);
@@ -251,6 +272,7 @@ export default function DownloadPage() {
   const AVAILABLE: Record<string, string[]> = {
     w10: ['x64'],
     w11: ['x64'],
+    linux: ['x64'],
   };
 
   const archRows: { arch: string; label: string; size: string }[] = [
@@ -462,38 +484,69 @@ export default function DownloadPage() {
           </div>
 
           {/* LINUX PC */}
-          <div className="relative group p-1 bg-[#05050a]/40 rounded-[2.5rem] border border-white/5">
+          <div className={`relative group p-1 rounded-[2.5rem] border ${linuxEntry ? 'bg-gradient-to-br from-neon-cyan/20 via-transparent to-transparent border-neon-cyan/20' : 'bg-[#05050a]/40 border-white/5'}`}>
             <div className="relative p-8 flex flex-col justify-between min-h-[420px]">
               <div className="space-y-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 text-gray-500 flex items-center justify-center p-2.5 bg-white/5 border border-white/10 rounded-2xl">
+                  <div className={`w-12 h-12 flex items-center justify-center p-2.5 rounded-2xl border ${linuxEntry ? 'text-neon-cyan bg-neon-cyan/10 border-neon-cyan/20' : 'text-gray-500 bg-white/5 border-white/10'}`}>
                     <LinuxIcon />
                   </div>
                   <div>
-                    <h2 className="text-xl font-header font-black text-gray-400 italic uppercase tracking-tight">{t.pages.download.linuxEdition}</h2>
-                    <span className="text-[8px] font-bold text-rose-500 uppercase tracking-widest bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20 block mt-0.5 w-fit">CERRADO</span>
+                    <h2 className={`text-xl font-header font-black italic uppercase tracking-tight ${linuxEntry ? 'text-white' : 'text-gray-400'}`}>{t.pages.download.linuxEdition}</h2>
+                    <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded border block mt-0.5 w-fit ${linuxEntry ? 'text-neon-cyan bg-neon-cyan/10 border-neon-cyan/20' : 'text-rose-500 bg-rose-500/10 border-rose-500/20'}`}>
+                      {linuxEntry ? 'DISPONIBLE' : 'CERRADO'}
+                    </span>
                   </div>
                 </div>
 
-                <p className="text-gray-500 font-bold text-xs leading-relaxed">
+                <p className={`font-bold text-xs leading-relaxed ${linuxEntry ? 'text-gray-300' : 'text-gray-500'}`}>
                   {t.pages.download.linuxDesc}
                 </p>
 
                 <div className="space-y-2 text-[10px] text-gray-600 font-black uppercase tracking-widest border-t border-white/5 pt-4">
-                  <div className="flex justify-between"><span>{t.pages.download.versionLabel}</span><span>{t.pages.download.versionValue}</span></div>
-                  <div className="flex justify-between"><span>{t.pages.download.sizeLabel}</span><span>{t.pages.download.sizeLinux}</span></div>
-                  <div className="flex justify-between"><span>{t.pages.download.formatLabel}</span><span>{t.pages.download.formatLinux}</span></div>
+                  <div className="flex justify-between"><span>{t.pages.download.versionLabel}</span><span>{linuxEntry ? `v${linuxEntry.launcherVersion}` : t.pages.download.versionValue}</span></div>
+                  <div className="flex justify-between"><span>{t.pages.download.sizeLabel}</span><span>{linuxEntry ? `${(linuxEntry.size / 1024 / 1024).toFixed(1)} MB` : t.pages.download.sizeLinux}</span></div>
+                  <div className="flex justify-between"><span>{t.pages.download.formatLabel}</span><span>{linuxEntry ? 'AppImage / DEB / RPM' : t.pages.download.formatLinux}</span></div>
                 </div>
               </div>
 
-              <div className="pt-8">
-                <button 
-                  onClick={() => handleUnsupportedOS('Linux')}
-                  className="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-500 hover:text-white rounded-xl font-header font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer relative"
-                >
-                  <LockBadge />
-                  {t.pages.download.joinBeta}
-                </button>
+              <div className="pt-8 space-y-2">
+                {linuxEntry ? (
+                  <>
+                    <button
+                      onClick={() => handleDownloadLinux('appimage')}
+                      disabled={isDownloading !== null || !hasLinuxFormat('appimage')}
+                      className="w-full py-4 bg-neon-cyan/20 hover:bg-neon-cyan border border-neon-cyan/30 hover:border-neon-cyan text-neon-cyan hover:text-black rounded-xl font-header font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                    >
+                      <DownloadIcon />
+                      APPIMAGE
+                    </button>
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => handleDownloadLinux('deb')}
+                        disabled={isDownloading !== null || !hasLinuxFormat('deb')}
+                        className="py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-400 hover:text-white rounded-xl font-header font-black uppercase tracking-widest text-[10px] transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        DEB
+                      </button>
+                      <button
+                        onClick={() => handleDownloadLinux('rpm')}
+                        disabled={isDownloading !== null || !hasLinuxFormat('rpm')}
+                        className="py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-400 hover:text-white rounded-xl font-header font-black uppercase tracking-widest text-[10px] transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        RPM
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <button
+                    disabled
+                    className="w-full py-4 bg-white/5 border border-white/10 text-gray-500 rounded-xl font-header font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 cursor-not-allowed"
+                  >
+                    <LockBadge />
+                    {t.pages.download.notCompiled}
+                  </button>
+                )}
               </div>
             </div>
           </div>

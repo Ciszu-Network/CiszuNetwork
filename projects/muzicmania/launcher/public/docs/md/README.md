@@ -52,4 +52,4 @@ Para información técnica detallada, reglas y términos legales, consulta nuest
 - [Reglas y Directrices](content/documents/RULES.md)
 
 ---
-© 2024-2026 Ciszuko Antony. All rights reserved.
+© 2024-2026 Ciszu Network — Ciszuko Antony. MIT License.

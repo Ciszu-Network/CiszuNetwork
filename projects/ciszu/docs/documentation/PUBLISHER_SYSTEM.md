@@ -267,7 +267,7 @@ pnpm notify "🚀 **Nuevo release v3.2.0**\n\nMuzicMania: nuevo modo ranked + 5 
 - `MARKETING_PLAN.md` — Objetivos, calendario, KPIs
 - `SOCIAL_NETWORK_PROTOCOLS.md` — Cuentas, handles, guidelines
 - `AD_SYSTEM.md` — Anuncios en web + social
-- `WORKFLOW_SYSTEM.md` — Comandos pnpm, git, CI/CD
+- `GLOBAL_SYSTEM.md` — Comandos pnpm, git, CI/CD
 - `WORKFLOW_APP_PROTOCOLS.md` — Disparadores GitHub por proyecto
 - `DOCUMENTATION_SYSTEM.md` — Estándar docs, formatos, pipeline
 - `CDN_SYSTEM.md` — Asset resolver, Supabase Storage
