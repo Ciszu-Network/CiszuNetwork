@@ -168,7 +168,23 @@ interface ReleaseEntry {
   buildDate: string;
   changelogUrl: string;
   releaseTag: string;
+  downloadUrl?: string;
 }
+
+const FORMAT_META: Record<string, { label: string; distro: string; manager: string }> = {
+  rpm: { label: 'RPM', distro: 'Fedora · RHEL · openSUSE', manager: 'dnf / zypper' },
+  deb: { label: 'DEB', distro: 'Debian · Ubuntu · Mint', manager: 'apt' },
+  appimage: { label: 'AppImage', distro: 'Universal (sin instalar)', manager: 'chmod +x' },
+  flatpak: { label: 'Flatpak', distro: 'Flathub · Discover', manager: 'flatpak' },
+  aur: { label: 'AUR', distro: 'Arch Linux · Manjaro', manager: 'yay / paru' },
+  exe: { label: 'EXE', distro: 'Windows', manager: 'instalador' },
+  msi: { label: 'MSI', distro: 'Windows', manager: 'instalador' },
+};
+
+const entryFormat = (entry: ReleaseEntry) =>
+  (entry.format || (entry.os.startsWith('windows') ? 'exe' : '')).toLowerCase();
+
+const formatLabel = (entry: ReleaseEntry) => FORMAT_META[entryFormat(entry)]?.label || entryFormat(entry).toUpperCase();
 
 export default function DownloadPage() {
   usePageTitle('DOWNLOAD');
@@ -179,6 +195,9 @@ export default function DownloadPage() {
   const [releases, setReleases] = useState<ReleaseEntry[]>([]);
   const [releaseQuery, setReleaseQuery] = useState('');
   const [releaseChannel, setReleaseChannel] = useState('all');
+  const [releaseOS, setReleaseOS] = useState('all');
+  const [releaseFormat, setReleaseFormat] = useState('all');
+  const [releaseArch, setReleaseArch] = useState('all');
   const [releaseSort, setReleaseSort] = useState('newest');
 
   useEffect(() => {
@@ -195,17 +214,37 @@ export default function DownloadPage() {
   }, []);
 
   const latestBuild = releases.find((entry) => entry.channel === 'beta' && entry.status !== 'blocked_security' && entry.status !== 'blocked_support') || releases.find((entry) => entry.status === 'supported') || releases[0];
-  const linuxEntries = releases.filter((entry) => entry.os === 'linux' && entry.arch === 'x64');
-  const linuxEntry = linuxEntries.find((entry) => entry.format === 'appimage') || linuxEntries[0];
+  const linuxBuilds = releases.filter((entry) => entry.os === 'linux' && entry.arch === 'x64');
+  const latestLinuxEntry = (format: string) => linuxBuilds
+    .filter((entry) => entryFormat(entry) === format)
+    .sort((a, b) => {
+      const byVersion = b.launcherVersion.localeCompare(a.launcherVersion, undefined, { numeric: true });
+      return byVersion !== 0 ? byVersion : String(b.buildDate).localeCompare(String(a.buildDate));
+    })[0];
+  const linuxEntry = latestLinuxEntry('rpm') || latestLinuxEntry('deb') || latestLinuxEntry('appimage') || linuxBuilds[0];
   const releaseRows = releases
     .filter((entry) => {
       const query = releaseQuery.trim().toLowerCase();
-      const matchesQuery = !query || [entry.launcherVersion, entry.gameVersion, entry.channel, entry.osLabel, entry.os]
+      const format = entryFormat(entry);
+      const matchesQuery = !query || [
+        entry.launcherVersion,
+        entry.gameVersion,
+        entry.channel,
+        entry.osLabel,
+        entry.os,
+        entry.arch,
+        format,
+        FORMAT_META[format]?.distro || '',
+      ]
         .join(' ')
         .toLowerCase()
         .includes(query);
       const matchesChannel = releaseChannel === 'all' || entry.channel === releaseChannel;
-      return matchesQuery && matchesChannel;
+      const matchesOS = releaseOS === 'all'
+        || (releaseOS === 'linux' ? entry.os === 'linux' : entry.os.startsWith('windows'));
+      const matchesFormat = releaseFormat === 'all' || format === releaseFormat;
+      const matchesArch = releaseArch === 'all' || entry.arch === releaseArch;
+      return matchesQuery && matchesChannel && matchesOS && matchesFormat && matchesArch;
     })
     .sort((a, b) => {
       if (releaseSort === 'oldest') return String(a.buildDate).localeCompare(String(b.buildDate));
@@ -240,22 +279,52 @@ export default function DownloadPage() {
     toast(`[SISTEMA]: La descarga de MuzicMania para ${os} es una función beta cerrada y estará disponible próximamente.`, 'warning');
   };
 
-  const hasLinuxFormat = (format: string) =>
-    releases.some((entry) => entry.os === 'linux' && entry.arch === 'x64' && entry.format === format);
-
-  const handleDownloadLinux = (format: 'appimage' | 'deb' | 'rpm') => {
-    if (!hasLinuxFormat(format)) {
+  const handleDownloadLinux = (format: string, version?: string, channel?: string) => {
+    const entry = version
+      ? linuxBuilds.find((item) => entryFormat(item) === format && item.launcherVersion === version && (!channel || item.channel === channel))
+      : latestLinuxEntry(format);
+    if (!entry) {
       toast(`[SISTEMA]: El paquete Linux ${format.toUpperCase()} aún no ha sido compilado.`, 'warning');
       return;
     }
     setIsDownloading(`linux-${format}`);
     toast('¡Gracias por descargar MuzicMania! Gracias por apoyar a Ciszu Network.', 'success');
     const url = new URL('/api/download/linux', window.location.origin);
-    url.searchParams.set('arch', 'x64');
+    url.searchParams.set('arch', entry.arch || 'x64');
     url.searchParams.set('format', format);
+    url.searchParams.set('version', entry.launcherVersion);
+    url.searchParams.set('channel', entry.channel);
     setTimeout(() => {
       window.location.href = url.toString();
-    }, 2000);
+    }, 1200);
+  };
+
+  const downloadHref = (entry: ReleaseEntry) => {
+    if (entry.os === 'linux') {
+      const params = new URLSearchParams({
+        arch: entry.arch || 'x64',
+        format: entryFormat(entry),
+        version: entry.launcherVersion,
+        channel: entry.channel,
+      });
+      return `/api/download/linux?${params.toString()}`;
+    }
+    const params = new URLSearchParams({
+      os: entry.os === 'windows11' ? 'w11' : 'w10',
+      arch: entry.arch || 'x64',
+      version: entry.launcherVersion,
+      channel: entry.channel,
+    });
+    return `/api/download/windows?${params.toString()}`;
+  };
+
+  const linuxInstallCommand = (entry?: ReleaseEntry) => {
+    if (!entry) return '';
+    const format = entryFormat(entry);
+    if (format === 'rpm') return `sudo dnf install ./${entry.fileName}`;
+    if (format === 'deb') return `sudo apt install ./${entry.fileName}`;
+    if (format === 'appimage') return `chmod +x ${entry.fileName}\n./${entry.fileName}`;
+    return '';
   };
 
   const handleCloseOverlay = () => {
@@ -484,9 +553,9 @@ export default function DownloadPage() {
           </div>
 
           {/* LINUX PC */}
-          <div className={`relative group p-1 rounded-[2.5rem] border ${linuxEntry ? 'bg-gradient-to-br from-neon-cyan/20 via-transparent to-transparent border-neon-cyan/20' : 'bg-[#05050a]/40 border-white/5'}`}>
-            <div className="relative p-8 flex flex-col justify-between min-h-[420px]">
-              <div className="space-y-6">
+          <div className={`relative group p-1 md:col-span-2 rounded-[2.5rem] border ${linuxEntry ? 'bg-gradient-to-br from-neon-cyan/20 via-transparent to-transparent border-neon-cyan/20' : 'bg-[#05050a]/40 border-white/5'}`}>
+            <div className="relative p-8 flex flex-col gap-6">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div className="flex items-center gap-4">
                   <div className={`w-12 h-12 flex items-center justify-center p-2.5 rounded-2xl border ${linuxEntry ? 'text-neon-cyan bg-neon-cyan/10 border-neon-cyan/20' : 'text-gray-500 bg-white/5 border-white/10'}`}>
                     <LinuxIcon />
@@ -498,56 +567,78 @@ export default function DownloadPage() {
                     </span>
                   </div>
                 </div>
-
-                <p className={`font-bold text-xs leading-relaxed ${linuxEntry ? 'text-gray-300' : 'text-gray-500'}`}>
-                  {t.pages.download.linuxDesc}
-                </p>
-
-                <div className="space-y-2 text-[10px] text-gray-600 font-black uppercase tracking-widest border-t border-white/5 pt-4">
-                  <div className="flex justify-between"><span>{t.pages.download.versionLabel}</span><span>{linuxEntry ? `v${linuxEntry.launcherVersion}` : t.pages.download.versionValue}</span></div>
-                  <div className="flex justify-between"><span>{t.pages.download.sizeLabel}</span><span>{linuxEntry ? `${(linuxEntry.size / 1024 / 1024).toFixed(1)} MB` : t.pages.download.sizeLinux}</span></div>
-                  <div className="flex justify-between"><span>{t.pages.download.formatLabel}</span><span>{linuxEntry ? 'AppImage / DEB / RPM' : t.pages.download.formatLinux}</span></div>
+                <div className="flex flex-wrap gap-2 text-[8px] font-black uppercase tracking-widest text-gray-500">
+                  <span className="border border-white/10 rounded-lg px-2.5 py-1.5">x86_64 · 64 bits</span>
+                  <span className="border border-white/10 rounded-lg px-2.5 py-1.5">kernel 5.15+</span>
+                  <span className="border border-neon-cyan/30 text-neon-cyan rounded-lg px-2.5 py-1.5">WebKitGTK 4.1</span>
                 </div>
               </div>
 
-              <div className="pt-8 space-y-2">
-                {linuxEntry ? (
-                  <>
-                    <button
-                      onClick={() => handleDownloadLinux('appimage')}
-                      disabled={isDownloading !== null || !hasLinuxFormat('appimage')}
-                      className="w-full py-4 bg-neon-cyan/20 hover:bg-neon-cyan border border-neon-cyan/30 hover:border-neon-cyan text-neon-cyan hover:text-black rounded-xl font-header font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                    >
-                      <DownloadIcon />
-                      APPIMAGE
-                    </button>
-                    <div className="grid grid-cols-2 gap-2">
-                      <button
-                        onClick={() => handleDownloadLinux('deb')}
-                        disabled={isDownloading !== null || !hasLinuxFormat('deb')}
-                        className="py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-400 hover:text-white rounded-xl font-header font-black uppercase tracking-widest text-[10px] transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                      >
-                        DEB
-                      </button>
-                      <button
-                        onClick={() => handleDownloadLinux('rpm')}
-                        disabled={isDownloading !== null || !hasLinuxFormat('rpm')}
-                        className="py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-gray-400 hover:text-white rounded-xl font-header font-black uppercase tracking-widest text-[10px] transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                      >
-                        RPM
-                      </button>
+              <p className={`font-bold text-xs leading-relaxed ${linuxEntry ? 'text-gray-300' : 'text-gray-500'}`}>
+                {t.pages.download.linuxDesc} Elige el paquete de tu distribución; todos incluyen el launcher, AppStream, iconos y licencia MIT.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {(['rpm', 'deb', 'appimage', 'flatpak'] as const).map((format) => {
+                  const entry = format === 'flatpak' ? undefined : latestLinuxEntry(format);
+                  const available = Boolean(entry);
+                  const meta = FORMAT_META[format];
+                  return (
+                    <div key={format} className={`rounded-2xl border p-4 flex flex-col gap-3 ${available ? 'border-white/10 bg-black/30' : 'border-white/5 bg-black/20'}`}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className={`font-header font-black uppercase italic tracking-tight text-sm ${available ? 'text-white' : 'text-gray-500'}`}>{meta.label}</h3>
+                          <p className="text-[8px] font-bold uppercase tracking-widest text-gray-500 mt-1">{meta.distro}</p>
+                        </div>
+                        <span className={`text-[8px] font-black uppercase tracking-widest rounded border px-2 py-0.5 ${available ? 'text-neon-cyan border-neon-cyan/30 bg-neon-cyan/10' : 'text-gray-500 border-white/10 bg-white/5'}`}>
+                          {available ? `${(entry!.size / 1024 / 1024).toFixed(1)} MB` : format === 'flatpak' ? 'Próximamente' : 'No compilado'}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between gap-3">
+                        <span className="text-[9px] font-bold uppercase tracking-widest text-gray-600">
+                          {available ? `v${entry!.launcherVersion} · ${entry!.channel.toUpperCase()}` : meta.manager}
+                        </span>
+                        {format === 'flatpak' ? (
+                          <span className="text-[9px] font-black uppercase tracking-widest text-amber-400">Flathub</span>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleDownloadLinux(format)}
+                            disabled={isDownloading !== null || !available}
+                            className={`px-3 py-2 rounded-lg border font-header font-black uppercase tracking-widest text-[9px] transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed ${available ? 'border-neon-cyan/30 bg-neon-cyan/10 text-neon-cyan hover:bg-neon-cyan hover:text-black' : 'border-white/10 bg-white/5 text-gray-500'}`}
+                          >
+                            Descargar
+                          </button>
+                        )}
+                      </div>
                     </div>
-                  </>
-                ) : (
-                  <button
-                    disabled
-                    className="w-full py-4 bg-white/5 border border-white/10 text-gray-500 rounded-xl font-header font-black uppercase tracking-widest text-xs flex items-center justify-center gap-2 cursor-not-allowed"
-                  >
-                    <LockBadge />
-                    {t.pages.download.notCompiled}
-                  </button>
-                )}
+                  );
+                })}
               </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 border-t border-white/5 pt-4">
+                {(['rpm', 'deb', 'appimage'] as const).map((format) => {
+                  const entry = latestLinuxEntry(format);
+                  if (!entry) return null;
+                  return (
+                    <div key={`cmd-${format}`} className="rounded-xl border border-white/5 bg-black/40 p-3">
+                      <p className="text-[8px] font-black uppercase tracking-widest text-gray-500 mb-1.5">{FORMAT_META[format].label} · {FORMAT_META[format].manager}</p>
+                      <pre className="text-[9px] leading-relaxed text-neon-cyan whitespace-pre-wrap break-all select-all">{linuxInstallCommand(entry)}</pre>
+                    </div>
+                  );
+                })}
+                <div className="rounded-xl border border-white/5 bg-black/40 p-3">
+                  <p className="text-[8px] font-black uppercase tracking-widest text-gray-500 mb-1.5">Arch Linux · AUR</p>
+                  <pre className="text-[9px] leading-relaxed text-gray-400 whitespace-pre-wrap break-all select-all">yay -S muzicmania{'\n'}# PKGBUILD preparado; pendiente de publicación en AUR</pre>
+                </div>
+              </div>
+
+              <p className="text-[9px] font-bold text-gray-600 leading-relaxed">
+                Los paquetes DEB/RPM se actualizan con el gestor del sistema. AppImage es portable. Flatpak se publicará en Flathub; mientras tanto, usa DEB o RPM. Verifica el SHA256 en el centro de versiones antes de instalar.
+              </p>
+              <a href="https://ciszu-network.github.io/muzicmania-packages/" target="_blank" rel="noreferrer" className="text-[9px] font-black uppercase tracking-widest text-neon-cyan hover:text-white transition-colors">
+                Repositorios DNF/APT firmados →
+              </a>
             </div>
           </div>
         </motion.section>
@@ -720,13 +811,45 @@ export default function DownloadPage() {
           </div>
 
           <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_auto] gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
               <input
                 value={releaseQuery}
                 onChange={(event) => setReleaseQuery(event.target.value)}
-                placeholder="Buscar versión, canal u OS..."
-                className="w-full rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-white outline-none placeholder:text-gray-600 focus:border-neon-blue"
+                placeholder="Buscar versión, distro, formato u OS..."
+                className="w-full lg:col-span-2 rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-[11px] font-bold uppercase tracking-widest text-white outline-none placeholder:text-gray-600 focus:border-neon-blue"
               />
+              <select
+                value={releaseOS}
+                onChange={(event) => setReleaseOS(event.target.value)}
+                className="rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-neon-blue"
+              >
+                <option value="all">Todos los OS</option>
+                <option value="linux">Linux</option>
+                <option value="windows">Windows</option>
+              </select>
+              <select
+                value={releaseFormat}
+                onChange={(event) => setReleaseFormat(event.target.value)}
+                className="rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-neon-blue"
+              >
+                <option value="all">Todos los formatos</option>
+                <option value="rpm">RPM</option>
+                <option value="deb">DEB</option>
+                <option value="appimage">AppImage</option>
+                <option value="flatpak">Flatpak</option>
+                <option value="exe">EXE</option>
+                <option value="msi">MSI</option>
+              </select>
+              <select
+                value={releaseArch}
+                onChange={(event) => setReleaseArch(event.target.value)}
+                className="rounded-xl border border-white/10 bg-black/50 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-gray-300 outline-none focus:border-neon-blue"
+              >
+                <option value="all">Todas las arquitecturas</option>
+                <option value="x64">x86_64 / x64</option>
+                <option value="arm64">ARM64</option>
+                <option value="x86">x86 (32 bits)</option>
+              </select>
               <select
                 value={releaseChannel}
                 onChange={(event) => setReleaseChannel(event.target.value)}
@@ -749,13 +872,15 @@ export default function DownloadPage() {
             </div>
 
             <div className="bg-white/5 border border-white/10 rounded-3xl overflow-x-auto shadow-2xl">
-              <table className="w-full min-w-[860px] text-left font-header text-[10px] text-gray-400 uppercase tracking-widest border-collapse">
+              <table className="w-full min-w-[1100px] text-left font-header text-[10px] text-gray-400 uppercase tracking-widest border-collapse">
                 <thead>
                   <tr className="bg-black/60 text-white border-b border-white/10">
                     <th className="p-4 font-black">Launcher</th>
                     <th className="p-4 font-black">Juego</th>
                     <th className="p-4 font-black">Canal</th>
-                    <th className="p-4 font-black">Plataforma</th>
+                    <th className="p-4 font-black">OS</th>
+                    <th className="p-4 font-black">Formato / Distro</th>
+                    <th className="p-4 font-black">Arq.</th>
                     <th className="p-4 font-black">Fecha</th>
                     <th className="p-4 font-black">Peso</th>
                     <th className="p-4 font-black">Changelog</th>
@@ -765,8 +890,10 @@ export default function DownloadPage() {
                 <tbody className="divide-y divide-white/5">
                   {releaseRows.map((entry) => {
                     const isLatest = Boolean(latestBuild && entry.launcherVersion === latestBuild.launcherVersion && entry.channel === latestBuild.channel);
+                    const format = entryFormat(entry);
+                    const isLinux = entry.os === 'linux';
                     return (
-                      <tr key={`${entry.launcherVersion}-${entry.channel}-${entry.os}`} className="hover:bg-white/5 transition-all">
+                      <tr key={`${entry.launcherVersion}-${entry.channel}-${entry.os}-${format}`} className="hover:bg-white/5 transition-all">
                         <td className="p-4 font-black text-white">
                           <span className="inline-flex items-center gap-2">
                             v{entry.launcherVersion}
@@ -783,6 +910,11 @@ export default function DownloadPage() {
                           </span>
                         </td>
                         <td className="p-4 font-bold">{entry.osLabel || entry.os}</td>
+                        <td className="p-4 font-bold">
+                          <span className={isLinux ? 'text-neon-cyan' : 'text-neon-blue'}>{formatLabel(entry)}</span>
+                          <span className="block mt-1 text-[7px] text-gray-500">{FORMAT_META[format]?.distro || '—'}</span>
+                        </td>
+                        <td className="p-4 font-bold">{entry.arch || '—'}</td>
                         <td className="p-4 font-bold">{entry.buildDate || '—'}</td>
                         <td className="p-4 font-bold">{entry.size ? `${(entry.size / 1024 / 1024).toFixed(1)} MB` : '—'}</td>
                         <td className="p-4 font-bold">
@@ -792,13 +924,13 @@ export default function DownloadPage() {
                         </td>
                         <td className="p-4 text-right">
                           <a
-                            href={`/api/download/windows?os=${entry.os === 'windows11' ? 'w11' : 'w10'}&arch=x64&version=${entry.launcherVersion}&channel=${entry.channel}`}
+                            href={downloadHref(entry)}
                             download
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-neon-blue/30 bg-neon-blue/15 px-3 py-2 text-[9px] font-black text-neon-blue transition-all hover:border-neon-blue hover:bg-neon-blue hover:text-black"
+                            className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-[9px] font-black transition-all ${isLinux ? 'border-neon-cyan/30 bg-neon-cyan/15 text-neon-cyan hover:border-neon-cyan hover:bg-neon-cyan hover:text-black' : 'border-neon-blue/30 bg-neon-blue/15 text-neon-blue hover:border-neon-blue hover:bg-neon-blue hover:text-black'}`}
                             title={`SHA256: ${entry.sha256}`}
                           >
                             <DownloadIcon />
-                            EXE
+                            {formatLabel(entry)}
                           </a>
                         </td>
                       </tr>
@@ -806,8 +938,8 @@ export default function DownloadPage() {
                   })}
                   {!releaseRows.length && (
                     <tr>
-                      <td colSpan={8} className="p-8 text-center font-bold text-gray-500">
-                        El registro de versiones se genera al compilar el instalador.
+                      <td colSpan={10} className="p-8 text-center font-bold text-gray-500">
+                        No hay versiones que coincidan con los filtros. El registro se genera al compilar los instaladores.
                       </td>
                     </tr>
                   )}

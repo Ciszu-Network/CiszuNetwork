@@ -60,7 +60,7 @@ const I18N = {
     accountLogin: 'Iniciar sesión',
     accountProfile: 'Mi cuenta',
     accountLogout: 'Cerrar sesión',
-    launcherSub: 'Idioma, inicio con Windows, actualizaciones y comportamiento al cerrar.',
+    launcherSub: 'Idioma, inicio con el sistema, actualizaciones y comportamiento al cerrar.',
     openSettings: 'Abrir configuración',
     support: 'Soporte',
     changelog: 'Changelog',
@@ -96,8 +96,13 @@ const I18N = {
     settingsEyebrow: 'CONFIGURACIÓN',
     settingsTitle: 'Opciones del launcher',
     settingsDesc: 'Las preferencias se guardan localmente. El idioma se aplica al reiniciar; el resto se aplica al instante.',
+    hubInfo: 'Información',
+    installInfo: 'Información de instalación',
+    infoOS: 'Sistema', infoDistro: 'Distribución', infoArch: 'Arquitectura', infoFormat: 'Formato',
+    infoSession: 'Sesión', infoKernel: 'Kernel', infoLauncher: 'Launcher', infoGame: 'Juego',
+    infoChannel: 'Canal', infoBuild: 'Build', pinMenu: 'Añadir al menú de aplicaciones',
     languageLabel: 'Idioma',
-    startWithWindows: 'Iniciar con Windows',
+    startWithWindows: 'Iniciar con el sistema',
     closeBehavior: 'Al cerrar',
     closeAsk: 'Preguntar siempre',
     closeBackgroundOpt: 'Mantener en segundo plano',
@@ -111,8 +116,8 @@ const I18N = {
     help: 'Ayuda',
     save: 'Guardar',
     closeAction: 'Cerrar',
-    startEnabled: 'Inicio con Windows activado.',
-    startDisabled: 'Inicio con Windows desactivado.',
+    startEnabled: 'Inicio con el sistema activado.',
+    startDisabled: 'Inicio con el sistema desactivado.',
     languageRestartEyebrow: 'IDIOMA',
     languageRestartTitle: 'Reinicia el launcher',
     languageRestartDesc: 'El idioma se aplica al reiniciar. Puedes reiniciar ahora, cancelar el cambio o continuar con el idioma seleccionado; continuar sin reiniciar no es recomendable.',
@@ -139,7 +144,7 @@ const I18N = {
     accountLogin: 'Sign in',
     accountProfile: 'My account',
     accountLogout: 'Sign out',
-    launcherSub: 'Language, start with Windows, updates and close behavior.',
+    launcherSub: 'Language, start with system, updates and close behavior.',
     openSettings: 'Open settings',
     support: 'Support',
     changelog: 'Changelog',
@@ -175,8 +180,13 @@ const I18N = {
     settingsEyebrow: 'SETTINGS',
     settingsTitle: 'Launcher options',
     settingsDesc: 'Preferences are saved locally. The language is applied on restart; the rest apply immediately.',
+    hubInfo: 'Information',
+    installInfo: 'Installation information',
+    infoOS: 'System', infoDistro: 'Distribution', infoArch: 'Architecture', infoFormat: 'Format',
+    infoSession: 'Session', infoKernel: 'Kernel', infoLauncher: 'Launcher', infoGame: 'Game',
+    infoChannel: 'Channel', infoBuild: 'Build', pinMenu: 'Add to applications menu',
     languageLabel: 'Language',
-    startWithWindows: 'Start with Windows',
+    startWithWindows: 'Start with system',
     closeBehavior: 'When closing',
     closeAsk: 'Always ask',
     closeBackgroundOpt: 'Keep in background',
@@ -190,8 +200,8 @@ const I18N = {
     help: 'Help',
     save: 'Save',
     closeAction: 'Close',
-    startEnabled: 'Start with Windows enabled.',
-    startDisabled: 'Start with Windows disabled.',
+    startEnabled: 'Start with system enabled.',
+    startDisabled: 'Start with system disabled.',
     languageRestartEyebrow: 'LANGUAGE',
     languageRestartTitle: 'Restart the launcher',
     languageRestartDesc: 'The language is applied on restart. You can restart now, cancel the change, or continue with the selected language; continuing without restarting is not recommended.',
@@ -212,22 +222,22 @@ function normalizeLanguage(value) {
 I18N['1033'] = I18N.en;
 I18N['1034'] = I18N.es;
 const EN_BASE = I18N.en;
-I18N['1036'] = Object.assign({}, EN_BASE, { settings: 'Paramètres', playOnline: 'Jouer en ligne', playOffline: 'Jouer hors ligne', refresh: 'Actualiser', online: 'En ligne', offline: 'Hors ligne', account: 'Compte', launcher: 'Launcher', community: 'Communauté', helpPages: 'Aide et pages', session: 'État de la session', openSettings: 'Ouvrir les paramètres', closeTitle: 'Fermer le launcher ?', closeCancel: 'Annuler', closeBackground: 'Garder en arrière-plan', closeExit: 'Fermer complètement', settingsTitle: 'Options du launcher', languageLabel: 'Langue', startWithWindows: 'Démarrer avec Windows', closeBehavior: 'À la fermeture', autoUpdate: 'Mises à jour automatiques', confirmLinks: 'Confirmer les liens externes', actions: 'Actions', checkUpdate: 'Rechercher des mises à jour', save: 'Enregistrer', closeAction: 'Fermer' });
-I18N['1031'] = Object.assign({}, EN_BASE, { settings: 'Einstellungen', playOnline: 'Online spielen', playOffline: 'Offline spielen', refresh: 'Aktualisieren', online: 'Online', offline: 'Offline', account: 'Konto', launcher: 'Launcher', community: 'Community', helpPages: 'Hilfe & Seiten', session: 'Sitzungsstatus', openSettings: 'Einstellungen öffnen', closeTitle: 'Launcher schließen?', closeCancel: 'Abbrechen', closeBackground: 'Im Hintergrund behalten', closeExit: 'Vollständig schließen', settingsTitle: 'Launcher-Optionen', languageLabel: 'Sprache', startWithWindows: 'Mit Windows starten', closeBehavior: 'Beim Schließen', autoUpdate: 'Automatische Updates', confirmLinks: 'Externe Links bestätigen', actions: 'Aktionen', checkUpdate: 'Nach Updates suchen', save: 'Speichern', closeAction: 'Schließen' });
-I18N['1040'] = Object.assign({}, EN_BASE, { settings: 'Impostazioni', playOnline: 'Gioca online', playOffline: 'Gioca offline', refresh: 'Aggiorna', online: 'Online', offline: 'Offline', account: 'Account', launcher: 'Launcher', community: 'Community', helpPages: 'Aiuto e pagine', session: 'Stato sessione', openSettings: 'Apri impostazioni', closeTitle: 'Chiudere il launcher?', closeCancel: 'Annulla', closeBackground: 'Mantieni in background', closeExit: 'Chiudi completamente', settingsTitle: 'Opzioni launcher', languageLabel: 'Lingua', startWithWindows: 'Avvia con Windows', closeBehavior: 'Alla chiusura', autoUpdate: 'Aggiornamenti automatici', confirmLinks: 'Conferma link esterni', actions: 'Azioni', checkUpdate: 'Controlla aggiornamenti', save: 'Salva', closeAction: 'Chiudi' });
-I18N['1043'] = Object.assign({}, EN_BASE, { settings: 'Instellingen', playOnline: 'Online spelen', playOffline: 'Offline spelen', refresh: 'Vernieuwen', online: 'Online', offline: 'Offline', account: 'Account', launcher: 'Launcher', community: 'Community', helpPages: 'Hulp en pagina\'s', session: 'Sessiestatus', openSettings: 'Instellingen openen', closeTitle: 'Launcher sluiten?', closeCancel: 'Annuleren', closeBackground: 'Op achtergrond houden', closeExit: 'Volledig sluiten', settingsTitle: 'Launcher-opties', languageLabel: 'Taal', startWithWindows: 'Starten met Windows', closeBehavior: 'Bij sluiten', autoUpdate: 'Automatische updates', confirmLinks: 'Externe links bevestigen', actions: 'Acties', checkUpdate: 'Controleren op updates', save: 'Opslaan', closeAction: 'Sluiten' });
-I18N['1045'] = Object.assign({}, EN_BASE, { settings: 'Ustawienia', playOnline: 'Graj online', playOffline: 'Graj offline', refresh: 'Odśwież', online: 'Online', offline: 'Offline', account: 'Konto', launcher: 'Launcher', community: 'Społeczność', helpPages: 'Pomoc i strony', session: 'Stan sesji', openSettings: 'Otwórz ustawienia', closeTitle: 'Zamknąć launcher?', closeCancel: 'Anuluj', closeBackground: 'Zostaw w tle', closeExit: 'Zamknij całkowicie', settingsTitle: 'Opcje launchera', languageLabel: 'Język', startWithWindows: 'Uruchamiaj z Windows', closeBehavior: 'Przy zamykaniu', autoUpdate: 'Automatyczne aktualizacje', confirmLinks: 'Potwierdzaj linki zewnętrzne', actions: 'Działania', checkUpdate: 'Sprawdź aktualizacje', save: 'Zapisz', closeAction: 'Zamknij' });
-I18N['1025'] = Object.assign({}, EN_BASE, { settings: 'الإعدادات', playOnline: 'العب عبر الإنترنت', playOffline: 'العب دون اتصال', refresh: 'تحديث', online: 'متصل', offline: 'غير متصل', account: 'الحساب', launcher: 'المشغّل', community: 'المجتمع', helpPages: 'المساعدة والصفحات', session: 'حالة الجلسة', openSettings: 'فتح الإعدادات', closeTitle: 'إغلاق المشغّل؟', closeCancel: 'إلغاء', closeBackground: 'إبقاء في الخلفية', closeExit: 'إغلاق بالكامل', settingsTitle: 'خيارات المشغّل', languageLabel: 'اللغة', startWithWindows: 'التشغيل مع Windows', closeBehavior: 'عند الإغلاق', autoUpdate: 'التحديثات التلقائية', confirmLinks: 'تأكيد الروابط الخارجية', actions: 'الإجراءات', checkUpdate: 'التحقق من التحديثات', save: 'حفظ', closeAction: 'إغلاق' });
-I18N['1055'] = Object.assign({}, EN_BASE, { settings: 'Ayarlar', playOnline: 'Çevrimiçi oyna', playOffline: 'Çevrimdışı oyna', refresh: 'Yenile', online: 'Çevrimiçi', offline: 'Çevrimdışı', account: 'Hesap', launcher: 'Başlatıcı', community: 'Topluluk', helpPages: 'Yardım ve sayfalar', session: 'Oturum durumu', openSettings: 'Ayarları aç', closeTitle: 'Başlatıcı kapatılsın mı?', closeCancel: 'İptal', closeBackground: 'Arka planda tut', closeExit: 'Tamamen kapat', settingsTitle: 'Başlatıcı seçenekleri', languageLabel: 'Dil', startWithWindows: 'Windows ile başlat', closeBehavior: 'Kapanışta', autoUpdate: 'Otomatik güncellemeler', confirmLinks: 'Harici bağlantıları onayla', actions: 'Eylemler', checkUpdate: 'Güncellemeleri denetle', save: 'Kaydet', closeAction: 'Kapat' });
-I18N['1029'] = Object.assign({}, EN_BASE, { settings: 'Nastavení', playOnline: 'Hrát online', playOffline: 'Hrát offline', refresh: 'Obnovit', online: 'Online', offline: 'Offline', account: 'Účet', launcher: 'Launcher', community: 'Komunita', helpPages: 'Nápověda a stránky', session: 'Stav relace', openSettings: 'Otevřít nastavení', closeTitle: 'Zavřít launcher?', closeCancel: 'Zrušit', closeBackground: 'Ponechat na pozadí', closeExit: 'Zavřít úplně', settingsTitle: 'Možnosti launcheru', languageLabel: 'Jazyk', startWithWindows: 'Spouštět s Windows', closeBehavior: 'Při zavření', autoUpdate: 'Automatické aktualizace', confirmLinks: 'Potvrzovat externí odkazy', actions: 'Akce', checkUpdate: 'Zkontrolovat aktualizace', save: 'Uložit', closeAction: 'Zavřít' });
-I18N['1038'] = Object.assign({}, EN_BASE, { settings: 'Beállítások', playOnline: 'Játék online', playOffline: 'Játék offline', refresh: 'Frissítés', online: 'Online', offline: 'Offline', account: 'Fiók', launcher: 'Launcher', community: 'Közösség', helpPages: 'Súgó és oldalak', session: 'Munkamenet állapota', openSettings: 'Beállítások megnyitása', closeTitle: 'Bezárja a launchcert?', closeCancel: 'Mégse', closeBackground: 'Háttérben tartás', closeExit: 'Teljes bezárás', settingsTitle: 'Launcher beállításai', languageLabel: 'Nyelv', startWithWindows: 'Indítás Windowsszal', closeBehavior: 'Bezáráskor', autoUpdate: 'Automatikus frissítések', confirmLinks: 'Külső hivatkozások megerősítése', actions: 'Műveletek', checkUpdate: 'Frissítések keresése', save: 'Mentés', closeAction: 'Bezárás' });
-I18N['1053'] = Object.assign({}, EN_BASE, { settings: 'Inställningar', playOnline: 'Spela online', playOffline: 'Spela offline', refresh: 'Uppdatera', online: 'Online', offline: 'Offline', account: 'Konto', launcher: 'Launcher', community: 'Gemenskap', helpPages: 'Hjälp och sidor', session: 'Sessionsstatus', openSettings: 'Öppna inställningar', closeTitle: 'Stäng launchern?', closeCancel: 'Avbryt', closeBackground: 'Behåll i bakgrunden', closeExit: 'Stäng helt', settingsTitle: 'Launcheralternativ', languageLabel: 'Språk', startWithWindows: 'Starta med Windows', closeBehavior: 'Vid stängning', autoUpdate: 'Automatiska uppdateringar', confirmLinks: 'Bekräfta externa länkar', actions: 'Åtgärder', checkUpdate: 'Sök efter uppdateringar', save: 'Spara', closeAction: 'Stäng' });
-I18N['2052'] = Object.assign({}, EN_BASE, { settings: '设置', playOnline: '在线游玩', playOffline: '离线游玩', refresh: '刷新', online: '在线', offline: '离线', account: '账户', launcher: '启动器', community: '社区', helpPages: '帮助与页面', session: '会话状态', openSettings: '打开设置', closeTitle: '关闭启动器？', closeCancel: '取消', closeBackground: '保留在后台', closeExit: '完全关闭', settingsTitle: '启动器选项', languageLabel: '语言', startWithWindows: '随 Windows 启动', closeBehavior: '关闭时', autoUpdate: '自动更新', confirmLinks: '确认外部链接', actions: '操作', checkUpdate: '检查更新', save: '保存', closeAction: '关闭' });
-I18N['1028'] = Object.assign({}, EN_BASE, { settings: '設定', playOnline: '線上遊玩', playOffline: '離線遊玩', refresh: '重新整理', online: '線上', offline: '離線', account: '帳戶', launcher: '啟動器', community: '社群', helpPages: '說明與頁面', session: '工作階段狀態', openSettings: '開啟設定', closeTitle: '關閉啟動器？', closeCancel: '取消', closeBackground: '保留在背景', closeExit: '完全關閉', settingsTitle: '啟動器選項', languageLabel: '語言', startWithWindows: '隨 Windows 啟動', closeBehavior: '關閉時', autoUpdate: '自動更新', confirmLinks: '確認外部連結', actions: '動作', checkUpdate: '檢查更新', save: '儲存', closeAction: '關閉' });
-I18N['1046'] = Object.assign({}, EN_BASE, { settings: 'Configurações', playOnline: 'Jogar online', playOffline: 'Jogar offline', refresh: 'Atualizar', online: 'Online', offline: 'Offline', account: 'Conta', launcher: 'Launcher', community: 'Comunidade', helpPages: 'Ajuda e páginas', session: 'Status da sessão', openSettings: 'Abrir configurações', closeTitle: 'Fechar o launcher?', closeCancel: 'Cancelar', closeBackground: 'Manter em segundo plano', closeExit: 'Fechar completamente', settingsTitle: 'Opções do launcher', languageLabel: 'Idioma', startWithWindows: 'Iniciar com Windows', closeBehavior: 'Ao fechar', autoUpdate: 'Atualizações automáticas', confirmLinks: 'Confirmar links externos', actions: 'Ações', checkUpdate: 'Verificar atualizações', save: 'Salvar', closeAction: 'Fechar' });
-I18N['1051'] = Object.assign({}, EN_BASE, { settings: 'Настройки', playOnline: 'Играть онлайн', playOffline: 'Играть офлайн', refresh: 'Обновить', online: 'Онлайн', offline: 'Офлайн', account: 'Аккаунт', launcher: 'Лаунчер', community: 'Сообщество', helpPages: 'Помощь и страницы', session: 'Состояние сеанса', openSettings: 'Открыть настройки', closeTitle: 'Закрыть лаунчер?', closeCancel: 'Отмена', closeBackground: 'Оставить в фоне', closeExit: 'Закрыть полностью', settingsTitle: 'Параметры лаунчера', languageLabel: 'Язык', startWithWindows: 'Запускать с Windows', closeBehavior: 'При закрытии', autoUpdate: 'Автообновления', confirmLinks: 'Подтверждать внешние ссылки', actions: 'Действия', checkUpdate: 'Проверить обновления', save: 'Сохранить', closeAction: 'Закрыть' });
-I18N['1041'] = Object.assign({}, EN_BASE, { settings: '設定', playOnline: 'オンラインでプレイ', playOffline: 'オフラインでプレイ', refresh: '更新', online: 'オンライン', offline: 'オフライン', account: 'アカウント', launcher: 'ランチャー', community: 'コミュニティ', helpPages: 'ヘルプとページ', session: 'セッション状態', openSettings: '設定を開く', closeTitle: 'ランチャーを閉じますか？', closeCancel: 'キャンセル', closeBackground: 'バックグラウンドで保持', closeExit: '完全に閉じる', settingsTitle: 'ランチャー設定', languageLabel: '言語', startWithWindows: 'Windows と同時に起動', closeBehavior: '閉じるとき', autoUpdate: '自動更新', confirmLinks: '外部リンクを確認', actions: '操作', checkUpdate: 'アップデートを確認', save: '保存', closeAction: '閉じる' });
-I18N['1050'] = Object.assign({}, EN_BASE, { settings: '설정', playOnline: '온라인 플레이', playOffline: '오프라인 플레이', refresh: '새로 고침', online: '온라인', offline: '오프라인', account: '계정', launcher: '런처', community: '커뮤니티', helpPages: '도움말 및 페이지', session: '세션 상태', openSettings: '설정 열기', closeTitle: '런처를 닫으시겠습니까?', closeCancel: '취소', closeBackground: '백그라운드에 유지', closeExit: '완전히 닫기', settingsTitle: '런처 옵션', languageLabel: '언어', startWithWindows: 'Windows 시작 시 실행', closeBehavior: '닫을 때', autoUpdate: '자동 업데이트', confirmLinks: '외부 링크 확인', actions: '작업', checkUpdate: '업데이트 확인', save: '저장', closeAction: '닫기' });
+I18N['1036'] = Object.assign({}, EN_BASE, { settings: 'Paramètres', playOnline: 'Jouer en ligne', playOffline: 'Jouer hors ligne', refresh: 'Actualiser', online: 'En ligne', offline: 'Hors ligne', account: 'Compte', launcher: 'Launcher', community: 'Communauté', helpPages: 'Aide et pages', session: 'État de la session', openSettings: 'Ouvrir les paramètres', closeTitle: 'Fermer le launcher ?', closeCancel: 'Annuler', closeBackground: 'Garder en arrière-plan', closeExit: 'Fermer complètement', settingsTitle: 'Options du launcher', languageLabel: 'Langue', startWithWindows: 'Démarrer avec le système', closeBehavior: 'À la fermeture', autoUpdate: 'Mises à jour automatiques', confirmLinks: 'Confirmer les liens externes', actions: 'Actions', checkUpdate: 'Rechercher des mises à jour', save: 'Enregistrer', closeAction: 'Fermer' });
+I18N['1031'] = Object.assign({}, EN_BASE, { settings: 'Einstellungen', playOnline: 'Online spielen', playOffline: 'Offline spielen', refresh: 'Aktualisieren', online: 'Online', offline: 'Offline', account: 'Konto', launcher: 'Launcher', community: 'Community', helpPages: 'Hilfe & Seiten', session: 'Sitzungsstatus', openSettings: 'Einstellungen öffnen', closeTitle: 'Launcher schließen?', closeCancel: 'Abbrechen', closeBackground: 'Im Hintergrund behalten', closeExit: 'Vollständig schließen', settingsTitle: 'Launcher-Optionen', languageLabel: 'Sprache', startWithWindows: 'Mit dem System starten', closeBehavior: 'Beim Schließen', autoUpdate: 'Automatische Updates', confirmLinks: 'Externe Links bestätigen', actions: 'Aktionen', checkUpdate: 'Nach Updates suchen', save: 'Speichern', closeAction: 'Schließen' });
+I18N['1040'] = Object.assign({}, EN_BASE, { settings: 'Impostazioni', playOnline: 'Gioca online', playOffline: 'Gioca offline', refresh: 'Aggiorna', online: 'Online', offline: 'Offline', account: 'Account', launcher: 'Launcher', community: 'Community', helpPages: 'Aiuto e pagine', session: 'Stato sessione', openSettings: 'Apri impostazioni', closeTitle: 'Chiudere il launcher?', closeCancel: 'Annulla', closeBackground: 'Mantieni in background', closeExit: 'Chiudi completamente', settingsTitle: 'Opzioni launcher', languageLabel: 'Lingua', startWithWindows: 'Avvia con il sistema', closeBehavior: 'Alla chiusura', autoUpdate: 'Aggiornamenti automatici', confirmLinks: 'Conferma link esterni', actions: 'Azioni', checkUpdate: 'Controlla aggiornamenti', save: 'Salva', closeAction: 'Chiudi' });
+I18N['1043'] = Object.assign({}, EN_BASE, { settings: 'Instellingen', playOnline: 'Online spelen', playOffline: 'Offline spelen', refresh: 'Vernieuwen', online: 'Online', offline: 'Offline', account: 'Account', launcher: 'Launcher', community: 'Community', helpPages: 'Hulp en pagina\'s', session: 'Sessiestatus', openSettings: 'Instellingen openen', closeTitle: 'Launcher sluiten?', closeCancel: 'Annuleren', closeBackground: 'Op achtergrond houden', closeExit: 'Volledig sluiten', settingsTitle: 'Launcher-opties', languageLabel: 'Taal', startWithWindows: 'Starten met het systeem', closeBehavior: 'Bij sluiten', autoUpdate: 'Automatische updates', confirmLinks: 'Externe links bevestigen', actions: 'Acties', checkUpdate: 'Controleren op updates', save: 'Opslaan', closeAction: 'Sluiten' });
+I18N['1045'] = Object.assign({}, EN_BASE, { settings: 'Ustawienia', playOnline: 'Graj online', playOffline: 'Graj offline', refresh: 'Odśwież', online: 'Online', offline: 'Offline', account: 'Konto', launcher: 'Launcher', community: 'Społeczność', helpPages: 'Pomoc i strony', session: 'Stan sesji', openSettings: 'Otwórz ustawienia', closeTitle: 'Zamknąć launcher?', closeCancel: 'Anuluj', closeBackground: 'Zostaw w tle', closeExit: 'Zamknij całkowicie', settingsTitle: 'Opcje launchera', languageLabel: 'Język', startWithWindows: 'Uruchamiaj z systemem', closeBehavior: 'Przy zamykaniu', autoUpdate: 'Automatyczne aktualizacje', confirmLinks: 'Potwierdzaj linki zewnętrzne', actions: 'Działania', checkUpdate: 'Sprawdź aktualizacje', save: 'Zapisz', closeAction: 'Zamknij' });
+I18N['1025'] = Object.assign({}, EN_BASE, { settings: 'الإعدادات', playOnline: 'العب عبر الإنترنت', playOffline: 'العب دون اتصال', refresh: 'تحديث', online: 'متصل', offline: 'غير متصل', account: 'الحساب', launcher: 'المشغّل', community: 'المجتمع', helpPages: 'المساعدة والصفحات', session: 'حالة الجلسة', openSettings: 'فتح الإعدادات', closeTitle: 'إغلاق المشغّل؟', closeCancel: 'إلغاء', closeBackground: 'إبقاء في الخلفية', closeExit: 'إغلاق بالكامل', settingsTitle: 'خيارات المشغّل', languageLabel: 'اللغة', startWithWindows: 'التشغيل مع النظام', closeBehavior: 'عند الإغلاق', autoUpdate: 'التحديثات التلقائية', confirmLinks: 'تأكيد الروابط الخارجية', actions: 'الإجراءات', checkUpdate: 'التحقق من التحديثات', save: 'حفظ', closeAction: 'إغلاق' });
+I18N['1055'] = Object.assign({}, EN_BASE, { settings: 'Ayarlar', playOnline: 'Çevrimiçi oyna', playOffline: 'Çevrimdışı oyna', refresh: 'Yenile', online: 'Çevrimiçi', offline: 'Çevrimdışı', account: 'Hesap', launcher: 'Başlatıcı', community: 'Topluluk', helpPages: 'Yardım ve sayfalar', session: 'Oturum durumu', openSettings: 'Ayarları aç', closeTitle: 'Başlatıcı kapatılsın mı?', closeCancel: 'İptal', closeBackground: 'Arka planda tut', closeExit: 'Tamamen kapat', settingsTitle: 'Başlatıcı seçenekleri', languageLabel: 'Dil', startWithWindows: 'Sistem ile başlat', closeBehavior: 'Kapanışta', autoUpdate: 'Otomatik güncellemeler', confirmLinks: 'Harici bağlantıları onayla', actions: 'Eylemler', checkUpdate: 'Güncellemeleri denetle', save: 'Kaydet', closeAction: 'Kapat' });
+I18N['1029'] = Object.assign({}, EN_BASE, { settings: 'Nastavení', playOnline: 'Hrát online', playOffline: 'Hrát offline', refresh: 'Obnovit', online: 'Online', offline: 'Offline', account: 'Účet', launcher: 'Launcher', community: 'Komunita', helpPages: 'Nápověda a stránky', session: 'Stav relace', openSettings: 'Otevřít nastavení', closeTitle: 'Zavřít launcher?', closeCancel: 'Zrušit', closeBackground: 'Ponechat na pozadí', closeExit: 'Zavřít úplně', settingsTitle: 'Možnosti launcheru', languageLabel: 'Jazyk', startWithWindows: 'Spouštět se systémem', closeBehavior: 'Při zavření', autoUpdate: 'Automatické aktualizace', confirmLinks: 'Potvrzovat externí odkazy', actions: 'Akce', checkUpdate: 'Zkontrolovat aktualizace', save: 'Uložit', closeAction: 'Zavřít' });
+I18N['1038'] = Object.assign({}, EN_BASE, { settings: 'Beállítások', playOnline: 'Játék online', playOffline: 'Játék offline', refresh: 'Frissítés', online: 'Online', offline: 'Offline', account: 'Fiók', launcher: 'Launcher', community: 'Közösség', helpPages: 'Súgó és oldalak', session: 'Munkamenet állapota', openSettings: 'Beállítások megnyitása', closeTitle: 'Bezárja a launchcert?', closeCancel: 'Mégse', closeBackground: 'Háttérben tartás', closeExit: 'Teljes bezárás', settingsTitle: 'Launcher beállításai', languageLabel: 'Nyelv', startWithWindows: 'Indítás a rendszerrel', closeBehavior: 'Bezáráskor', autoUpdate: 'Automatikus frissítések', confirmLinks: 'Külső hivatkozások megerősítése', actions: 'Műveletek', checkUpdate: 'Frissítések keresése', save: 'Mentés', closeAction: 'Bezárás' });
+I18N['1053'] = Object.assign({}, EN_BASE, { settings: 'Inställningar', playOnline: 'Spela online', playOffline: 'Spela offline', refresh: 'Uppdatera', online: 'Online', offline: 'Offline', account: 'Konto', launcher: 'Launcher', community: 'Gemenskap', helpPages: 'Hjälp och sidor', session: 'Sessionsstatus', openSettings: 'Öppna inställningar', closeTitle: 'Stäng launchern?', closeCancel: 'Avbryt', closeBackground: 'Behåll i bakgrunden', closeExit: 'Stäng helt', settingsTitle: 'Launcheralternativ', languageLabel: 'Språk', startWithWindows: 'Starta med systemet', closeBehavior: 'Vid stängning', autoUpdate: 'Automatiska uppdateringar', confirmLinks: 'Bekräfta externa länkar', actions: 'Åtgärder', checkUpdate: 'Sök efter uppdateringar', save: 'Spara', closeAction: 'Stäng' });
+I18N['2052'] = Object.assign({}, EN_BASE, { settings: '设置', playOnline: '在线游玩', playOffline: '离线游玩', refresh: '刷新', online: '在线', offline: '离线', account: '账户', launcher: '启动器', community: '社区', helpPages: '帮助与页面', session: '会话状态', openSettings: '打开设置', closeTitle: '关闭启动器？', closeCancel: '取消', closeBackground: '保留在后台', closeExit: '完全关闭', settingsTitle: '启动器选项', languageLabel: '语言', startWithWindows: '随系统启动', closeBehavior: '关闭时', autoUpdate: '自动更新', confirmLinks: '确认外部链接', actions: '操作', checkUpdate: '检查更新', save: '保存', closeAction: '关闭' });
+I18N['1028'] = Object.assign({}, EN_BASE, { settings: '設定', playOnline: '線上遊玩', playOffline: '離線遊玩', refresh: '重新整理', online: '線上', offline: '離線', account: '帳戶', launcher: '啟動器', community: '社群', helpPages: '說明與頁面', session: '工作階段狀態', openSettings: '開啟設定', closeTitle: '關閉啟動器？', closeCancel: '取消', closeBackground: '保留在背景', closeExit: '完全關閉', settingsTitle: '啟動器選項', languageLabel: '語言', startWithWindows: '隨系統啟動', closeBehavior: '關閉時', autoUpdate: '自動更新', confirmLinks: '確認外部連結', actions: '動作', checkUpdate: '檢查更新', save: '儲存', closeAction: '關閉' });
+I18N['1046'] = Object.assign({}, EN_BASE, { settings: 'Configurações', playOnline: 'Jogar online', playOffline: 'Jogar offline', refresh: 'Atualizar', online: 'Online', offline: 'Offline', account: 'Conta', launcher: 'Launcher', community: 'Comunidade', helpPages: 'Ajuda e páginas', session: 'Status da sessão', openSettings: 'Abrir configurações', closeTitle: 'Fechar o launcher?', closeCancel: 'Cancelar', closeBackground: 'Manter em segundo plano', closeExit: 'Fechar completamente', settingsTitle: 'Opções do launcher', languageLabel: 'Idioma', startWithWindows: 'Iniciar com o sistema', closeBehavior: 'Ao fechar', autoUpdate: 'Atualizações automáticas', confirmLinks: 'Confirmar links externos', actions: 'Ações', checkUpdate: 'Verificar atualizações', save: 'Salvar', closeAction: 'Fechar' });
+I18N['1051'] = Object.assign({}, EN_BASE, { settings: 'Настройки', playOnline: 'Играть онлайн', playOffline: 'Играть офлайн', refresh: 'Обновить', online: 'Онлайн', offline: 'Офлайн', account: 'Аккаунт', launcher: 'Лаунчер', community: 'Сообщество', helpPages: 'Помощь и страницы', session: 'Состояние сеанса', openSettings: 'Открыть настройки', closeTitle: 'Закрыть лаунчер?', closeCancel: 'Отмена', closeBackground: 'Оставить в фоне', closeExit: 'Закрыть полностью', settingsTitle: 'Параметры лаунчера', languageLabel: 'Язык', startWithWindows: 'Запускать с системой', closeBehavior: 'При закрытии', autoUpdate: 'Автообновления', confirmLinks: 'Подтверждать внешние ссылки', actions: 'Действия', checkUpdate: 'Проверить обновления', save: 'Сохранить', closeAction: 'Закрыть' });
+I18N['1041'] = Object.assign({}, EN_BASE, { settings: '設定', playOnline: 'オンラインでプレイ', playOffline: 'オフラインでプレイ', refresh: '更新', online: 'オンライン', offline: 'オフライン', account: 'アカウント', launcher: 'ランチャー', community: 'コミュニティ', helpPages: 'ヘルプとページ', session: 'セッション状態', openSettings: '設定を開く', closeTitle: 'ランチャーを閉じますか？', closeCancel: 'キャンセル', closeBackground: 'バックグラウンドで保持', closeExit: '完全に閉じる', settingsTitle: 'ランチャー設定', languageLabel: '言語', startWithWindows: 'システムと同時に起動', closeBehavior: '閉じるとき', autoUpdate: '自動更新', confirmLinks: '外部リンクを確認', actions: '操作', checkUpdate: 'アップデートを確認', save: '保存', closeAction: '閉じる' });
+I18N['1050'] = Object.assign({}, EN_BASE, { settings: '설정', playOnline: '온라인 플레이', playOffline: '오프라인 플레이', refresh: '새로 고침', online: '온라인', offline: '오프라인', account: '계정', launcher: '런처', community: '커뮤니티', helpPages: '도움말 및 페이지', session: '세션 상태', openSettings: '설정 열기', closeTitle: '런처를 닫으시겠습니까?', closeCancel: '취소', closeBackground: '백그라운드에 유지', closeExit: '완전히 닫기', settingsTitle: '런처 옵션', languageLabel: '언어', startWithWindows: '시스템 시작 시 실행', closeBehavior: '닫을 때', autoUpdate: '자동 업데이트', confirmLinks: '외부 링크 확인', actions: '작업', checkUpdate: '업데이트 확인', save: '저장', closeAction: '닫기' });
 
 function htmlLanguage(code) {
   const normalized = normalizeLanguage(code);
@@ -238,6 +248,38 @@ function tr(key) {
   const lang = normalizeLanguage(state.settings?.language);
   return I18N[lang]?.[key] || I18N['1033']?.[key] || key;
 }
+
+function renderInstallInfo() {
+  const platform = state.boot?.platform || {};
+  const distro = [platform.distro, platform.distro_version].filter(Boolean).join(' ');
+  setText('info-os', platform.os_label || platform.os || '—');
+  setText('info-distro', distro || platform.distro_id || '—');
+  setText('info-arch', platform.arch || '—');
+  setText('info-format', platform.package_format ? String(platform.package_format).toUpperCase() : '—');
+  setText('info-session', [platform.session_type, platform.desktop].filter(Boolean).join(' · ') || '—');
+  setText('info-kernel', platform.kernel || '—');
+  setText('info-launcher', `v${state.boot?.version || BUILD.launcherVersion}`);
+  setText('info-game', `v${state.boot?.game_version || BUILD.gameVersion}`);
+  setText('info-channel', String(state.boot?.channel || BUILD.channel || 'beta').toUpperCase());
+  setText('info-build', state.boot?.build_date || BUILD.buildDate || '—');
+  setText('info-path', platform.install_path || '—');
+  setText('hub-top-channel', String(state.boot?.channel || BUILD.channel || 'beta').toUpperCase());
+  const startupLine = $('startup-line');
+  if (startupLine) startupLine.classList.toggle('hidden', platform.startup_supported === false);
+  const pinButton = $('settings-pin');
+  if (pinButton) {
+    const label = pinButton.querySelector('span');
+    if (label) label.textContent = platform.os === 'windows' ? tr('pinTaskbar') : tr('pinMenu');
+  }
+}
+
+window.showInstallInfo = function showInstallInfo() {
+  renderInstallInfo();
+  $('settings-modal')?.classList.remove('hidden');
+  window.setTimeout(() => {
+    $('settings-info-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 80);
+};
 
 function updateLanguagePicker(code) {
   const normalized = normalizeLanguage(code);
@@ -283,6 +325,7 @@ function applyLanguage(language) {
     if (key) element.textContent = tr(key);
   });
   updateLanguagePicker(normalized);
+  renderInstallInfo();
   const settingsButton = $('settings-open');
   if (settingsButton) {
     settingsButton.title = tr('settings');
@@ -493,6 +536,7 @@ async function boot() {
     });
     setText('splash-version', `V${state.boot?.version || '2.1.1'}`);
     setText('hub-version', state.boot?.version || '2.1.1');
+    renderInstallInfo();
     const offlineLaunch = new URLSearchParams(window.location.search).get('offline') === '1' || window.location.hash === '#offline';
     if (offlineLaunch) {
       state.online = false;
@@ -792,7 +836,7 @@ async function waitForDownload() {
       setBar('update-bar', 100);
       setPct('update-pct', 100);
       setText('update-title', 'Actualización lista');
-      setText('update-desc', 'Cierra el launcher y aplica la actualización. Windows puede pedir permisos de administrador.');
+      setText('update-desc', 'Cierra el launcher y aplica la actualización. El sistema puede pedir permisos de administrador.');
       setText('update-note', 'Se descargó de forma segura desde GitHub Releases.');
       $('update-spinner')?.classList.add('hidden');
       $('update-install')?.classList.remove('hidden');
@@ -993,7 +1037,9 @@ function syncSettingsForm() {
   const telemetry = $('modal-telemetry');
   if (telemetry) telemetry.checked = state.settings.telemetry_enabled !== false;
   const startup = $('modal-startup');
-  if (startup) startup.checked = Boolean(state.settings.launch_on_startup);
+  if (startup) startup.checked = typeof state.boot?.platform?.startup_enabled === 'boolean'
+    ? state.boot.platform.startup_enabled
+    : Boolean(state.settings.launch_on_startup);
   const updateChannel = $('modal-update-channel');
   if (updateChannel) updateChannel.value = state.settings.update_channel || state.boot?.update_channel || BUILD.channel || 'beta';
   const autoRelease = $('modal-auto-release');
@@ -1005,6 +1051,7 @@ function syncSettingsForm() {
 
 async function openSettings() {
   syncSettingsForm();
+  renderInstallInfo();
   $('settings-modal')?.classList.remove('hidden');
 }
 
@@ -1163,6 +1210,7 @@ function bind() {
   $('offline-play')?.addEventListener('click', startOfflineGame);
   $('titlebar-hub')?.addEventListener('click', showHub);
   $('titlebar-settings')?.addEventListener('click', openSettings);
+  $('hub-info')?.addEventListener('click', () => window.showInstallInfo());
   $('titlebar-minimize')?.addEventListener('click', () => invoke('launcher_minimize').catch(() => {}));
   $('titlebar-maximize')?.addEventListener('click', () => invoke('launcher_toggle_maximize').catch(() => {}));
   $('titlebar-close')?.addEventListener('click', () => window.showCloseDialog());
@@ -1173,7 +1221,11 @@ function bind() {
   $('hub-restart-online')?.addEventListener('click', restartLauncher);
   $('settings-restart')?.addEventListener('click', restartLauncher);
   $('settings-pin')?.addEventListener('click', () => {
-    invoke('launcher_pin_taskbar').catch((error) => toast(String(error), 'error'));
+    invoke('launcher_pin_taskbar')
+      .then(() => toast(state.boot?.platform?.os === 'windows'
+        ? 'Acceso creado. Busca MuzicMania en el menú de aplicaciones.'
+        : 'Acceso creado en el menú de aplicaciones.'))
+      .catch((error) => toast(String(error), 'error'));
   });
   $('hub-refresh')?.addEventListener('click', async () => {
     const button = $('hub-refresh');
@@ -1251,10 +1303,11 @@ function bind() {
     const enabled = Boolean(event.target.checked);
     try {
       await invoke('set_launch_on_startup', { enabled });
+      if (state.boot?.platform) state.boot.platform.startup_enabled = enabled;
       await persistSettings({ launch_on_startup: enabled });
       toast(enabled
-        ? (state.settings?.language === 'en' ? 'Start with Windows enabled.' : 'Inicio con Windows activado.')
-        : (state.settings?.language === 'en' ? 'Start with Windows disabled.' : 'Inicio con Windows desactivado.'));
+        ? (state.settings?.language === 'en' ? 'Start with system enabled.' : 'Inicio con el sistema activado.')
+        : (state.settings?.language === 'en' ? 'Start with system disabled.' : 'Inicio con el sistema desactivado.'));
     } catch (error) {
       event.target.checked = !enabled;
       toast(String(error), 'error');

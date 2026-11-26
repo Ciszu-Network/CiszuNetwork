@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.3.0
-Actualización: 2026-11-25
-Identificador: STATUS_SYSTEM_V2.3.0_2026_11_25_ciszunetwork
+Versión: 2.3.1
+Actualización: 2026-11-26
+Identificador: STATUS_SYSTEM_V2.3.1_2026_11_26_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -405,5 +405,9 @@ _Última revisión: 14 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Licencia**: todo el ecosistema pasa a MIT/open source; corregidas las cláusulas no comerciales en ciszu, ciszubot, ciszukoantony y MuzicMania, incluidas webs legales, docs y copias públicas. La música/assets de terceros conservan sus licencias.
 - **Ventanas MuzicMania**: launcher con `resizable/maximizable` desde el inicio, `always_on_top` desactivado en el hub, `unminimize/show/set_focus`, capabilities de Tauri para drag/maximize/minimize y main window enfocada; probado el arranque.
 - **KDE**: `FocusStealingPreventionLevel=2` pasó a `0` y se recargó KWin; no era un bug de KDE, era la prevención de robo de foco. Backup en `~/.config/kwinrc.bak-20261125`.
+- **Launcher multiplataforma (26 nov)**: `Iniciar con el sistema` sustituye a “Iniciar con Windows”; autostart real por XDG (`~/.config/autostart`) en Linux, LaunchAgent en macOS y registro en Windows. Añadidos `--platform-info`, `--set-autostart` y `--unset-autostart` para diagnóstico/empaquetado. El estado y la cuenta volvieron junto a Configuración; el hub recupera logo, canal e información de instalación (OS, distro, arch, formato, sesión, kernel, versiones y build).
+- **Descargas Linux (26 nov)**: la página usa `downloads-registry.json`, muestra RPM/DEB/AppImage/Flatpak por distro y permite filtrar por OS, formato, arquitectura, canal y versión. Corregidos los enlaces Linux del centro de versiones (antes apuntaban a Windows).
+- **Repos publicados (26 nov)**: DNF y APT firmados en `https://ciszu-network.github.io/muzicmania-packages/` (repo `Ciszu-Network/muzicmania-packages`); RPM/DEB 2.4.2 subidos a GitHub Releases. Flatpak/Snap/AUR/Fedora oficial siguen pendientes de cuenta/revisión; el build Flatpak local queda bloqueado por espacio de runtimes.
+- **Herramientas Linux (26 nov)**: `md2office`/`txt2pdf` detectan Pandoc/fuentes y usan LibreOffice; `sync-public-docs` ya no hardcodea `E:\Ciszu Network`; `platform-run.js` delega `dev`/`profile`/`vault:bw`; `backup-db`, `seo-crawl`, `convert` y `update-env-keys` degradan con mensajes claros fuera de Windows. `build-launcher.yml` instala dependencias Linux correctas y dejó de compilar AppImage.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-11-25

@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "bundle": {
-    "targets": ["deb", "rpm", "appimage"],
+    "targets": ["deb", "rpm"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -12,7 +12,7 @@
       "icons/icon.ico"
     ],
     "shortDescription": "Ecosistema rítmico de alto rendimiento",
-    "longDescription": "MuzicMania es un juego rítmico de alto rendimiento desarrollado por Ciszu Network. La edición Linux usa el WebView del sistema y carga el juego online; el instalador nativo se distribuye como DEB o AppImage.",
+    "longDescription": "MuzicMania es un juego rítmico de alto rendimiento desarrollado por Ciszu Network. La edición Linux usa el WebView del sistema y carga el juego online; se distribuye como DEB, RPM y Flatpak.",
     "publisher": "Ciszu Network",
     "copyright": "© 2026 Ciszu Network — Ciszuko Antony. MIT License.",
     "licenseFile": "LICENSE.txt",

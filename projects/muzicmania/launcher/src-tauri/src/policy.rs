@@ -65,6 +65,8 @@ pub struct ReleaseRecord {
     #[serde(default)]
     pub arch: String,
     #[serde(default)]
+    pub format: String,
+    #[serde(default)]
     pub minimum_windows: String,
     #[serde(default)]
     pub file_name: String,
@@ -121,6 +123,7 @@ pub struct PolicyOption {
     pub channel: String,
     pub os: String,
     pub arch: String,
+    pub format: String,
     pub size: u64,
     pub url: String,
     pub download_page_url: String,
@@ -424,6 +427,7 @@ fn to_option(release: &ReleaseRecord) -> PolicyOption {
         channel: release.channel.clone(),
         os: release.os.clone(),
         arch: release.arch.clone(),
+        format: release.format.clone(),
         size: release.size,
         url: release.download_url.clone(),
         download_page_url,
@@ -443,6 +447,7 @@ pub fn check(
     build_channel: &str,
     preferred_channel: &str,
     auto_switch_release: bool,
+    package_format: &str,
     allow_network: bool,
 ) -> PolicyOutcome {
     let loaded = load_manifest(allow_network);
@@ -490,10 +495,19 @@ pub fn check(
         }
     }
 
+    // En Linux el manifiesto puede traer AppImage, DEB y RPM del mismo release.
+    // Solo ofrecemos el formato que realmente esta instalado.
+    let matches_format = |release: &&ReleaseRecord| {
+        os != "linux"
+            || package_format == "portable"
+            || release.format.is_empty()
+            || release.format == package_format
+    };
     let platform_releases: Vec<&ReleaseRecord> = manifest
         .releases
         .iter()
         .filter(|release| release.os == os && release.arch == arch)
+        .filter(matches_format)
         .collect();
 
     // Las builds de Linux/macOS se distribuyen como paquetes nativos (deb/rpm/AppImage,
@@ -515,6 +529,7 @@ pub fn check(
         .releases
         .iter()
         .filter(|release| release.os == os && release.arch == arch)
+        .filter(matches_format)
         .filter(|release| {
             compare_versions(&release.launcher_version, current)
                 == std::cmp::Ordering::Greater

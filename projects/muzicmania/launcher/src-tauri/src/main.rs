@@ -689,7 +689,52 @@ fn set_launch_on_startup(enabled: bool) -> Result<(), String> {
             return Err(String::from_utf8_lossy(&output.stderr).trim().to_string());
         }
     }
-    #[cfg(not(target_os = "windows"))]
+
+    #[cfg(target_os = "linux")]
+    {
+        let path = linux_autostart_path()
+            .ok_or_else(|| "No se pudo resolver ~/.config/autostart".to_string())?;
+        if enabled {
+            if let Some(parent) = path.parent() {
+                std::fs::create_dir_all(parent)
+                    .map_err(|error| format!("No se pudo crear autostart: {error}"))?;
+            }
+            std::fs::write(&path, desktop_entry(true))
+                .map_err(|error| format!("No se pudo escribir el autostart: {error}"))?;
+        } else if path.exists() {
+            std::fs::remove_file(&path)
+                .map_err(|error| format!("No se pudo quitar el autostart: {error}"))?;
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        let path = macos_launch_agent_path()
+            .ok_or_else(|| "No se pudo resolver ~/Library/LaunchAgents".to_string())?;
+        if enabled {
+            if let Some(parent) = path.parent() {
+                std::fs::create_dir_all(parent)
+                    .map_err(|error| format!("No se pudo crear LaunchAgents: {error}"))?;
+            }
+            let exe = std::env::current_exe()
+                .map_err(|error| error.to_string())?
+                .display()
+                .to_string()
+                .replace('&', "&amp;")
+                .replace('<', "&lt;")
+                .replace('>', "&gt;");
+            let plist = format!(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n  <key>Label</key><string>network.ciszu.muzicmania</string>\n  <key>ProgramArguments</key><array><string>{exe}</string></array>\n  <key>RunAtLoad</key><true/>\n</dict>\n</plist>\n"
+            );
+            std::fs::write(&path, plist)
+                .map_err(|error| format!("No se pudo escribir el LaunchAgent: {error}"))?;
+        } else if path.exists() {
+            std::fs::remove_file(&path)
+                .map_err(|error| format!("No se pudo quitar el LaunchAgent: {error}"))?;
+        }
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "linux", target_os = "macos")))]
     {
         let _ = enabled;
     }
@@ -721,6 +766,222 @@ fn mark_first_run_done() {
     }
 }
 
+#[derive(serde::Serialize, Clone, Debug, Default)]
+struct PlatformInfo {
+    os: String,
+    os_label: String,
+    distro: String,
+    distro_id: String,
+    distro_version: String,
+    arch: String,
+    package_format: String,
+    install_path: String,
+    session_type: String,
+    desktop: String,
+    kernel: String,
+    startup_supported: bool,
+    startup_enabled: bool,
+}
+
+fn read_os_release() -> std::collections::BTreeMap<String, String> {
+    let mut values = std::collections::BTreeMap::new();
+    if let Ok(text) = std::fs::read_to_string("/etc/os-release") {
+        for line in text.lines() {
+            let Some((key, value)) = line.split_once('=') else {
+                continue;
+            };
+            values.insert(
+                key.trim().to_string(),
+                value.trim().trim_matches('"').to_string(),
+            );
+        }
+    }
+    values
+}
+
+fn detect_package_format() -> String {
+    #[cfg(target_os = "linux")]
+    {
+        if std::env::var_os("APPIMAGE").is_some() {
+            return "appimage".to_string();
+        }
+        if std::path::Path::new("/.flatpak-info").exists()
+            || std::env::var_os("FLATPAK_ID").is_some()
+        {
+            return "flatpak".to_string();
+        }
+        if std::env::var_os("SNAP").is_some() {
+            return "snap".to_string();
+        }
+        if std::path::Path::new("/usr/lib/sysimage/rpm").exists()
+            || std::path::Path::new("/var/lib/rpm").exists()
+        {
+            return "rpm".to_string();
+        }
+        if std::path::Path::new("/var/lib/dpkg/status").exists() {
+            return "deb".to_string();
+        }
+        "portable".to_string()
+    }
+    #[cfg(target_os = "windows")]
+    {
+        "exe".to_string()
+    }
+    #[cfg(target_os = "macos")]
+    {
+        "dmg".to_string()
+    }
+    #[cfg(not(any(target_os = "linux", target_os = "windows", target_os = "macos")))]
+    {
+        std::env::consts::OS.to_string()
+    }
+}
+
+fn launch_command() -> String {
+    #[cfg(target_os = "linux")]
+    {
+        if std::path::Path::new("/.flatpak-info").exists()
+            || std::env::var_os("FLATPAK_ID").is_some()
+        {
+            return "flatpak run network.ciszu.muzicmania".to_string();
+        }
+        if let Ok(snap) = std::env::var("SNAP_INSTANCE_NAME") {
+            return format!("snap run {snap}");
+        }
+        if let Ok(appimage) = std::env::var("APPIMAGE") {
+            if !appimage.trim().is_empty() {
+                return format!("\"{appimage}\"");
+            }
+        }
+    }
+    let executable = std::env::current_exe()
+        .map(|path| path.display().to_string())
+        .unwrap_or_else(|_| "muzicmania".to_string());
+    format!("\"{executable}\"")
+}
+
+fn linux_autostart_path() -> Option<std::path::PathBuf> {
+    dirs::config_dir().map(|base| {
+        base.join("autostart")
+            .join("network.ciszu.muzicmania.desktop")
+    })
+}
+
+fn linux_menu_entry_path() -> Option<std::path::PathBuf> {
+    dirs::data_dir().map(|base| {
+        base.join("applications")
+            .join("network.ciszu.muzicmania.desktop")
+    })
+}
+
+fn macos_launch_agent_path() -> Option<std::path::PathBuf> {
+    dirs::home_dir().map(|home| {
+        home.join("Library")
+            .join("LaunchAgents")
+            .join("network.ciszu.muzicmania.plist")
+    })
+}
+
+fn desktop_entry(autostart: bool) -> String {
+    let icon = if detect_package_format() == "flatpak" {
+        "network.ciszu.muzicmania"
+    } else {
+        "muzicmania"
+    };
+    let autostart_lines = if autostart {
+        "X-GNOME-Autostart-enabled=true\nX-KDE-autostart-after=panel\n"
+    } else {
+        ""
+    };
+    format!(
+        "[Desktop Entry]\nType=Application\nVersion=1.0\nName=MuzicMania\nComment=Launcher de MuzicMania\nExec={}\nIcon={}\nTerminal=false\nCategories=Game;\nStartupNotify=true\n{}",
+        launch_command(),
+        icon,
+        autostart_lines
+    )
+}
+
+fn platform_info() -> PlatformInfo {
+    let mut info = PlatformInfo {
+        arch: detect_arch_key(),
+        package_format: detect_package_format(),
+        install_path: std::env::current_exe()
+            .map(|path| path.display().to_string())
+            .unwrap_or_default(),
+        startup_supported: true,
+        ..PlatformInfo::default()
+    };
+
+    #[cfg(target_os = "linux")]
+    {
+        let os_release = read_os_release();
+        let name = os_release
+            .get("NAME")
+            .cloned()
+            .unwrap_or_else(|| "Linux".to_string());
+        let version = os_release
+            .get("VERSION_ID")
+            .cloned()
+            .or_else(|| os_release.get("BUILD_ID").cloned())
+            .unwrap_or_default();
+        info.os = "linux".to_string();
+        info.os_label = if version.is_empty() {
+            name.clone()
+        } else {
+            format!("{name} {version}")
+        };
+        info.distro = name;
+        info.distro_id = os_release.get("ID").cloned().unwrap_or_default();
+        info.distro_version = version;
+        info.session_type = std::env::var("XDG_SESSION_TYPE").unwrap_or_else(|_| {
+            if std::env::var_os("WAYLAND_DISPLAY").is_some() {
+                "wayland".to_string()
+            } else if std::env::var_os("DISPLAY").is_some() {
+                "x11".to_string()
+            } else {
+                "unknown".to_string()
+            }
+        });
+        info.desktop = std::env::var("XDG_CURRENT_DESKTOP").unwrap_or_default();
+        info.kernel = std::fs::read_to_string("/proc/sys/kernel/osrelease")
+            .map(|value| value.trim().to_string())
+            .unwrap_or_default();
+        info.startup_enabled = linux_autostart_path()
+            .map(|path| path.exists())
+            .unwrap_or(false);
+    }
+
+    #[cfg(target_os = "windows")]
+    {
+        info.os = "windows".to_string();
+        info.os_label = detect_windows_version();
+        info.distro = "Windows".to_string();
+        info.distro_version = windows_build_number().to_string();
+        info.session_type = "desktop".to_string();
+        info.desktop = "Windows".to_string();
+        info.kernel = format!("build {}", windows_build_number());
+        info.startup_enabled = read_reg_value(
+            r"HKCU\Software\Microsoft\Windows\CurrentVersion\Run",
+            "MuzicMania",
+        )
+        .is_some();
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        info.os = "macos".to_string();
+        info.os_label = "macOS".to_string();
+        info.distro = "macOS".to_string();
+        info.session_type = "aqua".to_string();
+        info.desktop = "Aqua".to_string();
+        info.startup_enabled = macos_launch_agent_path()
+            .map(|path| path.exists())
+            .unwrap_or(false);
+    }
+
+    info
+}
+
 #[derive(serde::Serialize)]
 struct LauncherBoot {
     version: String,
@@ -728,6 +989,7 @@ struct LauncherBoot {
     channel: String,
     build_date: String,
     changelog_url: String,
+    platform: PlatformInfo,
     first_run: bool,
     tutorial_done: bool,
     auto_update: bool,
@@ -746,6 +1008,7 @@ fn launcher_boot(state: tauri::State<LauncherState>) -> LauncherBoot {
         channel: BUILD_CHANNEL.to_string(),
         build_date: BUILD_DATE.to_string(),
         changelog_url: CHANGELOG_URL.to_string(),
+        platform: platform_info(),
         first_run: !settings_path().map(|path| path.exists()).unwrap_or(false),
         tutorial_done: settings.tutorial_done,
         auto_update: settings.auto_update,
@@ -800,14 +1063,36 @@ fn launcher_show_hub(app: tauri::AppHandle) {
 }
 
 #[tauri::command]
-fn launcher_pin_taskbar(app: tauri::AppHandle) {
+fn launcher_pin_taskbar(app: tauri::AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window("launcher") {
         let _ = window.set_focus();
     }
     #[cfg(target_os = "windows")]
     request_taskbar_pin();
-    #[cfg(not(target_os = "windows"))]
+    #[cfg(target_os = "linux")]
+    {
+        let path = linux_menu_entry_path()
+            .ok_or_else(|| "No se pudo resolver ~/.local/share/applications".to_string())?;
+        if let Some(parent) = path.parent() {
+            std::fs::create_dir_all(parent)
+                .map_err(|error| format!("No se pudo crear el menú: {error}"))?;
+        }
+        std::fs::write(&path, desktop_entry(false))
+            .map_err(|error| format!("No se pudo escribir el acceso: {error}"))?;
+    }
+    #[cfg(not(any(target_os = "windows", target_os = "linux")))]
     let _ = app;
+    Ok(())
+}
+
+#[tauri::command]
+fn launcher_show_info(app: tauri::AppHandle) {
+    if let Some(window) = app.get_webview_window("launcher") {
+        let _ = window.unminimize();
+        let _ = window.show();
+        let _ = window.set_focus();
+        let _ = window.eval("window.showInstallInfo && window.showInstallInfo()");
+    }
 }
 
 #[tauri::command]
@@ -933,6 +1218,7 @@ fn check_policy(current: &str, preferred_channel: &str, allow_network: bool) -> 
         BUILD_CHANNEL,
         &preferred,
         settings.auto_switch_release,
+        &detect_package_format(),
         allow_network,
     )
 }
@@ -980,15 +1266,20 @@ fn launcher_start_update(
     let update_app = app.clone();
     std::thread::spawn(move || {
         let update_state = update_app.state::<UpdateState>();
-        let Some(local) = std::env::var("LOCALAPPDATA").ok() else {
-            let mut status = update_state.0.lock().unwrap();
-            status.state = "error".to_string();
-            status.error = "LOCALAPPDATA no disponible.".to_string();
-            return;
-        };
-        let update_dir = std::path::PathBuf::from(local).join("MuzicMania").join("update");
+        #[cfg(target_os = "windows")]
+        let update_base = std::env::var("LOCALAPPDATA")
+            .map(std::path::PathBuf::from)
+            .unwrap_or_else(|_| std::env::temp_dir());
+        #[cfg(not(target_os = "windows"))]
+        let update_base = dirs::cache_dir().unwrap_or_else(std::env::temp_dir);
+        let update_dir = update_base.join("MuzicMania").join("update");
         let _ = std::fs::create_dir_all(&update_dir);
-        let setup_path = update_dir.join("MuzicMania-update.exe");
+        let file_name = url
+            .rsplit('/')
+            .next()
+            .filter(|name| !name.is_empty() && name.len() < 180)
+            .unwrap_or("MuzicMania-update");
+        let setup_path = update_dir.join(file_name);
         let _ = std::fs::remove_file(&setup_path);
         {
             let mut status = update_state.0.lock().unwrap();
@@ -1066,15 +1357,34 @@ fn launcher_apply_update(app: tauri::AppHandle) -> Result<(), String> {
     if path.is_empty() || !std::path::Path::new(&path).exists() {
         return Err("update_not_downloaded".to_string());
     }
-    let ps = format!(
-        "$ErrorActionPreference='SilentlyContinue'; Start-Process -FilePath '{}' -Verb RunAs",
-        ps_quote(&path)
-    );
-    let _ = hidden_command("powershell")
-        .args(["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", &ps])
-        .spawn();
+
+    #[cfg(target_os = "windows")]
+    {
+        let ps = format!(
+            "$ErrorActionPreference='SilentlyContinue'; Start-Process -FilePath '{}' -Verb RunAs",
+            ps_quote(&path)
+        );
+        let _ = hidden_command("powershell")
+            .args(["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Command", &ps])
+            .spawn();
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        if path.to_lowercase().ends_with(".appimage") {
+            let _ = std::fs::set_permissions(&path, std::fs::Permissions::from_mode(0o755));
+        }
+        let _ = hidden_command("xdg-open").arg(&path).spawn();
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        let _ = hidden_command("open").arg(&path).spawn();
+    }
+
     std::thread::spawn(move || {
-        std::thread::sleep(Duration::from_millis(900));
+        std::thread::sleep(Duration::from_millis(1200));
         LAUNCHER_FORCE_CLOSE.store(true, Ordering::SeqCst);
         app.exit(0);
     });
@@ -2063,6 +2373,33 @@ fn main() {
             let pin_taskbar = args.iter().any(|arg| arg == "--pin-taskbar");
             let pin_only = args.iter().any(|arg| arg == "--pin-only");
 
+            if args.iter().any(|arg| arg == "--platform-info") {
+                match serde_json::to_string_pretty(&platform_info()) {
+                    Ok(json) => println!("{json}"),
+                    Err(error) => eprintln!("platform_info: {error}"),
+                }
+                std::process::exit(0);
+                return Ok(());
+            }
+            if args.iter().any(|arg| arg == "--set-autostart") {
+                if let Err(error) = set_launch_on_startup(true) {
+                    eprintln!("set-autostart: {error}");
+                    std::process::exit(1);
+                } else {
+                    std::process::exit(0);
+                }
+                return Ok(());
+            }
+            if args.iter().any(|arg| arg == "--unset-autostart") {
+                if let Err(error) = set_launch_on_startup(false) {
+                    eprintln!("unset-autostart: {error}");
+                    std::process::exit(1);
+                } else {
+                    std::process::exit(0);
+                }
+                return Ok(());
+            }
+
             if is_installer {
                 if let Some(index) = args.iter().position(|arg| arg == "--installer") {
                     if let Some(path) = args.get(index + 1) {
@@ -2247,7 +2584,7 @@ fn main() {
                             }
                         }
                         "tray-info" => {
-                            let _ = open::that("https://muzicmania.vercel.app");
+                            launcher_show_info(app.clone());
                         }
                         "tray-quit" => {
                             LAUNCHER_FORCE_CLOSE.store(true, Ordering::SeqCst);
@@ -2332,6 +2669,7 @@ fn main() {
             launcher_mark_tutorial_done,
             launcher_show_hub,
             launcher_show_small,
+            launcher_show_info,
             launcher_pin_taskbar,
             launcher_open_login,
             launcher_restart,

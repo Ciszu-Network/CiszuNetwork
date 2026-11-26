@@ -61,7 +61,8 @@ body {
 .titlebar-live .avatar { width: 20px; height: 20px; }
 .titlebar-product { font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
 .titlebar-beta { font-size: 7px; font-weight: 800; letter-spacing: .14em; color: var(--dim); border: 1px solid var(--border); border-radius: 999px; padding: 3px 6px; }
-.titlebar-actions { display: flex; align-items: center; gap: 2px; }
+.titlebar-actions { display: flex; align-items: center; gap: 2px; margin-left: auto; }
+.titlebar-live { margin-right: 6px; padding-right: 8px; border-right: 1px solid var(--border); }
 .titlebar-btn {
   display: inline-flex;
   align-items: center;
@@ -535,6 +536,36 @@ a { color: inherit; }
 .settings-subtitle { margin: 14px 0 8px; color: var(--dim); font-size: 9px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
 .settings-actions { display: flex; flex-wrap: wrap; gap: 7px; }
 .settings-actions .btn { flex: 1 1 160px; }
+.install-info {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 8px;
+}
+.install-info > div {
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+}
+.install-info span {
+  display: block;
+  color: var(--dim);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.install-info strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--text);
+  font-size: 10px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.install-path { word-break: break-all; }
 .select-field { position: relative; }
 .select-field::after { content: "⌄"; position: absolute; right: 12px; top: 50%; transform: translateY(-55%); color: var(--muted); pointer-events: none; font-size: 13px; }
 .select-control {

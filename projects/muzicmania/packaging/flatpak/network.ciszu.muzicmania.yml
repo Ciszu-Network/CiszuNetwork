@@ -3,7 +3,7 @@ runtime: org.gnome.Platform
 runtime-version: '49'
 sdk: org.gnome.Sdk
 sdk-extensions:
-  - org.freedesktop.Sdk.Extension.rust-stable
+  - org.freedesktop.Sdk.Extension.rust-stable//25.08
 command: muzicmania
 finish-args:
   - --share=ipc
@@ -13,7 +13,10 @@ finish-args:
   - --socket=pulseaudio
   - --device=dri
   - --talk-name=org.freedesktop.portal.Desktop
+  - --talk-name=org.kde.StatusNotifierWatcher
   - --filesystem=xdg-download
+  - --filesystem=xdg-config/autostart:create
+  - --filesystem=xdg-data/applications:create
 modules:
   - name: muzicmania
     buildsystem: simple

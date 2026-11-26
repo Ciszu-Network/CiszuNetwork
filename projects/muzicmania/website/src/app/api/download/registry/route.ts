@@ -1,7 +1,7 @@
 ﻿import { NextResponse } from 'next/server';
-import manifest from '@/data/releases-manifest.json';
+import registry from '@/data/downloads-registry.json';
 
 export async function GET() {
-  const releases = manifest && Array.isArray(manifest.releases) ? manifest.releases : [];
+  const releases = Array.isArray(registry) ? registry : [];
   return NextResponse.json(releases);
 }

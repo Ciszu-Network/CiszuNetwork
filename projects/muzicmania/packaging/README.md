@@ -11,7 +11,7 @@ comunitarios. AppImage queda fuera de este flujo.
 En Fedora:
 
 ```bash
-sudo dnf install -y flatpak-builder rpm-build createrepo_c dpkg dpkg-dev
+sudo dnf install -y flatpak-builder rpm-build createrepo_c dpkg dpkg-dev apt-utils rpm-sign
 ```
 
 Flathub usa `org.flatpak.Builder` (Flatpak) para construir; Snapcraft se instala
@@ -60,15 +60,17 @@ Para enviar a Flathub:
 5. Corrige avisos de `flatpak-builder-lint` y AppStream.
 
 El manifiesto usa `org.gnome.Platform` (incluye WebKitGTK) y la extensión
-`org.freedesktop.Sdk.Extension.rust-stable`. Para Flathub conviene sustituir
-`type: dir` por una fuente `git`/`archive` fijada a un tag y un commit.
+`org.freedesktop.Sdk.Extension.rust-stable//25.08`. Para Flathub hay que sustituir
+`type: dir` por un archivo `archive` fijado a un tag con `sha256` y vendorizar
+Cargo (`cargo vendor`) para que el build sea reproducible sin red. El manifiesto
+actual es un scaffold local, no una submission lista para revisión.
 
 ## Fedora / RPM
 
 ```bash
 # Crear el tarball fuente
-git archive --format=tar.gz --prefix=muzicmania-2.4.2/ \
-  -o packaging/rpm/muzicmania-2.4.2.tar.gz HEAD
+git archive --format=tar.gz --prefix=muzic-mania-2.4.2/ \
+  -o packaging/rpm/muzic-mania-2.4.2.tar.gz HEAD
 
 rpmbuild -ba packaging/rpm/muzic-mania.spec \
   --define "_sourcedir $PWD/packaging/rpm" \
@@ -109,7 +111,16 @@ packaging/repo/build-dnf-repo.sh ./rpm-output ./public/rpm
 ```
 
 Genera `repodata/`, firma los RPM y `repomd.xml`, y deja
-`muzicmania.repo` para que el usuario lo añada.
+`muzicmania.repo` para que el usuario lo añada. URL publicada:
+`https://ciszu-network.github.io/muzicmania-packages/rpm`.
+
+```bash
+sudo curl -fsSL https://ciszu-network.github.io/muzicmania-packages/muzicmania.asc \
+  -o /etc/pki/rpm-gpg/RPM-GPG-KEY-muzicmania
+sudo curl -fsSL https://ciszu-network.github.io/muzicmania-packages/rpm/muzicmania.repo \
+  -o /etc/yum.repos.d/muzicmania.repo
+sudo dnf install muzic-mania
+```
 
 ### DEB
 
@@ -117,7 +128,17 @@ Genera `repodata/`, firma los RPM y `repomd.xml`, y deja
 packaging/repo/build-deb-repo.sh ./deb-output ./public/deb
 ```
 
-Genera `Packages`, `Packages.gz`, `Release` y `Release.gpg`.
+Genera `Packages`, `Packages.gz`, `Release` y `Release.gpg`/`InRelease`.
+URL publicada: `https://ciszu-network.github.io/muzicmania-packages/deb`.
+
+```bash
+sudo install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://ciszu-network.github.io/muzicmania-packages/muzicmania.asc \
+  | sudo tee /etc/apt/keyrings/muzicmania.asc >/dev/null
+echo "deb [signed-by=/etc/apt/keyrings/muzicmania.asc] https://ciszu-network.github.io/muzicmania-packages/deb ./" \
+  | sudo tee /etc/apt/sources.list.d/muzicmania.list
+sudo apt update && sudo apt install muzic-mania
+```
 
 ## Checklist antes de publicar
 
@@ -134,8 +155,15 @@ Genera `Packages`, `Packages.gz`, `Release` y `Release.gpg`.
 
 ## Limitaciones actuales
 
-- Flathub, Fedora, Snap Store y AUR requieren cuentas, revisión y aceptación
-  de sus políticas; no se pueden publicar solo desde este repo.
+- **Publicado**: repos DNF/APT firmados en GitHub Pages
+  (`https://ciszu-network.github.io/muzicmania-packages/`) y paquetes RPM/DEB
+  2.4.2 en GitHub Releases.
+- **Pendiente de cuenta/revisión**: Flathub, Fedora oficial, Snap Store y AUR.
+  No se pueden publicar solo desde este repo.
+- **Flatpak local**: el build completo requiere `org.gnome.Sdk//49` +
+  `rust-stable//25.08` (~4,3 GB instalados) y en Fedora quedan ~2,5 GB libres en
+  `/`; no se ejecutó el build, solo se validó el manifiesto con
+  `flatpak-builder --show-manifest`.
 - El launcher usa WebView/online; Flathub puede pedir justificar la dependencia
   de red y el contenido de terceros.
 - La música y assets de terceros no quedan cubiertos por la MIT; sus licencias

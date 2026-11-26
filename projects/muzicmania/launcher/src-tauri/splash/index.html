@@ -40,11 +40,11 @@
     <img src="isotipo.svg" alt="MuzicMania" class="titlebar-logo titlebar-isotipo">
     <span class="titlebar-beta" id="titlebar-beta">BETA</span>
   </div>
-  <div class="titlebar-live">
-    <span class="status-pill" id="hub-status" data-i18n="checking">Comprobando</span>
-    <button class="account-chip" id="hub-account-chip" type="button"><span class="avatar" id="hub-avatar">?</span><span id="hub-account-name">Invitado</span></button>
-  </div>
   <div class="titlebar-actions">
+    <div class="titlebar-live">
+      <span class="status-pill" id="hub-status" data-i18n="checking">Comprobando</span>
+      <button class="account-chip" id="hub-account-chip" type="button"><span class="avatar" id="hub-avatar">?</span><span id="hub-account-name">Invitado</span></button>
+    </div>
     <button id="titlebar-hub" class="titlebar-btn" type="button" title="Volver al hub" aria-label="Volver al hub"><svg class="icon"><use href="#i-home"></use></svg><span>HUB</span></button>
     <button id="titlebar-settings" class="titlebar-btn" type="button" title="Configuración" aria-label="Configuración"><svg class="icon"><use href="#i-settings"></use></svg></button>
     <button id="titlebar-minimize" class="titlebar-btn" type="button" title="Minimizar" aria-label="Minimizar"><svg class="icon"><use href="#i-window-min"></use></svg></button>
@@ -171,6 +171,13 @@
 
   <section id="view-hub" class="view">
     <div class="hub-shell">
+      <div class="hub-top">
+        <div class="hub-brand">
+          <img src="logo.svg" alt="MuzicMania">
+          <small>Launcher · <span id="hub-top-channel">BETA</span></small>
+        </div>
+        <button id="hub-info" class="btn ghost" type="button"><svg class="icon"><use href="#i-info"></use></svg><span data-i18n="hubInfo">Información</span></button>
+      </div>
 
       <div class="hub-grid">
         <section class="hero">
@@ -300,7 +307,7 @@
         <div class="language-picker-menu" id="launcher-language-menu" role="listbox"></div>
       </div>
     </div>
-    <div class="settings-line"><span><svg class="icon"><use href="#i-monitor"></use></svg> <span data-i18n="startWithWindows">Iniciar con Windows</span></span><label class="switch"><input id="modal-startup" type="checkbox"><span></span></label></div>
+    <div class="settings-line" id="startup-line"><span><svg class="icon"><use href="#i-monitor"></use></svg> <span data-i18n="startWithWindows">Iniciar con el sistema</span></span><label class="switch"><input id="modal-startup" type="checkbox"><span></span></label></div>
     <div class="settings-section">
       <div class="settings-label"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="closeBehavior">Al cerrar</span></div>
       <div class="select-field">
@@ -319,10 +326,24 @@
     <div class="settings-subtitle" data-i18n="actions">Acciones</div>
     <div class="settings-actions">
       <button id="settings-check-update" class="btn"><svg class="icon"><use href="#i-refresh"></use></svg> <span data-i18n="checkUpdate">Buscar actualización</span></button>
-      <button id="settings-pin" class="btn"><svg class="icon"><use href="#i-pin"></use></svg> <span data-i18n="pinTaskbar">Anclar a taskbar</span></button>
+      <button id="settings-pin" class="btn"><svg class="icon"><use href="#i-pin"></use></svg> <span data-i18n="pinTaskbar">Anclar al menú de aplicaciones</span></button>
       <button id="settings-restart" class="btn"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="restartLauncher">Reiniciar launcher</span></button>
       <a class="btn ghost" data-url href="https://muzicmania.vercel.app/support"><svg class="icon"><use href="#i-help"></use></svg> <span data-i18n="help">Ayuda</span></a>
     </div>
+    <div class="settings-subtitle" data-i18n="installInfo">Información de instalación</div>
+    <div class="install-info" id="settings-info-section">
+      <div><span data-i18n="infoOS">Sistema</span><strong id="info-os">—</strong></div>
+      <div><span data-i18n="infoDistro">Distribución</span><strong id="info-distro">—</strong></div>
+      <div><span data-i18n="infoArch">Arquitectura</span><strong id="info-arch">—</strong></div>
+      <div><span data-i18n="infoFormat">Formato</span><strong id="info-format">—</strong></div>
+      <div><span data-i18n="infoSession">Sesión</span><strong id="info-session">—</strong></div>
+      <div><span data-i18n="infoKernel">Kernel</span><strong id="info-kernel">—</strong></div>
+      <div><span data-i18n="infoLauncher">Launcher</span><strong id="info-launcher">—</strong></div>
+      <div><span data-i18n="infoGame">Juego</span><strong id="info-game">—</strong></div>
+      <div><span data-i18n="infoChannel">Canal</span><strong id="info-channel">—</strong></div>
+      <div><span data-i18n="infoBuild">Build</span><strong id="info-build">—</strong></div>
+    </div>
+    <p class="note install-path" id="info-path">—</p>
     <div class="row" style="margin-top:18px">
       <button id="settings-save" class="btn primary" data-i18n="save">Guardar</button>
       <button id="settings-close" class="btn ghost" data-i18n="closeAction">Cerrar</button>
