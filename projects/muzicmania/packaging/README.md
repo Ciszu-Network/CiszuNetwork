@@ -44,6 +44,9 @@ sus políticas; este directorio solo prepara los artefactos y la configuración.
 ## Flathub
 
 ```bash
+# Genera/verifica el archivo fuente del tag (11 MB):
+packaging/flatpak/make-source.sh launcher-v2.4.2-beta.2
+
 flatpak install flathub org.flatpak.Builder
 flatpak run org.flatpak.Builder --user --install --force-clean \
   --state-dir=.flatpak-builder build-dir \
@@ -59,11 +62,11 @@ Para enviar a Flathub:
 4. Abre un PR; el bot construye en x86_64/aarch64 y revisa permisos.
 5. Corrige avisos de `flatpak-builder-lint` y AppStream.
 
-El manifiesto usa `org.gnome.Platform` (incluye WebKitGTK) y la extensión
-`org.freedesktop.Sdk.Extension.rust-stable//25.08`. Para Flathub hay que sustituir
-`type: dir` por un archivo `archive` fijado a un tag con `sha256` y vendorizar
-Cargo (`cargo vendor`) para que el build sea reproducible sin red. El manifiesto
-actual es un scaffold local, no una submission lista para revisión.
+El manifiesto usa `org.gnome.Platform` (incluye WebKitGTK), la extensión
+`org.freedesktop.Sdk.Extension.rust-stable//25.08` y un archivo `archive`
+fijado al tag `launcher-v2.4.2-beta.2` con `sha256`. Para Flathub aún hay que
+vendorizar Cargo (`cargo vendor`) y añadir esas fuentes al manifiesto para que
+el build sea reproducible sin red; sin eso no es una submission lista.
 
 ## Fedora / RPM
 

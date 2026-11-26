@@ -1,23 +1,23 @@
 # Maintainer: Ciszu Network <fplayersoffcial@gmail.com>
 pkgname=muzicmania
 pkgver=2.4.2
-pkgrel=1
+pkgrel=2
 pkgdesc="Ecosistema rítmico de alto rendimiento"
 arch=('x86_64')
 url="https://muzicmania.vercel.app"
 license=('MIT')
 depends=('webkit2gtk-4.1' 'gtk3' 'libayatana-appindicator')
 makedepends=('rust' 'cargo' 'pkgconf' 'openssl')
-source=("$pkgname-$pkgver.tar.gz::https://github.com/Ciszu-Network/CiszuNetwork/archive/refs/tags/v$pkgver.tar.gz")
-sha256sums=('SKIP')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/Ciszu-Network/CiszuNetwork/releases/download/launcher-v2.4.2-beta.2/muzicmania-2.4.2-src.tar.gz")
+sha256sums=('f3361bb7ed2f7e36c2066b1528dcf1c9d8cb902740db5d26ed57f82a2e89b79b')
 
 build() {
-  cd "CiszuNetwork-$pkgver"
+  cd "$srcdir"
   cargo build --release --manifest-path projects/muzicmania/launcher/src-tauri/Cargo.toml
 }
 
 package() {
-  cd "CiszuNetwork-$pkgver"
+  cd "$srcdir"
   install -Dm755 projects/muzicmania/launcher/src-tauri/target/release/muzicmania \
     "$pkgdir/usr/bin/muzicmania"
   install -Dm644 projects/muzicmania/packaging/assets/network.ciszu.muzicmania.desktop \

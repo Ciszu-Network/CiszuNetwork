@@ -3,7 +3,10 @@
 # Uso: ./make-source.sh [tag] [salida]
 set -euo pipefail
 
-REPO="${CISZU_REPO:-$(cd "$(dirname "$0")/../../../.." && pwd)}"
+REPO="${CISZU_REPO:-}"
+if [ -z "$REPO" ] || [ ! -d "$REPO" ]; then
+  REPO="$(cd "$(dirname "$0")/../../../.." && pwd)"
+fi
 TAG="${1:-launcher-v2.4.2-beta.2}"
 OUT="${2:-$REPO/.opencode/temp/muzicmania-2.4.2-src.tar.gz}"
 
