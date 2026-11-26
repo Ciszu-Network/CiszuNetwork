@@ -63,10 +63,11 @@ Para enviar a Flathub:
 5. Corrige avisos de `flatpak-builder-lint` y AppStream.
 
 El manifiesto usa `org.gnome.Platform` (incluye WebKitGTK), la extensión
-`org.freedesktop.Sdk.Extension.rust-stable//25.08` y un archivo `archive`
-fijado al tag `launcher-v2.4.2-beta.2` con `sha256`. Para Flathub aún hay que
-vendorizar Cargo (`cargo vendor`) y añadir esas fuentes al manifiesto para que
-el build sea reproducible sin red; sin eso no es una submission lista.
+`org.freedesktop.Sdk.Extension.rust-stable//25.08`, un archivo `archive`
+fijado al tag `launcher-v2.4.2-beta.2` con `sha256` y `cargo-sources.json`
+generado con `flatpak-cargo-generator.py` (1104 crates, build offline).
+Sigue sin probarse el build completo por falta de espacio para los runtimes;
+antes de enviarlo a Flathub hay que ejecutarlo y corregir lo que falle.
 
 ## Fedora / RPM
 
