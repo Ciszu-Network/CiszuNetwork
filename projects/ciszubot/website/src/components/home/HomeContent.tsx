@@ -12,6 +12,7 @@ import FeaturesSection from './FeaturesSection';
 import PremiumSection from './PremiumSection';
 import CommandTabs from './CommandTabs';
 import PlatformsSection from './PlatformsSection';
+import AppsHubSection from './AppsHubSection';
 import ChangelogStrip from './ChangelogStrip';
 import ReviewsStrip from './ReviewsStrip';
 import CtaSection from './CtaSection';
@@ -45,6 +46,7 @@ export default function HomeContent({ status, serverNow }: HomeContentProps) {
         <PremiumSection dict={dict} />
         <CommandTabs dict={dict} prefix={prefix} />
         <PlatformsSection dict={dict} />
+        <AppsHubSection dict={dict} />
         <ChangelogStrip dict={dict} />
         <ReviewsStrip dict={dict} lang={lang} />
         <CtaSection dict={dict} />

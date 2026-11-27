@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Icon, SmartImage, CopyWithButton } from '@ciszu/ui';
 import {
   BOT_PREFIX,
@@ -197,6 +198,13 @@ export default function HeroBanner({ dict, status, serverNow }: HeroBannerProps)
             <GithubMark />
             {dict.hero.ctaGithub}
           </a>
+          <Link
+            href="#apps"
+            className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-xl text-sm font-bold tracking-wide btn-ghost"
+          >
+            <Icon name="globe" size={18} />
+            {dict.appsHub.viewApps}
+          </Link>
         </div>
 
         {/* Plataformas reales */}

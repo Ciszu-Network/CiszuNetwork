@@ -200,6 +200,61 @@ const es = {
     description: 'Invita a CiszuBot a tu servidor en menos de un minuto. Gratis y rápido.',
     button: 'Invitar ahora',
   },
+  appsHub: {
+    kicker: 'Ecosistema Ciszu Network',
+    title: 'Todas las apps, un solo lugar',
+    subtitle:
+      'CiszuBot es la puerta de entrada al ecosistema. Discord es el canal principal; Telegram y WhatsApp llegarán pronto.',
+    discordTitle: 'CiszuBot en Discord',
+    discordDesc: 'El bot completo, la comunidad y el soporte oficial. Es el canal principal del ecosistema.',
+    discordCta: 'Invitar a Discord',
+    telegramCta: 'Telegram · Próximamente',
+    whatsappCta: 'WhatsApp · Próximamente',
+    visit: 'Abrir',
+    viewApps: 'Ver todas las apps',
+    apps: [
+      { name: 'Ciszu Network', desc: 'Hub central, marca y proyectos.' },
+      { name: 'Ciszuko Antony', desc: 'Portfolio, logos y música.' },
+      { name: 'MuzicMania', desc: 'Juego de ritmo y editor de niveles.' },
+      { name: 'CiszuBot', desc: 'Bot de Discord todo en uno.' },
+      { name: 'CiszuGamens', desc: 'Comunidad gaming y eventos.' },
+      { name: 'CiszuPy', desc: 'CLI y librería de Python.' },
+    ],
+  },
+  telegramInvitePage: {
+    title: 'Telegram',
+    kicker: 'Próximamente',
+    subtitle:
+      'Estamos preparando la invitación oficial de CiszuBot para Telegram. Mientras tanto, toda la experiencia vive en Discord.',
+    badge: 'EN PREPARACIÓN',
+    statusTitle: 'El bot de Telegram está en camino',
+    statusBody:
+      'Trabajamos en una versión de CiszuBot para Telegram con comandos, música y comunidad. La invitación se activará cuando la integración esté lista.',
+    items: [
+      { title: 'Comandos', body: 'Los mismos módulos de diversión, información y utilidad, adaptados a Telegram.' },
+      { title: 'Comunidad', body: 'Acceso al ecosistema Ciszu Network y a los canales oficiales.' },
+      { title: 'Sin fecha', body: 'No prometemos fechas que no podamos cumplir. Se anunciará en Discord y en la web.' },
+    ],
+    ctaDiscord: 'Ir a la invitación de Discord',
+    ctaHome: 'Volver al inicio',
+  },
+  whatsappInvitePage: {
+    title: 'WhatsApp',
+    kicker: 'Próximamente',
+    subtitle:
+      'La invitación oficial de CiszuBot para WhatsApp todavía no está disponible. Discord sigue siendo el canal principal.',
+    badge: 'EN PREPARACIÓN',
+    statusTitle: 'WhatsApp llegará más adelante',
+    statusBody:
+      'La API de WhatsApp impone reglas distintas a Discord. Estamos evaluando la mejor forma de llevar comandos y soporte sin romper esas reglas.',
+    items: [
+      { title: 'Soporte', body: 'Atención directa del equipo y respuestas a dudas frecuentes.' },
+      { title: 'Avisos', body: 'Novedades del ecosistema y del bot en un canal cercano.' },
+      { title: 'Sin fecha', body: 'Se anunciará primero en Discord y en la web oficial.' },
+    ],
+    ctaDiscord: 'Ir a la invitación de Discord',
+    ctaHome: 'Volver al inicio',
+  },
   quickDocks: {
     subtitle: 'Acceso rápido a todas las secciones',
   },
@@ -2035,6 +2090,61 @@ const en = {
     title: 'Ready to try it?',
     description: 'Invite CiszuBot to your server in less than a minute. Free and fast.',
     button: 'Invite now',
+  },
+  appsHub: {
+    kicker: 'Ciszu Network ecosystem',
+    title: 'Every app, one place',
+    subtitle:
+      'CiszuBot is the gateway to the ecosystem. Discord is the main channel; Telegram and WhatsApp are coming soon.',
+    discordTitle: 'CiszuBot on Discord',
+    discordDesc: 'The full bot, the community and official support. It is the main channel of the ecosystem.',
+    discordCta: 'Invite to Discord',
+    telegramCta: 'Telegram · Coming soon',
+    whatsappCta: 'WhatsApp · Coming soon',
+    visit: 'Open',
+    viewApps: 'View all apps',
+    apps: [
+      { name: 'Ciszu Network', desc: 'Central hub, brand and projects.' },
+      { name: 'Ciszuko Antony', desc: 'Portfolio, logos and music.' },
+      { name: 'MuzicMania', desc: 'Rhythm game and level editor.' },
+      { name: 'CiszuBot', desc: 'All-in-one Discord bot.' },
+      { name: 'CiszuGamens', desc: 'Gaming community and events.' },
+      { name: 'CiszuPy', desc: 'Python CLI and library.' },
+    ],
+  },
+  telegramInvitePage: {
+    title: 'Telegram',
+    kicker: 'Coming soon',
+    subtitle:
+      'We are preparing the official CiszuBot invitation for Telegram. Until then, the full experience lives on Discord.',
+    badge: 'IN PREPARATION',
+    statusTitle: 'The Telegram bot is on the way',
+    statusBody:
+      'We are working on a Telegram version of CiszuBot with commands, music and community. The invitation will open when the integration is ready.',
+    items: [
+      { title: 'Commands', body: 'The same fun, info and utility modules, adapted to Telegram.' },
+      { title: 'Community', body: 'Access to the Ciszu Network ecosystem and official channels.' },
+      { title: 'No date', body: 'We will not promise dates we cannot keep. It will be announced on Discord and the website.' },
+    ],
+    ctaDiscord: 'Go to the Discord invite',
+    ctaHome: 'Back to home',
+  },
+  whatsappInvitePage: {
+    title: 'WhatsApp',
+    kicker: 'Coming soon',
+    subtitle:
+      'The official CiszuBot invitation for WhatsApp is not available yet. Discord remains the main channel.',
+    badge: 'IN PREPARATION',
+    statusTitle: 'WhatsApp will come later',
+    statusBody:
+      'The WhatsApp API has different rules than Discord. We are evaluating the best way to bring commands and support without breaking them.',
+    items: [
+      { title: 'Support', body: 'Direct help from the team and answers to frequent questions.' },
+      { title: 'Updates', body: 'Ecosystem and bot news in a closer channel.' },
+      { title: 'No date', body: 'It will be announced first on Discord and the official website.' },
+    ],
+    ctaDiscord: 'Go to the Discord invite',
+    ctaHome: 'Back to home',
   },
   quickDocks: {
     subtitle: 'Quick access to every section',

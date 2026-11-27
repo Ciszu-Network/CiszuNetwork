@@ -41,16 +41,18 @@ export interface InfoHeroProps {
   subtitle: string;
   /** Etiqueta pequeña sobre el título. */
   kicker?: string;
+  /** Estilo del icono (outline/filled/brand/flag). */
+  iconStyle?: 'outline' | 'filled' | 'flag' | 'brand';
   theme: InfoTheme;
 }
 
-export function InfoHero({ icon, title, subtitle, kicker, theme }: InfoHeroProps) {
+export function InfoHero({ icon, title, subtitle, kicker, iconStyle, theme }: InfoHeroProps) {
   return (
     <header className="text-center mb-14">
       <div
         className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-6 ${theme.accentBg} ${theme.accent}`}
       >
-        <Icon name={icon} size={30} />
+        <Icon name={icon} style={iconStyle} size={30} />
       </div>
       {kicker ? (
         <p className={`text-[10px] font-black uppercase tracking-[0.3em] mb-3 ${theme.accent}`}>{kicker}</p>
