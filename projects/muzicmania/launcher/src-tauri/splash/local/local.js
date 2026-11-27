@@ -1,0 +1,704 @@
+/* MuzicMania Offline · shell local.
+ * Reutiliza el motor de offline-game.js y añade hub, niveles locales,
+ * canciones locales, inventario y almacenamiento persistente.
+ */
+(function () {
+  'use strict';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var STORE_KEY = 'muzicmania.local.v1';
+  var AUDIO_DB = 'muzicmania-local-audio';
+  var AUDIO_STORE = 'audio';
+  var MAX_NOTES = 10000;
+  var MAX_AUDIO_BYTES = 50 * 1024 * 1024;
+
+  var store = { levels: [], settings: {}, createdAt: Date.now() };
+  var statusTimer = null;
+
+  function safeParse(value, fallback) {
+    try { return JSON.parse(value); } catch (e) { return fallback; }
+  }
+
+  function loadStore() {
+    var parsed = safeParse(localStorage.getItem(STORE_KEY) || 'null', null);
+    if (parsed && Array.isArray(parsed.levels)) {
+      store = { levels: parsed.levels, settings: parsed.settings || {}, createdAt: parsed.createdAt || Date.now() };
+    }
+  }
+
+  function saveStore() {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify(store));
+      return true;
+    } catch (e) {
+      setStatus('No se pudieron guardar los datos locales. Revisa el espacio del equipo.', true);
+      return false;
+    }
+  }
+
+  function setStatus(text, error) {
+    var elements = [$('local-status'), $('editor-status')];
+    elements.forEach(function (el) {
+      if (!el) return;
+      el.textContent = text || '';
+      el.style.color = error ? '#ff6b7a' : '';
+    });
+    clearTimeout(statusTimer);
+    if (text) statusTimer = setTimeout(function () {
+      elements.forEach(function (el) { if (el) el.textContent = ''; });
+    }, 6000);
+  }
+
+  function openAudioDb() {
+    return new Promise(function (resolve, reject) {
+      if (!window.indexedDB) return reject(new Error('IndexedDB no disponible'));
+      var req = indexedDB.open(AUDIO_DB, 1);
+      req.onupgradeneeded = function () {
+        if (!req.result.objectStoreNames.contains(AUDIO_STORE)) req.result.createObjectStore(AUDIO_STORE, { keyPath: 'id' });
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error || new Error('No se pudo abrir IndexedDB')); };
+    });
+  }
+
+  async function putAudio(id, blob) {
+    var db = await openAudioDb();
+    await new Promise(function (resolve, reject) {
+      var tx = db.transaction(AUDIO_STORE, 'readwrite');
+      tx.objectStore(AUDIO_STORE).put({ id: id, blob: blob });
+      tx.oncomplete = resolve;
+      tx.onerror = function () { reject(tx.error || new Error('No se pudo guardar el audio')); };
+    });
+    db.close();
+  }
+
+  async function getAudio(id) {
+    var db = await openAudioDb();
+    var value = await new Promise(function (resolve, reject) {
+      var tx = db.transaction(AUDIO_STORE, 'readonly');
+      var req = tx.objectStore(AUDIO_STORE).get(id);
+      req.onsuccess = function () { resolve(req.result ? req.result.blob : null); };
+      req.onerror = function () { reject(req.error); };
+    });
+    db.close();
+    return value;
+  }
+
+  async function clearAudio() {
+    var db = await openAudioDb();
+    await new Promise(function (resolve, reject) {
+      var tx = db.transaction(AUDIO_STORE, 'readwrite');
+      tx.objectStore(AUDIO_STORE).clear();
+      tx.oncomplete = resolve;
+      tx.onerror = function () { reject(tx.error); };
+    });
+    db.close();
+  }
+
+  function slug(value) {
+    return String(value || 'local').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40) || 'local';
+  }
+
+  function uid() {
+    return Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+  }
+
+  // Los audios oficiales viven en ../offline/music desde local/.
+  var OFFICIAL_TRACKS = TRACKS.map(function (track) {
+    return Object.assign({}, track, { audio: '../' + track.audio, kind: 'official' });
+  });
+
+  function officialById(id) {
+    return OFFICIAL_TRACKS.filter(function (track) { return track.id === id; })[0] || null;
+  }
+
+  function normalizeNotes(raw) {
+    if (!Array.isArray(raw) || raw.length === 0) throw new Error('El nivel no contiene notas.');
+    if (raw.length > MAX_NOTES) throw new Error('El nivel supera el límite de ' + MAX_NOTES + ' notas.');
+    var maxTime = 0;
+    raw.forEach(function (note) {
+      var t = Number(note && note.time);
+      if (!isFinite(t) || t < 0) throw new Error('Hay una nota con tiempo inválido.');
+      maxTime = Math.max(maxTime, t);
+    });
+    var factor = maxTime > 1000 ? 0.001 : 1;
+    return raw.map(function (note) {
+      var lane = Number(note.lane);
+      if (!isFinite(lane) || lane < 0 || lane > 3) throw new Error('Hay una nota con carril inválido.');
+      var type = note.type === 'hold' || note.type === 'mine' ? note.type : 'tap';
+      var out = {
+        time: Math.round(Number(note.time) * factor * 1000) / 1000,
+        lane: Math.round(lane),
+        type: type
+      };
+      if (type === 'hold' && note.endTime != null) out.endTime = Math.round(Number(note.endTime) * factor * 1000) / 1000;
+      return out;
+    }).sort(function (a, b) { return a.time - b.time; });
+  }
+
+  function normalizeLevel(raw, fallbackTrack) {
+    if (!raw || typeof raw !== 'object') throw new Error('El archivo no es un nivel válido.');
+    var notes = normalizeNotes(raw.chart && raw.chart.notes ? raw.chart.notes : raw.notes);
+    var trackId = typeof raw.trackId === 'string' ? raw.trackId : (fallbackTrack ? fallbackTrack.id : null);
+    var base = trackId ? officialById(trackId) : fallbackTrack || null;
+    var title = String(raw.title || raw.name || 'Nivel local').trim().slice(0, 80) || 'Nivel local';
+    var artist = String(raw.artist || (base ? base.artist : 'Local')).trim().slice(0, 80) || 'Local';
+    var bpm = Number(raw.bpm || (base ? base.bpm : 120));
+    if (!isFinite(bpm) || bpm < 40 || bpm > 320) bpm = 120;
+    var duration = Number(raw.duration || (base ? base.duration : 0));
+    if (!isFinite(duration) || duration <= 0) {
+      duration = notes[notes.length - 1].time + 2;
+    }
+    var difficulty = ['Easy', 'Normal', 'Hard', 'Expert'].indexOf(raw.difficulty) >= 0 ? raw.difficulty : selectedDifficulty;
+    return {
+      id: uid(),
+      title: title,
+      artist: artist,
+      trackId: trackId,
+      difficulty: difficulty,
+      bpm: bpm,
+      duration: Math.max(5, Math.min(900, duration)),
+      chart: { formatVersion: '1.0', offset: 0, notes: notes },
+      createdAt: Date.now()
+    };
+  }
+
+  async function trackFromLevel(level) {
+    var base = level.trackId ? officialById(level.trackId) : null;
+    var audio = base ? base.audio : '';
+    if (level.audioId) {
+      try {
+        var blob = await getAudio(level.audioId);
+        if (blob) audio = URL.createObjectURL(blob);
+      } catch (e) {
+        audio = '';
+      }
+    }
+    if (!audio) return null;
+    return {
+      id: level.id,
+      name: level.title,
+      artist: level.artist,
+      duration: level.duration,
+      bpm: level.bpm,
+      color: base ? base.color : '#0f9eff',
+      audio: audio,
+      chart: level.chart,
+      kind: 'local',
+      local: true
+    };
+  }
+
+  async function rebuildTracks() {
+    TRACKS.length = 0;
+    OFFICIAL_TRACKS.forEach(function (track) { TRACKS.push(Object.assign({}, track)); });
+    for (var i = 0; i < store.levels.length; i += 1) {
+      var track = await trackFromLevel(store.levels[i]);
+      if (track) TRACKS.push(track);
+    }
+    if (!selectedTrack || TRACKS.indexOf(selectedTrack) === -1) selectedTrack = TRACKS[0] || null;
+    renderTracks();
+    updateStats();
+  }
+
+  function updateStats() {
+    if ($('stat-levels')) $('stat-levels').textContent = String(store.levels.length);
+    if ($('stat-songs')) $('stat-songs').textContent = String(store.levels.filter(function (level) { return level.audioId; }).length);
+  }
+
+  function downloadJson(payload, name) {
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = name;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+
+  function exportSelectedLevel() {
+    if (!selectedTrack) return;
+    var notes = selectedTrack.chart && Array.isArray(selectedTrack.chart.notes)
+      ? selectedTrack.chart.notes
+      : generateChart(selectedTrack.id, selectedTrack.duration, selectedTrack.bpm, selectedDifficulty).map(function (note) {
+          return { time: note.time / 1000, lane: note.lane, type: 'tap' };
+        });
+    downloadJson({
+      schemaVersion: 1,
+      title: selectedTrack.name,
+      artist: selectedTrack.artist,
+      trackId: selectedTrack.kind === 'official' ? selectedTrack.id : null,
+      difficulty: selectedDifficulty,
+      bpm: selectedTrack.bpm,
+      duration: selectedTrack.duration,
+      chart: { formatVersion: '1.0', offset: 0, notes: notes }
+    }, 'muzicmania-' + slug(selectedTrack.name) + '.json');
+    setStatus('Nivel exportado. El archivo se guardó en tu equipo.');
+  }
+
+  async function importLevelFile(file) {
+    if (!file) return;
+    try {
+      var text = await file.text();
+      var raw = JSON.parse(text);
+      var level = normalizeLevel(raw, selectedTrack && selectedTrack.kind === 'official' ? selectedTrack : null);
+      store.levels.push(level);
+      if (!saveStore()) { store.levels.pop(); return; }
+      await rebuildTracks();
+      setStatus('Nivel local cargado: ' + level.title);
+    } catch (error) {
+      setStatus('No se pudo cargar el nivel: ' + (error && error.message ? error.message : error), true);
+    } finally {
+      $('level-file').value = '';
+    }
+  }
+
+  function readAudioDuration(url) {
+    return new Promise(function (resolve) {
+      var audio = new Audio();
+      audio.preload = 'metadata';
+      audio.onloadedmetadata = function () {
+        var duration = isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0;
+        audio.src = '';
+        resolve(duration);
+      };
+      audio.onerror = function () { resolve(0); };
+      audio.src = url;
+    });
+  }
+
+  async function importSongFile(file) {
+    if (!file) return;
+    if (!file.type || file.type.indexOf('audio/') !== 0) {
+      setStatus('El archivo no es un audio válido.', true);
+      $('song-file').value = '';
+      return;
+    }
+    if (file.size > MAX_AUDIO_BYTES) {
+      setStatus('La canción supera el límite de 50 MB para el modo local.', true);
+      $('song-file').value = '';
+      return;
+    }
+    try {
+      var audioId = uid();
+      await putAudio(audioId, file);
+      var url = URL.createObjectURL(file);
+      var duration = await readAudioDuration(url);
+      URL.revokeObjectURL(url);
+      if (!duration) duration = 180;
+      store.levels.push({
+        id: uid(),
+        title: file.name.replace(/\.[^.]+$/, '').slice(0, 80) || 'Canción local',
+        artist: 'Local',
+        trackId: null,
+        audioId: audioId,
+        difficulty: selectedDifficulty,
+        bpm: 120,
+        duration: Math.max(5, Math.min(900, duration)),
+        chart: null,
+        createdAt: Date.now()
+      });
+      if (!saveStore()) { store.levels.pop(); return; }
+      await rebuildTracks();
+      setStatus('Canción local cargada. Se guardó en este equipo.');
+    } catch (error) {
+      setStatus('No se pudo cargar la canción: ' + (error && error.message ? error.message : error), true);
+    } finally {
+      $('song-file').value = '';
+    }
+  }
+
+  function stopLocalGame() {
+    isRunning = false;
+    isPaused = false;
+    cancelAnimationFrame(raf);
+    if (audio) { audio.pause(); audio = null; }
+    $('results').classList.remove('active');
+    $('game').classList.remove('active');
+    $('menu').style.display = 'flex';
+  }
+
+  function showView(name) {
+    if (name !== 'solo' && name !== 'game') stopLocalGame();
+    document.querySelectorAll('.view').forEach(function (view) { view.classList.remove('active'); });
+    var target = $('view-' + name);
+    if (target) target.classList.add('active');
+    if (name === 'solo') {
+      $('menu').style.display = 'flex';
+      renderTracks();
+      updateStats();
+    }
+  }
+
+  function backToHub() {
+    stopLocalGame();
+    $('menu').style.display = 'flex';
+    showView('hub');
+  }
+
+  function leaveToLauncher() {
+    try {
+      if (window.__TAURI_INTERNALS__ && window.__TAURI_INTERNALS__.invoke) {
+        window.__TAURI_INTERNALS__.invoke('offline_back_to_hub');
+        return;
+      }
+    } catch (e) {}
+    window.location.href = '../index.html?offline=1';
+  }
+
+  var editor = { notes: [], trackId: '', type: 'tap', editingId: null };
+  var fileTarget = 'solo';
+
+  function editorElements() {
+    return {
+      title: $('editor-title'),
+      artist: $('editor-artist'),
+      track: $('editor-track'),
+      difficulty: $('editor-difficulty'),
+      bpm: $('editor-bpm'),
+      existing: $('editor-existing'),
+      grid: $('editor-grid'),
+      status: $('editor-status')
+    };
+  }
+
+  function editorBpm() {
+    var value = Number(editorElements().bpm.value);
+    return isFinite(value) && value >= 40 && value <= 320 ? value : 120;
+  }
+
+  function editorStepSec() {
+    return 60 / editorBpm() / 2;
+  }
+
+  function renderEditorTrackOptions() {
+    var el = editorElements().track;
+    if (!el) return;
+    el.innerHTML = '';
+    OFFICIAL_TRACKS.forEach(function (track) {
+      var option = document.createElement('option');
+      option.value = track.id;
+      option.textContent = track.name + ' · ' + track.bpm + ' BPM';
+      el.appendChild(option);
+    });
+    if (!editor.trackId) editor.trackId = OFFICIAL_TRACKS[0] ? OFFICIAL_TRACKS[0].id : '';
+    el.value = editor.trackId;
+  }
+
+  function renderEditorExisting() {
+    var el = editorElements().existing;
+    if (!el) return;
+    el.innerHTML = '<option value="">Nuevo nivel</option>';
+    store.levels.filter(function (level) { return Boolean(level.trackId); }).forEach(function (level) {
+      var option = document.createElement('option');
+      option.value = level.id;
+      option.textContent = level.title;
+      el.appendChild(option);
+    });
+    if (editor.editingId) el.value = editor.editingId;
+  }
+
+  function renderEditorGrid() {
+    var grid = editorElements().grid;
+    if (!grid) return;
+    var base = officialById(editor.trackId) || OFFICIAL_TRACKS[0];
+    var stepSec = editorStepSec();
+    var duration = base ? base.duration : 180;
+    var steps = Math.max(1, Math.min(1200, Math.floor(duration / stepSec) + 1));
+    grid.innerHTML = '';
+    var fragment = document.createDocumentFragment();
+    var noteMap = new Map();
+    editor.notes.forEach(function (note) {
+      noteMap.set(Math.round(note.time / stepSec) + ':' + note.lane, note);
+    });
+    for (let step = 0; step < steps; step += 1) {
+      var row = document.createElement('div');
+      row.className = 'editor-row';
+      var time = document.createElement('span');
+      time.className = 'editor-time';
+      time.textContent = Math.floor(step * stepSec / 60) + ':' + String(Math.floor(step * stepSec % 60)).padStart(2, '0');
+      row.appendChild(time);
+      for (let lane = 0; lane < 4; lane += 1) {
+        var cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = 'editor-cell';
+        cell.dataset.step = String(step);
+        cell.dataset.lane = String(lane);
+        var note = noteMap.get(step + ':' + lane);
+        if (note) {
+          cell.classList.add('active');
+          if (note.type && note.type !== 'tap') cell.classList.add(note.type);
+          cell.textContent = note.type === 'hold' ? 'H' : note.type === 'mine' ? 'M' : '·';
+        }
+        cell.addEventListener('click', function () { toggleEditorNote(step, lane); });
+        row.appendChild(cell);
+      }
+      fragment.appendChild(row);
+    }
+    grid.appendChild(fragment);
+  }
+
+  function toggleEditorNote(step, lane) {
+    var stepSec = editorStepSec();
+    var time = Math.round(step * stepSec * 1000) / 1000;
+    var index = -1;
+    for (var i = 0; i < editor.notes.length; i += 1) {
+      var note = editor.notes[i];
+      if (note.lane === lane && Math.abs(note.time - time) < 0.001) { index = i; break; }
+    }
+    if (index >= 0) {
+      editor.notes.splice(index, 1);
+    } else {
+      if (editor.notes.length >= MAX_NOTES) {
+        setStatus('El nivel alcanzó el límite de notas.', true);
+        return;
+      }
+      var entry = { time: time, lane: lane, type: editor.type };
+      if (editor.type === 'hold') entry.endTime = Math.round((time + stepSec * 2) * 1000) / 1000;
+      editor.notes.push(entry);
+      editor.notes.sort(function (a, b) { return a.time - b.time; });
+    }
+    renderEditorGrid();
+  }
+
+  function editorPayload() {
+    var el = editorElements();
+    var base = officialById(editor.trackId) || OFFICIAL_TRACKS[0];
+    return {
+      schemaVersion: 1,
+      title: (el.title.value || 'Mi nivel').trim().slice(0, 80),
+      artist: (el.artist.value || 'Invitado').trim().slice(0, 80),
+      trackId: editor.trackId,
+      difficulty: el.difficulty.value || 'Normal',
+      bpm: editorBpm(),
+      duration: base ? base.duration : 180,
+      chart: { formatVersion: '1.0', offset: 0, notes: editor.notes }
+    };
+  }
+
+  function loadEditorLevel(level) {
+    if (!level) return;
+    var el = editorElements();
+    editor.editingId = level.id || null;
+    editor.trackId = level.trackId || editor.trackId || (OFFICIAL_TRACKS[0] && OFFICIAL_TRACKS[0].id);
+    editor.notes = Array.isArray(level.chart && level.chart.notes) ? level.chart.notes.slice() : [];
+    el.title.value = level.title || 'Mi nivel';
+    el.artist.value = level.artist || 'Invitado';
+    el.difficulty.value = level.difficulty || 'Normal';
+    el.bpm.value = String(level.bpm || 120);
+    el.track.value = editor.trackId;
+    renderEditorExisting();
+    renderEditorGrid();
+  }
+
+  async function saveEditorLevel() {
+    var el = editorElements();
+    if (!editor.notes.length) {
+      setStatus('Añade al menos una nota antes de guardar.', true);
+      return null;
+    }
+    if (!editor.trackId) {
+      setStatus('Elige una pista oficial.', true);
+      return null;
+    }
+    var payload = editorPayload();
+    var level;
+    if (editor.editingId) {
+      level = store.levels.filter(function (item) { return item.id === editor.editingId; })[0];
+      if (!level) return null;
+      Object.assign(level, payload, { updatedAt: Date.now() });
+    } else {
+      level = Object.assign({ id: uid(), createdAt: Date.now() }, payload);
+      store.levels.push(level);
+      editor.editingId = level.id;
+    }
+    if (!saveStore()) return null;
+    await rebuildTracks();
+    renderEditorExisting();
+    setStatus('Nivel guardado: ' + level.title);
+    return level;
+  }
+
+  function exportEditorLevel() {
+    var payload = editorPayload();
+    if (!payload.chart.notes.length) {
+      setStatus('Añade notas antes de exportar.', true);
+      return;
+    }
+    downloadJson(payload, 'muzicmania-' + slug(payload.title) + '.json');
+    setStatus('Nivel exportado.');
+  }
+
+  async function loadEditorFile(file) {
+    if (!file) return;
+    try {
+      var raw = JSON.parse(await file.text());
+      var fallback = officialById(editor.trackId) || OFFICIAL_TRACKS[0];
+      var level = normalizeLevel(raw, fallback);
+      level.id = null;
+      loadEditorLevel(level);
+      setStatus('Nivel cargado en el editor: ' + level.title);
+    } catch (error) {
+      setStatus('No se pudo cargar en el editor: ' + (error && error.message ? error.message : error), true);
+    } finally {
+      $('level-file').value = '';
+    }
+  }
+
+  function openEditor() {
+    editor.trackId = editor.trackId || (OFFICIAL_TRACKS[0] && OFFICIAL_TRACKS[0].id);
+    renderEditorTrackOptions();
+    renderEditorExisting();
+    var el = editorElements();
+    if (!el.title.value) el.title.value = 'Mi nivel';
+    if (!el.artist.value) el.artist.value = 'Invitado';
+    renderEditorGrid();
+    showView('editor');
+  }
+
+  function applyInputMode(mode) {
+    var allowed = { arrows: true, wasd: true, dfjk: true };
+    var selected = allowed[mode] ? mode : 'dfjk';
+    inputMode = selected;
+    store.settings = store.settings || {};
+    store.settings.inputMode = selected;
+    saveStore();
+    var labels = { arrows: ['←', '↓', '↑', '→'], wasd: ['A', 'S', 'W', 'D'], dfjk: ['D', 'F', 'J', 'K'] }[selected];
+    document.querySelectorAll('.input-choice').forEach(function (button) {
+      button.classList.toggle('active', button.getAttribute('data-input') === selected);
+    });
+    var hint = $('control-hint');
+    if (hint) hint.textContent = 'Controles: ' + labels.join(' ') + ' · Esc pausa';
+    var label = $('setup-input-label');
+    if (label) label.textContent = selected.toUpperCase() + ' · ' + (selected === 'arrows' ? 'flechas' : selected === 'wasd' ? 'WASD' : 'configuración clásica');
+    document.querySelectorAll('.keys .key').forEach(function (element, index) {
+      if (labels[index]) element.textContent = labels[index];
+    });
+  }
+
+  function bind() {
+    loadStore();
+    $('welcome-enter').addEventListener('click', function () { showView('setup'); });
+    $('welcome-exit').addEventListener('click', leaveToLauncher);
+    $('setup-back').addEventListener('click', function () { showView('welcome'); });
+    $('setup-exit').addEventListener('click', leaveToLauncher);
+    $('setup-continue').addEventListener('click', function () { showView('hub'); });
+    $('settings-controls').addEventListener('click', function () { showView('setup'); });
+    document.querySelectorAll('#input-choices .input-choice').forEach(function (button) {
+      button.addEventListener('click', function () { applyInputMode(button.getAttribute('data-input')); });
+    });
+    document.querySelectorAll('#editor-note-tools .input-choice').forEach(function (button) {
+      button.addEventListener('click', function () {
+        editor.type = button.getAttribute('data-note') || 'tap';
+        document.querySelectorAll('#editor-note-tools .input-choice').forEach(function (item) { item.classList.toggle('active', item === button); });
+      });
+    });
+    $('hub-local').addEventListener('click', function () { showView('solo'); });
+    $('hub-editor').addEventListener('click', openEditor);
+    $('hub-inventory').addEventListener('click', function () { showView('inventory'); });
+    $('hub-settings').addEventListener('click', function () { showView('settings'); });
+    $('hub-back').addEventListener('click', function () { showView('welcome'); });
+    var onlineButton = $('hub-online');
+    var refreshOnlineButton = function () {
+      if (!onlineButton) return;
+      onlineButton.disabled = !navigator.onLine;
+      onlineButton.textContent = navigator.onLine ? 'Jugar online' : 'Online sin conexión';
+    };
+    refreshOnlineButton();
+    window.addEventListener('online', refreshOnlineButton);
+    window.addEventListener('offline', refreshOnlineButton);
+    if (onlineButton) onlineButton.addEventListener('click', function () {
+      if (!navigator.onLine) return;
+      try {
+        if (window.__TAURI_INTERNALS__ && window.__TAURI_INTERNALS__.invoke) {
+          window.__TAURI_INTERNALS__.invoke('launcher_ready').catch(function (error) { setStatus(String(error), true); });
+          return;
+        }
+      } catch (e) {}
+      window.open('https://muzicmania.vercel.app/play', '_blank');
+    });
+    $('solo-back').addEventListener('click', backToHub);
+    $('inventory-back').addEventListener('click', function () { showView('hub'); });
+    $('settings-back').addEventListener('click', function () { showView('hub'); });
+    $('editor-back').addEventListener('click', function () { showView('hub'); });
+    $('back-launcher').addEventListener('click', leaveToLauncher);
+    $('import-level').addEventListener('click', function () { fileTarget = 'solo'; $('level-file').click(); });
+    $('editor-import').addEventListener('click', function () { fileTarget = 'editor'; $('level-file').click(); });
+    $('import-song').addEventListener('click', function () { $('song-file').click(); });
+    $('export-level').addEventListener('click', exportSelectedLevel);
+    $('level-file').addEventListener('change', function (event) {
+      var file = event.target.files && event.target.files[0];
+      if (fileTarget === 'editor') loadEditorFile(file);
+      else importLevelFile(file);
+    });
+    $('song-file').addEventListener('change', function (event) { importSongFile(event.target.files && event.target.files[0]); });
+    $('editor-track').addEventListener('change', function () { editor.trackId = $('editor-track').value; renderEditorGrid(); });
+    $('editor-bpm').addEventListener('change', renderEditorGrid);
+    $('editor-existing').addEventListener('change', function () {
+      var id = $('editor-existing').value;
+      if (!id) {
+        editor.editingId = null;
+        editor.notes = [];
+        $('editor-title').value = 'Mi nivel';
+        $('editor-artist').value = 'Invitado';
+        renderEditorGrid();
+        return;
+      }
+      var level = store.levels.filter(function (item) { return item.id === id; })[0];
+      if (level) loadEditorLevel(level);
+    });
+    $('editor-clear').addEventListener('click', function () { editor.notes = []; renderEditorGrid(); setStatus('Editor limpio.'); });
+    $('editor-save').addEventListener('click', function () { saveEditorLevel(); });
+    $('editor-export').addEventListener('click', exportEditorLevel);
+    $('editor-play').addEventListener('click', async function () {
+      var level = await saveEditorLevel();
+      if (!level) return;
+      await rebuildTracks();
+      var track = TRACKS.filter(function (item) { return item.id === level.id; })[0];
+      if (!track) { setStatus('No se pudo preparar el nivel para jugar.', true); return; }
+      selectedTrack = track;
+      selectedDifficulty = level.difficulty || 'Normal';
+      showView('solo');
+      startGame();
+    });
+    $('editor-track').value = (OFFICIAL_TRACKS[0] && OFFICIAL_TRACKS[0].id) || '';
+    $('editor-track').dispatchEvent(new Event('change'));
+    $('clear-records').addEventListener('click', function () {
+      Object.keys(localStorage).filter(function (key) { return key.indexOf('muzicmania.offline.best.') === 0; }).forEach(function (key) { localStorage.removeItem(key); });
+      renderTracks();
+      setStatus('Récords locales borrados.');
+    });
+    $('clear-local').addEventListener('click', async function () {
+      if (!window.confirm('¿Borrar todos los niveles, canciones y récords locales? No se puede deshacer.')) return;
+      localStorage.removeItem(STORE_KEY);
+      try { await clearAudio(); } catch (e) {}
+      store = { levels: [], settings: {}, createdAt: Date.now() };
+      await rebuildTracks();
+      setStatus('Datos locales borrados.');
+    });
+    $('net-badge').textContent = 'LOCAL · SIN RED';
+  }
+
+  window.MuzicLocalShell = {
+    showView: showView,
+    stopLocalGame: stopLocalGame,
+    getTracks: function () { return TRACKS; },
+    get selectedDifficulty() { return selectedDifficulty; },
+    set selectedDifficulty(value) { selectedDifficulty = value; },
+    refreshTracks: rebuildTracks,
+    setStatus: setStatus
+  };
+
+  async function boot() {
+    bind();
+    applyInputMode((store.settings && store.settings.inputMode) || 'dfjk');
+    await rebuildTracks();
+    showView('welcome');
+    if (!store.levels.length) setStatus('Modo local listo. Puedes cargar un nivel JSON o una canción desde “Modo local”.');
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();

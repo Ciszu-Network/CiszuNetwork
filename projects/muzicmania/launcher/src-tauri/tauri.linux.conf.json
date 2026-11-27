@@ -1,7 +1,10 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "bundle": {
-    "targets": ["deb", "rpm"],
+    "targets": [
+      "deb",
+      "rpm"
+    ],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -20,19 +23,25 @@
       "appimage": {
         "files": {
           "usr/share/metainfo/network.ciszu.muzicmania.metainfo.xml": "linux/network.ciszu.muzicmania.metainfo.xml",
-          "usr/share/licenses/muzicmania/LICENSE": "LICENSE.txt"
+          "usr/share/licenses/muzicmania/LICENSE": "LICENSE.txt",
+          "usr/share/applications/com.ciszunetwork.muzicmania.desktop": "linux/com.ciszunetwork.muzicmania.desktop",
+          "usr/share/applications/muzicmania.desktop": "linux/muzicmania.desktop"
         }
       },
       "deb": {
         "files": {
           "/usr/share/metainfo/network.ciszu.muzicmania.metainfo.xml": "linux/network.ciszu.muzicmania.metainfo.xml",
-          "/usr/share/doc/muzicmania/copyright": "LICENSE.txt"
+          "/usr/share/doc/muzicmania/copyright": "LICENSE.txt",
+          "/usr/share/applications/com.ciszunetwork.muzicmania.desktop": "linux/com.ciszunetwork.muzicmania.desktop",
+          "/usr/share/applications/muzicmania.desktop": "linux/muzicmania.desktop"
         }
       },
       "rpm": {
         "files": {
           "/usr/share/metainfo/network.ciszu.muzicmania.metainfo.xml": "linux/network.ciszu.muzicmania.metainfo.xml",
-          "/usr/share/licenses/muzicmania/LICENSE": "LICENSE.txt"
+          "/usr/share/licenses/muzicmania/LICENSE": "LICENSE.txt",
+          "/usr/share/applications/com.ciszunetwork.muzicmania.desktop": "linux/com.ciszunetwork.muzicmania.desktop",
+          "/usr/share/applications/muzicmania.desktop": "linux/muzicmania.desktop"
         }
       }
     }

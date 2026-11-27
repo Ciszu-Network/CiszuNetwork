@@ -1,8 +1,8 @@
 # STATUS_SYSTEM — Estado del Ecosistema CISZU NETWORK
 
-Versión: 2.3.1
-Actualización: 2026-11-26
-Identificador: STATUS_SYSTEM_V2.3.1_2026_11_26_ciszunetwork
+Versión: 2.3.2
+Actualización: 2026-11-27
+Identificador: STATUS_SYSTEM_V2.3.2_2026_11_27_ciszunetwork
 
 > **Definición**: documento operativo de estado del monorepo. Se actualiza al cerrar cada
 > sesión de trabajo. Refleja la foto actual de proyectos, sistemas y scripts.
@@ -408,6 +408,7 @@ _Última revisión: 14 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Launcher multiplataforma (26 nov)**: `Iniciar con el sistema` sustituye a “Iniciar con Windows”; autostart real por XDG (`~/.config/autostart`) en Linux, LaunchAgent en macOS y registro en Windows. Añadidos `--platform-info`, `--set-autostart` y `--unset-autostart` para diagnóstico/empaquetado. El estado y la cuenta volvieron junto a Configuración; el hub recupera logo, canal e información de instalación (OS, distro, arch, formato, sesión, kernel, versiones y build).
 - **Descargas Linux (26 nov)**: la página usa `downloads-registry.json`, muestra RPM/DEB/AppImage/Flatpak por distro y permite filtrar por OS, formato, arquitectura, canal y versión. Corregidos los enlaces Linux del centro de versiones (antes apuntaban a Windows).
 - **Repos publicados (26 nov)**: DNF y APT firmados en `https://ciszu-network.github.io/muzicmania-packages/` (repo `Ciszu-Network/muzicmania-packages`); RPM/DEB 2.4.2 subidos a GitHub Releases. Flatpak/Snap/AUR/Fedora oficial siguen pendientes de cuenta/revisión; el build Flatpak local queda bloqueado por espacio de runtimes.
+- **Modo offline local (27 nov)**: shell `splash/local/` con bienvenida, configuración de teclas, hub, pistas oficiales, niveles/canciones locales, IndexedDB y récords; launcher abre `local/index.html`. Editor local y 1v1 local implementados en la misma fase; modo local online añadido al hub de `/play`. Incidencia de energía: NTFS reparado desde Windows; `git fsck`, TypeScript y `cargo check` limpios.
 - **Herramientas Linux (26 nov)**: `md2office`/`txt2pdf` detectan Pandoc/fuentes y usan LibreOffice; `sync-public-docs` ya no hardcodea `E:\Ciszu Network`; `platform-run.js` delega `dev`/`profile`/`vault:bw`; `backup-db`, `seo-crawl`, `convert` y `update-env-keys` degradan con mensajes claros fuera de Windows. `build-launcher.yml` instala dependencias Linux correctas y dejó de compilar AppImage.
 
 ÚLTIMA ACTUALIZACIÓN: 2026-11-25

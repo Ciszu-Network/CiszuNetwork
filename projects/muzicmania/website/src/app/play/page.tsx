@@ -130,7 +130,7 @@ const I = {
    shield: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
 };
 
-type PlayPhase = 'loading' | 'welcome' | 'disclaimer' | 'intro' | 'hub' | 'solo' | 'multijugador' | 'crear' | 'tienda' | 'eventos' | 'historia' | 'config' | 'inventario' | 'game' | 'results' | 'gameover';
+type PlayPhase = 'loading' | 'welcome' | 'disclaimer' | 'intro' | 'hub' | 'local' | 'solo' | 'multijugador' | 'crear' | 'tienda' | 'eventos' | 'historia' | 'config' | 'inventario' | 'game' | 'results' | 'gameover';
 
 type InventoryRow = {
   equipped_slot?: string | null;
@@ -758,7 +758,7 @@ function PlayPageContent() {
       return;
     }
 
-    const introPhases = ['welcome', 'disclaimer', 'intro', 'hub', 'solo', 'multijugador', 'crear', 'tienda', 'eventos', 'historia', 'config', 'inventario'];
+    const introPhases = ['welcome', 'disclaimer', 'intro', 'hub', 'local', 'solo', 'multijugador', 'crear', 'tienda', 'eventos', 'historia', 'config', 'inventario'];
     if (!introPhases.includes(phase)) {
       if (isMusicPlaying) pauseGlobalMusic();
     } else {
@@ -1723,7 +1723,7 @@ function PlayPageContent() {
             `}</style>
           {/* Dynamic Animated Background */}
           <div className="absolute inset-0 pointer-events-none z-0">
-            {(phase === 'solo' || phase === 'multijugador') && (
+            {(phase === 'solo' || phase === 'local' || phase === 'multijugador') && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -2166,6 +2166,7 @@ function PlayPageContent() {
                 const modeBg: Record<string,{from:string,via:string,to:string,orb1:string,orb2:string,orb3:string}> = {
                   historia: {from:'#1a1025',via:'#0a0a1a',to:'#1a1625',orb1:'rgba(107,114,128,0.08)',orb2:'rgba(75,85,99,0.05)',orb3:'rgba(156,163,175,0.04)'},
                   solo: {from:'#0a0a2a',via:'#0a001a',to:'#0a1a2e',orb1:'rgba(0,212,255,0.12)',orb2:'rgba(0,100,255,0.08)',orb3:'rgba(0,212,255,0.04)'},
+                  local: {from:'#0a1a2a',via:'#0a0a1a',to:'#1a0a2e',orb1:'rgba(0,212,255,0.1)',orb2:'rgba(176,38,255,0.08)',orb3:'rgba(0,212,255,0.04)'},
                   multijugador: {from:'#2a0a2e',via:'#1a0a2e',to:'#2a0a1a',orb1:'rgba(236,72,153,0.12)',orb2:'rgba(189,0,255,0.08)',orb3:'rgba(236,72,153,0.04)'},
                   crear: {from:'#0a2a1a',via:'#0a1a0a',to:'#0a2a20',orb1:'rgba(16,185,129,0.12)',orb2:'rgba(20,184,166,0.08)',orb3:'rgba(16,185,129,0.04)'},
                   eventos: {from:'#2a1a0a',via:'#1a100a',to:'#2a0a0a',orb1:'rgba(249,115,22,0.12)',orb2:'rgba(239,68,68,0.08)',orb3:'rgba(249,115,22,0.04)'},
@@ -2274,6 +2275,7 @@ function PlayPageContent() {
                     {[
                       { id: 'historia', label: t.pages.play.storyMode, icon: I.book, desc: 'Descubre la historia de MuzicMania', locked: true, lockReason: 'beta', pronto: true, soon: false },
                       { id: 'solo', label: 'MODO SOLO', icon: I.music, desc: 'Juega partidas individuales con 4 dificultades y canciones variadas', soon: false },
+                      { id: 'local', label: 'MODO LOCAL', icon: I.monitor, desc: 'Juega con tus niveles y configuración guardados en tu cuenta, sin restricciones online', soon: false },
                       { id: 'multijugador', label: 'MULTIJUGADOR', icon: I.radio, desc: 'Salas online, chat y modos 1v1/duos/tríos', soon: false },
                       { id: 'crear', label: 'CREAR', icon: I.customize, desc: 'Crea y comparte tus propios niveles', soon: false },
                       { id: 'eventos', label: 'EVENTOS', icon: I.trophy, desc: 'Eventos por tiempo limitado', locked: true, lockReason: 'beta', pronto: true, soon: false },
@@ -2465,6 +2467,7 @@ function PlayPageContent() {
                       const previews: Record<string,{icon:React.ReactNode,title:string,color:string,bg:string,desc:string,stats:{label:string,value:string}[]}> = {
                         historia: {icon:I.book,title: t.pages.play.storyMode,color:'from-gray-500 via-white to-gray-600',bg:'from-white/5 to-white/5',desc:'Sumérgete en la historia de MuzicMania. Descubre secretos, desbloquea canciones y avanza por capítulos.',stats:[{label:'CAPÍTULOS',value:'Sin definir'},{label:'SECRETOS',value:'Por descubrir'},{label:'CANON',value:'Historia principal'}]},
                         solo: {icon:I.music,title:'MODO SOLO',color:'from-neon-cyan via-white to-neon-blue',bg:'from-neon-cyan/20 to-neon-blue/20',desc:'Demuestra tu habilidad rítmica en partidas individuales. Elige entre 4 dificultades y completa cada canción al ritmo perfecto.',stats:[{label:'ESTILO',value:'Individual'},{label:'PRECISIÓN',value:'Descripción'},{label:'SUPERVIVENCIA',value:'Descripción'}]},
+                        local: {icon:I.monitor,title:'MODO LOCAL',color:'from-neon-cyan via-white to-neon-purple',bg:'from-neon-cyan/20 to-neon-purple/20',desc:'Juega con tus niveles y configuración guardados en tu cuenta. Sin restricciones online; es un modo más del hub.',stats:[{label:'ESTILO',value:'Individual'},{label:'DATOS',value:'Cuenta'},{label:'ESTADO',value:'Sin restricciones'}]},
                         multijugador: {icon:I.radio,title:'MULTIJUGADOR',color:'from-neon-pink via-white to-neon-purple',bg:'from-neon-pink/20 to-neon-purple/20',desc:'Compite en tiempo real contra otros jugadores. Sube en el ranking global y conviértete en leyenda.',stats:[{label:'ESTILO',value:'Competitivo'},{label:'MODOS',value:'1v1 · Duos · Tríos'},{label:'ESTADO',value:'ONLINE'}]},
                         crear: {icon:I.customize,title:'CREAR',color:'from-emerald-500 via-white to-teal-500',bg:'from-emerald-500/20 to-teal-500/20',desc:'Diseña tus propios niveles con nuestro editor integrado. Comparte tus creaciones con la comunidad.',stats:[{label:'EDITOR',value:'Editor visual de niveles'},{label:'PUBLICAR',value:'Comparte con la comunidad'},{label:'SELECTORES',value:'Aparece en selectores'}]},
                         eventos: {icon:I.trophy,title:'EVENTOS',color:'from-orange-500 via-white to-red-500',bg:'from-orange-500/20 to-red-500/20',desc:'Participa en eventos por tiempo limitado. Consigue recompensas exclusivas y compite por el podio.',stats:[{label:'RECOMPENSAS',value:'Por definir'},{label:'DURACIÓN',value:'Tiempo limitado'},{label:'PODIO',value:'Próximamente'}]},
@@ -2751,7 +2754,7 @@ function PlayPageContent() {
           )}
 
           {/* --- SOLO PHASE --- */}
-          {phase === 'solo' && (
+          {phase === 'solo' || phase === 'local' ? (
             <motion.div key="solo" initial="hidden" animate="visible" exit="exit" variants={sectionVariants} className="w-full h-full flex flex-col pt-2 pb-1 px-4">
               <div className="flex items-center gap-2 bg-black px-2.5 py-1.5 rounded-xl border border-white/5 relative z-30 shrink-0">
                   <button 
@@ -2762,6 +2765,9 @@ function PlayPageContent() {
                     VOLVER
                   </button>
                   <div className="w-px h-5 bg-white/10" />
+                  <span className={`px-3 py-1.5 rounded-lg border text-[8px] font-black uppercase tracking-widest ${phase === 'local' ? 'border-neon-cyan/30 bg-neon-cyan/10 text-neon-cyan' : 'border-white/10 bg-white/5 text-gray-500'}`}>
+                    {phase === 'local' ? 'MODO LOCAL · CUENTA' : 'MODO SOLO'}
+                  </span>
                   <div ref={menuRef} className="relative">
                     <button 
                       onClick={() => setIsMenuOpen(!isMenuOpen)} 
@@ -3540,7 +3546,7 @@ function PlayPageContent() {
                 )}
               </AnimatePresence>
             </motion.div>
-          )}
+          ) : null}
 
           {/* Floating error modal - outside hub phase */}
           <AnimatePresence>

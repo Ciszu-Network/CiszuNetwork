@@ -252,6 +252,7 @@ function tr(key) {
 function renderInstallInfo() {
   const platform = state.boot?.platform || {};
   const distro = [platform.distro, platform.distro_version].filter(Boolean).join(' ');
+  const isLinux = platform.os === 'linux';
   setText('info-os', platform.os_label || platform.os || '—');
   setText('info-distro', distro || platform.distro_id || '—');
   setText('info-arch', platform.arch || '—');
@@ -264,6 +265,9 @@ function renderInstallInfo() {
   setText('info-build', state.boot?.build_date || BUILD.buildDate || '—');
   setText('info-path', platform.install_path || '—');
   setText('hub-top-channel', String(state.boot?.channel || BUILD.channel || 'beta').toUpperCase());
+  ['info-distro-row', 'info-session-row', 'info-kernel-row'].forEach((id) => {
+    $(id)?.classList.toggle('hidden', !isLinux);
+  });
   const startupLine = $('startup-line');
   if (startupLine) startupLine.classList.toggle('hidden', platform.startup_supported === false);
   const pinButton = $('settings-pin');
@@ -425,13 +429,13 @@ function openOfflineScreen() {
   window.CiszuTelemetry?.track('play_offline', { mode: 'offline' });
   if (state.policy?.mandatory) return;
   invoke('launcher_offline_game').catch(() => {});
-  show('view-offline');
+  startOfflineGame();
 }
 
 function startOfflineGame() {
   if (state.policy?.mandatory) return;
   const frame = $('offline-game-frame');
-  if (frame) frame.src = 'offline-game.html';
+  if (frame) frame.src = 'local/index.html';
   show('view-offline-game');
 }
 
@@ -1055,6 +1059,15 @@ async function openSettings() {
   $('settings-modal')?.classList.remove('hidden');
 }
 
+function closeSettings() {
+  $('settings-modal')?.classList.add('hidden');
+}
+
+function scrollToInstallInfo() {
+  renderInstallInfo();
+  $('settings-info-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
 
 async function persistSettings(patch = {}) {
   state.settings = { ...(state.settings || {}), ...patch };
@@ -1210,7 +1223,6 @@ function bind() {
   $('offline-play')?.addEventListener('click', startOfflineGame);
   $('titlebar-hub')?.addEventListener('click', showHub);
   $('titlebar-settings')?.addEventListener('click', openSettings);
-  $('hub-info')?.addEventListener('click', () => window.showInstallInfo());
   $('titlebar-minimize')?.addEventListener('click', () => invoke('launcher_minimize').catch(() => {}));
   $('titlebar-maximize')?.addEventListener('click', () => invoke('launcher_toggle_maximize').catch(() => {}));
   $('titlebar-close')?.addEventListener('click', () => window.showCloseDialog());
@@ -1356,7 +1368,15 @@ function bind() {
     invoke('launcher_close').catch(() => {});
   });
 
-  $('settings-close')?.addEventListener('click', () => $('settings-modal')?.classList.add('hidden'));
+  $('settings-close')?.addEventListener('click', closeSettings);
+  $('settings-x')?.addEventListener('click', closeSettings);
+  $('settings-info')?.addEventListener('click', scrollToInstallInfo);
+  $('settings-modal')?.addEventListener('click', (event) => {
+    if (event.target === $('settings-modal')) closeSettings();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !$('settings-modal')?.classList.contains('hidden')) closeSettings();
+  });
   $('settings-save')?.addEventListener('click', async () => {
     const closeAction = $('modal-close-action')?.value || 'ask';
     await persistSettings({

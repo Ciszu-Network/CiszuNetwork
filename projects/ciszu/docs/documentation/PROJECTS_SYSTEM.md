@@ -1,8 +1,8 @@
 # PROJECTS_SYSTEM — Sistema de Proyectos del Ecosistema (Ciszu Network)
 
-Versión: 2.2.1
-Actualización: 2026-11-26
-Identificador: PROJECTS_SYSTEM_V2.2.1_2026_11_26_ciszunetwork
+Versión: 2.2.2
+Actualización: 2026-11-27
+Identificador: PROJECTS_SYSTEM_V2.2.2_2026_11_27_ciszunetwork
 
 > **Definición**: documento maestro de los proyectos de Ciszu Network. Fusiona la vista
 > general (Projects), el estado detallado (Project State) y el historial cronológico
@@ -167,6 +167,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 - **Ventanas MuzicMania**: corregidos maximize/drag/minimizado con capabilities de Tauri, flags del launcher y foco; KDE `FocusStealingPreventionLevel` ajustado a 0.
 - **Launcher Linux (26 nov)**: autostart XDG multiplataforma, opción “Iniciar con el sistema”, panel de información de instalación, logo del hub y estado/cuenta junto a Configuración; actualizaciones Linux descargan el paquete y lo abren con el instalador del sistema.
 - **Descargas y repos (26 nov)**: filtros por OS/formato/distro/arquitectura/canal/versión y enlaces Linux corregidos; repos DNF/APT firmados publicados en GitHub Pages (`muzicmania-packages`) y paquetes 2.4.2 en GitHub Releases. Flatpak/Snap/AUR/Fedora oficial pendientes de revisión o cuenta.
+- **Modo offline local (27 nov)**: fase 1 del shell offline en `splash/local/` (hub, teclas, pistas oficiales, niveles/canciones locales, récords); launcher integrado; editor local y 1v1 local implementados; modo local online añadido a `/play`. Recuperación tras corte de energía verificada con `git fsck` y builds.
 - **Tooling Linux (26 nov)**: scripts de documentación, backups, SEO y conversión con detección de binarios/rutas Linux; workflow del launcher con dependencias correctas y sin AppImage.
 
 ### 13 de Noviembre, 2026 — Vercel sigue pausado y Top.gg deniega CiszuBot

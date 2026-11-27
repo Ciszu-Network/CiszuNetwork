@@ -146,3 +146,13 @@
 - ✅ **Changelog**: Página `/changelog` con filtros, búsqueda, orden, paginación y likes con login.
 - ✅ **Support**: Página `/support` con sistema de tickets (tabla `muzicmania_tickets`) y AuthWarningModal.
 - ✅ **Disclaimer Actions**: Soporte de botones de acción (`--action "Texto|URL"` o `--action "OK|close"`) en devcon y componente `DisclaimerStack`.
+
+## Modo offline local (27 Nov 2026)
+
+- Nuevo shell offline en `launcher/src-tauri/splash/local/`: bienvenida, configuración de teclado (flechas/WASD/DFJK), hub reducido, modo local, inventario default y configuración.
+- Fase 1 completada: 4 pistas oficiales locales, carga de niveles JSON, carga de canciones locales en IndexedDB, récords locales, exportación de nivel y reproducción con el motor offline existente.
+- Fase 2 completada: editor local con rejilla TAP/HOLD/MINE, guardado, carga, exportación y “guardar y jugar”.
+- Fase 3 completada: 1 vs 1 local en el mismo equipo, J1 flechas y J2 D F J K, puntuación/combo por jugador, pausa, revancha y resultado local.
+- El launcher abre `local/index.html` tanto desde el hub como desde la pantalla offline; no hay peticiones de red en el shell (`connect-src 'none'`).
+- El modo `local` online se añadió como un modo más del hub de `/play`; usa la misma pantalla Solo, cuenta y almacenamiento online, sin las restricciones del shell offline.
+- Incidencia: corte de energía el 26/27 nov; el disco NTFS se reparó desde Windows. `git fsck --full --strict`, TypeScript, `cargo check` y los tests del shell local pasan después de la reparación.

@@ -176,13 +176,13 @@
           <img src="logo.svg" alt="MuzicMania">
           <small>Launcher · <span id="hub-top-channel">BETA</span></small>
         </div>
-        <button id="hub-info" class="btn ghost" type="button"><svg class="icon"><use href="#i-info"></use></svg><span data-i18n="hubInfo">Información</span></button>
       </div>
 
       <div class="hub-grid">
         <section class="hero">
           <div>
             <div class="eyebrow" id="hub-kicker">BIENVENIDO DE VUELTA</div>
+            <img class="hero-logo" src="logo.svg" alt="MuzicMania">
             <p id="hub-welcome">Tu launcher está listo. Elige cómo quieres entrar al juego.</p>
             <div class="hero-actions">
               <button id="hub-play-online" class="btn primary"><svg class="icon"><use href="#i-play"></use></svg><span id="hub-play-online-label" data-i18n="playOnline">Jugar online</span></button>
@@ -199,6 +199,8 @@
         <aside class="hub-side">
           <div class="card">
             <h3><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="account">Cuenta</span></h3>
+            <div class="who" id="account-who">Invitado</div>
+            <div class="sub" id="account-sub">Sesión local</div>
             <div class="mini-actions">
               <button id="account-login" class="btn hidden"><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="accountLogin">Iniciar sesión</span></button>
               <button id="account-profile" class="btn hidden"><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="accountProfile">Mi cuenta</span></button>
@@ -295,6 +297,7 @@
 
 <div id="settings-modal" class="overlay hidden">
   <div class="panel settings-panel">
+    <button id="settings-x" class="panel-close" type="button" title="Cerrar" aria-label="Cerrar">×</button>
     <div class="eyebrow"><svg class="icon"><use href="#i-settings"></use></svg> <span data-i18n="settingsEyebrow">CONFIGURACIÓN</span></div>
     <h2 data-i18n="settingsTitle">Opciones del launcher</h2>
     <p data-i18n="settingsDesc">Las preferencias se guardan localmente. El idioma se aplica al reiniciar; el resto se aplica al instante.</p>
@@ -326,6 +329,7 @@
     <div class="settings-subtitle" data-i18n="actions">Acciones</div>
     <div class="settings-actions">
       <button id="settings-check-update" class="btn"><svg class="icon"><use href="#i-refresh"></use></svg> <span data-i18n="checkUpdate">Buscar actualización</span></button>
+      <button id="settings-info" class="btn ghost"><svg class="icon"><use href="#i-info"></use></svg> <span data-i18n="installInfo">Información de instalación</span></button>
       <button id="settings-pin" class="btn"><svg class="icon"><use href="#i-pin"></use></svg> <span data-i18n="pinTaskbar">Anclar al menú de aplicaciones</span></button>
       <button id="settings-restart" class="btn"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="restartLauncher">Reiniciar launcher</span></button>
       <a class="btn ghost" data-url href="https://muzicmania.vercel.app/support"><svg class="icon"><use href="#i-help"></use></svg> <span data-i18n="help">Ayuda</span></a>
@@ -333,11 +337,11 @@
     <div class="settings-subtitle" data-i18n="installInfo">Información de instalación</div>
     <div class="install-info" id="settings-info-section">
       <div><span data-i18n="infoOS">Sistema</span><strong id="info-os">—</strong></div>
-      <div><span data-i18n="infoDistro">Distribución</span><strong id="info-distro">—</strong></div>
+      <div id="info-distro-row"><span data-i18n="infoDistro">Distribución</span><strong id="info-distro">—</strong></div>
       <div><span data-i18n="infoArch">Arquitectura</span><strong id="info-arch">—</strong></div>
       <div><span data-i18n="infoFormat">Formato</span><strong id="info-format">—</strong></div>
-      <div><span data-i18n="infoSession">Sesión</span><strong id="info-session">—</strong></div>
-      <div><span data-i18n="infoKernel">Kernel</span><strong id="info-kernel">—</strong></div>
+      <div id="info-session-row"><span data-i18n="infoSession">Sesión</span><strong id="info-session">—</strong></div>
+      <div id="info-kernel-row"><span data-i18n="infoKernel">Kernel</span><strong id="info-kernel">—</strong></div>
       <div><span data-i18n="infoLauncher">Launcher</span><strong id="info-launcher">—</strong></div>
       <div><span data-i18n="infoGame">Juego</span><strong id="info-game">—</strong></div>
       <div><span data-i18n="infoChannel">Canal</span><strong id="info-channel">—</strong></div>

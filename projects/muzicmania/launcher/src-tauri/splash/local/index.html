@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'none';">
+<title>MuzicMania — Local</title>
+<link rel="stylesheet" href="local.css">
+</head>
+<body>
+<div class="glow"></div>
+
+<header class="top">
+  <div class="brand"><img src="../isotipo.svg" alt=""> <span>MuzicMania</span> <em>OFFLINE</em></div>
+  <div class="top-actions">
+    <span class="badge" id="net-badge">Sin red</span>
+    <button class="top-btn" id="back-launcher" type="button">Salir al launcher</button>
+    <button class="close" id="close-app" type="button" title="Cerrar">×</button>
+  </div>
+</header>
+
+<main id="local-main">
+  <section id="view-welcome" class="view active">
+    <div class="welcome">
+      <img class="welcome-logo" src="../logo.svg" alt="MuzicMania">
+      <div class="kicker">SESIÓN LOCAL · SIN INTERNET</div>
+      <h1>Modo offline.</h1>
+      <p class="sub">Esta versión funciona sin conexión. Tus niveles, canciones, récords y ajustes quedan guardados únicamente en este equipo. Si borras los datos, se pierden.</p>
+      <div class="welcome-actions">
+        <button class="primary" id="welcome-enter" type="button">Entrar al modo local</button>
+        <button class="secondary" id="welcome-exit" type="button">Volver al launcher</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-setup" class="view">
+    <div class="panel-page">
+      <div class="page-head">
+        <button class="secondary" id="setup-back" type="button">← Inicio</button>
+        <div><div class="kicker">PREPARACIÓN LOCAL</div><h1>Configura tu sesión</h1></div>
+      </div>
+      <div class="setup-grid">
+        <div class="setup-card">
+          <div class="kicker">INVITADO</div>
+          <h2>Jugador local</h2>
+          <p class="sub">No hay cuenta ni inicio de sesión. En este modo eres un invitado y todos los datos quedan en este equipo.</p>
+          <div class="guest-chip"><span class="guest-avatar">J1</span><strong>Invitado</strong></div>
+        </div>
+        <div class="setup-card">
+          <div class="kicker">TECLADO</div>
+          <h2>Controles</h2>
+          <p class="sub">Elige cómo quieres jugar. Puedes cambiarlo después desde Configuración.</p>
+          <div class="input-choices" id="input-choices">
+            <button class="input-choice" data-input="arrows" type="button">← ↓ ↑ →</button>
+            <button class="input-choice" data-input="wasd" type="button">A S W D</button>
+            <button class="input-choice active" data-input="dfjk" type="button">D F J K</button>
+          </div>
+          <p class="hint" id="setup-input-label">DFJK · configuración clásica</p>
+        </div>
+      </div>
+      <div class="setup-note">
+        <strong>Modo offline:</strong> sin internet, sin tienda, sin leaderboard y sin funciones online. Los récords locales son distintos de los online. Si borras los datos locales, se pierden.
+      </div>
+      <div class="welcome-actions">
+        <button class="primary" id="setup-continue" type="button">Entrar al hub local</button>
+        <button class="secondary" id="setup-exit" type="button">Volver al launcher</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-hub" class="view">
+    <div class="hub">
+      <div class="hub-head">
+        <img src="../logo.svg" alt="MuzicMania">
+        <div>
+          <div class="kicker">BIENVENIDO</div>
+          <h1>Modo local</h1>
+          <p class="sub">Solo modos locales. Sin cuenta, sin tienda, sin leaderboard y sin conexión.</p>
+        </div>
+      </div>
+      <div class="hub-grid">
+        <button class="mode-card cyan" id="hub-local" type="button">
+          <span class="mode-icon">▶</span>
+          <strong>Modo local</strong>
+          <small>Juega las pistas oficiales o carga tus niveles y canciones.</small>
+          <em>1 JUGADOR</em>
+        </button>
+        <button class="mode-card pink" id="hub-multi" type="button">
+          <span class="mode-icon">1v1</span>
+          <strong>Multijugador local</strong>
+          <small>1 vs 1 en el mismo equipo, J1 y J2.</small>
+          <em>1 VS 1</em>
+        </button>
+        <button class="mode-card green" id="hub-editor" type="button">
+          <span class="mode-icon">+</span>
+          <strong>Editor local</strong>
+          <small>Crea y edita niveles sin conexión.</small>
+          <em>DISPONIBLE</em>
+        </button>
+        <button class="mode-card yellow" id="hub-inventory" type="button">
+          <span class="mode-icon">▣</span>
+          <strong>Inventario</strong>
+          <small>Aspectos por defecto. Sin compras ni objetos online.</small>
+          <em>LOCAL</em>
+        </button>
+      </div>
+      <div class="hub-foot">
+        <button class="secondary" id="hub-online" type="button">Jugar online</button>
+        <button class="secondary" id="hub-settings" type="button">Configuración</button>
+        <button class="secondary" id="hub-back" type="button">Volver al inicio</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-solo" class="view">
+    <div class="solo-wrap">
+      <div class="solo-head">
+        <button class="secondary" id="solo-back" type="button">← Hub</button>
+        <div>
+          <div class="kicker">MODO LOCAL · 1 JUGADOR</div>
+          <h1>Elige una pista</h1>
+        </div>
+      </div>
+      <div id="menu">
+        <p class="sub">Pistas oficiales de MuzicMania o niveles locales cargados desde un archivo JSON. Los récords son locales y no se envían a ningún servidor.</p>
+        <div class="difficulty" id="difficulty">
+          <button class="diff" data-diff="Easy" type="button">Easy</button>
+          <button class="diff active" data-diff="Normal" type="button">Normal</button>
+          <button class="diff" data-diff="Hard" type="button">Hard</button>
+          <button class="diff" data-diff="Expert" type="button">Expert</button>
+        </div>
+        <div id="track-list"></div>
+        <div class="start-row">
+          <span class="hint" id="control-hint">Controles: D F J K o ← ↓ ↑ → · Esc pausa</span>
+          <div class="start-actions">
+            <button class="secondary" id="import-level" type="button">Cargar nivel</button>
+            <button class="secondary" id="import-song" type="button">Cargar canción</button>
+            <button class="secondary" id="export-level" type="button">Guardar nivel</button>
+            <button class="primary" id="start-btn" type="button">Jugar</button>
+          </div>
+        </div>
+        <p class="hint" id="local-status"></p>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-versus" class="view">
+    <div class="solo-wrap">
+      <div class="solo-head">
+        <button class="secondary" id="versus-back" type="button">← Hub</button>
+        <div>
+          <div class="kicker">MULTIJUGADOR LOCAL · 1 VS 1</div>
+          <h1>Duelo local</h1>
+        </div>
+      </div>
+      <p class="sub">Dos jugadores en el mismo equipo. J1 usa las flechas; J2 usa D F J K. Sin salas, sin internet y sin rankings online.</p>
+      <div class="guest-chip"><span class="guest-avatar">J1</span><strong>Invitado J1</strong><span class="vs-sep">VS</span><span class="guest-avatar pink">J2</span><strong>Invitado J2</strong></div>
+      <div class="difficulty" id="versus-difficulty">
+        <button class="vs-diff" data-diff="Easy" type="button">Easy</button>
+        <button class="vs-diff active" data-diff="Normal" type="button">Normal</button>
+        <button class="vs-diff" data-diff="Hard" type="button">Hard</button>
+        <button class="vs-diff" data-diff="Expert" type="button">Expert</button>
+      </div>
+      <div id="versus-track-list"></div>
+      <div class="start-row">
+        <span class="hint">J1: ← ↓ ↑ → · J2: D F J K · Esc pausa</span>
+        <button class="primary" id="versus-start" type="button">Empezar 1 vs 1</button>
+      </div>
+      <p class="hint" id="versus-status"></p>
+    </div>
+  </section>
+
+  <section id="versus-game">
+    <div class="hud vs-hud">
+      <div class="vs-player"><span class="vs-tag cyan">J1</span><span>Score<strong id="vs-p1-score">0</strong></span><span>Combo<strong id="vs-p1-combo">0</strong></span></div>
+      <div class="vs-player"><span class="vs-tag pink">J2</span><span>Score<strong id="vs-p2-score">0</strong></span><span>Combo<strong id="vs-p2-combo">0</strong></span></div>
+      <button class="secondary" id="vs-pause" type="button">Pausa</button>
+      <button class="secondary" id="vs-exit" type="button">Salir</button>
+    </div>
+    <div id="vs-canvas-wrap"><canvas id="versus-canvas"></canvas><div class="judgement" id="vs-judgement"></div></div>
+    <div id="versus-results"><div class="result-card"><div class="result-title" id="vs-result-title">Resultado</div><div class="result-grade" id="vs-winner">J1</div><div class="result-grid"><div class="result-row">J1<strong id="vs-result-p1">0</strong></div><div class="result-row">J2<strong id="vs-result-p2">0</strong></div></div><div class="result-actions"><button class="secondary" id="vs-rematch" type="button">Revancha</button><button class="secondary" id="vs-lobby" type="button">Elegir pista</button><button class="secondary" id="vs-hub" type="button">Hub</button></div></div></div>
+  </section>
+
+  <section id="view-inventory" class="view">
+    <div class="panel-page">
+      <div class="page-head">
+        <button class="secondary" id="inventory-back" type="button">← Hub</button>
+        <div><div class="kicker">INVENTARIO LOCAL</div><h1>Aspectos</h1></div>
+      </div>
+      <p class="sub">En offline solo existen los aspectos por defecto. No hay tienda, compras ni objetos online.</p>
+      <div class="inventory-grid">
+        <article class="inventory-card owned"><span class="inv-dot cyan"></span><strong>Flechas neón</strong><small>Por defecto · equipado</small></article>
+        <article class="inventory-card owned"><span class="inv-dot pink"></span><strong>Partículas base</strong><small>Por defecto · equipado</small></article>
+        <article class="inventory-card locked"><span class="inv-dot gray"></span><strong>Prism</strong><small>Requiere online/tienda</small></article>
+        <article class="inventory-card locked"><span class="inv-dot gray"></span><strong>Ember</strong><small>Requiere online/tienda</small></article>
+        <article class="inventory-card locked"><span class="inv-dot gray"></span><strong>Void</strong><small>Requiere online/tienda</small></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-settings" class="view">
+    <div class="panel-page">
+      <div class="page-head">
+        <button class="secondary" id="settings-back" type="button">← Hub</button>
+        <div><div class="kicker">CONFIGURACIÓN</div><h1>Modo offline</h1></div>
+      </div>
+      <div class="settings-card">
+        <div class="settings-row"><span>Almacenamiento</span><strong>Local (este equipo)</strong></div>
+        <div class="settings-row"><span>Niveles locales</span><strong id="stat-levels">0</strong></div>
+        <div class="settings-row"><span>Canciones locales</span><strong id="stat-songs">0</strong></div>
+        <div class="settings-row"><span>Red</span><strong>No requerida</strong></div>
+        <div class="settings-row"><span>Cuenta</span><strong>Invitado local</strong></div>
+      </div>
+      <p class="sub">Los récords y niveles offline son independientes de los online. Si borras los datos locales, no se pueden recuperar.</p>
+      <div class="settings-actions">
+        <button class="secondary" id="settings-controls" type="button">Cambiar controles</button>
+        <button class="secondary" id="clear-records" type="button">Borrar récords locales</button>
+        <button class="secondary" id="clear-local" type="button">Borrar todos los datos locales</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-editor" class="view">
+    <div class="panel-page editor-page">
+      <div class="page-head">
+        <button class="secondary" id="editor-back" type="button">← Hub</button>
+        <div><div class="kicker">EDITOR LOCAL · FASE 2</div><h1>Crea un nivel</h1></div>
+      </div>
+      <p class="sub">Elige una pista oficial, define el BPM y pulsa las celdas para colocar notas. Todo se guarda únicamente en este equipo.</p>
+      <div class="editor-form">
+        <label>Título<input id="editor-title" maxlength="80" placeholder="Mi nivel"></label>
+        <label>Artista<input id="editor-artist" maxlength="80" placeholder="Invitado"></label>
+        <label>Pista<select id="editor-track"></select></label>
+        <label>Dificultad<select id="editor-difficulty"><option>Easy</option><option>Normal</option><option>Hard</option><option>Expert</option></select></label>
+        <label>BPM<input id="editor-bpm" type="number" min="40" max="320" value="120"></label>
+        <label>Editar existente<select id="editor-existing"><option value="">Nuevo nivel</option></select></label>
+      </div>
+      <div class="editor-toolbar">
+        <div class="note-tools" id="editor-note-tools">
+          <button class="input-choice active" data-note="tap" type="button">TAP</button>
+          <button class="input-choice" data-note="hold" type="button">HOLD</button>
+          <button class="input-choice" data-note="mine" type="button">MINE</button>
+        </div>
+        <button class="secondary" id="editor-clear" type="button">Limpiar</button>
+        <button class="secondary" id="editor-import" type="button">Cargar JSON</button>
+        <button class="secondary" id="editor-export" type="button">Exportar JSON</button>
+        <button class="secondary" id="editor-save" type="button">Guardar</button>
+        <button class="primary" id="editor-play" type="button">Guardar y jugar</button>
+      </div>
+      <div class="editor-scroll"><div id="editor-grid"></div></div>
+      <p class="hint" id="editor-status"></p>
+    </div>
+  </section>
+</main>
+
+<section id="game">
+  <div class="hud">
+    <div class="hud-group"><span>Score<strong id="hud-score">0</strong></span><span class="combo">Combo<strong id="hud-combo">0</strong></span></div>
+    <div class="hud-group"><span>Accuracy<strong id="hud-acc">100%</strong></span><span>Misses<strong id="hud-miss">0</strong></span></div>
+    <button class="secondary" id="pause-btn" type="button">Pausa</button>
+  </div>
+  <div id="canvas-wrap"><canvas id="game-canvas"></canvas><div class="judgement" id="judgement"></div><div class="keys"><span class="key">D</span><span class="key">F</span><span class="key">J</span><span class="key">K</span></div></div>
+  <div id="results"><div class="result-card"><div class="result-title" id="result-track">Track</div><div class="result-grade" id="result-grade">S</div><div class="result-title">Puntuación final</div><div class="result-grid"><div class="result-row">Score<strong id="result-score">0</strong></div><div class="result-row">Accuracy<strong id="result-acc">100%</strong></div><div class="result-row">Max combo<strong id="result-combo">0</strong></div><div class="result-row">Misses<strong id="result-miss">0</strong></div></div><div class="result-actions"><button class="secondary" id="retry-btn" type="button">Repetir</button><button class="secondary" id="back-btn" type="button">Lista de pistas</button></div></div></div>
+</section>
+
+<footer><span>© 2026 Ciszu Network · MuzicMania Offline</span><span>Datos locales · Sin conexión</span></footer>
+<input id="level-file" type="file" accept=".json,application/json" hidden>
+<input id="song-file" type="file" accept="audio/*" hidden>
+<script src="../offline-game.js"></script>
+<script src="local.js"></script>
+<script src="local-versus.js"></script>
+</body>
+</html>

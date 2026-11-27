@@ -491,7 +491,7 @@ fn launcher_ready(app: tauri::AppHandle) {
     let main = WebviewWindowBuilder::new(
         &app,
         "main",
-        WebviewUrl::External("https://muzicmania.vercel.app".parse().unwrap()),
+        WebviewUrl::External("https://muzicmania.vercel.app/play".parse().unwrap()),
     )
     .maximized(true)
     .title("MuzicMania")
@@ -600,7 +600,7 @@ fn offline_start_game(app: tauri::AppHandle) -> Result<(), String> {
         .ok_or_else(|| "launcher_window_missing".to_string())?;
     let current = window.url().map_err(|error| error.to_string())?;
     let target = current
-        .join("offline-game.html")
+        .join("local/index.html")
         .map_err(|error| error.to_string())?;
     window.navigate(target).map_err(|error| error.to_string())
 }

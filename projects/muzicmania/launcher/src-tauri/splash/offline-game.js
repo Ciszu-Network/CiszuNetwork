@@ -7,6 +7,7 @@ var TRACKS = [
 
 var selectedTrack = TRACKS[0];
 var selectedDifficulty = "Normal";
+var inputMode = "dfjk";
 var notes = [];
 var isRunning = false;
 var isPaused = false;
@@ -22,6 +23,7 @@ var bestKey = "";
 
 function $(id) { return document.getElementById(id); }
 function formatNumber(n) { return Number(n || 0).toLocaleString("en-US"); }
+function escapeHtml(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (ch) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]; }); }
 function difficultyLabel(value) { return value.toUpperCase(); }
 
 function seededRandom(seed) {
@@ -77,7 +79,7 @@ function renderTracks() {
     btn.type = "button";
     btn.className = "track" + (track.id === selectedTrack.id ? " selected" : "");
     btn.style.setProperty("--accent", track.color);
-    btn.innerHTML = '<span class="cover">♪</span><span><span class="tname">' + track.name + '</span><span class="tmeta">' + track.artist + ' · ' + track.bpm + ' BPM · ' + Math.floor(track.duration / 60) + ':' + String(track.duration % 60).padStart(2, "0") + '</span></span><span class="best">Local best<strong>' + (bestScore(track, selectedDifficulty) ? formatNumber(bestScore(track, selectedDifficulty)) : "—") + '</strong></span>';
+    btn.innerHTML = '<span class="cover">♪</span><span><span class="tname">' + escapeHtml(track.name) + '</span><span class="tmeta">' + escapeHtml(track.artist) + ' · ' + Number(track.bpm) + ' BPM · ' + Math.floor(track.duration / 60) + ':' + String(track.duration % 60).padStart(2, "0") + '</span></span><span class="best">Local best<strong>' + (bestScore(track, selectedDifficulty) ? formatNumber(bestScore(track, selectedDifficulty)) : "—") + '</strong></span>';
     btn.addEventListener("click", function() { selectedTrack = track; renderTracks(); });
     list.appendChild(btn);
   });
@@ -244,7 +246,21 @@ function tick() {
 function startGame() {
   if (!selectedTrack) return;
   resetState();
-  notes = generateChart(selectedTrack.id, selectedTrack.duration, selectedTrack.bpm, selectedDifficulty);
+  if (selectedTrack.chart && Array.isArray(selectedTrack.chart.notes)) {
+    notes = selectedTrack.chart.notes.map(function(note, index) {
+      return {
+        time: Number(note.time) * 1000,
+        lane: Number(note.lane) || 0,
+        type: note.type || "tap",
+        endTime: note.endTime ? Number(note.endTime) * 1000 : undefined,
+        hit: false,
+        missed: false,
+        id: "local_" + index
+      };
+    }).sort(function(a, b) { return a.time - b.time; });
+  } else {
+    notes = generateChart(selectedTrack.id, selectedTrack.duration, selectedTrack.bpm, selectedDifficulty);
+  }
   bestKey = "muzicmania.offline.best." + selectedTrack.id + "." + selectedDifficulty;
   audio = new Audio(selectedTrack.audio);
   audio.volume = 0.8;
@@ -339,7 +355,14 @@ function init() {
   document.addEventListener("contextmenu", function(e) { e.preventDefault(); });
   document.addEventListener("keydown", function(e) {
     var key = e.key.toLowerCase();
-    var keyLane = { d: 0, f: 1, j: 2, k: 3, arrowleft: 0, arrowdown: 1, arrowup: 2, arrowright: 3 }[key];
+    var keyLane;
+    if (key.indexOf("arrow") === 0) {
+      keyLane = { arrowleft: 0, arrowdown: 1, arrowup: 2, arrowright: 3 }[key];
+    } else if (inputMode === "wasd") {
+      keyLane = { a: 0, s: 1, w: 2, d: 3 }[key];
+    } else {
+      keyLane = { d: 0, f: 1, j: 2, k: 3 }[key];
+    }
     if (keyLane !== undefined) {
       e.preventDefault();
       pressLane(keyLane);
