@@ -1,8 +1,8 @@
 ﻿#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Mutex, OnceLock};
-use std::time::Duration;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tauri::menu::{Menu, MenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
@@ -23,6 +23,7 @@ static INSTALLER_FORCE_CLOSE: AtomicBool = AtomicBool::new(false);
 static UNINSTALLER_FORCE_CLOSE: AtomicBool = AtomicBool::new(false);
 static CLOSE_TIMEOUT_ACTIVE: AtomicBool = AtomicBool::new(false);
 static POLICY_BLOCKED: AtomicBool = AtomicBool::new(false);
+static LAST_HEARTBEAT: AtomicU64 = AtomicU64::new(0);
 static INSTALLER_SETUP_PATH: OnceLock<String> = OnceLock::new();
 
 fn default_true() -> bool {
@@ -41,6 +42,8 @@ struct DesktopSettings {
     tutorial_done: bool,
     #[serde(default = "default_language")]
     language: String,
+    #[serde(default = "default_theme")]
+    theme: String,
     #[serde(default)]
     launch_on_startup: bool,
     #[serde(default = "default_close_action")]
@@ -59,6 +62,10 @@ fn default_language() -> String {
     "es".to_string()
 }
 
+fn default_theme() -> String {
+    "light".to_string()
+}
+
 fn default_close_action() -> String {
     "ask".to_string()
 }
@@ -71,6 +78,7 @@ impl Default for DesktopSettings {
             auto_update: true,
             tutorial_done: false,
             language: default_language(),
+            theme: default_theme(),
             launch_on_startup: false,
             close_action: default_close_action(),
             update_channel: String::new(),
@@ -95,6 +103,8 @@ struct LauncherSession {
     display_name: String,
     #[serde(default)]
     avatar_url: String,
+    #[serde(default)]
+    launcher_token: String,
     #[serde(default)]
     role: String,
     #[serde(default = "default_true")]
@@ -123,7 +133,8 @@ fn load_launcher_session() -> Option<LauncherSession> {
     let path = launcher_session_path()?;
     let data = std::fs::read_to_string(&path).ok()?;
     let session = serde_json::from_str::<LauncherSession>(&data).ok()?;
-    // Reescribe el JSON sin campos heredados (tokens/email) de versiones anteriores.
+    // Reescribe el JSON sin campos heredados (access_token/refresh_token/email).
+    // `launcher_token` es un token de alcance limitado (solo notificaciones).
     if let Ok(sanitized) = serde_json::to_string(&session) {
         let _ = std::fs::write(&path, sanitized);
     }
@@ -146,11 +157,31 @@ fn save_launcher_session(session: Option<&LauncherSession>) {
     }
 }
 
+fn guest_name_valid(name: &str) -> bool {
+    name.len() == 11
+        && name.starts_with("Guest")
+        && name[5..].chars().all(|character| character.is_ascii_digit())
+}
+
+fn new_guest_name() -> String {
+    let nanos = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_nanos();
+    format!("Guest{:06}", 100000 + (nanos % 900000) as u32)
+}
+
 fn guest_session() -> LauncherSession {
+    if let Some(saved) = load_launcher_session() {
+        if saved.guest && guest_name_valid(&saved.display_name) {
+            return saved;
+        }
+    }
+    let name = new_guest_name();
     LauncherSession {
         guest: true,
-        display_name: "Invitado".to_string(),
-        username: "invitado".to_string(),
+        display_name: name.clone(),
+        username: name.to_lowercase(),
         role: "guest".to_string(),
         remember: true,
         ..LauncherSession::default()
@@ -445,6 +476,203 @@ fn load_settings_from_disk() -> DesktopSettings {
     DesktopSettings::default()
 }
 
+fn now_millis() -> u64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_millis() as u64
+}
+
+fn launcher_log_path() -> Option<std::path::PathBuf> {
+    settings_path().map(|path| path.with_file_name("launcher.log"))
+}
+
+fn append_launcher_log(level: &str, message: &str, source: &str) {
+    let Some(path) = launcher_log_path() else {
+        return;
+    };
+    let entry = serde_json::json!({
+        "time": now_millis(),
+        "level": level,
+        "message": message,
+        "source": source,
+    });
+    if let Ok(mut file) = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(path)
+    {
+        use std::io::Write;
+        let _ = writeln!(file, "{}", entry);
+    }
+}
+
+#[tauri::command]
+fn launcher_log(level: String, message: String, source: Option<String>) {
+    append_launcher_log(&level, &message, source.as_deref().unwrap_or("webview"));
+}
+
+#[tauri::command]
+fn launcher_logs_read(limit: Option<usize>) -> Vec<serde_json::Value> {
+    let Some(path) = launcher_log_path() else {
+        return Vec::new();
+    };
+    let Ok(text) = std::fs::read_to_string(path) else {
+        return Vec::new();
+    };
+    let max = limit.unwrap_or(200).clamp(1, 1000);
+    let mut entries: Vec<serde_json::Value> = text
+        .lines()
+        .rev()
+        .take(max)
+        .filter_map(|line| serde_json::from_str::<serde_json::Value>(line).ok())
+        .collect();
+    entries.reverse();
+    entries
+}
+
+#[tauri::command]
+fn launcher_logs_clear() -> Result<(), String> {
+    if let Some(path) = launcher_log_path() {
+        if path.exists() {
+            std::fs::remove_file(path).map_err(|error| error.to_string())?;
+        }
+    }
+    Ok(())
+}
+
+fn rotate_launcher_log() {
+    let Some(path) = launcher_log_path() else {
+        return;
+    };
+    let Ok(metadata) = std::fs::metadata(&path) else {
+        return;
+    };
+    if metadata.len() < 2_000_000 {
+        return;
+    }
+    let Ok(text) = std::fs::read_to_string(&path) else {
+        return;
+    };
+    let mut lines: Vec<&str> = text.lines().rev().take(1500).collect();
+    lines.reverse();
+    let _ = std::fs::write(path, format!("{}\n", lines.join("\n")));
+}
+
+fn previous_session_unclean() -> bool {
+    let Some(path) = launcher_log_path() else {
+        return false;
+    };
+    let Ok(text) = std::fs::read_to_string(path) else {
+        return false;
+    };
+    let Some(last) = text.lines().rev().find(|line| !line.trim().is_empty()) else {
+        return false;
+    };
+    let Ok(entry) = serde_json::from_str::<serde_json::Value>(last) else {
+        return false;
+    };
+    let message = entry
+        .get("message")
+        .and_then(|value| value.as_str())
+        .unwrap_or("");
+    !message.starts_with("launcher_closed")
+}
+
+#[tauri::command]
+fn launcher_heartbeat() {
+    LAST_HEARTBEAT.store(now_millis(), Ordering::SeqCst);
+}
+
+fn curl_json(
+    url: &str,
+    method: &str,
+    token: &str,
+    body: Option<&str>,
+) -> Result<serde_json::Value, String> {
+    use std::io::Write;
+    use std::process::Stdio;
+    let mut command = hidden_command("curl");
+    command.args(["-fsSL", "--max-time", "15", "-X", method, "-K", "-"]);
+    if let Some(body) = body {
+        command.args(["-H", "Content-Type: application/json", "--data-binary", body]);
+    }
+    command.arg(url);
+    command.stdin(Stdio::piped());
+    command.stdout(Stdio::piped());
+    command.stderr(Stdio::piped());
+    let mut child = command.spawn().map_err(|error| format!("curl: {error}"))?;
+    if let Some(mut stdin) = child.stdin.take() {
+        let clean = token.replace(['"', '\\', '\n', '\r'], "");
+        let config = format!("header = \"Authorization: Bearer {clean}\"\n");
+        stdin
+            .write_all(config.as_bytes())
+            .map_err(|error| error.to_string())?;
+    }
+    let output = child
+        .wait_with_output()
+        .map_err(|error| error.to_string())?;
+    if !output.status.success() {
+        return Err(format!(
+            "http_error: {}",
+            String::from_utf8_lossy(&output.stderr).trim()
+        ));
+    }
+    serde_json::from_slice(&output.stdout).map_err(|error| format!("json: {error}"))
+}
+
+#[tauri::command]
+async fn launcher_notifications(
+    state: tauri::State<'_, LauncherState>,
+) -> Result<serde_json::Value, String> {
+    let token = state
+        .0
+        .lock()
+        .unwrap()
+        .as_ref()
+        .map(|session| session.launcher_token.clone())
+        .unwrap_or_default();
+    if token.is_empty() {
+        return Ok(serde_json::json!({
+            "notifications": [],
+            "unread": 0,
+            "unauthorized": false,
+            "localOnly": true
+        }));
+    }
+    curl_json(
+        "https://muzicmania.vercel.app/api/launcher/notifications?limit=50",
+        "GET",
+        &token,
+        None,
+    )
+}
+
+#[tauri::command]
+async fn launcher_notifications_read(
+    state: tauri::State<'_, LauncherState>,
+    ids: Vec<String>,
+    all: bool,
+) -> Result<serde_json::Value, String> {
+    let token = state
+        .0
+        .lock()
+        .unwrap()
+        .as_ref()
+        .map(|session| session.launcher_token.clone())
+        .unwrap_or_default();
+    if token.is_empty() {
+        return Ok(serde_json::json!({ "ok": false, "unauthorized": true }));
+    }
+    let body = serde_json::json!({ "ids": ids, "all": all }).to_string();
+    curl_json(
+        "https://muzicmania.vercel.app/api/launcher/notifications",
+        "PATCH",
+        &token,
+        Some(&body),
+    )
+}
+
 fn save_settings_to_disk(settings: &DesktopSettings) {
     if let Some(path) = settings_path() {
         if let Ok(data) = serde_json::to_string(settings) {
@@ -488,10 +716,17 @@ fn launcher_ready(app: tauri::AppHandle) {
         let _ = app.emit("launcher-blocked", ());
         return;
     }
+    let mut play_url = "https://muzicmania.vercel.app/play".to_string();
+    if let Some(session) = app.state::<LauncherState>().0.lock().unwrap().clone() {
+        if session.guest && guest_name_valid(&session.display_name) {
+            play_url.push_str("?guest=");
+            play_url.push_str(&session.display_name);
+        }
+    }
     let main = WebviewWindowBuilder::new(
         &app,
         "main",
-        WebviewUrl::External("https://muzicmania.vercel.app/play".parse().unwrap()),
+        WebviewUrl::External(play_url.parse().unwrap()),
     )
     .maximized(true)
     .title("MuzicMania")
@@ -585,7 +820,7 @@ fn offline_back_to_hub(app: tauri::AppHandle) -> Result<(), String> {
         .ok_or_else(|| "launcher_window_missing".to_string())?;
     let current = window.url().map_err(|error| error.to_string())?;
     let target = current
-        .join("index.html?offline=1")
+        .join("/index.html?offline=1")
         .map_err(|error| error.to_string())?;
     window.navigate(target).map_err(|error| error.to_string())
 }
@@ -607,6 +842,7 @@ fn offline_start_game(app: tauri::AppHandle) -> Result<(), String> {
 
 #[tauri::command]
 fn offline_game_close(app: tauri::AppHandle) {
+    append_launcher_log("info", "launcher_closed_offline", "rust");
     LAUNCHER_FORCE_CLOSE.store(true, Ordering::SeqCst);
     if let Some(launcher) = app.get_webview_window("launcher") {
         let _ = launcher.close();
@@ -614,6 +850,7 @@ fn offline_game_close(app: tauri::AppHandle) {
 }
 #[tauri::command]
 fn launcher_close(app: tauri::AppHandle) {
+    append_launcher_log("info", "launcher_closed", "rust");
     LAUNCHER_FORCE_CLOSE.store(true, Ordering::SeqCst);
     if let Some(launcher) = app.get_webview_window("launcher") {
         let _ = launcher.close();
@@ -1002,6 +1239,18 @@ struct LauncherBoot {
 #[tauri::command]
 fn launcher_boot(state: tauri::State<LauncherState>) -> LauncherBoot {
     let settings = load_settings_from_disk();
+    let session = {
+        let mut guard = state.0.lock().unwrap();
+        if let Some(current) = guard.as_mut() {
+            if current.guest && !guest_name_valid(&current.display_name) {
+                let name = new_guest_name();
+                current.display_name = name.clone();
+                current.username = name.to_lowercase();
+                save_launcher_session(Some(current));
+            }
+        }
+        guard.clone()
+    };
     LauncherBoot {
         version: LAUNCHER_VERSION.to_string(),
         game_version: GAME_VERSION.to_string(),
@@ -1015,7 +1264,7 @@ fn launcher_boot(state: tauri::State<LauncherState>) -> LauncherBoot {
         update_channel: settings_channel(&settings),
         auto_switch_release: settings.auto_switch_release,
         release_prompted_version: settings.release_prompted_version,
-        session: state.0.lock().unwrap().clone(),
+        session,
     }
 }
 
@@ -1167,6 +1416,7 @@ fn launcher_open_login(app: tauri::AppHandle) -> Result<(), String> {
 
 #[tauri::command]
 fn launcher_restart(app: tauri::AppHandle) {
+    append_launcher_log("info", "launcher_closed_restart", "rust");
     if let Ok(executable) = std::env::current_exe() {
         let exe = executable.to_string_lossy().to_string();
         let _ = hidden_command(&exe).spawn();
@@ -1384,6 +1634,7 @@ fn launcher_apply_update(app: tauri::AppHandle) -> Result<(), String> {
     }
 
     std::thread::spawn(move || {
+        append_launcher_log("info", "launcher_closed_update", "rust");
         std::thread::sleep(Duration::from_millis(1200));
         LAUNCHER_FORCE_CLOSE.store(true, Ordering::SeqCst);
         app.exit(0);
@@ -2366,12 +2617,32 @@ fn main() {
     #[cfg(target_os = "windows")]
     set_taskbar_identity();
 
+    let previous_panic_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        append_launcher_log("error", &format!("panic: {info}"), "rust");
+        previous_panic_hook(info);
+    }));
+
     tauri::Builder::default()
         .setup(|app| {
             let args: Vec<String> = std::env::args().collect();
             let is_installer = args.iter().any(|arg| arg == "--installer");
             let pin_taskbar = args.iter().any(|arg| arg == "--pin-taskbar");
             let pin_only = args.iter().any(|arg| arg == "--pin-only");
+
+            std::thread::spawn(|| loop {
+                std::thread::sleep(Duration::from_secs(15));
+                let now = now_millis();
+                let last = LAST_HEARTBEAT.load(Ordering::SeqCst);
+                if last > 0 && now.saturating_sub(last) > 120_000 {
+                    append_launcher_log(
+                        "warn",
+                        "hang_detected: el webview no respondió en 120 s",
+                        "rust",
+                    );
+                    LAST_HEARTBEAT.store(now, Ordering::SeqCst);
+                }
+            });
 
             if args.iter().any(|arg| arg == "--platform-info") {
                 match serde_json::to_string_pretty(&platform_info()) {
@@ -2398,6 +2669,20 @@ fn main() {
                     std::process::exit(0);
                 }
                 return Ok(());
+            }
+
+            if !is_installer {
+                rotate_launcher_log();
+                let unclean = previous_session_unclean();
+                append_launcher_log("info", "launcher_started", "rust");
+                if unclean {
+                    append_launcher_log(
+                        "warn",
+                        "previous_session_unclean: la sesión anterior no se cerró correctamente",
+                        "rust",
+                    );
+                }
+                LAST_HEARTBEAT.store(now_millis(), Ordering::SeqCst);
             }
 
             if is_installer {
@@ -2587,6 +2872,7 @@ fn main() {
                             launcher_show_info(app.clone());
                         }
                         "tray-quit" => {
+                            append_launcher_log("info", "launcher_closed_tray", "rust");
                             LAUNCHER_FORCE_CLOSE.store(true, Ordering::SeqCst);
                             app.exit(0);
                         }
@@ -2664,6 +2950,12 @@ fn main() {
             mark_first_run_done,
             launcher_boot,
             launcher_session,
+            launcher_log,
+            launcher_logs_read,
+            launcher_logs_clear,
+            launcher_heartbeat,
+            launcher_notifications,
+            launcher_notifications_read,
             launcher_guest,
             launcher_logout,
             launcher_mark_tutorial_done,

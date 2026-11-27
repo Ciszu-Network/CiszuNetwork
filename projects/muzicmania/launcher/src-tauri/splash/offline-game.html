@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MuzicMania - Offline</title>
+<script>
+  try {
+    const storedTheme = localStorage.getItem('muzic_launcher_theme');
+    document.documentElement.dataset.theme = storedTheme === 'dark' ? 'dark' : 'light';
+  } catch {
+    document.documentElement.dataset.theme = 'light';
+  }
+</script>
 <style>
   :root { --bg:#07070d; --panel:rgba(20,22,32,.78); --cyan:#0f9eff; --purple:#b026ff; --pink:#ff20bf; --green:#2ED573; --text:#f3f5ff; --muted:#9ba1b8; --border:rgba(255,255,255,.09); }
   html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",system-ui,sans-serif;overflow:hidden;user-select:none}
@@ -65,6 +73,29 @@
   .secondary:hover{border-color:var(--cyan)}
   footer{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;color:var(--muted);font-size:9px;border-top:1px solid var(--border);z-index:6;background:var(--bg)}
   @media(max-width:700px){#track-list{grid-template-columns:1fr}.hud-group{gap:10px}.hud strong{font-size:14px}.best{display:none}}
+</style>
+<style>
+  html[data-theme="light"] {
+    --bg: #eef3fa;
+    --panel: rgba(255, 255, 255, 0.92);
+    --text: #0b1526;
+    --muted: #506078;
+    --border: rgba(13, 30, 55, 0.14);
+  }
+  html[data-theme="light"] html,
+  html[data-theme="light"] body { background: var(--bg); color: var(--text); }
+  html[data-theme="light"] .glow { opacity: .55; }
+  html[data-theme="light"] h1 {
+    background: linear-gradient(120deg, #0b1526, #0077c8 40%, #a8008f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  html[data-theme="light"] .diff { background: rgba(13, 30, 55, .04); }
+  html[data-theme="light"] .diff:hover,
+  html[data-theme="light"] .diff.active { color: var(--text); }
+  html[data-theme="light"] .track.selected { background: rgba(0, 119, 200, .06); }
+  html[data-theme="light"] .best strong { color: var(--text); }
 </style>
 </head>
 <body>

@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>MuzicMania - Instalación</title>
+<script>
+  try {
+    const storedTheme = localStorage.getItem('muzic_launcher_theme');
+    document.documentElement.dataset.theme = storedTheme === 'dark' ? 'dark' : 'light';
+  } catch {
+    document.documentElement.dataset.theme = 'light';
+  }
+</script>
 <style>
   :root {
     --bg-main: #0B0C10;
@@ -221,6 +229,32 @@
 </style>
 <link rel="stylesheet" href="roadmap.css">
 <link rel="stylesheet" href="setup-titlebar.css">
+<style>
+  html[data-theme="light"] {
+    --bg-main: #eef3fa;
+    --bg-panel: rgba(255, 255, 255, 0.92);
+    --text-main: #0b1526;
+    --text-muted: #506078;
+    --secondary: #e7eef8;
+    --secondary-hover: #dce6f3;
+    --border-light: rgba(13, 30, 55, 0.14);
+  }
+  html[data-theme="light"] body { background: var(--bg-main); color: var(--text-main); }
+  html[data-theme="light"] .bg-glow { opacity: .55; }
+  html[data-theme="light"] .lang-menu,
+  html[data-theme="light"] .modal-content { background: #fff; color: var(--text-main); }
+  html[data-theme="light"] .lang-trigger,
+  html[data-theme="light"] .footer-lang,
+  html[data-theme="light"] .checkbox-wrapper input { background: rgba(13, 30, 55, .04); color: var(--text-main); }
+  html[data-theme="light"] .lang-option:hover,
+  html[data-theme="light"] .lang-option.selected { background: rgba(108, 92, 231, .1); }
+  html[data-theme="light"] .info-row { background: rgba(13, 30, 55, .04); }
+  html[data-theme="light"] .req-panel { background: rgba(13, 30, 55, .03); }
+  html[data-theme="light"] .reinstall-step.active,
+  html[data-theme="light"] .checkbox-wrapper:hover { color: var(--text-main); }
+  html[data-theme="light"] [style*="rgba(0,0,0,0.3)"],
+  html[data-theme="light"] [style*="rgba(0,0,0,.22)"] { background: rgba(13, 30, 55, .04) !important; }
+</style>
 </head>
 <body>
 <svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">

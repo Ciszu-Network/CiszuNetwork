@@ -1,11 +1,12 @@
 ﻿<!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://muzicmania.vercel.app;">
 <title>MuzicMania — Launcher</title>
 <link rel="icon" type="image/svg+xml" href="logo.svg">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('muzic_launcher_theme')==='dark'?'dark':'light';}catch(e){}</script>
 <link rel="stylesheet" href="launcher.css">
 </head>
 <body>
@@ -26,6 +27,7 @@
   <symbol id="i-window-min" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
   <symbol id="i-window-max" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="1"/></symbol>
   <symbol id="i-window-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H4M10 6l-6 6 6 6"/></symbol>
   <symbol id="i-discord" viewBox="0 0 24 24"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3c-.2.4-.4.9-.6 1.3a18.3 18.3 0 0 0-5.5 0C9 3.9 8.8 3.4 8.6 3a19.8 19.8 0 0 0-4.9 1.4C.5 9-.3 13.6.1 18.1a19.9 19.9 0 0 0 6 3c.5-.7.9-1.4 1.2-2a13 13 0 0 1-1.9-.9l.5-.4a14.2 14.2 0 0 0 12.1 0l.5.4c-.6.3-1.2.6-1.9.9.3.7.7 1.4 1.2 2a19.9 19.9 0 0 0 6-3c.5-5.2-.8-9.7-3.5-13.7ZM8 15.3c-1.2 0-2.2-1.1-2.2-2.4S6.7 10.5 8 10.5s2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Z"/></symbol>
   <symbol id="i-youtube" viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.5 15.6V8.4L15.8 12l-6.3 3.6Z"/></symbol>
@@ -44,7 +46,20 @@
     <div class="titlebar-live">
       <span class="status-pill" id="hub-status" data-i18n="checking">Comprobando</span>
       <button class="account-chip" id="hub-account-chip" type="button"><span class="avatar" id="hub-avatar">?</span><span id="hub-account-name">Invitado</span></button>
+      <div class="account-menu hidden" id="account-menu">
+        <div class="account-menu-head">
+          <strong id="account-menu-name">Invitado</strong>
+          <small id="account-menu-status">Sesión local offline</small>
+        </div>
+        <button id="account-menu-settings" type="button"><svg class="icon"><use href="#i-settings"></use></svg><span data-i18n="launcherSettings">Configuración del launcher</span></button>
+        <button id="account-menu-connection" type="button"><svg class="icon"><use href="#i-refresh"></use></svg><span data-i18n="updateConnection">Actualizar conexión</span></button>
+        <button id="account-menu-login" type="button" class="hidden"><svg class="icon"><use href="#i-user"></use></svg><span data-i18n="accountLogin">Iniciar sesión</span></button>
+        <button id="account-menu-profile" type="button" class="hidden"><svg class="icon"><use href="#i-user"></use></svg><span data-i18n="accountSettings">Configuración de cuenta</span></button>
+        <button id="account-menu-logout" type="button" class="hidden"><svg class="icon"><use href="#i-power"></use></svg><span data-i18n="accountLogout">Cerrar sesión</span></button>
+      </div>
     </div>
+    <button id="titlebar-update" class="titlebar-btn hidden" type="button" title="Actualización disponible" aria-label="Actualización disponible"><svg class="icon"><use href="#i-download"></use></svg><span class="notif-dot"></span></button>
+    <button id="titlebar-notifications" class="titlebar-btn notif-trigger" type="button" title="Notificaciones" aria-label="Notificaciones"><svg class="icon"><use href="#i-bell"></use></svg><span id="notif-badge" class="notif-badge hidden">0</span></button>
     <button id="titlebar-hub" class="titlebar-btn" type="button" title="Volver al hub" aria-label="Volver al hub"><svg class="icon"><use href="#i-home"></use></svg><span>HUB</span></button>
     <button id="titlebar-settings" class="titlebar-btn" type="button" title="Configuración" aria-label="Configuración"><svg class="icon"><use href="#i-settings"></use></svg></button>
     <button id="titlebar-minimize" class="titlebar-btn" type="button" title="Minimizar" aria-label="Minimizar"><svg class="icon"><use href="#i-window-min"></use></svg></button>
@@ -52,6 +67,34 @@
     <button id="titlebar-close" class="titlebar-btn close" type="button" title="Cerrar" aria-label="Cerrar"><svg class="icon"><use href="#i-window-close"></use></svg></button>
   </div>
 </header>
+<div id="notifications-menu" class="notifications-menu hidden">
+  <div class="notif-head">
+    <strong id="notif-title">Notificaciones</strong>
+    <span id="notif-count">0</span>
+    <button id="notif-close" type="button" aria-label="Cerrar">×</button>
+  </div>
+  <div class="notif-tools">
+    <input id="notif-search" type="search" placeholder="Buscar...">
+    <select id="notif-filter">
+      <option value="all">Todas</option>
+      <option value="unread">No leídas</option>
+      <option value="update">Actualizaciones</option>
+      <option value="error">Errores</option>
+      <option value="logs">Logs</option>
+      <option value="account">Cuenta</option>
+    </select>
+    <select id="notif-sort">
+      <option value="newest">Recientes</option>
+      <option value="oldest">Antiguas</option>
+    </select>
+  </div>
+  <div class="notif-actions">
+    <button id="notif-read-all" type="button">Leer todo</button>
+    <button id="notif-clear" type="button">Borrar</button>
+    <button id="notif-clear-logs" type="button">Borrar logs</button>
+  </div>
+  <div id="notif-list" class="notif-list"></div>
+</div>
 <div id="app">
   <section id="view-splash" class="view active">
     <div class="compact">
@@ -161,6 +204,9 @@
           </div>
           <div class="row" style="margin-top:18px">
             <button id="login-open" class="btn primary wide">Iniciar sesión con CISZU ID</button>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <button id="login-guest" class="btn ghost wide">Continuar como invitado</button>
           </div>
           <p class="note" id="login-status" style="margin-top:14px">La ventana de CISZU ID se abrirá con el login oficial.</p>
           <p class="note" style="margin-top:8px"><a href="https://ciszunetwork.vercel.app/help" data-url>Ayuda</a> · <a href="https://muzicmania.vercel.app/support" data-url>Soporte</a> · <a href="https://wa.me/584126858111" data-url>WhatsApp</a></p>
@@ -310,6 +356,7 @@
         <div class="language-picker-menu" id="launcher-language-menu" role="listbox"></div>
       </div>
     </div>
+    <div class="settings-line"><span><svg class="icon"><use href="#i-monitor"></use></svg> <span data-i18n="themeLabel">Tema</span></span><select id="modal-theme" class="settings-select"><option value="light" data-i18n="themeLight">Claro</option><option value="dark" data-i18n="themeDark">Oscuro</option></select></div>
     <div class="settings-line" id="startup-line"><span><svg class="icon"><use href="#i-monitor"></use></svg> <span data-i18n="startWithWindows">Iniciar con el sistema</span></span><label class="switch"><input id="modal-startup" type="checkbox"><span></span></label></div>
     <div class="settings-section">
       <div class="settings-label"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="closeBehavior">Al cerrar</span></div>

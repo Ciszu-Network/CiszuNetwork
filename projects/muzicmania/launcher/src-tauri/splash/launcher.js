@@ -18,6 +18,19 @@ const state = {
   updating: false,
   autoApplying: false,
   pendingLanguage: null,
+  notifications: [],
+  serverNotifications: [],
+  logs: [],
+  notifOpen: false,
+  notifSearch: '',
+  notifFilter: 'all',
+  notifSort: 'newest',
+  lastNotifiedUpdate: '',
+  availableUpdate: null,
+  watchersStarted: false,
+  notifSyncWarned: false,
+  serverUnread: 0,
+  readServerIds: new Set(),
 };
 
 const LANGUAGES = [
@@ -60,6 +73,35 @@ const I18N = {
     accountLogin: 'Iniciar sesión',
     accountProfile: 'Mi cuenta',
     accountLogout: 'Cerrar sesión',
+    launcherSettings: 'Configuración del launcher',
+    updateConnection: 'Actualizar conexión',
+    accountSettings: 'Configuración de cuenta',
+    notifications: 'Notificaciones',
+    notifErrorTitle: 'Error del launcher',
+    notifWarnTitle: 'Aviso del launcher',
+    notifFriendTitle: 'Solicitud de amistad',
+    notifFriendBody: 'quiere añadirte como amigo',
+    notifEmpty: 'No hay notificaciones con este filtro.',
+    notifCleared: 'Notificaciones borradas.',
+    notifLogsCleared: 'Logs locales borrados.',
+    notifReadAll: 'Leer todo',
+    notifClear: 'Borrar',
+    notifClearLogs: 'Borrar logs',
+    notifSearch: 'Buscar...',
+    notifAll: 'Todas',
+    notifUnread: 'No leídas',
+    notifUpdates: 'Actualizaciones',
+    notifErrors: 'Errores',
+    notifLogs: 'Logs',
+    notifAccount: 'Cuenta',
+    notifOldest: 'Antiguas',
+    notifNewest: 'Recientes',
+    notifOpen: 'Abrir',
+    notifMarkRead: 'Marcar visto',
+    notifUpdateTitle: 'Actualización disponible',
+    notifUpdateBody: 'La versión {version} está lista. Abre el actualizador para instalarla.',
+    notifUpdateNow: 'Actualizar',
+    notifUpdateAvailable: 'Actualización disponible',
     launcherSub: 'Idioma, inicio con el sistema, actualizaciones y comportamiento al cerrar.',
     openSettings: 'Abrir configuración',
     support: 'Soporte',
@@ -102,6 +144,9 @@ const I18N = {
     infoSession: 'Sesión', infoKernel: 'Kernel', infoLauncher: 'Launcher', infoGame: 'Juego',
     infoChannel: 'Canal', infoBuild: 'Build', pinMenu: 'Añadir al menú de aplicaciones',
     languageLabel: 'Idioma',
+    themeLabel: 'Tema',
+    themeLight: 'Claro',
+    themeDark: 'Oscuro',
     startWithWindows: 'Iniciar con el sistema',
     closeBehavior: 'Al cerrar',
     closeAsk: 'Preguntar siempre',
@@ -144,6 +189,35 @@ const I18N = {
     accountLogin: 'Sign in',
     accountProfile: 'My account',
     accountLogout: 'Sign out',
+    launcherSettings: 'Launcher settings',
+    updateConnection: 'Refresh connection',
+    accountSettings: 'Account settings',
+    notifications: 'Notifications',
+    notifErrorTitle: 'Launcher error',
+    notifWarnTitle: 'Launcher warning',
+    notifFriendTitle: 'Friend request',
+    notifFriendBody: 'wants to add you as a friend',
+    notifEmpty: 'No notifications match this filter.',
+    notifCleared: 'Notifications cleared.',
+    notifLogsCleared: 'Local logs cleared.',
+    notifReadAll: 'Mark all read',
+    notifClear: 'Clear',
+    notifClearLogs: 'Clear logs',
+    notifSearch: 'Search...',
+    notifAll: 'All',
+    notifUnread: 'Unread',
+    notifUpdates: 'Updates',
+    notifErrors: 'Errors',
+    notifLogs: 'Logs',
+    notifAccount: 'Account',
+    notifOldest: 'Oldest',
+    notifNewest: 'Newest',
+    notifOpen: 'Open',
+    notifMarkRead: 'Mark read',
+    notifUpdateTitle: 'Update available',
+    notifUpdateBody: 'Version {version} is ready. Open the updater to install it.',
+    notifUpdateNow: 'Update',
+    notifUpdateAvailable: 'Update available',
     launcherSub: 'Language, start with system, updates and close behavior.',
     openSettings: 'Open settings',
     support: 'Support',
@@ -186,6 +260,9 @@ const I18N = {
     infoSession: 'Session', infoKernel: 'Kernel', infoLauncher: 'Launcher', infoGame: 'Game',
     infoChannel: 'Channel', infoBuild: 'Build', pinMenu: 'Add to applications menu',
     languageLabel: 'Language',
+    themeLabel: 'Theme',
+    themeLight: 'Light',
+    themeDark: 'Dark',
     startWithWindows: 'Start with system',
     closeBehavior: 'When closing',
     closeAsk: 'Always ask',
@@ -285,6 +362,14 @@ window.showInstallInfo = function showInstallInfo() {
   }, 80);
 };
 
+function applyTheme(theme) {
+  const value = theme === 'dark' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = value;
+  document.body.dataset.theme = value;
+  try { localStorage.setItem('muzic_launcher_theme', value); } catch {}
+  $('offline-game-frame')?.contentWindow?.postMessage({ type: 'muzic-theme', theme: value }, '*');
+}
+
 function updateLanguagePicker(code) {
   const normalized = normalizeLanguage(code);
   const info = LANGUAGES.find((item) => item.code === normalized) || LANGUAGES[1];
@@ -329,6 +414,7 @@ function applyLanguage(language) {
     if (key) element.textContent = tr(key);
   });
   updateLanguagePicker(normalized);
+  renderNotificationLabels();
   renderInstallInfo();
   const settingsButton = $('settings-open');
   if (settingsButton) {
@@ -411,12 +497,14 @@ async function showHub() {
   window.CiszuTelemetry?.setActivity('hub');
   if (state.policy?.mandatory) return;
   if (!state.boot?.tutorial_done) return;
-  if (state.online && !state.forcedOffline && (!state.session || state.session.guest)) return;
+  if (state.online && !state.forcedOffline && !state.session) return;
   stopLoginPoll();
   stopOfflineGame();
   await invoke('launcher_show_hub').catch(() => {});
   show('view-hub');
   renderHub();
+  syncOnlineNotifications();
+  checkForUpdatesQuietly();
 }
 
 function stopOfflineGame() {
@@ -435,7 +523,15 @@ function openOfflineScreen() {
 function startOfflineGame() {
   if (state.policy?.mandatory) return;
   const frame = $('offline-game-frame');
-  if (frame) frame.src = 'local/index.html';
+  const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  const params = new URLSearchParams({ theme });
+  if (state.session?.guest && state.session?.display_name) {
+    params.set('guest', state.session.display_name);
+  } else if (state.session?.display_name) {
+    params.set('name', state.session.display_name);
+    if (state.session.avatar_url) params.set('avatar', state.session.avatar_url);
+  }
+  if (frame) frame.src = `local/index.html?${params.toString()}`;
   show('view-offline-game');
 }
 
@@ -511,6 +607,14 @@ async function checkOnline() {
 }
 
 async function boot() {
+  state.notifications = loadLocalNotifications();
+  try {
+    const savedRead = JSON.parse(localStorage.getItem(NOTIF_SERVER_READ_KEY) || '[]');
+    state.readServerIds = new Set(Array.isArray(savedRead) ? savedRead : []);
+  } catch {
+    state.readServerIds = new Set();
+  }
+  renderNotificationBadge();
   show('view-splash');
   setBar('splash-bar', 4);
   setPct('splash-pct', 4);
@@ -523,10 +627,13 @@ async function boot() {
     state.boot = await invoke('launcher_boot');
     state.settings = await invoke('get_settings');
     state.session = state.boot?.session || null;
+    applyTheme(state.settings?.theme || 'light');
     if (!state.settings?.language) {
       state.settings = { ...(state.settings || {}), language: navigator.language.startsWith('es') ? '1034' : '1033' };
     }
     applyLanguage(state.settings.language);
+    startBackgroundWatchers();
+    launcherLog('info', `launcher_boot v${state.boot?.version || BUILD.launcherVersion}`, 'webview');
     window.CiszuTelemetry?.configure({
       app: 'muzicmania',
       source: 'launcher',
@@ -687,6 +794,7 @@ async function startUpdateOption(option, info) {
     showUpdateError(info);
     return;
   }
+  $('titlebar-update')?.classList.add('hidden');
   state.update = option;
   state.policy = info;
   $('update-policy')?.classList.add('hidden');
@@ -1000,12 +1108,16 @@ function renderHub() {
   $('hub-kicker')?.classList.toggle('first-time', firstTime);
   document.querySelector('.hero')?.classList.toggle('first-time', firstTime);
   const isGuest = !session || session.guest;
-  const name = session?.display_name || session?.username || tr('guest');
+  const guestName = session?.display_name && /^Guest\d{6}$/.test(session.display_name)
+    ? session.display_name
+    : tr('guest');
+  const name = isGuest ? guestName : (session?.display_name || session?.username || tr('guest'));
   setText('hub-welcome', state.boot?.first_run
     ? tr('welcomeFirstText')
     : tr('welcomeBackText').replace('{name}', name));
-  setText('hub-account-name', isGuest ? tr('guest') : name);
-  setText('account-who', isGuest ? tr('guest') : name);
+  setText('hub-account-name', name);
+  setText('account-who', name);
+  window.renderAccountMenu?.();
   setText('account-sub', isGuest
     ? (online ? tr('sessionLocalOnline') : tr('sessionLocalOffline'))
     : tr('sessionCiszu').replace('{username}', session?.username || (state.settings?.language === 'en' ? 'user' : 'usuario')));
@@ -1044,6 +1156,8 @@ function syncSettingsForm() {
   if (startup) startup.checked = typeof state.boot?.platform?.startup_enabled === 'boolean'
     ? state.boot.platform.startup_enabled
     : Boolean(state.settings.launch_on_startup);
+  const theme = $('modal-theme');
+  if (theme) theme.value = state.settings.theme === 'dark' ? 'dark' : 'light';
   const updateChannel = $('modal-update-channel');
   if (updateChannel) updateChannel.value = state.settings.update_channel || state.boot?.update_channel || BUILD.channel || 'beta';
   const autoRelease = $('modal-auto-release');
@@ -1117,6 +1231,466 @@ window.showCloseDialog = function () {
   if (remember) remember.checked = false;
   $('close-dialog')?.classList.remove('hidden');
 };
+
+const NOTIF_KEY = 'muzic_launcher_notifications_v1';
+const NOTIF_SERVER_READ_KEY = 'muzic_launcher_notif_read_v1';
+
+function loadLocalNotifications() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(NOTIF_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed.filter((entry) => entry && entry.id) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalNotifications() {
+  try {
+    localStorage.setItem(NOTIF_KEY, JSON.stringify(state.notifications.slice(0, 120)));
+  } catch {}
+}
+
+function saveServerReadIds() {
+  try {
+    localStorage.setItem(NOTIF_SERVER_READ_KEY, JSON.stringify(Array.from(state.readServerIds).slice(-300)));
+  } catch {}
+}
+
+function pushNotification(entry) {
+  const item = {
+    id: entry.id || `local-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    kind: entry.kind || 'info',
+    title: entry.title || tr('notifications'),
+    message: entry.message || '',
+    time: Number(entry.time) || Date.now(),
+    read: Boolean(entry.read),
+    href: entry.href || '',
+    action: entry.action || '',
+    source: entry.source || 'launcher',
+    fromLog: Boolean(entry.fromLog),
+  };
+  if (state.notifications.some((existing) => existing.id === item.id)) return null;
+  const duplicate = state.notifications.find((existing) => existing.kind === item.kind
+    && existing.message === item.message
+    && Math.abs(existing.time - item.time) < 15000);
+  if (duplicate) return null;
+  state.notifications.unshift(item);
+  state.notifications = state.notifications.slice(0, 120);
+  saveLocalNotifications();
+  renderNotificationBadge();
+  if (state.notifOpen) renderNotifications();
+  return item;
+}
+
+function launcherLog(level, message, source = 'webview') {
+  const text = String(message || '').replace(/\s+/g, ' ').slice(0, 900);
+  if (!text) return;
+  invoke('launcher_log', { level, message: text, source })
+    .then(() => syncLogs())
+    .catch(() => {});
+}
+
+let syncingLogs = false;
+async function syncLogs(importErrors = true) {
+  if (syncingLogs) return;
+  syncingLogs = true;
+  try {
+    const entries = await invoke('launcher_logs_read', { limit: 250 });
+    state.logs = (entries || []).map((entry, index) => ({
+      id: `raw-${entry.time}-${index}`,
+      time: Number(entry.time) || 0,
+      level: entry.level || 'info',
+      message: String(entry.message || ''),
+      source: entry.source || 'rust',
+    })).filter((entry) => entry.time > 0);
+    if (importErrors) {
+      const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+      for (const entry of state.logs) {
+        if (entry.time < cutoff) continue;
+        const importantWarn = entry.level === 'warn'
+          && /^(previous_session_unclean|hang_detected)/.test(entry.message);
+        if (entry.level !== 'error' && !importantWarn) continue;
+        pushNotification({
+          id: `log-${entry.time}-${entry.level}`,
+          kind: entry.level === 'error' ? 'error' : 'log',
+          title: entry.level === 'error' ? tr('notifErrorTitle') : tr('notifWarnTitle'),
+          message: entry.message,
+          time: entry.time,
+          read: false,
+          source: entry.source,
+          fromLog: true,
+        });
+      }
+    }
+    if (state.notifOpen) renderNotifications();
+  } catch {}
+  syncingLogs = false;
+}
+
+let syncingServer = false;
+async function syncOnlineNotifications() {
+  if (syncingServer) return;
+  const session = state.session;
+  if (!state.online || state.forcedOffline || !session || session.guest || !session.launcher_token) {
+    state.serverNotifications = [];
+    state.serverUnread = 0;
+    renderNotificationBadge();
+    return;
+  }
+  syncingServer = true;
+  try {
+    const data = await invoke('launcher_notifications');
+    if (!data || data.unauthorized) {
+      if (session) session.launcher_token = '';
+      state.serverNotifications = [];
+      return;
+    }
+    state.notifSyncWarned = false;
+    state.serverUnread = Number(data.unread) || 0;
+    state.serverNotifications = (data.notifications || []).map((row) => {
+      const parsed = Date.parse(row.created_at);
+      return {
+        id: `server-${row.id}`,
+        serverId: row.id,
+        kind: row.kind === 'security' ? 'error' : (row.kind === 'system' ? 'update' : 'account'),
+        title: row.title || tr('notifications'),
+        message: row.body || '',
+        time: Number.isFinite(parsed) ? parsed : Date.now(),
+        read: Boolean(row.read_at),
+        href: row.href || '',
+        source: 'online',
+      };
+    });
+    for (const request of data.friendRequests || []) {
+      const sender = request.sender || {};
+      state.serverNotifications.unshift({
+        id: `friend-${request.id}`,
+        kind: 'account',
+        title: tr('notifFriendTitle'),
+        message: `${sender.display_name || sender.username || tr('notifications')} · ${tr('notifFriendBody')}`,
+        time: Date.parse(request.created_at) || Date.now(),
+        read: state.readServerIds.has(`friend-${request.id}`),
+        href: '/friends',
+        source: 'online',
+      });
+    }
+  } catch (error) {
+    const text = String(error || '');
+    if (text.includes('401') || text.includes('unauthorized')) {
+      if (session) session.launcher_token = '';
+      state.serverNotifications = [];
+      state.serverUnread = 0;
+    } else if (!state.notifSyncWarned) {
+      state.notifSyncWarned = true;
+      launcherLog('warn', `notifications_sync_failed: ${text}`, 'webview');
+    }
+  } finally {
+    syncingServer = false;
+    renderNotificationBadge();
+    if (state.notifOpen) renderNotifications();
+  }
+}
+
+function renderNotificationBadge() {
+  const localUnread = state.notifications.filter((item) => !item.read).length;
+  const mappedServerUnread = state.serverNotifications.filter((item) => !item.read).length;
+  const unread = localUnread + Math.max(state.serverUnread || 0, mappedServerUnread);
+  const badge = $('notif-badge');
+  if (badge) {
+    badge.textContent = unread > 99 ? '99+' : String(unread);
+    badge.classList.toggle('hidden', unread === 0);
+  }
+  $('titlebar-notifications')?.classList.toggle('has-unread', unread > 0);
+  setText('notif-count', unread > 99 ? '99+' : String(unread));
+}
+
+function formatNotifTime(ts) {
+  const diff = Math.max(0, Date.now() - ts);
+  const spanish = normalizeLanguage(state.settings?.language) === '1034';
+  if (diff < 60000) return spanish ? 'ahora' : 'now';
+  if (diff < 3600000) {
+    const minutes = Math.floor(diff / 60000);
+    return spanish ? `hace ${minutes} min` : `${minutes} min ago`;
+  }
+  if (diff < 86400000) {
+    const hours = Math.floor(diff / 3600000);
+    return spanish ? `hace ${hours} h` : `${hours} h ago`;
+  }
+  return new Date(ts).toLocaleDateString(spanish ? 'es' : 'en', { day: '2-digit', month: 'short' });
+}
+
+function notificationIcon(kind) {
+  if (kind === 'update') return 'i-download';
+  if (kind === 'account') return 'i-user';
+  if (kind === 'error') return 'i-info';
+  if (kind === 'log') return 'i-monitor';
+  return 'i-info';
+}
+
+function markNotificationRead(item) {
+  if (!item || item.read) return;
+  item.read = true;
+  if (item.serverId) {
+    const stored = state.serverNotifications.find((entry) => entry.id === item.id);
+    if (stored) stored.read = true;
+    state.serverUnread = Math.max(0, (state.serverUnread || 0) - 1);
+    invoke('launcher_notifications_read', { ids: [item.serverId], all: false }).catch(() => {});
+  } else if (item.source === 'online') {
+    const stored = state.serverNotifications.find((entry) => entry.id === item.id);
+    if (stored) stored.read = true;
+    state.readServerIds.add(item.id);
+    saveServerReadIds();
+  } else {
+    const local = state.notifications.find((entry) => entry.id === item.id);
+    if (local) {
+      local.read = true;
+      saveLocalNotifications();
+    }
+  }
+  renderNotificationBadge();
+  renderNotifications();
+}
+
+async function markAllNotificationsRead() {
+  state.notifications.forEach((item) => { item.read = true; });
+  saveLocalNotifications();
+  const pendingServer = state.serverNotifications.some((item) => !item.read) || (state.serverUnread || 0) > 0;
+  state.serverUnread = 0;
+  state.serverNotifications.forEach((item) => {
+    if (!item.read && !item.serverId && item.source === 'online') state.readServerIds.add(item.id);
+    item.read = true;
+  });
+  saveServerReadIds();
+  renderNotificationBadge();
+  renderNotifications();
+  if (pendingServer) {
+    await invoke('launcher_notifications_read', { ids: [], all: true }).catch(() => {});
+  }
+}
+
+async function clearNotifications() {
+  if (state.serverNotifications.some((item) => !item.read)) {
+    await invoke('launcher_notifications_read', { ids: [], all: true }).catch(() => {});
+  }
+  state.notifications = [];
+  state.serverNotifications.forEach((item) => {
+    if (!item.serverId && item.source === 'online') state.readServerIds.add(item.id);
+  });
+  state.serverNotifications = [];
+  state.serverUnread = 0;
+  saveLocalNotifications();
+  saveServerReadIds();
+  renderNotificationBadge();
+  renderNotifications();
+  toast(tr('notifCleared'));
+}
+
+async function clearLauncherLogs() {
+  await invoke('launcher_logs_clear').catch(() => {});
+  state.logs = [];
+  state.notifications = state.notifications.filter((item) => !item.fromLog);
+  saveLocalNotifications();
+  renderNotificationBadge();
+  renderNotifications();
+  toast(tr('notifLogsCleared'));
+}
+
+function renderNotifications() {
+  const list = $('notif-list');
+  if (!list) return;
+  const query = state.notifSearch.trim().toLowerCase();
+  let items;
+  if (state.notifFilter === 'logs') {
+    items = state.logs.map((entry) => ({
+      id: entry.id,
+      kind: entry.level === 'error' ? 'error' : 'log',
+      title: `${String(entry.level).toUpperCase()} · ${entry.source}`,
+      message: entry.message,
+      time: entry.time,
+      read: true,
+      fromLog: true,
+    }));
+  } else {
+    items = [
+      ...state.notifications.map((item) => ({ ...item })),
+      ...state.serverNotifications.map((item) => ({ ...item })),
+    ];
+    if (state.notifFilter === 'unread') items = items.filter((item) => !item.read);
+    else if (state.notifFilter !== 'all') items = items.filter((item) => item.kind === state.notifFilter);
+  }
+  if (query) items = items.filter((item) => `${item.title} ${item.message}`.toLowerCase().includes(query));
+  items.sort((a, b) => (state.notifSort === 'oldest' ? a.time - b.time : b.time - a.time));
+  list.innerHTML = '';
+  if (!items.length) {
+    const empty = document.createElement('div');
+    empty.className = 'notif-empty';
+    empty.textContent = tr('notifEmpty');
+    list.appendChild(empty);
+    return;
+  }
+  for (const item of items) {
+    const row = document.createElement('article');
+    row.className = `notif-item${item.read ? '' : ' unread'}`;
+    row.dataset.kind = item.kind;
+    const icon = document.createElement('span');
+    icon.className = 'notif-icon';
+    icon.innerHTML = `<svg class="icon"><use href="#${notificationIcon(item.kind)}"></use></svg>`;
+    const body = document.createElement('div');
+    body.className = 'notif-body';
+    const head = document.createElement('div');
+    head.className = 'notif-item-head';
+    const title = document.createElement('strong');
+    title.textContent = item.title;
+    const time = document.createElement('time');
+    time.textContent = formatNotifTime(item.time);
+    head.append(title, time);
+    const message = document.createElement('p');
+    message.textContent = item.message;
+    body.append(head, message);
+    const actions = document.createElement('div');
+    actions.className = 'notif-item-actions';
+    if (item.action === 'update') {
+      const open = document.createElement('button');
+      open.type = 'button';
+      open.textContent = tr('notifUpdateNow');
+      open.addEventListener('click', () => {
+        closeNotifications();
+        runUpdateFlow(false);
+      });
+      actions.appendChild(open);
+    } else if (item.href) {
+      const open = document.createElement('button');
+      open.type = 'button';
+      open.textContent = tr('notifOpen');
+      open.addEventListener('click', () => {
+        openExternal(item.href.startsWith('http') ? item.href : `${API_BASE}${item.href}`);
+        markNotificationRead(item);
+      });
+      actions.appendChild(open);
+    }
+    if (!item.read) {
+      const read = document.createElement('button');
+      read.type = 'button';
+      read.textContent = tr('notifMarkRead');
+      read.addEventListener('click', () => markNotificationRead(item));
+      actions.appendChild(read);
+    }
+    if (actions.childElementCount) body.appendChild(actions);
+    row.append(icon, body);
+    row.addEventListener('click', (event) => {
+      if (event.target.closest('button')) return;
+      if (!item.read) markNotificationRead(item);
+    });
+    list.appendChild(row);
+  }
+}
+
+function openNotifications() {
+  state.notifOpen = true;
+  renderNotificationLabels();
+  $('notifications-menu')?.classList.remove('hidden');
+  renderNotificationBadge();
+  renderNotifications();
+  syncLogs();
+  syncOnlineNotifications();
+}
+
+function closeNotifications() {
+  state.notifOpen = false;
+  $('notifications-menu')?.classList.add('hidden');
+}
+
+function renderNotificationLabels() {
+  setText('notif-title', tr('notifications'));
+  setText('notif-read-all', tr('notifReadAll'));
+  setText('notif-clear', tr('notifClear'));
+  setText('notif-clear-logs', tr('notifClearLogs'));
+  const search = $('notif-search');
+  if (search) search.placeholder = tr('notifSearch');
+  const filter = $('notif-filter');
+  if (filter) {
+    const labels = {
+      all: tr('notifAll'),
+      unread: tr('notifUnread'),
+      update: tr('notifUpdates'),
+      error: tr('notifErrors'),
+      logs: tr('notifLogs'),
+      account: tr('notifAccount'),
+    };
+    Array.from(filter.options).forEach((option) => {
+      option.textContent = labels[option.value] || option.textContent;
+    });
+  }
+  const sort = $('notif-sort');
+  if (sort) {
+    Array.from(sort.options).forEach((option) => {
+      option.textContent = option.value === 'oldest' ? tr('notifOldest') : tr('notifNewest');
+    });
+  }
+}
+
+async function checkForUpdatesQuietly() {
+  if (!navigator.onLine) return;
+  if (state.policy?.mandatory || state.updating || state.autoApplying) return;
+  try {
+    const info = await invoke('launcher_check_update', { online: true });
+    if (!info || info.error || !info.available) {
+      $('titlebar-update')?.classList.add('hidden');
+      return;
+    }
+    const version = info.latestSafe?.version
+      || info.latest
+      || info.options?.[info.options.length - 1]?.version
+      || '';
+    state.availableUpdate = info;
+    const button = $('titlebar-update');
+    if (button) {
+      button.classList.remove('hidden');
+      button.title = `${tr('notifUpdateTitle')} ${version}`.trim();
+    }
+    if (version && state.lastNotifiedUpdate !== version) {
+      state.lastNotifiedUpdate = version;
+      pushNotification({
+        id: `update-${version}`,
+        kind: 'update',
+        title: tr('notifUpdateTitle'),
+        message: tr('notifUpdateBody').replace('{version}', version),
+        action: 'update',
+      });
+      toast(tr('notifUpdateTitle'));
+    }
+  } catch {}
+}
+
+function startBackgroundWatchers() {
+  if (state.watchersStarted) return;
+  state.watchersStarted = true;
+  setInterval(() => invoke('launcher_heartbeat').catch(() => {}), 10000);
+  setInterval(() => {
+    syncOnlineNotifications();
+    checkForUpdatesQuietly();
+  }, 60000);
+  setTimeout(() => {
+    syncOnlineNotifications();
+    checkForUpdatesQuietly();
+  }, 12000);
+  window.addEventListener('online', () => {
+    launcherLog('info', 'network_online', 'webview');
+    syncOnlineNotifications();
+    checkForUpdatesQuietly();
+  });
+  window.addEventListener('offline', () => launcherLog('warn', 'network_offline', 'webview'));
+  window.addEventListener('error', (event) => {
+    launcherLog('error', `${event.message || 'error'} (${event.filename || 'inline'}:${event.lineno || 0})`, 'webview');
+  });
+  window.addEventListener('unhandledrejection', (event) => {
+    const reason = event.reason?.message || event.reason || 'unknown';
+    launcherLog('error', `unhandledrejection: ${reason}`, 'webview');
+  });
+  window.addEventListener('beforeunload', () => {
+    invoke('launcher_log', { level: 'info', message: 'webview_unload', source: 'webview' }).catch(() => {});
+  });
+}
 
 function bind() {
   renderLanguageMenu();
@@ -1197,16 +1771,40 @@ function bind() {
   $('settings-open')?.addEventListener('click', openSettings);
   $('settings-open-card')?.addEventListener('click', openSettings);
 
-  $('hub-account-chip')?.addEventListener('click', () => {
-    if (!state.session || state.session.guest) {
-      openSettings();
-      return;
-    }
-    const username = state.session?.username;
-    openExternal(username
-      ? `${API_BASE}/profile/@${encodeURIComponent(username)}`
-      : `${API_BASE}/login`);
+  const closeAccountMenu = () => $('account-menu')?.classList.add('hidden');
+  const renderAccountMenu = () => {
+    const session = state.session;
+    const isGuest = !session || session.guest;
+    const online = state.online && !state.forcedOffline;
+    const guestLabel = session?.display_name && /^Guest\d{6}$/.test(session.display_name)
+      ? session.display_name
+      : tr('guest');
+    const name = isGuest ? guestLabel : (session?.display_name || session?.username || tr('guest'));
+    setText('account-menu-name', name);
+    setText('account-menu-status', isGuest
+      ? (online ? tr('sessionLocalOnline') : tr('sessionLocalOffline'))
+      : tr('sessionCiszu').replace('{username}', session?.username || ''));
+    $('account-menu-connection')?.classList.toggle('hidden', online);
+    $('account-menu-login')?.classList.toggle('hidden', !(online && isGuest));
+    $('account-menu-profile')?.classList.toggle('hidden', !(online && !isGuest));
+    $('account-menu-logout')?.classList.toggle('hidden', !(online && !isGuest));
+  };
+  window.renderAccountMenu = renderAccountMenu;
+  $('hub-account-chip')?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    renderAccountMenu();
+    $('account-menu')?.classList.toggle('hidden');
   });
+  document.addEventListener('click', (event) => {
+    const menu = $('account-menu');
+    if (!menu || menu.classList.contains('hidden')) return;
+    if (!$('hub-account-chip')?.contains(event.target) && !menu.contains(event.target)) closeAccountMenu();
+  });
+  $('account-menu-settings')?.addEventListener('click', () => { closeAccountMenu(); openSettings(); });
+  $('account-menu-connection')?.addEventListener('click', () => { closeAccountMenu(); $('hub-refresh')?.click(); });
+  $('account-menu-login')?.addEventListener('click', () => { closeAccountMenu(); showLogin(); });
+  $('account-menu-profile')?.addEventListener('click', () => { closeAccountMenu(); openExternal(`${API_BASE}/settings`); });
+  $('account-menu-logout')?.addEventListener('click', () => { closeAccountMenu(); logout(); });
 
   $('hub-play-online')?.addEventListener('click', () => {
     window.CiszuTelemetry?.setActivity('online');
@@ -1222,6 +1820,36 @@ function bind() {
   $('offline-back')?.addEventListener('click', showHub);
   $('offline-play')?.addEventListener('click', startOfflineGame);
   $('titlebar-hub')?.addEventListener('click', showHub);
+  $('titlebar-update')?.addEventListener('click', () => {
+    closeNotifications();
+    runUpdateFlow(false);
+  });
+  $('titlebar-notifications')?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (state.notifOpen) closeNotifications();
+    else openNotifications();
+  });
+  $('notif-close')?.addEventListener('click', closeNotifications);
+  $('notif-search')?.addEventListener('input', (event) => {
+    state.notifSearch = event.target.value || '';
+    renderNotifications();
+  });
+  $('notif-filter')?.addEventListener('change', (event) => {
+    state.notifFilter = event.target.value || 'all';
+    renderNotifications();
+  });
+  $('notif-sort')?.addEventListener('change', (event) => {
+    state.notifSort = event.target.value === 'oldest' ? 'oldest' : 'newest';
+    renderNotifications();
+  });
+  $('notif-read-all')?.addEventListener('click', () => { markAllNotificationsRead(); });
+  $('notif-clear')?.addEventListener('click', () => { clearNotifications(); });
+  $('notif-clear-logs')?.addEventListener('click', () => { clearLauncherLogs(); });
+  document.addEventListener('click', (event) => {
+    if (!state.notifOpen) return;
+    if ($('notifications-menu')?.contains(event.target) || $('titlebar-notifications')?.contains(event.target)) return;
+    closeNotifications();
+  });
   $('titlebar-settings')?.addEventListener('click', openSettings);
   $('titlebar-minimize')?.addEventListener('click', () => invoke('launcher_minimize').catch(() => {}));
   $('titlebar-maximize')?.addEventListener('click', () => invoke('launcher_toggle_maximize').catch(() => {}));
@@ -1311,6 +1939,11 @@ function bind() {
     $('language-restart-modal')?.classList.add('hidden');
     toast(tr('languageRestartToast'));
   });
+  $('modal-theme')?.addEventListener('change', async (event) => {
+    const theme = event.target.value === 'dark' ? 'dark' : 'light';
+    applyTheme(theme);
+    await persistSettings({ theme });
+  });
   $('modal-startup')?.addEventListener('change', async (event) => {
     const enabled = Boolean(event.target.checked);
     try {
@@ -1375,7 +2008,10 @@ function bind() {
     if (event.target === $('settings-modal')) closeSettings();
   });
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && !$('settings-modal')?.classList.contains('hidden')) closeSettings();
+    if (event.key !== 'Escape') return;
+    if (state.notifOpen) closeNotifications();
+    if (!$('account-menu')?.classList.contains('hidden')) closeAccountMenu();
+    if (!$('settings-modal')?.classList.contains('hidden')) closeSettings();
   });
   $('settings-save')?.addEventListener('click', async () => {
     const closeAction = $('modal-close-action')?.value || 'ask';

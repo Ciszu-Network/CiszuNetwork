@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'none';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob:; connect-src 'none';">
 <title>MuzicMania — Local</title>
 <link rel="stylesheet" href="local.css">
 </head>
@@ -26,6 +26,7 @@
       <div class="kicker">SESIÓN LOCAL · SIN INTERNET</div>
       <h1>Modo offline.</h1>
       <p class="sub">Esta versión funciona sin conexión. Tus niveles, canciones, récords y ajustes quedan guardados únicamente en este equipo. Si borras los datos, se pierden.</p>
+      <div class="guest-chip welcome-guest"><span class="guest-avatar" id="welcome-guest-avatar">G</span><strong id="welcome-guest-name">Invitado</strong><small>Sesión local permanente en este equipo</small></div>
       <div class="welcome-actions">
         <button class="primary" id="welcome-enter" type="button">Entrar al modo local</button>
         <button class="secondary" id="welcome-exit" type="button">Volver al launcher</button>
@@ -44,7 +45,7 @@
           <div class="kicker">INVITADO</div>
           <h2>Jugador local</h2>
           <p class="sub">No hay cuenta ni inicio de sesión. En este modo eres un invitado y todos los datos quedan en este equipo.</p>
-          <div class="guest-chip"><span class="guest-avatar">J1</span><strong>Invitado</strong></div>
+          <div class="guest-chip"><span class="guest-avatar" id="setup-guest-avatar">G</span><strong id="setup-guest-name">Invitado</strong></div>
         </div>
         <div class="setup-card">
           <div class="kicker">TECLADO</div>
@@ -68,33 +69,75 @@
     </div>
   </section>
 
-  <section id="view-hub" class="view">
-    <div class="hub">
-      <div class="hub-head">
-        <img src="../logo.svg" alt="MuzicMania">
-        <div>
-          <div class="kicker">BIENVENIDO</div>
-          <h1>Modo local</h1>
-          <p class="sub">Solo modos locales. Sin cuenta, sin tienda, sin leaderboard y sin conexión.</p>
+  <section id="view-hub" class="view hub-view">
+    <aside class="hub-side">
+      <button class="hub-brand" id="hub-brand" type="button" title="MuzicMania">
+        <img src="../isotipo.svg" alt="">
+        <span>MuzicMania</span>
+        <em>LOCAL</em>
+      </button>
+      <div class="hub-mode-list">
+        <button class="hub-mode locked" data-hub-mode="historia" type="button"><span class="hub-mode-icon book">▤</span><span><strong>HISTORIA</strong><small>Próximamente</small></span><i>PRONTO</i></button>
+        <button class="hub-mode active" data-hub-mode="solo" type="button"><span class="hub-mode-icon cyan">♪</span><span><strong>MODO SOLO</strong><small>Partidas individuales</small></span><i>›</i></button>
+        <button class="hub-mode" data-hub-mode="local" type="button"><span class="hub-mode-icon cyan">▣</span><span><strong>MODO LOCAL</strong><small>Tus niveles guardados</small></span><i>›</i></button>
+        <button class="hub-mode" data-hub-mode="multijugador" type="button"><span class="hub-mode-icon pink">◉</span><span><strong>MULTIJUGADOR</strong><small>1 vs 1 local</small></span><i>LOCAL</i></button>
+        <button class="hub-mode" data-hub-mode="crear" type="button"><span class="hub-mode-icon green">＋</span><span><strong>CREAR</strong><small>Editor de niveles</small></span><i>›</i></button>
+        <button class="hub-mode locked" data-hub-mode="eventos" type="button"><span class="hub-mode-icon orange">🏆</span><span><strong>EVENTOS</strong><small>Próximamente</small></span><i>PRONTO</i></button>
+        <button class="hub-mode locked" data-hub-mode="tienda" type="button"><span class="hub-mode-icon yellow">▦</span><span><strong>TIENDA</strong><small>Requiere online</small></span><i>ONLINE</i></button>
+      </div>
+      <div class="hub-option-grid">
+        <button class="hub-option yellow" data-hub-panel="inventario" type="button">▣<span>INVENTARIO</span></button>
+        <button class="hub-option cyan" data-hub-panel="ayuda" type="button">?<span>AYUDA</span></button>
+        <button class="hub-option blue" data-hub-panel="info" type="button">i<span>INFO</span></button>
+        <button class="hub-option pink" data-hub-panel="creditos" type="button">★<span>CRÉDITOS</span></button>
+        <button class="hub-option yellow" data-hub-panel="leaderboard" type="button">▲<span>RANKING</span></button>
+        <button class="hub-option cyan" data-hub-panel="forum" type="button">◍<span>FORO</span></button>
+        <button class="hub-option green" data-hub-panel="redes" type="button">✆<span>REDES</span></button>
+        <button class="hub-option orange" data-hub-panel="cambios" type="button">◷<span>CAMBIOS</span></button>
+        <button class="hub-option violet" id="hub-settings" type="button">⚙<span>CONFIG</span></button>
+        <button class="hub-option purple" data-hub-panel="otros" type="button">≡<span>OTROS</span></button>
+      </div>
+      <div class="hub-account">
+        <div class="guest-chip"><span class="guest-avatar" id="hub-avatar">G</span><strong id="hub-guest-name">Invitado</strong></div>
+        <button class="secondary" id="hub-online" type="button">Jugar online</button>
+        <button class="secondary" id="hub-back" type="button">Salir del modo local</button>
+      </div>
+    </aside>
+    <div class="hub-main">
+      <div class="hub-notes" id="hub-notes"></div>
+      <div class="hub-easter hidden" id="hub-easter">
+        <span id="hub-easter-label">EASTER EGG</span>
+        <div class="easter-dots" id="easter-dots"><i></i><i></i><i></i></div>
+        <strong id="hub-easter-state"></strong>
+      </div>
+      <div class="hub-hero">
+        <div class="kicker" id="hub-mode-kicker">MODO LOCAL · 1 JUGADOR</div>
+        <h1 id="hub-mode-title">Elige una pista</h1>
+        <p class="sub" id="hub-mode-desc">Juega las pistas oficiales o carga tus niveles y canciones. Todo se guarda en este equipo y no requiere conexión.</p>
+        <div class="hub-hero-actions">
+          <button class="primary" id="hub-play" type="button">Jugar solo</button>
+          <button class="secondary" id="hub-play-versus" type="button">1 vs 1 local</button>
+          <button class="secondary" id="hub-create" type="button">Crear nivel</button>
         </div>
       </div>
-      <div class="hub-grid">
+      <div class="hub-notice hidden" id="hub-notice"></div>
+      <div class="hub-cards">
         <button class="mode-card cyan" id="hub-local" type="button">
           <span class="mode-icon">▶</span>
-          <strong>Modo local</strong>
-          <small>Juega las pistas oficiales o carga tus niveles y canciones.</small>
+          <strong>Modo solo</strong>
+          <small>Pistas oficiales, dificultades y récords locales.</small>
           <em>1 JUGADOR</em>
         </button>
         <button class="mode-card pink" id="hub-multi" type="button">
           <span class="mode-icon">1v1</span>
           <strong>Multijugador local</strong>
-          <small>1 vs 1 en el mismo equipo, J1 y J2.</small>
+          <small>Dos jugadores en el mismo equipo, J1 y J2.</small>
           <em>1 VS 1</em>
         </button>
         <button class="mode-card green" id="hub-editor" type="button">
-          <span class="mode-icon">+</span>
+          <span class="mode-icon">＋</span>
           <strong>Editor local</strong>
-          <small>Crea y edita niveles sin conexión.</small>
+          <small>Crea, guarda y juega tus propios niveles.</small>
           <em>DISPONIBLE</em>
         </button>
         <button class="mode-card yellow" id="hub-inventory" type="button">
@@ -104,10 +147,11 @@
           <em>LOCAL</em>
         </button>
       </div>
-      <div class="hub-foot">
-        <button class="secondary" id="hub-online" type="button">Jugar online</button>
-        <button class="secondary" id="hub-settings" type="button">Configuración</button>
-        <button class="secondary" id="hub-back" type="button">Volver al inicio</button>
+      <div class="hub-stats">
+        <div><span>Pistas oficiales</span><strong id="hub-stat-official">0</strong></div>
+        <div><span>Niveles locales</span><strong id="hub-stat-levels">0</strong></div>
+        <div><span>Canciones locales</span><strong id="hub-stat-songs">0</strong></div>
+        <div><span>Modo</span><strong>Sin conexión</strong></div>
       </div>
     </div>
   </section>
@@ -154,7 +198,7 @@
         </div>
       </div>
       <p class="sub">Dos jugadores en el mismo equipo. J1 usa las flechas; J2 usa D F J K. Sin salas, sin internet y sin rankings online.</p>
-      <div class="guest-chip"><span class="guest-avatar">J1</span><strong>Invitado J1</strong><span class="vs-sep">VS</span><span class="guest-avatar pink">J2</span><strong>Invitado J2</strong></div>
+      <div class="guest-chip"><span class="guest-avatar">J1</span><strong id="vs-p1-name">Invitado</strong><span class="vs-sep">VS</span><span class="guest-avatar pink">J2</span><strong id="vs-p2-name">Invitado J2</strong></div>
       <div class="difficulty" id="versus-difficulty">
         <button class="vs-diff" data-diff="Easy" type="button">Easy</button>
         <button class="vs-diff active" data-diff="Normal" type="button">Normal</button>
@@ -263,6 +307,12 @@
   <div id="results"><div class="result-card"><div class="result-title" id="result-track">Track</div><div class="result-grade" id="result-grade">S</div><div class="result-title">Puntuación final</div><div class="result-grid"><div class="result-row">Score<strong id="result-score">0</strong></div><div class="result-row">Accuracy<strong id="result-acc">100%</strong></div><div class="result-row">Max combo<strong id="result-combo">0</strong></div><div class="result-row">Misses<strong id="result-miss">0</strong></div></div><div class="result-actions"><button class="secondary" id="retry-btn" type="button">Repetir</button><button class="secondary" id="back-btn" type="button">Lista de pistas</button></div></div></div>
 </section>
 
+<div id="local-modal" class="local-modal hidden">
+  <div class="local-modal-card">
+    <button class="local-modal-close" id="local-modal-close" type="button" aria-label="Cerrar">×</button>
+    <div id="local-modal-body"></div>
+  </div>
+</div>
 <footer><span>© 2026 Ciszu Network · MuzicMania Offline</span><span>Datos locales · Sin conexión</span></footer>
 <input id="level-file" type="file" accept=".json,application/json" hidden>
 <input id="song-file" type="file" accept="audio/*" hidden>

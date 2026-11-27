@@ -202,8 +202,277 @@
   }
 
   function updateStats() {
+    var songs = store.levels.filter(function (level) { return level.audioId; }).length;
     if ($('stat-levels')) $('stat-levels').textContent = String(store.levels.length);
-    if ($('stat-songs')) $('stat-songs').textContent = String(store.levels.filter(function (level) { return level.audioId; }).length);
+    if ($('stat-songs')) $('stat-songs').textContent = String(songs);
+    if ($('hub-stat-levels')) $('hub-stat-levels').textContent = String(store.levels.length);
+    if ($('hub-stat-songs')) $('hub-stat-songs').textContent = String(songs);
+    if ($('hub-stat-official')) $('hub-stat-official').textContent = String(typeof OFFICIAL_TRACKS !== 'undefined' ? OFFICIAL_TRACKS.length : 0);
+  }
+
+  var identity = { name: 'Invitado', guest: true, avatar: '' };
+  var hubNoticeTimer = null;
+  var easter = {
+    clicks: Number(localStorage.getItem('muzic_local_logo_clicks') || 0) || 0,
+    cat: localStorage.getItem('muzic_local_cat_mode') === '1'
+  };
+
+  function readIdentity() {
+    var params = new URLSearchParams(location.search);
+    var queryGuest = params.get('guest');
+    var storedGuest = localStorage.getItem('muzic_launcher_guest');
+    if (queryGuest && /^Guest\d{6}$/.test(queryGuest)) {
+      identity.guest = true;
+      identity.name = queryGuest;
+      try { localStorage.setItem('muzic_launcher_guest', queryGuest); } catch (e) {}
+    } else if (storedGuest && /^Guest\d{6}$/.test(storedGuest)) {
+      identity.guest = true;
+      identity.name = storedGuest;
+    } else if (!params.get('name')) {
+      identity.guest = true;
+      identity.name = 'Guest' + String(Math.floor(100000 + Math.random() * 900000));
+      try { localStorage.setItem('muzic_launcher_guest', identity.name); } catch (e) {}
+    }
+    var display = params.get('name');
+    if (display) {
+      identity.guest = false;
+      identity.name = display.slice(0, 48);
+    }
+    var avatar = params.get('avatar');
+    if (avatar && /^https:\/\//.test(avatar)) identity.avatar = avatar;
+  }
+
+  function applyIdentity() {
+    var name = identity.name || 'Invitado';
+    var hubName = $('hub-guest-name');
+    if (hubName) hubName.textContent = name;
+    var setupName = $('setup-guest-name');
+    if (setupName) setupName.textContent = name;
+    var welcomeName = $('welcome-guest-name');
+    if (welcomeName) welcomeName.textContent = name;
+    var p1 = $('vs-p1-name');
+    if (p1) p1.textContent = name;
+    var p2 = $('vs-p2-name');
+    if (p2) p2.textContent = name + ' · J2';
+    ['hub-avatar', 'setup-guest-avatar', 'welcome-guest-avatar'].forEach(function (id) {
+      var el = $(id);
+      if (!el) return;
+      if (identity.avatar) {
+        el.innerHTML = '';
+        var image = document.createElement('img');
+        image.src = identity.avatar;
+        image.alt = '';
+        el.appendChild(image);
+      } else {
+        el.textContent = name.trim().charAt(0).toUpperCase() || 'G';
+      }
+    });
+  }
+
+  function hubNotice(text) {
+    var el = $('hub-notice');
+    if (!el) return;
+    clearTimeout(hubNoticeTimer);
+    if (!text) { el.classList.add('hidden'); return; }
+    el.textContent = text;
+    el.classList.remove('hidden');
+    hubNoticeTimer = setTimeout(function () { el.classList.add('hidden'); }, 6500);
+  }
+
+  function openExternalUrl(url) {
+    if (!url) return;
+    try {
+      if (window.__TAURI_INTERNALS__ && window.__TAURI_INTERNALS__.invoke) {
+        window.__TAURI_INTERNALS__.invoke('open_url', { url: url });
+        return;
+      }
+    } catch (e) {}
+    window.open(url, '_blank', 'noopener');
+  }
+
+  function setLocalTheme(theme) {
+    var next = theme === 'dark' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('muzic_launcher_theme', next); } catch (e) {}
+  }
+
+  function panelHtml(panel) {
+    if (panel === 'ayuda') {
+      return '<div class="kicker">AYUDA LOCAL</div><h2>Cómo jugar sin conexión</h2>'
+        + '<h3>Controles</h3><ul><li><code>D F J K</code> o <code>← ↓ ↑ →</code> para las notas.</li>'
+        + '<li><code>Esc</code> pausa o sale de la partida.</li><li>En 1 vs 1: J1 usa flechas y J2 usa D F J K.</li></ul>'
+        + '<h3>Niveles y canciones</h3><p>Desde <strong>Modo solo</strong> puedes cargar un nivel JSON o una canción local. '
+        + 'Todo queda en este equipo, dentro de IndexedDB y localStorage.</p>'
+        + '<h3>Sin conexión</h3><p>La tienda, el ranking online, el foro y las salas online no están disponibles. '
+        + 'Los récords locales son independientes de los online.</p>';
+    }
+    if (panel === 'info') {
+      return '<div class="kicker">ACERCA DE</div><h2>MuzicMania Local</h2>'
+        + '<p>Shell offline de MuzicMania para jugar sin internet. Reutiliza el motor de la web y guarda niveles, '
+        + 'canciones, récords y ajustes en el equipo.</p>'
+        + '<h3>Privacidad</h3><p>No se envía nada a ningún servidor mientras juegas en local. La telemetría del launcher '
+        + 'se controla desde sus Opciones y puede desactivarse.</p>'
+        + '<h3>Versión</h3><p>Launcher y motor local comparten la versión instalada de MuzicMania.</p>';
+    }
+    if (panel === 'creditos') {
+      return '<div class="kicker">CRÉDITOS</div><h2>Hecho por Ciszu Network</h2>'
+        + '<p>Dirección, diseño y desarrollo: <strong>Ciszuko Antony</strong>.</p>'
+        + '<p>MuzicMania forma parte del ecosistema Ciszu Network. Motor rítmico, editor local y modo 1 vs 1 '
+        + 'pensados para funcionar incluso sin conexión.</p>'
+        + '<h3>Agradecimientos</h3><p>A la comunidad de MuzicMania y a todos los que prueban los niveles locales.</p>';
+    }
+    if (panel === 'redes') {
+      return '<div class="kicker">COMUNIDAD</div><h2>Redes oficiales</h2>'
+        + '<p>Estos enlaces necesitan conexión y se abren fuera del modo local.</p>'
+        + '<button class="modal-link" data-external="https://discord.gg/W3kMtMMj6E">Discord <span>Comunidad</span></button>'
+        + '<button class="modal-link" data-external="https://www.youtube.com/@CiszuNetwork">YouTube <span>Vídeos</span></button>'
+        + '<button class="modal-link" data-external="https://x.com/CiszukoAntony">X <span>Noticias</span></button>'
+        + '<button class="modal-link" data-external="https://wa.me/584126858111">WhatsApp <span>Soporte</span></button>'
+        + '<button class="modal-link" data-external="https://github.com/Ciszu-Network">GitHub <span>Código</span></button>';
+    }
+    if (panel === 'cambios') {
+      return '<div class="kicker">CAMBIOS</div><h2>Novedades del modo local</h2>'
+        + '<ul><li>Hub con la misma estructura de <code>/play</code>: modos, opciones y cuenta.</li>'
+        + '<li>Editor TAP/HOLD/MINE, canciones locales y 1 vs 1 en el mismo equipo.</li>'
+        + '<li>Tema claro por defecto y tema oscuro desde Opciones.</li>'
+        + '<li>Notificaciones y logs del launcher con búsqueda, filtros y actualizaciones.</li></ul>'
+        + '<p>El historial completo está en la web oficial.</p>'
+        + '<button class="modal-link" data-external="https://muzicmania.vercel.app/changelog">Abrir changelog <span>Web</span></button>';
+    }
+    if (panel === 'leaderboard') {
+      return '<div class="kicker">RANKING</div><h2>Ranking online</h2>'
+        + '<p>El ranking global requiere conexión y una cuenta CISZU ID. En modo local solo existen récords guardados en este equipo.</p>'
+        + '<button class="modal-link" data-external="https://muzicmania.vercel.app/leaderboard">Abrir ranking online <span>Requiere red</span></button>';
+    }
+    if (panel === 'forum') {
+      return '<div class="kicker">FORO</div><h2>Foro de la comunidad</h2>'
+        + '<p>El foro es una función online. Puedes abrirlo en la web cuando tengas conexión.</p>'
+        + '<button class="modal-link" data-external="https://muzicmania.vercel.app/forum">Abrir foro <span>Requiere red</span></button>';
+    }
+    if (panel === 'otros') {
+      return '<div class="kicker">OTROS</div><h2>Ajustes rápidos</h2>'
+        + '<div class="modal-theme-row"><span>Tema del shell local</span><button class="secondary" data-theme-toggle type="button">'
+        + (document.documentElement.dataset.theme === 'dark' ? 'Cambiar a claro' : 'Cambiar a oscuro') + '</button></div>'
+        + '<p style="margin-top:12px">El tema también se configura en las Opciones del launcher y se aplica al abrir el modo local.</p>'
+        + '<div class="modal-actions"><button class="secondary" data-panel-action="settings" type="button">Abrir configuración</button>'
+        + '<button class="secondary" data-panel-action="inventory" type="button">Abrir inventario</button></div>';
+    }
+    return '<h2>—</h2>';
+  }
+
+  function closeLocalModal() {
+    $('local-modal')?.classList.add('hidden');
+  }
+
+  function openLocalModal(panel) {
+    var modal = $('local-modal');
+    var body = $('local-modal-body');
+    if (!modal || !body) return;
+    body.innerHTML = panelHtml(panel);
+    modal.classList.remove('hidden');
+    body.querySelectorAll('[data-external]').forEach(function (button) {
+      button.addEventListener('click', function () { openExternalUrl(button.getAttribute('data-external')); });
+    });
+    body.querySelectorAll('[data-theme-toggle]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        setLocalTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+        closeLocalModal();
+      });
+    });
+    body.querySelectorAll('[data-panel-action]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        closeLocalModal();
+        var action = button.getAttribute('data-panel-action');
+        if (action === 'settings') showView('settings');
+        if (action === 'inventory') showView('inventory');
+      });
+    });
+  }
+
+  function openHubPanel(panel) {
+    if (panel === 'inventario') { showView('inventory'); return; }
+    if (panel === 'historia') { hubNotice('Historia estará disponible próximamente.'); return; }
+    if (panel === 'eventos') { hubNotice('Los eventos requieren conexión y estarán disponibles próximamente.'); return; }
+    if (panel === 'tienda') { hubNotice('La tienda requiere conexión. En local no hay compras.'); return; }
+    openLocalModal(panel);
+  }
+
+  function renderEaster() {
+    var indicator = $('hub-easter');
+    if (!indicator) return;
+    var visible = easter.clicks > 0 || easter.cat;
+    indicator.classList.toggle('hidden', !visible);
+    var label = $('hub-easter-label');
+    if (label) label.textContent = easter.cat ? 'MODO GATO' : 'EASTER EGG';
+    var dots = document.querySelectorAll('#easter-dots i');
+    dots.forEach(function (dot, index) { dot.classList.toggle('on', index < easter.clicks || easter.cat); });
+    var state = $('hub-easter-state');
+    if (state) state.textContent = easter.cat ? '😺 ACTIVADO' : (easter.clicks >= 3 ? '✨ COMPLETADO' : '');
+    var brand = $('hub-brand');
+    if (brand) brand.title = easter.cat ? 'MuzicMania · modo gato' : 'MuzicMania';
+    renderHubNotes();
+  }
+
+  function renderHubNotes() {
+    var host = $('hub-notes');
+    if (!host) return;
+    host.innerHTML = '';
+    var symbols = easter.cat ? ['🐱', '😺', '🐈', '🐾'] : ['♪', '♫', '♬', '◆', '●', '✦'];
+    for (var i = 0; i < 16; i += 1) {
+      var note = document.createElement('span');
+      note.className = 'hub-note' + (easter.cat ? ' cat' : '');
+      note.textContent = symbols[i % symbols.length];
+      note.style.left = (4 + Math.random() * 92) + '%';
+      note.style.top = (8 + Math.random() * 84) + '%';
+      note.style.animationDuration = (5 + Math.random() * 6).toFixed(1) + 's';
+      note.style.animationDelay = (-Math.random() * 6).toFixed(1) + 's';
+      host.appendChild(note);
+    }
+  }
+
+  function registerEasterClick() {
+    easter.clicks += 1;
+    if (easter.clicks >= 3) {
+      easter.cat = !easter.cat;
+      easter.clicks = 0;
+    }
+    try {
+      localStorage.setItem('muzic_local_logo_clicks', String(easter.clicks));
+      localStorage.setItem('muzic_local_cat_mode', easter.cat ? '1' : '0');
+    } catch (e) {}
+    renderEaster();
+  }
+
+  function selectHubMode(mode) {
+    var target = document.querySelector('.hub-mode[data-hub-mode="' + mode + '"]');
+    if (target && target.classList.contains('locked')) {
+      if (mode === 'historia') hubNotice('Historia estará disponible próximamente.');
+      else if (mode === 'eventos') hubNotice('Los eventos requieren conexión y estarán disponibles próximamente.');
+      else if (mode === 'tienda') hubNotice('La tienda requiere conexión. En local no hay compras.');
+      return;
+    }
+    document.querySelectorAll('.hub-mode').forEach(function (button) {
+      button.classList.toggle('active', button.getAttribute('data-hub-mode') === mode);
+    });
+    var kicker = $('hub-mode-kicker');
+    var title = $('hub-mode-title');
+    var desc = $('hub-mode-desc');
+    if (mode === 'solo' || mode === 'local') {
+      if (kicker) kicker.textContent = 'MODO LOCAL · 1 JUGADOR';
+      if (title) title.textContent = 'Elige una pista';
+      if (desc) desc.textContent = 'Juega las pistas oficiales o carga tus niveles y canciones. Todo se guarda en este equipo y no requiere conexión.';
+      showView('solo');
+    } else if (mode === 'multijugador') {
+      showView('versus');
+    } else if (mode === 'crear') {
+      openEditor();
+    } else if (mode === 'historia') {
+      hubNotice('Historia estará disponible próximamente.');
+    } else if (mode === 'eventos') {
+      hubNotice('Los eventos requieren conexión y estarán disponibles próximamente.');
+    } else if (mode === 'tienda') {
+      hubNotice('La tienda requiere conexión. En local no hay compras.');
+    }
   }
 
   function downloadJson(payload, name) {
@@ -600,6 +869,20 @@
     $('hub-inventory').addEventListener('click', function () { showView('inventory'); });
     $('hub-settings').addEventListener('click', function () { showView('settings'); });
     $('hub-back').addEventListener('click', function () { showView('welcome'); });
+    $('hub-play')?.addEventListener('click', function () { showView('solo'); });
+    $('hub-play-versus')?.addEventListener('click', function () { showView('versus'); });
+    $('hub-create')?.addEventListener('click', openEditor);
+    $('hub-brand')?.addEventListener('click', registerEasterClick);
+    document.querySelectorAll('.hub-mode').forEach(function (button) {
+      button.addEventListener('click', function () { selectHubMode(button.getAttribute('data-hub-mode')); });
+    });
+    document.querySelectorAll('[data-hub-panel]').forEach(function (button) {
+      button.addEventListener('click', function () { openHubPanel(button.getAttribute('data-hub-panel')); });
+    });
+    $('local-modal-close')?.addEventListener('click', closeLocalModal);
+    $('local-modal')?.addEventListener('click', function (event) {
+      if (event.target === $('local-modal')) closeLocalModal();
+    });
     var onlineButton = $('hub-online');
     var refreshOnlineButton = function () {
       if (!onlineButton) return;
@@ -678,6 +961,9 @@
       await rebuildTracks();
       setStatus('Datos locales borrados.');
     });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !$('local-modal')?.classList.contains('hidden')) closeLocalModal();
+    });
     $('net-badge').textContent = 'LOCAL · SIN RED';
   }
 
@@ -692,7 +978,24 @@
   };
 
   async function boot() {
+    const embedded = window.self !== window.top;
+    document.documentElement.dataset.embedded = embedded ? 'true' : 'false';
+    document.body.classList.toggle('embedded', embedded);
+    const queryTheme = new URLSearchParams(location.search).get('theme');
+    const storedTheme = (() => { try { return localStorage.getItem('muzic_launcher_theme'); } catch { return null; } })();
+    const theme = queryTheme === 'dark' || queryTheme === 'light' ? queryTheme : (storedTheme === 'dark' ? 'dark' : 'light');
+    document.documentElement.dataset.theme = theme;
+    try { localStorage.setItem('muzic_launcher_theme', theme); } catch {}
+    window.addEventListener('message', (event) => {
+      if (event.data?.type !== 'muzic-theme') return;
+      const next = event.data.theme === 'dark' ? 'dark' : 'light';
+      document.documentElement.dataset.theme = next;
+      try { localStorage.setItem('muzic_launcher_theme', next); } catch {}
+    });
+    readIdentity();
+    applyIdentity();
     bind();
+    renderEaster();
     applyInputMode((store.settings && store.settings.inputMode) || 'dfjk');
     await rebuildTracks();
     showView('welcome');

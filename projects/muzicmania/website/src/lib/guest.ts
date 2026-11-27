@@ -12,6 +12,11 @@ export function generateGuestName(): string {
 
 export function getGuestName(): string {
   if (typeof window === 'undefined') return generateGuestName();
+  const queryGuest = new URLSearchParams(window.location.search).get('guest');
+  if (queryGuest && /^Guest\d{6}$/.test(queryGuest)) {
+    localStorage.setItem(GUEST_KEY, queryGuest);
+    return queryGuest;
+  }
   const saved = localStorage.getItem(GUEST_KEY);
   if (saved) {
     const normalized = normalizeGuest(saved);

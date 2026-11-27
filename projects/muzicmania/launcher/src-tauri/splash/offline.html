@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';">
 <title>MuzicMania — Offline</title>
+<script>
+  try {
+    const storedTheme = localStorage.getItem('muzic_launcher_theme');
+    document.documentElement.dataset.theme = storedTheme === 'dark' ? 'dark' : 'light';
+  } catch {
+    document.documentElement.dataset.theme = 'light';
+  }
+</script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%}
@@ -25,6 +33,16 @@ body{background:#08080f;color:#e0e0e0;font-family:'Segoe UI',system-ui,sans-seri
 .close-card p{font-size:12px;color:#9ba1b8;line-height:1.6;margin-bottom:16px}
 .close-card .btns{display:flex;gap:8px;flex-wrap:wrap}
 .close-card .btn{font-size:9px;padding:10px 14px}
+</style>
+<style>
+  html[data-theme="light"] body { background: #eef3fa; color: #0b1526; }
+  html[data-theme="light"] .title { color: #d92d3f; }
+  html[data-theme="light"] .desc { color: #506078; }
+  html[data-theme="light"] .btn { border-color: rgba(13, 30, 55, .16); color: #506078; }
+  html[data-theme="light"] .btn-secondary:hover { background: rgba(13, 30, 55, .05); color: #0b1526; }
+  html[data-theme="light"] .close-overlay { background: rgba(238, 243, 250, .8); }
+  html[data-theme="light"] .close-card { background: #fff; border-color: rgba(13, 30, 55, .14); }
+  html[data-theme="light"] .close-card p { color: #506078; }
 </style>
 </head>
 <body>

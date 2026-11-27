@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MuzicMania - Uninstall</title>
+<script>
+  try {
+    const storedTheme = localStorage.getItem('muzic_launcher_theme');
+    document.documentElement.dataset.theme = storedTheme === 'dark' ? 'dark' : 'light';
+  } catch {
+    document.documentElement.dataset.theme = 'light';
+  }
+</script>
 <style>
   :root { --bg:#0B0C10; --panel:rgba(22,24,33,.72); --primary:#6C5CE7; --primary-hover:#8A7DF2; --glow:rgba(108,92,231,.5); --text:#F8F9FA; --muted:#A0A5B5; --danger:#FF4757; --success:#2ED573; --border:rgba(255,255,255,.08); }
   html { overflow:hidden; }
@@ -102,6 +110,32 @@
 </style>
 <link rel="stylesheet" href="roadmap.css">
 <link rel="stylesheet" href="setup-titlebar.css">
+<style>
+  html[data-theme="light"] {
+    --bg: #eef3fa;
+    --panel: rgba(255, 255, 255, 0.92);
+    --text: #0b1526;
+    --muted: #506078;
+    --border: rgba(13, 30, 55, 0.14);
+  }
+  html[data-theme="light"] body { background: var(--bg); color: var(--text); }
+  html[data-theme="light"] .bg-glow { opacity: .55; }
+  html[data-theme="light"] .info-row,
+  html[data-theme="light"] .checkbox-wrapper,
+  html[data-theme="light"] .language-card,
+  html[data-theme="light"] .language-trigger,
+  html[data-theme="light"] .footer-lang { background: rgba(13, 30, 55, .04); }
+  html[data-theme="light"] .reason { background: rgba(13, 30, 55, .03); }
+  html[data-theme="light"] .reason:hover { color: var(--text); }
+  html[data-theme="light"] .star { color: rgba(13, 30, 55, .2); }
+  html[data-theme="light"] textarea { background: #fff; color: var(--text); }
+  html[data-theme="light"] .language-modal,
+  html[data-theme="light"] .modal { background: #fff; color: var(--text); }
+  html[data-theme="light"] .language-option { background: rgba(13, 30, 55, .035); color: var(--text); }
+  html[data-theme="light"] .language-option:hover,
+  html[data-theme="light"] .language-option.selected { background: rgba(108, 92, 231, .1); }
+  html[data-theme="light"] .btn-secondary { background: rgba(13, 30, 55, .05); }
+</style>
 </head>
 <body>
 <svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">

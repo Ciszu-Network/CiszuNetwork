@@ -198,8 +198,23 @@ export default function LoginPage() {
   const isLauncherLogin = () =>
     typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('launcher') === '1';
 
-  const returnToLauncher = (session: any, user: any, profile: any) => {
+  const returnToLauncher = async (session: any, user: any, profile: any) => {
     if (!isLauncherLogin() || !session) return false;
+    // Token de alcance limitado: solo leer/marcar notificaciones. El launcher
+    // nunca recibe el access_token de Supabase.
+    let launcherToken = '';
+    try {
+      const response = await fetch('/api/launcher/session', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        launcherToken = typeof data?.token === 'string' ? data.token : '';
+      }
+    } catch {
+      // Sin token el launcher sigue funcionando con notificaciones locales.
+    }
     const payload = {
       guest: false,
       user_id: user?.id || session.user?.id || '',
@@ -208,6 +223,7 @@ export default function LoginPage() {
       avatar_url: profile?.avatar_url || '',
       role: profile?.role || 'user',
       remember: rememberMe,
+      launcher_token: launcherToken,
     };
     window.location.href = `/launcher-auth?session=${encodeURIComponent(JSON.stringify(payload))}`;
     return true;
@@ -222,7 +238,7 @@ export default function LoginPage() {
       .select('id, username, display_name, avatar_url, role, is_admin')
       .eq('id', session.user.id)
       .maybeSingle();
-    returnToLauncher(session, session.user, profile);
+    return returnToLauncher(session, session.user, profile);
   };
 
   useEffect(() => {
@@ -366,7 +382,7 @@ export default function LoginPage() {
           })
           .eq('id', data.user.id);
 
-        if (returnToLauncher(data.session, data.user, profile)) return;
+        if (await returnToLauncher(data.session, data.user, profile)) return;
 
         setFeedback({ 
           isVisible: true, 
