@@ -153,6 +153,20 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 > Este historial absorbe `PROJECT_HISTORY.md` (eliminado 13 ago 2026). Añadir aquí los
 > nuevos hitos al cierre de sesión.
 
+### 27 de Noviembre, 2026 — Launcher: cuenta, tema, notificaciones y paridad offline
+
+- **Invitados**: numeración local persistente `Guest` + 6 dígitos en launcher y shell offline; `/play` recibe `?guest=` y conserva el mismo nombre. Con cuenta online se muestra `display_name` y avatar.
+- **Menú de cuenta**: click en el usuario abre configuración del launcher; offline añade “Actualizar conexión”; online añade configuración de cuenta y logout (invitado: iniciar sesión). Se puede continuar como invitado desde el login.
+- **Tema**: claro por defecto y selector claro/oscuro en Opciones; aplicado a launcher, splashes, instalador/desinstalador y shell local. El shell embebido oculta su topbar/footer y el launcher deja de duplicar la barra.
+- **Notificaciones**: campana en la barra con contador, búsqueda, filtros, orden, marcar visto, leer todo y borrar. Mezcla notificaciones locales, de cuenta online y logs de error; el icono de actualización aparece al detectar versión nueva.
+- **Cuenta online**: nuevo token de alcance limitado (`/api/launcher/session` + `/api/launcher/notifications`) para leer/marcar notificaciones; no se transporta el `access_token` de Supabase.
+- **Logs**: `launcher.log` local con pánicos, cierres sucios, heartbeat/hangs y errores del webview; rotación a 2 MB y visor en la bandeja.
+- **Chequeo de updates**: cada 60 s con red, incluso en hub offline; abre el flujo de autoactualización existente desde el icono de la barra.
+- **Offline**: hub con sidebar y mismas opciones que `/play` (solo/local/1v1/editor/inventario/ayuda/info/créditos/redes/cambios/config/otros), easter egg de 3 clicks (modo gato), identidad de invitado y tema.
+- **Correcciones**: `offline_back_to_hub` vuelve a la raíz del launcher; el topbar local se oculta dentro del iframe.
+- **Ciszubot**: home con sección “Todas las apps” y Discord como CTA principal; rutas `/invite/telegram` y `/invite/whatsapp` en estado “próximamente”.
+- **Validación**: `cargo check`, `tsc --noEmit` y builds de MuzicMania y Ciszubot; pruebas de UI con Playwright (launcher, cuenta, tema, notificaciones, shell local y páginas nuevas).
+
 ### 25 de Noviembre, 2026 — Fedora 45 operativo y repo consolidado
 
 - **Entorno dual**: Fedora 45 KDE junto a Windows 11; un solo repo en NTFS (`E:\Ciszu Network` = `/mnt/CiscoData2/Ciszu Network`), con el data dir de OpenCode dentro de `.opencode/data`. Residuo del árbol duplicado eliminado.
@@ -718,7 +732,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 3. **Pendientes (§3)**: mover a historial cuando se resuelva, añadir nuevos bloqueos.
 4. Marcar "Última actualización" y actualizar `STATUS_SYSTEM.md` y `STATISTICS_SYSTEM.md`.
 
-_Última revisión: 25 nov 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
+_Última revisión: 27 nov 2026._ Relacionado: `STATUS_SYSTEM.md`, `STATISTICS_SYSTEM.md`,
 `ARCHITECTURE.md`, `GLOBAL_SYSTEM.md`, `AGENTS.md`.
 
 ## Historial — Sesión 21-22 oct 2026

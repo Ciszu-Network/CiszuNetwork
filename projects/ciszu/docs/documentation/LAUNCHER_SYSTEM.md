@@ -1,8 +1,8 @@
 ﻿# LAUNCHER_SYSTEM — Launcher reutilizable de escritorio (Ciszu Network)
 
-Versión: 1.0.0
-Actualización: 2026-11-16
-Identificador: LAUNCHER_SYSTEM_V1.0.0_2026_11_16_ciszunetwork
+Versión: 1.1.0
+Actualización: 2026-11-27
+Identificador: LAUNCHER_SYSTEM_V1.1.0_2026_11_27_ciszunetwork
 
 > **Definición**: sistema oficial del launcher de escritorio de Ciszu Network: splash,
 > actualización, tutorial, login, hub, offline, configuración, bandeja y cierre, reutilizable
@@ -39,10 +39,12 @@ Plantilla:
 | Tutorial | Pasos de bienvenida | Entrar al hub |
 | Login | CISZU ID o invitado | Abrir login oficial |
 | Hub | Cuenta, estado, juego, comunidad, ayuda | Jugar online/offline |
-| Configuración | Modal centrado | Guardar preferencias |
-| Offline | Aviso de modo local | Volver al menú / Jugar |
+| Configuración | Modal centrado (idioma, tema, arranque, updates, telemetría) | Guardar preferencias |
+| Notificaciones | Bandeja de la barra de ventana: cuenta online + locales + logs | Buscar, filtrar, ordenar, marcar, borrar |
+| Offline | Shell local con hub, modos, ajustes y editor | Volver al menú / Jugar |
 | Offline game | Juego local | Jugar pistas |
 | Close dialog | Cerrar a bandeja o salir | Recordar elección |
+| Update chip | Icono de actualización en la barra | Abrir el actualizador existente |
 
 ## 3. Flujo de arranque
 
@@ -86,7 +88,47 @@ El hub contiene:
   3. Si hay conexión y no hay sesión, abrir login.
   4. Si hay sesión, continuar al hub/juego.
 
-### 4.2 Botones
+### 4.2 Cuenta y menú de usuario
+
+- La barra muestra el avatar y el nombre: `GuestXXXXXX` para invitados y `display_name` para
+  cuentas online.
+- Click en la cuenta abre un menú contextual:
+  - Offline: configuración del launcher y “Actualizar conexión”.
+  - Online: configuración del launcher, configuración de cuenta y cerrar sesión; si es invitado,
+    además “Iniciar sesión”.
+- El invitado conserva una numeración local persistente (`Guest` + 6 dígitos) y la web la recibe
+  por `?guest=` para que `/play` use el mismo nombre. Nunca se muestra “Invitado” genérico si ya
+  existe un nombre local.
+
+### 4.3 Notificaciones y logs
+
+- La barra de ventana incluye una campana con contador de no leídas y un icono de actualización
+  cuando hay una versión nueva.
+- Fuentes de notificaciones:
+  - **Cuenta online**: `GET/PATCH /api/launcher/notifications`, autenticado con un token de
+    alcance limitado (solo leer/marcar notificaciones). Nunca se transporta el `access_token`
+    de Supabase.
+  - **Locales**: eventos del launcher (offline, errores, actualizaciones, cuenta) persistidos en
+    `localStorage`.
+  - **Logs**: errores y avisos del archivo `launcher.log` se convierten en notificaciones; el
+    filtro “Logs” permite ver el historial completo.
+- Controles: búsqueda, filtro por tipo/estado, orden recientes/antiguas, marcar visto, leer todo,
+  borrar notificaciones y borrar logs.
+- El chequeo silencioso de actualizaciones corre cada 60 s cuando hay red, independientemente del
+  modo online/offline del hub. Si hay versión nueva, crea una notificación y muestra el icono de
+  actualización; al pulsarlo se abre el flujo de autoactualización existente.
+
+### 4.4 Logs locales y detección de fallos
+
+- `launcher.log` (junto a `desktop_settings.json`) registra arranque, cierre, errores, pánicos,
+  navegación y eventos de red.
+- Un hilo de Rust comprueba el heartbeat del webview cada 15 s; si no responde en 120 s escribe
+  `hang_detected`.
+- Al arrancar, si la última línea del log no es un cierre limpio, escribe
+  `previous_session_unclean` y lo muestra como aviso en la bandeja.
+- Rotación automática al superar 2 MB (conserva las últimas 1.500 líneas).
+
+### 4.5 Botones
 
 - Jugar online: solo si hay conexión.
 - Jugar offline: siempre disponible.
@@ -213,6 +255,13 @@ El modo offline vive dentro del mismo shell del launcher, no en una página sepa
 | Comando | Uso |
 |---|---|
 | `launcher_boot` | Versión, primer inicio, sesión y settings |
+| `launcher_log` | Escribir una entrada en el log local |
+| `launcher_logs_read` | Leer las últimas entradas del log |
+| `launcher_logs_clear` | Borrar el log local |
+| `launcher_heartbeat` | Señal de vida del webview |
+| `launcher_notifications` | Leer notificaciones de la cuenta (token de alcance limitado) |
+| `launcher_notifications_read` | Marcar notificaciones como leídas |
+| `offline_back_to_hub` | Volver al hub desde el shell offline |
 | `launcher_session` | Leer sesión |
 | `launcher_guest` | Crear invitado |
 | `launcher_logout` | Cerrar sesión |
@@ -243,14 +292,18 @@ El modo offline vive dentro del mismo shell del launcher, no en una página sepa
   "auto_update": true,
   "tutorial_done": false,
   "language": "1034",
+  "theme": "light",
   "launch_on_startup": false,
   "close_action": "ask"
 }
 ```
 
 - `language` usa el código numérico.
+- `theme` acepta `light` (por defecto) o `dark`; se aplica al instante en launcher, splashes y shell local.
 - `close_action` acepta `ask`, `background` o `exit`.
-- Nunca guardar tokens, emails ni secretos.
+- El `launcher_session.json` puede guardar un token de notificaciones de alcance limitado; nunca el
+  `access_token`/`refresh_token` de Supabase ni emails.
+- Nunca guardar tokens de acceso completos, emails ni secretos.
 
 ## 13. Plantilla
 
@@ -340,12 +393,15 @@ esta secuencia para no permitir saltarse un bloqueo obligatorio.
 
 La sesión se guarda en `launcher_session.json` solo si `remember=true`. Si el usuario no marca
 Recordarme, la sesión vive durante la ejecución actual y se elimina al cerrar. El invitado
-automático se usa únicamente cuando no hay conexión; con conexión el hub exige login. El hub
-muestra “BIENVENIDO A MUZICMANIA · ¿PRIMERA VEZ?” durante la primera sesión y cambia a
-“BIENVENIDO DE VUELTA” en las siguientes.
+automático se usa cuando no hay conexión y también puede elegirse con “Continuar como invitado”
+en la pantalla de login. El hub muestra “BIENVENIDO A MUZICMANIA · ¿PRIMERA VEZ?” durante la
+primera sesión y cambia a “BIENVENIDO DE VUELTA” en las siguientes.
 
-_Última revisión: 18 nov 2026._
-_Última revisión: 18 nov 2026._ Relacionado: `DESKTOP_SHELL_SYSTEM.md`,
+El invitado lleva numeración local persistente (`Guest` + 6 dígitos). El launcher la pasa a
+`/play?guest=GuestXXXXXX` para que la web use exactamente el mismo nombre, y al shell offline
+por `local/index.html?guest=...`. Con cuenta online se muestra `display_name` y avatar reales.
+
+_Última revisión: 27 nov 2026._ Relacionado: `DESKTOP_SHELL_SYSTEM.md`,
 `INSTALLERS_SYSTEM.md`, `RELEASE_POLICY_SYSTEM.md`, `AUTH_SYSTEM.md`, `FRONTEND_SYSTEM.md`.
 
 

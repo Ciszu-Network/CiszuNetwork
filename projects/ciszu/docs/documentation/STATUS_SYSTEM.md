@@ -411,4 +411,14 @@ _Última revisión: 14 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Modo offline local (27 nov)**: shell `splash/local/` con bienvenida, configuración de teclas, hub, pistas oficiales, niveles/canciones locales, IndexedDB y récords; launcher abre `local/index.html`. Editor local y 1v1 local implementados en la misma fase; modo local online añadido al hub de `/play`. Incidencia de energía: NTFS reparado desde Windows; `git fsck`, TypeScript y `cargo check` limpios.
 - **Herramientas Linux (26 nov)**: `md2office`/`txt2pdf` detectan Pandoc/fuentes y usan LibreOffice; `sync-public-docs` ya no hardcodea `E:\Ciszu Network`; `platform-run.js` delega `dev`/`profile`/`vault:bw`; `backup-db`, `seo-crawl`, `convert` y `update-env-keys` degradan con mensajes claros fuera de Windows. `build-launcher.yml` instala dependencias Linux correctas y dejó de compilar AppImage.
 
-ÚLTIMA ACTUALIZACIÓN: 2026-11-25
+## Sesión 27 nov 2026 — launcher de MuzicMania y home de Ciszubot
+
+- **Launcher**: invitados `GuestXXXXXX` persistentes (launcher, `/play` y shell offline comparten nombre), menú de cuenta offline/online, tema claro por defecto con selector, notificaciones con búsqueda/filtros/orden/leído/borrado y logs locales visibles.
+- **Logs y estabilidad**: `launcher.log` con pánicos, cierres sucios, heartbeat y hangs; rotación a 2 MB; `offline_back_to_hub` corregido y barra local oculta dentro del iframe.
+- **Actualizaciones**: chequeo silencioso cada 60 s con red, notificación + icono en la barra y reutilización del autoactualizador; launcher token de alcance limitado para notificaciones online (sin access_token de Supabase).
+- **Offline**: hub con sidebar y opciones equivalentes a `/play`, submenús de ayuda/info/créditos/redes/cambios/config/otros y easter egg de modo gato.
+- **Ciszubot**: sección de apps en la home con Discord como principal y páginas `/invite/telegram` y `/invite/whatsapp` en “próximamente”.
+- **Validación**: `cargo check` ✅, `tsc --noEmit` MuzicMania/Ciszubot ✅, builds Next de ambas webs ✅, pruebas Playwright de launcher, cuenta, tema, notificaciones, shell local y páginas nuevas.
+- **Estado**: Vercel sigue pausado (402); sin deploy online. Flatpak/Snap/AUR pendientes.
+
+ÚLTIMA ACTUALIZACIÓN: 2026-11-27
