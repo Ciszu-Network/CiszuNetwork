@@ -1,10 +1,10 @@
 ﻿{
-  "launcherVersion": "2.4.2",
+  "launcherVersion": "2.5.0",
   "gameVersion": "2.1.1",
   "channel": "beta",
-  "buildDate": "2026-11-18",
-  "changelogUrl": "https://muzicmania.vercel.app/changelog/launcher-v2.4.2-beta",
-  "releaseTag": "launcher-v2.4.2-beta",
+  "buildDate": "2026-11-27",
+  "changelogUrl": "https://muzicmania.vercel.app/changelog",
+  "releaseTag": "launcher-v2.5.0-beta",
   "minimumWindows": "10"
 }
 
