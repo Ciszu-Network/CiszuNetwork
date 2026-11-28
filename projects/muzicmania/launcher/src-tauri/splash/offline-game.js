@@ -1,3 +1,11 @@
+/*
+ * Motor del modo local de MuzicMania.
+ *
+ * Replica las constantes y el flujo de `useGameEngine` de la web: ventanas de
+ * juicio, puntuación, vida, holds, minas, KPS, precisión, pausa con cuenta
+ * atrás y auto-pausa al perder el foco. El chart oficial se genera con el
+ * mismo algoritmo y la misma semilla que `src/data/charts.ts`.
+ */
 var TRACKS = [
   { id: "oled_darkness", name: "OLED Darkness", artist: "CiszukoAntony", duration: 301, bpm: 110, color: "#59b4ff", audio: "offline/music/oled_darkness.opus" },
   { id: "neon_dreams", name: "Neon Dreams", artist: "CiszukoAntony", duration: 225, bpm: 124, color: "#68cfff", audio: "offline/music/neon_dreams.opus" },
@@ -5,59 +13,89 @@ var TRACKS = [
   { id: "cyber_beat", name: "Cyber Beat", artist: "CiszukoAntony", duration: 208, bpm: 140, color: "#ff33cc", audio: "offline/music/cyber_beat.opus" }
 ];
 
+var isRunning = false;
+var isPaused = false;
 var selectedTrack = TRACKS[0];
 var selectedDifficulty = "Normal";
 var inputMode = "dfjk";
-var notes = [];
-var isRunning = false;
-var isPaused = false;
+
+var GAME_CONFIG = {
+  lanes: 4,
+  hitZoneRatio: 0.82,
+  laneColors: ["#ff33cc", "#68cfff", "#b400ff", "#59b4ff"]
+};
+
+var HIT_TOLERANCES = { perfect: 45, great: 80, good: 120, meh: 165, bad: 215, veryBad: 265, miss: 320 };
+var SCORE_VALUES = { perfect: 300, great: 200, good: 100, meh: 50, bad: 10, veryBad: -50, miss: -100 };
+var JUDGMENT_COLORS = { perfect: "#68cfff", great: "#b400ff", good: "#00ff88", meh: "#ffd900", bad: "#ff6600", veryBad: "#ff2244", miss: "#ff4444" };
+var JUDGMENT_LABELS = { perfect: "PERFECT", great: "GREAT", good: "GOOD", meh: "MEH", bad: "BAD", veryBad: "VERY BAD", miss: "MISS" };
+var JUDGMENT_WEIGHTS = { perfect: 1, great: 0.8, good: 0.6, meh: 0.4, bad: 0.2, veryBad: 0.1, miss: 0 };
+var JUDGMENT_ORDER = ["perfect", "great", "good", "meh", "bad", "veryBad", "miss"];
+
+var game = null;
 var audio = null;
 var raf = 0;
+var pausedAt = 0;
+var countdownTimer = null;
 var lastFrame = 0;
-var score = 0;
-var combo = 0;
-var maxCombo = 0;
-var misses = 0;
-var hits = { Perfect: 0, Great: 0, Good: 0, Bad: 0 };
-var bestKey = "";
 
 function $(id) { return document.getElementById(id); }
 function formatNumber(n) { return Number(n || 0).toLocaleString("en-US"); }
 function escapeHtml(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (ch) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[ch]; }); }
-function difficultyLabel(value) { return value.toUpperCase(); }
+function formatTime(seconds) {
+  var safe = Math.max(0, Math.floor(Number(seconds) || 0));
+  return Math.floor(safe / 60) + ":" + String(safe % 60).padStart(2, "0");
+}
 
 function seededRandom(seed) {
   var x = Math.sin(seed) * 10000;
   return x - Math.floor(x);
 }
 
+/* Mismo generador que la web (src/data/charts.ts + generateNotes de levels/index.ts). */
 function generateChart(trackId, durationSec, bpm, difficulty) {
   var events = [];
   var beatInterval = 60 / bpm;
-  var density = 1;
-  var chord = 0.05;
-  var triple = 0;
-  if (difficulty === "Easy") { density = 1; chord = 0.05; }
-  if (difficulty === "Normal") { density = 0.5; chord = 0.15; }
-  if (difficulty === "Hard") { density = 0.25; chord = 0.3; triple = 0.05; }
-  if (difficulty === "Expert") { density = 0.125; chord = 0.4; triple = 0.15; }
-  var seed = trackId.split("").reduce(function(acc, ch) { return acc + ch.charCodeAt(0); }, 0);
-  for (var t = 3; t < durationSec - 2; t += beatInterval * density) {
+  var noteDensity = 1;
+  var chordProbability = 0;
+  var tripleProbability = 0;
+  if (difficulty === "Normal") { noteDensity = 0.5; chordProbability = 0.15; }
+  if (difficulty === "Hard") { noteDensity = 0.25; chordProbability = 0.3; tripleProbability = 0.05; }
+  if (difficulty === "Expert") { noteDensity = 0.125; chordProbability = 0.4; tripleProbability = 0.15; }
+  if (difficulty === "Easy") { noteDensity = 1; chordProbability = 0.05; }
+
+  var seed = trackId.split("").reduce(function (acc, ch) { return acc + ch.charCodeAt(0); }, 0);
+  for (var t = 3; t < durationSec - 2; t += beatInterval * noteDensity) {
     if (seededRandom(seed++) < 0.1) continue;
-    var base = Math.floor(seededRandom(seed++) * 4);
-    events.push({ time: t * 1000, lane: base, hit: false, missed: false });
-    if (seededRandom(seed++) < chord) {
-      var extra = Math.floor(seededRandom(seed++) * 4);
-      while (extra === base) extra = Math.floor(seededRandom(seed++) * 4);
-      events.push({ time: t * 1000, lane: extra, hit: false, missed: false });
-      if (seededRandom(seed++) < triple) {
-        var third = Math.floor(seededRandom(seed++) * 4);
-        while (third === base || third === extra) third = Math.floor(seededRandom(seed++) * 4);
-        events.push({ time: t * 1000, lane: third, hit: false, missed: false });
+    var baseLane = Math.floor(seededRandom(seed++) * 4);
+    events.push({ time: t, lane: baseLane });
+    if (seededRandom(seed++) < chordProbability) {
+      var extraLane = Math.floor(seededRandom(seed++) * 4);
+      while (extraLane === baseLane) extraLane = Math.floor(seededRandom(seed++) * 4);
+      events.push({ time: t, lane: extraLane });
+      if (seededRandom(seed++) < tripleProbability) {
+        var thirdLane = Math.floor(seededRandom(seed++) * 4);
+        while (thirdLane === baseLane || thirdLane === extraLane) thirdLane = Math.floor(seededRandom(seed++) * 4);
+        events.push({ time: t, lane: thirdLane });
       }
     }
   }
-  return events.sort(function(a, b) { return a.time - b.time; });
+
+  var holdChance = difficulty === "Easy" ? 0 : difficulty === "Normal" ? 0.12 : difficulty === "Hard" ? 0.28 : 0.42;
+  return events.map(function (event, index) {
+    var type = "tap";
+    var endTime;
+    if (holdChance > 0 && seededRandom(seed + index) < holdChance) {
+      type = "hold";
+      endTime = Math.round((event.time + 0.5 + seededRandom(seed + index + 999) * 1.0) * 100) / 100;
+    }
+    return {
+      time: Math.round(event.time * 100) / 100 * 1000,
+      lane: event.lane,
+      type: type,
+      endTime: endTime ? Math.round(endTime * 100) / 100 * 1000 : undefined
+    };
+  });
 }
 
 function bestScore(track, diff) {
@@ -66,313 +104,531 @@ function bestScore(track, diff) {
 
 function saveBest(track, diff, value) {
   try {
-    var key = "muzicmania.offline.best." + track.id + "." + diff;
-    if (value > bestScore(track, diff)) localStorage.setItem(key, String(value));
+    if (value > bestScore(track, diff)) localStorage.setItem("muzicmania.offline.best." + track.id + "." + diff, String(value));
   } catch (e) {}
 }
 
 function renderTracks() {
   var list = $("track-list");
+  if (!list) return;
   list.innerHTML = "";
-  TRACKS.forEach(function(track) {
-    var btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "track" + (track.id === selectedTrack.id ? " selected" : "");
-    btn.style.setProperty("--accent", track.color);
-    btn.innerHTML = '<span class="cover">♪</span><span><span class="tname">' + escapeHtml(track.name) + '</span><span class="tmeta">' + escapeHtml(track.artist) + ' · ' + Number(track.bpm) + ' BPM · ' + Math.floor(track.duration / 60) + ':' + String(track.duration % 60).padStart(2, "0") + '</span></span><span class="best">Local best<strong>' + (bestScore(track, selectedDifficulty) ? formatNumber(bestScore(track, selectedDifficulty)) : "—") + '</strong></span>';
-    btn.addEventListener("click", function() { selectedTrack = track; renderTracks(); });
-    list.appendChild(btn);
+  TRACKS.forEach(function (track) {
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "track" + (selectedTrack && track.id === selectedTrack.id ? " selected" : "");
+    button.style.setProperty("--accent", track.color);
+    var best = bestScore(track, selectedDifficulty);
+    button.innerHTML = '<span class="cover">♪</span><span><span class="tname">' + escapeHtml(track.name) + '</span><span class="tmeta">' + escapeHtml(track.artist) + ' · ' + Number(track.bpm) + ' BPM · ' + formatTime(track.duration) + '</span></span><span class="best">Local best<strong>' + (best ? formatNumber(best) : "—") + '</strong></span>';
+    button.addEventListener("click", function () { selectedTrack = track; renderTracks(); if (window.MuzicLocalShell) window.MuzicLocalShell.selectedDifficulty = selectedDifficulty; });
+    list.appendChild(button);
   });
-  $("start-btn").disabled = !selectedTrack;
+  if ($("start-btn")) $("start-btn").disabled = !selectedTrack;
 }
 
-function resetState() {
-  score = 0; combo = 0; maxCombo = 0; misses = 0;
-  hits = { Perfect: 0, Great: 0, Good: 0, Bad: 0 };
-  $("hud-score").textContent = "0";
-  $("hud-combo").textContent = "0";
-  $("hud-acc").textContent = "100%";
-  $("hud-miss").textContent = "0";
-  $("results").classList.remove("active");
+function resetGameState() {
+  return {
+    notes: [], totalNotes: 0, notesHit: 0,
+    score: 0, combo: 0, maxCombo: 0, mistakes: 0, life: 100, deaths: 0,
+    accuracy: 100, kps: 0, progress: 0,
+    hits: { perfect: 0, great: 0, good: 0, meh: 0, bad: 0, veryBad: 0, miss: 0 },
+    isRunning: false, isPaused: false, isGameOver: false,
+    startTime: 0, pausedTotal: 0, duration: 0, kpsWindow: [],
+    holding: null, lastJudgement: null
+  };
+}
+
+function getElapsed() {
+  if (!game) return 0;
+  if (audio && audio.currentTime > 0) return audio.currentTime;
+  if (!game.startTime) return 0;
+  return Math.max(0, (performance.now() - game.startTime - game.pausedTotal) / 1000);
 }
 
 function accuracy() {
-  var total = hits.Perfect + hits.Great + hits.Good + hits.Bad + misses;
-  if (!total) return 100;
-  var points = hits.Perfect * 100 + hits.Great * 80 + hits.Good * 55 + hits.Bad * 25;
-  return Math.max(0, Math.round((points / (total * 100)) * 100));
+  if (!game) return 100;
+  var total = 0;
+  var weight = 0;
+  JUDGMENT_ORDER.forEach(function (key) {
+    total += game.hits[key];
+    weight += game.hits[key] * JUDGMENT_WEIGHTS[key];
+  });
+  return total ? Math.max(0, Math.round((weight / total) * 1000) / 10) : 100;
 }
 
-function grade() {
-  var acc = accuracy();
-  if (acc >= 98 && !misses) return "S";
+function grade(acc) {
+  if (acc >= 98) return "S";
   if (acc >= 92) return "A";
   if (acc >= 82) return "B";
   if (acc >= 65) return "C";
   return "D";
 }
 
+function registerJudgments(keys, hitCount) {
+  if (!game) return;
+  var lifeDelta = 0;
+  var hasBreak = false;
+  var comboBefore = game.combo;
+  keys.forEach(function (key) {
+    game.hits[key] += 1;
+    if (key === "perfect") lifeDelta += 3;
+    else if (key === "great") lifeDelta += 1;
+    else if (key === "good") lifeDelta += 0;
+    else if (key === "meh") { lifeDelta -= 1; hasBreak = true; }
+    else if (key === "bad") { lifeDelta -= 2; hasBreak = true; }
+    else if (key === "veryBad") { lifeDelta -= 4; hasBreak = true; }
+    else if (key === "miss") { lifeDelta -= 6; hasBreak = true; }
+    if (key !== "perfect" && key !== "great" && key !== "good") game.mistakes += 1;
+  });
+  var bonus = hasBreak ? 0 : Math.floor(comboBefore / 10) * 10;
+  var flow = hitCount >= 4 ? 4 : hitCount >= 3 ? 3 : hitCount >= 2 ? 2 : 1;
+  keys.forEach(function (key) {
+    game.score += (SCORE_VALUES[key] + bonus) * flow;
+  });
+  game.life = Math.max(0, Math.min(100, game.life + lifeDelta));
+  if (game.life <= 0 && game.life - lifeDelta > 0) game.deaths += 1;
+  game.combo = hasBreak ? 0 : game.combo + hitCount;
+  game.maxCombo = Math.max(game.maxCombo, game.combo);
+  game.accuracy = accuracy();
+  game.kpsWindow.push(performance.now());
+  game.kpsWindow = game.kpsWindow.filter(function (stamp) { return performance.now() - stamp < 1000; });
+  game.kps = game.kpsWindow.length;
+  updateHud();
+  if (game.life <= 0) finishGame();
+}
+
+function showJudgement(label, color) {
+  var element = $("judgement");
+  if (!element) return;
+  element.textContent = label;
+  element.style.color = color;
+  element.classList.remove("show");
+  void element.offsetWidth;
+  element.classList.add("show");
+}
+
+function judgeFromDelta(deltaMs) {
+  var abs = Math.abs(deltaMs);
+  if (abs <= HIT_TOLERANCES.perfect) return "perfect";
+  if (abs <= HIT_TOLERANCES.great) return "great";
+  if (abs <= HIT_TOLERANCES.good) return "good";
+  if (abs <= HIT_TOLERANCES.meh) return "meh";
+  if (abs <= HIT_TOLERANCES.bad) return "bad";
+  if (abs <= HIT_TOLERANCES.veryBad) return "veryBad";
+  return "miss";
+}
+
+function nearestNote(lane) {
+  var elapsed = getElapsed();
+  var best = null;
+  var bestDelta = Infinity;
+  game.notes.forEach(function (note) {
+    if (note.lane !== lane || note.hit || note.missed) return;
+    var delta = (note.time - elapsed) * 1000;
+    if (Math.abs(delta) < Math.abs(bestDelta)) { bestDelta = delta; best = note; }
+  });
+  return { note: best, delta: bestDelta };
+}
+
+function pressLane(lane) {
+  if (!game || !game.isRunning || game.isPaused) return;
+  var found = nearestNote(lane);
+  var note = found.note;
+  if (!note) return;
+  if (note.type === "mine") {
+    if (Math.abs(found.delta) <= HIT_TOLERANCES.good) {
+      note.hit = true;
+      game.life = Math.max(0, game.life - 10);
+      game.combo = 0;
+      game.mistakes += 1;
+      game.score -= 100;
+      showJudgement("MINE", "#ff2244");
+      updateHud();
+      if (game.life <= 0) finishGame();
+    }
+    return;
+  }
+  if (Math.abs(found.delta) > HIT_TOLERANCES.miss) return;
+  var key = judgeFromDelta(found.delta);
+  if (key === "miss") return;
+  note.hit = true;
+  game.notesHit += 1;
+  if (note.type === "hold" && note.endTime) {
+    note.holding = true;
+    game.holding = note;
+  }
+  registerJudgments([key], 1);
+  showJudgement(JUDGMENT_LABELS[key], JUDGMENT_COLORS[key]);
+}
+
+function releaseLane(lane) {
+  if (!game || !game.holding) return;
+  var note = game.holding;
+  if (note.lane !== lane) return;
+  game.holding = null;
+  if (getElapsed() < note.endTime - 0.08) {
+    game.life = Math.max(0, game.life - 6);
+    game.combo = 0;
+    game.mistakes += 1;
+    game.hits.miss += 1;
+    game.accuracy = accuracy();
+    showJudgement("HOLD MISS", "#ff4444");
+    updateHud();
+    if (game.life <= 0) finishGame();
+  }
+}
+
+function updateHud() {
+  if (!game) return;
+  var set = function (id, text) { if ($(id)) $(id).textContent = text; };
+  set("hud-score", formatNumber(game.score));
+  set("hud-combo", game.combo + "x");
+  set("hud-maxcombo", game.maxCombo + "x");
+  set("hud-kps", String(game.kps));
+  set("hud-miss", String(game.mistakes));
+  set("hud-acc", game.accuracy + "%");
+  set("hud-life-label", Math.round(game.life) + "%");
+  if ($("hud-life")) $("hud-life").style.width = Math.max(0, Math.min(100, game.life)) + "%";
+  var duration = game.duration || (selectedTrack ? selectedTrack.duration : 0) || 1;
+  var elapsed = getElapsed();
+  set("hud-time", formatTime(elapsed));
+  set("hud-time-left", "-" + formatTime(Math.max(0, duration - elapsed)));
+  if ($("hud-progress")) $("hud-progress").style.width = Math.max(0, Math.min(100, (elapsed / duration) * 100)) + "%";
+  var counts = $("hud-judgements");
+  if (counts) {
+    counts.innerHTML = "";
+    JUDGMENT_ORDER.forEach(function (key) {
+      var row = document.createElement("div");
+      row.className = key;
+      var label = document.createElement("span");
+      label.textContent = JUDGMENT_LABELS[key];
+      var value = document.createElement("strong");
+      value.textContent = String(game.hits[key]);
+      row.append(label, value);
+      counts.appendChild(row);
+    });
+  }
+}
+
 function resizeCanvas() {
   var canvas = $("game-canvas");
+  if (!canvas) return;
   var rect = canvas.getBoundingClientRect();
   var dpr = window.devicePixelRatio || 1;
   canvas.width = Math.max(1, Math.floor(rect.width * dpr));
   canvas.height = Math.max(1, Math.floor(rect.height * dpr));
   var ctx = canvas.getContext("2d");
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  return { ctx: ctx, width: rect.width, height: rect.height };
+  return ctx;
 }
 
-function drawBoard(ctx, width, height, time) {
-  var laneWidth = Math.min(112, Math.max(62, width / 7));
-  var boardWidth = laneWidth * 4;
-  var x0 = (width - boardWidth) / 2;
-  var hitY = height - 84;
-  var speed = 0.52;
-  ctx.clearRect(0, 0, width, height);
-  var bg = ctx.createLinearGradient(0, 0, 0, height);
-  bg.addColorStop(0, "rgba(8,10,20,.2)");
-  bg.addColorStop(1, "rgba(15,158,255,.035)");
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, width, height);
-  for (var i = 0; i < 4; i++) {
-    var x = x0 + i * laneWidth;
-    ctx.fillStyle = i % 2 === 0 ? "rgba(255,255,255,.018)" : "rgba(255,255,255,.035)";
-    ctx.fillRect(x, 0, laneWidth, height);
-    ctx.strokeStyle = "rgba(255,255,255,.07)";
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
-  }
-  ctx.strokeStyle = "rgba(255,255,255,.1)";
-  ctx.beginPath(); ctx.moveTo(x0 + boardWidth, 0); ctx.lineTo(x0 + boardWidth, height); ctx.stroke();
-  var laneColors = ["#0f9eff", "#b026ff", "#ff20bf", "#59b4ff"];
-  for (var n = 0; n < notes.length; n++) {
-    var note = notes[n];
-    if (note.hit || note.missed) continue;
-    var y = hitY - ((note.time - time) / 1000) * speed * 1000;
-    if (y < -26 || y > height + 30) continue;
-    var nx = x0 + note.lane * laneWidth;
-    var cx = nx + laneWidth / 2;
-    ctx.shadowBlur = 18;
-    ctx.shadowColor = laneColors[note.lane];
-    ctx.fillStyle = laneColors[note.lane];
-    ctx.beginPath();
-    ctx.moveTo(cx, y - 16); ctx.lineTo(cx + 14, y); ctx.lineTo(cx, y + 16); ctx.lineTo(cx - 14, y);
-    ctx.closePath(); ctx.fill();
-    ctx.shadowBlur = 0;
-  }
-  ctx.strokeStyle = "rgba(255,255,255,.8)";
-  ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(x0, hitY); ctx.lineTo(x0 + boardWidth, hitY); ctx.stroke();
-  for (var l = 0; l < 4; l++) {
-    var lx = x0 + l * laneWidth + laneWidth / 2;
-    ctx.fillStyle = "rgba(255,255,255,.32)";
-    ctx.font = "700 10px Segoe UI";
-    ctx.textAlign = "center";
-    ctx.fillText(["D", "F", "J", "K"][l], lx, hitY + 20);
-    ctx.strokeStyle = laneColors[l] + "55";
-    ctx.strokeRect(x0 + l * laneWidth + 8, hitY - 3, laneWidth - 16, 6);
-  }
-}
-
-function updateHud() {
-  $("hud-score").textContent = formatNumber(score);
-  $("hud-combo").textContent = combo;
-  $("hud-acc").textContent = accuracy() + "%";
-  $("hud-miss").textContent = misses;
-}
-
-function showJudgement(label, color) {
-  var el = $("judgement");
-  el.textContent = label;
-  el.style.color = color;
-  el.classList.remove("show");
-  void el.offsetWidth;
-  el.classList.add("show");
-}
-
-function pressLane(lane) {
-  if (!isRunning || isPaused) return;
-  var time = audio ? audio.currentTime * 1000 : 0;
-  var best = null;
-  var bestDelta = Infinity;
-  for (var i = 0; i < notes.length; i++) {
-    var note = notes[i];
-    if (note.lane !== lane || note.hit || note.missed) continue;
-    var delta = Math.abs(note.time - time);
-    if (delta < bestDelta) { bestDelta = delta; best = note; }
-  }
-  if (!best || bestDelta > 170) return;
-  best.hit = true;
-  var label = "Bad", color = "#9ba1b8", value = 100;
-  if (bestDelta <= 45) { label = "Perfect"; color = "#2ED573"; value = 1000; }
-  else if (bestDelta <= 85) { label = "Great"; color = "#0f9eff"; value = 700; }
-  else if (bestDelta <= 125) { label = "Good"; color = "#b026ff"; value = 450; }
-  hits[label] += 1;
-  score += value;
-  combo += 1;
-  maxCombo = Math.max(maxCombo, combo);
-  showJudgement(label, color);
-  updateHud();
-}
-
-function tick() {
-  if (!isRunning) return;
+function draw() {
   var canvas = $("game-canvas");
+  if (!canvas) return;
   var rect = canvas.getBoundingClientRect();
   var ctx = canvas.getContext("2d");
   var dpr = window.devicePixelRatio || 1;
-  if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
-    var r = resizeCanvas(); ctx = r.ctx;
+  if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) ctx = resizeCanvas();
+  var width = rect.width;
+  var height = rect.height;
+  var laneWidth = Math.min(120, Math.max(64, width / 6.4));
+  var boardWidth = laneWidth * 4;
+  var x0 = (width - boardWidth) / 2;
+  var hitY = height * GAME_CONFIG.hitZoneRatio;
+  var elapsed = getElapsed();
+  var speed = height * 0.55;
+  ctx.clearRect(0, 0, width, height);
+  var bg = ctx.createLinearGradient(0, 0, 0, height);
+  bg.addColorStop(0, "rgba(5,5,10,.9)");
+  bg.addColorStop(0.55, "rgba(8,12,26,.55)");
+  bg.addColorStop(1, "rgba(24,0,44,.35)");
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, width, height);
+
+  for (var lane = 0; lane < 4; lane += 1) {
+    var x = x0 + lane * laneWidth;
+    ctx.fillStyle = lane % 2 === 0 ? "rgba(255,255,255,.018)" : "rgba(255,255,255,.035)";
+    ctx.fillRect(x, 0, laneWidth, height);
+    ctx.strokeStyle = "rgba(255,255,255,.065)";
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
   }
-  var time = audio ? audio.currentTime * 1000 : 0;
-  for (var i = 0; i < notes.length; i++) {
-    var note = notes[i];
-    if (!note.hit && !note.missed && time > note.time + 170) {
-      note.missed = true;
-      misses += 1;
-      combo = 0;
-      updateHud();
+  ctx.strokeStyle = "rgba(255,255,255,.08)";
+  ctx.beginPath(); ctx.moveTo(x0 + boardWidth, 0); ctx.lineTo(x0 + boardWidth, height); ctx.stroke();
+
+  game.notes.forEach(function (note) {
+    if (note.hit || note.missed) return;
+    var delta = note.time - elapsed;
+    var y = hitY - delta * speed;
+    if (y < -120 || y > height + 120) return;
+    var nx = x0 + note.lane * laneWidth;
+    var cx = nx + laneWidth / 2;
+    var color = GAME_CONFIG.laneColors[note.lane];
+    ctx.save();
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = color;
+    if (note.type === "mine") {
+      ctx.fillStyle = "#ff2244";
+      ctx.beginPath();
+      ctx.arc(cx, y, laneWidth * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (note.type === "hold") {
+      var endY = hitY - ((note.endTime || note.time + 0.5) - elapsed) * speed;
+      var top = Math.min(y, endY);
+      var bottom = Math.max(y, endY);
+      ctx.fillStyle = color + "55";
+      ctx.fillRect(cx - laneWidth * 0.16, top, laneWidth * 0.32, bottom - top);
+      ctx.fillStyle = color;
+      ctx.fillRect(cx - laneWidth * 0.22, y - 5, laneWidth * 0.44, 10);
+      ctx.fillRect(cx - laneWidth * 0.22, endY - 7, laneWidth * 0.44, 14);
+    } else {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(cx, y - 18);
+      ctx.lineTo(cx + 17, y);
+      ctx.lineTo(cx, y + 18);
+      ctx.lineTo(cx - 17, y);
+      ctx.closePath();
+      ctx.fill();
     }
+    ctx.restore();
+  });
+
+  ctx.strokeStyle = "rgba(255,255,255,.7)";
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(x0, hitY); ctx.lineTo(x0 + boardWidth, hitY); ctx.stroke();
+  var labels = inputMode === "arrows" ? ["←", "↓", "↑", "→"] : inputMode === "wasd" ? ["A", "S", "W", "D"] : ["D", "F", "J", "K"];
+  for (var l = 0; l < 4; l += 1) {
+    var lx = x0 + l * laneWidth + laneWidth / 2;
+    ctx.fillStyle = "rgba(255,255,255,.55)";
+    ctx.font = "700 11px Rajdhani, sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(labels[l], lx, hitY + 24);
+    ctx.strokeStyle = GAME_CONFIG.laneColors[l] + "66";
+    ctx.strokeRect(x0 + l * laneWidth + 10, hitY - 4, laneWidth - 20, 8);
   }
-  drawBoard(ctx, rect.width, rect.height, time);
-  if (audio && (audio.ended || (audio.duration && audio.currentTime >= audio.duration - 0.05))) {
-    finishGame();
-    return;
+}
+
+function tick() {
+  if (!game || !game.isRunning || game.isPaused || game.isGameOver) return;
+  var elapsed = getElapsed();
+  var changed = false;
+  game.notes.forEach(function (note) {
+    if (note.hit || note.missed) return;
+    if (elapsed > note.time + HIT_TOLERANCES.miss / 1000) {
+      note.missed = true;
+      note.hit = true;
+      game.hits.miss += 1;
+      game.mistakes += 1;
+      game.combo = 0;
+      game.life = Math.max(0, game.life - 6);
+      game.accuracy = accuracy();
+      changed = true;
+      if (game.life <= 0) finishGame();
+    }
+  });
+  if (changed) updateHud();
+  draw();
+  updateHud();
+  if (game.holding && elapsed >= (game.holding.endTime || 0)) game.holding = null;
+  if (!game.isGameOver) {
+    if (audio && audio.ended) { finishGame(); return; }
+    if (elapsed >= game.duration || (game.notesHit >= game.totalNotes && elapsed > 2)) { finishGame(); return; }
   }
-  raf = requestAnimationFrame(tick);
+  if (game.isRunning && !game.isPaused) raf = requestAnimationFrame(tick);
 }
 
 function startGame() {
   if (!selectedTrack) return;
-  resetState();
-  if (selectedTrack.chart && Array.isArray(selectedTrack.chart.notes)) {
-    notes = selectedTrack.chart.notes.map(function(note, index) {
+  stopGame();
+  game = resetGameState();
+  var track = selectedTrack;
+  game.duration = Number(track.duration) || 180;
+  var raw;
+  if (track.chart && Array.isArray(track.chart.notes)) {
+    raw = track.chart.notes.map(function (note) {
       return {
-        time: Number(note.time) * 1000,
-        lane: Number(note.lane) || 0,
-        type: note.type || "tap",
-        endTime: note.endTime ? Number(note.endTime) * 1000 : undefined,
-        hit: false,
-        missed: false,
-        id: "local_" + index
+        time: Math.max(0, Number(note.time) || 0),
+        lane: Math.max(0, Math.min(3, Number(note.lane) || 0)),
+        type: note.type === "hold" || note.type === "mine" ? note.type : "tap",
+        endTime: note.endTime ? Number(note.endTime) : undefined
       };
-    }).sort(function(a, b) { return a.time - b.time; });
+    });
   } else {
-    notes = generateChart(selectedTrack.id, selectedTrack.duration, selectedTrack.bpm, selectedDifficulty);
+    raw = generateChart(track.id, track.duration, track.bpm, selectedDifficulty).map(function (note) {
+      return { time: note.time / 1000, lane: note.lane, type: note.type, endTime: note.endTime ? note.endTime / 1000 : undefined };
+    });
   }
-  bestKey = "muzicmania.offline.best." + selectedTrack.id + "." + selectedDifficulty;
-  audio = new Audio(selectedTrack.audio);
-  audio.volume = 0.8;
-  audio.addEventListener("error", function() { showJudgement("AUDIO ERROR", "#ff4757"); });
-  audio.play().catch(function() {});
+  game.notes = raw.sort(function (a, b) { return a.time - b.time; }).map(function (note) {
+    return Object.assign({ hit: false, missed: false }, note);
+  });
+  game.totalNotes = game.notes.length;
+  game.startTime = performance.now();
+  game.isRunning = true;
+  game.isPaused = false;
+  game.isGameOver = false;
+  audio = track.audio ? new Audio(track.audio) : null;
+  if (audio) {
+    audio.volume = 0.8;
+    audio.addEventListener("error", function () { if (game) game.audioFailed = true; });
+    audio.play().catch(function () { if (game) game.audioFailed = true; });
+  }
   $("menu").style.display = "none";
   $("game").classList.add("active");
-  isRunning = true;
-  isPaused = false;
+  $("pause-screen").classList.add("hidden");
+  $("countdown").classList.add("hidden");
+  $("results").classList.remove("active");
   resizeCanvas();
   updateHud();
   lastFrame = performance.now();
   raf = requestAnimationFrame(tick);
 }
 
+function stopGame() {
+  if (raf) cancelAnimationFrame(raf);
+  raf = 0;
+  clearInterval(countdownTimer);
+  countdownTimer = null;
+  if (audio) { audio.pause(); audio = null; }
+  if (game) { game.isRunning = false; game.isPaused = false; }
+}
+
 function finishGame() {
-  if (!isRunning) return;
-  isRunning = false;
+  if (!game || game.isGameOver) return;
+  game.isGameOver = true;
+  game.isRunning = false;
   cancelAnimationFrame(raf);
-  if (audio) { audio.pause(); }
+  if (audio) audio.pause();
   var acc = accuracy();
-  var finalScore = score;
   var previous = bestScore(selectedTrack, selectedDifficulty);
-  saveBest(selectedTrack, selectedDifficulty, finalScore);
+  saveBest(selectedTrack, selectedDifficulty, game.score);
   $("result-track").textContent = selectedTrack.name + " · " + selectedDifficulty;
-  $("result-grade").textContent = grade();
-  $("result-score").textContent = formatNumber(finalScore);
+  $("result-grade").textContent = grade(acc);
+  $("result-score").textContent = formatNumber(game.score);
   $("result-acc").textContent = acc + "%";
-  $("result-combo").textContent = maxCombo;
-  $("result-miss").textContent = misses;
+  $("result-combo").textContent = game.maxCombo + "x";
+  $("result-miss").textContent = String(game.mistakes);
+  $("result-perfect").textContent = String(game.hits.perfect);
+  $("result-great").textContent = String(game.hits.great);
+  $("result-good").textContent = String(game.hits.good);
   $("results").classList.add("active");
-  if (finalScore > previous) $("result-track").textContent += " · New local best";
+  if (game.score > previous) $("result-track").textContent += " · New local best";
 }
 
 function backToMenu() {
-  isRunning = false;
-  isPaused = false;
-  cancelAnimationFrame(raf);
-  if (audio) { audio.pause(); audio = null; }
+  stopGame();
   $("results").classList.remove("active");
   $("game").classList.remove("active");
-  $("menu").style.display = "flex";
+  $("pause-screen").classList.add("hidden");
+  $("countdown").classList.add("hidden");
+  if ($("menu")) $("menu").style.display = "flex";
   renderTracks();
 }
 
-function togglePause() {
-  if (!isRunning) return;
-  isPaused = !isPaused;
-  if (isPaused) {
-    if (audio) audio.pause();
-    cancelAnimationFrame(raf);
-    showJudgement("PAUSED", "#9ba1b8");
-    $("pause-btn").textContent = "Resume";
-  } else {
-    if (audio) audio.play().catch(function() {});
-    $("pause-btn").textContent = "Pause";
-    raf = requestAnimationFrame(tick);
-  }
+function pauseGame() {
+  if (!game || !game.isRunning || game.isPaused || game.isGameOver) return;
+  game.isPaused = true;
+  pausedAt = performance.now();
+  if (audio) audio.pause();
+  cancelAnimationFrame(raf);
+  $("pause-screen").classList.remove("hidden");
+  $("countdown").classList.add("hidden");
 }
 
-window.showCloseDialog = function() {
+function resumeGame() {
+  if (!game || !game.isPaused) return;
+  $("pause-screen").classList.add("hidden");
+  var countdown = $("countdown");
+  var value = 3;
+  countdown.textContent = String(value);
+  countdown.classList.remove("hidden");
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(function () {
+    value -= 1;
+    if (value > 0) {
+      countdown.textContent = String(value);
+      return;
+    }
+    clearInterval(countdownTimer);
+    countdownTimer = null;
+    countdown.classList.add("hidden");
+    game.pausedTotal += performance.now() - pausedAt;
+    game.isPaused = false;
+    if (audio) audio.play().catch(function () {});
+    raf = requestAnimationFrame(tick);
+  }, 1000);
+}
+
+function togglePause() {
+  if (!game || !game.isRunning || game.isGameOver) return;
+  if (game.isPaused) resumeGame();
+  else pauseGame();
+}
+
+window.showCloseDialog = function () {
   try { window.__TAURI_INTERNALS__.invoke("offline_game_close"); } catch (e) { window.close(); }
 };
 
 function init() {
   if (window.self !== window.top) {
-    var frameClose = document.getElementById("close-app");
+    var frameClose = $("close-app");
     if (frameClose) frameClose.style.display = "none";
   }
-  var diffs = document.querySelectorAll(".diff");
-  var i;
-  for (i = 0; i < diffs.length; i++) {
-    diffs[i].addEventListener("click", function() {
-      for (var j = 0; j < diffs.length; j++) diffs[j].classList.remove("active");
-      this.classList.add("active");
-      selectedDifficulty = this.getAttribute("data-diff");
+  document.querySelectorAll(".diff").forEach(function (button) {
+    button.addEventListener("click", function () {
+      document.querySelectorAll(".diff").forEach(function (item) { item.classList.remove("active"); });
+      button.classList.add("active");
+      selectedDifficulty = button.getAttribute("data-diff");
       renderTracks();
     });
-  }
+  });
   renderTracks();
-  $("start-btn").addEventListener("click", startGame);
-  $("retry-btn").addEventListener("click", function() { $("results").classList.remove("active"); startGame(); });
-  $("back-btn").addEventListener("click", backToMenu);
-  $("pause-btn").addEventListener("click", togglePause);
-  $("close-app").addEventListener("click", function() {
+  $("start-btn")?.addEventListener("click", startGame);
+  $("retry-btn")?.addEventListener("click", startGame);
+  $("back-btn")?.addEventListener("click", backToMenu);
+  $("pause-btn")?.addEventListener("click", togglePause);
+  $("pause-resume")?.addEventListener("click", resumeGame);
+  $("pause-restart")?.addEventListener("click", function () { $("pause-screen").classList.add("hidden"); startGame(); });
+  $("pause-config")?.addEventListener("click", function () { if (window.MuzicLocalShell) window.MuzicLocalShell.showView("settings"); });
+  $("pause-exit")?.addEventListener("click", backToMenu);
+  $("close-app")?.addEventListener("click", function () {
     try {
       if (window.__TAURI_INTERNALS__ && window.__TAURI_INTERNALS__.invoke) window.__TAURI_INTERNALS__.invoke("offline_game_close");
       else window.close();
     } catch (e) { window.close(); }
   });
-  window.addEventListener("resize", function() { if (isRunning) resizeCanvas(); });
-  document.addEventListener("contextmenu", function(e) { e.preventDefault(); });
-  document.addEventListener("keydown", function(e) {
-    var key = e.key.toLowerCase();
-    var keyLane;
-    if (key.indexOf("arrow") === 0) {
-      keyLane = { arrowleft: 0, arrowdown: 1, arrowup: 2, arrowright: 3 }[key];
-    } else if (inputMode === "wasd") {
-      keyLane = { a: 0, s: 1, w: 2, d: 3 }[key];
-    } else {
-      keyLane = { d: 0, f: 1, j: 2, k: 3 }[key];
-    }
-    if (keyLane !== undefined) {
-      e.preventDefault();
-      pressLane(keyLane);
+  window.addEventListener("resize", function () { if (game && game.isRunning) draw(); });
+  window.addEventListener("blur", function () { pauseGame(); });
+  document.addEventListener("visibilitychange", function () { if (document.hidden) pauseGame(); });
+  document.addEventListener("contextmenu", function (event) { event.preventDefault(); });
+  document.addEventListener("keydown", function (event) {
+    var key = event.key.toLowerCase();
+    if (event.repeat) {
+      if (key === "escape") event.preventDefault();
       return;
     }
-    if (e.key === "Escape") {
-      e.preventDefault();
-      if (isRunning) togglePause();
+    var lane;
+    if (key.indexOf("arrow") === 0) lane = { arrowleft: 0, arrowdown: 1, arrowup: 2, arrowright: 3 }[key];
+    else if (inputMode === "wasd") lane = { a: 0, s: 1, w: 2, d: 3 }[key];
+    else lane = { d: 0, f: 1, j: 2, k: 3 }[key];
+    if (lane !== undefined) {
+      event.preventDefault();
+      pressLane(lane);
+      return;
     }
-    if (e.key === "F5" || e.key === "F12" || (e.ctrlKey && ["p", "r", "f", "s", "u"].indexOf(key) !== -1)) e.preventDefault();
+    if (event.key === "Escape") {
+      event.preventDefault();
+      togglePause();
+      return;
+    }
+    if (event.key === "F5" || event.key === "F12" || (event.ctrlKey && ["p", "r", "f", "s", "u"].indexOf(key) !== -1)) event.preventDefault();
+  });
+  document.addEventListener("keyup", function (event) {
+    var key = event.key.toLowerCase();
+    var lane;
+    if (key.indexOf("arrow") === 0) lane = { arrowleft: 0, arrowdown: 1, arrowup: 2, arrowright: 3 }[key];
+    else if (inputMode === "wasd") lane = { a: 0, s: 1, w: 2, d: 3 }[key];
+    else lane = { d: 0, f: 1, j: 2, k: 3 }[key];
+    if (lane !== undefined) releaseLane(lane);
   });
 }
 

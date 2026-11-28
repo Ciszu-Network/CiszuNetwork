@@ -418,6 +418,7 @@ _Última revisión: 14 nov 2026._ Relacionado: `PROJECTS_SYSTEM.md`, `STATISTICS
 - **Actualizaciones**: chequeo silencioso cada 60 s con red, notificación + icono en la barra y reutilización del autoactualizador; launcher token de alcance limitado para notificaciones online (sin access_token de Supabase).
 - **Offline**: hub con sidebar y opciones equivalentes a `/play`, submenús de ayuda/info/créditos/redes/cambios/config/otros y easter egg de modo gato.
 - **Ciszubot**: sección de apps en la home con Discord como principal y páginas `/invite/telegram` y `/invite/whatsapp` en “próximamente”.
+- **Launcher 2.5.1**: splash animado con isotipo+logotipo y aviso de soporte por tardanza; barra con logotipo, hub centrado, acciones apiladas, changelog, marco de avatar y fondo reactivo; preferencias de notificaciones; shell offline con fuentes oficiales, sidebar/preview de `/play` y quickdocks; motor local con charts, holds, minas, vida, KPS y pausa con cuenta atrás.
 - **Validación**: `cargo check` ✅, `tsc --noEmit` MuzicMania/Ciszubot ✅, builds Next de ambas webs ✅, pruebas Playwright de launcher, cuenta, tema, notificaciones, shell local y páginas nuevas.
 - **Estado**: Vercel sigue pausado (402); sin deploy online. Flatpak/Snap/AUR pendientes.
 

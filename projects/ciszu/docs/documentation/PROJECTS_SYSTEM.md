@@ -166,6 +166,7 @@ Multi-formato (TXT/MD/DOCX/PDF) en los 5 proyectos + `documentation/` con los si
 - **Correcciones**: `offline_back_to_hub` vuelve a la raíz del launcher; el topbar local se oculta dentro del iframe.
 - **Ciszubot**: home con sección “Todas las apps” y Discord como CTA principal; rutas `/invite/telegram` y `/invite/whatsapp` en estado “próximamente”.
 - **Validación**: `cargo check`, `tsc --noEmit` y builds de MuzicMania y Ciszubot; pruebas de UI con Playwright (launcher, cuenta, tema, notificaciones, shell local y páginas nuevas).
+- **Launcher 2.5.1 (27 nov)**: splash con isotipo+logotipo animados y soporte por tardanza; hub centrado con acciones apiladas, changelog, marco de avatar y fondo reactivo; preferencias de notificaciones; shell offline con tipografías y assets oficiales y layout de `/play`; motor de juego con las constantes, charts, holds/minas y pausa del motor online.
 
 ### 25 de Noviembre, 2026 — Fedora 45 operativo y repo consolidado
 

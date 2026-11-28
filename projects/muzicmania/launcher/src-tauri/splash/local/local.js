@@ -250,6 +250,8 @@
     if (setupName) setupName.textContent = name;
     var welcomeName = $('welcome-guest-name');
     if (welcomeName) welcomeName.textContent = name;
+    var guestId = $('hub-guest-id');
+    if (guestId) guestId.textContent = identity.guest ? '@' + name.toLowerCase() : '@' + (identity.name || '').toLowerCase();
     var p1 = $('vs-p1-name');
     if (p1) p1.textContent = name;
     var p2 = $('vs-p2-name');
@@ -357,6 +359,18 @@
         + '<div class="modal-actions"><button class="secondary" data-panel-action="settings" type="button">Abrir configuración</button>'
         + '<button class="secondary" data-panel-action="inventory" type="button">Abrir inventario</button></div>';
     }
+    if (panel === 'perfil') {
+      return '<div class="kicker">PERFIL LOCAL</div><h2>' + identity.name + '</h2>'
+        + '<p>' + (identity.guest ? 'Invitado local con numeración persistente.' : 'Sesión de cuenta en este equipo.') + '</p>'
+        + '<p><code>' + (identity.guest ? '@' + identity.name.toLowerCase() : '@' + identity.name.toLowerCase()) + '</code></p>'
+        + '<div class="modal-actions"><button class="secondary" data-panel-action="settings" type="button">Configuración</button>'
+        + '<button class="secondary" data-panel-action="launcher" type="button">Volver al launcher</button></div>';
+    }
+    if (panel === 'idioma') {
+      return '<div class="kicker">IDIOMA</div><h2>Idioma del shell local</h2>'
+        + '<p>El shell local hereda el idioma configurado en las Opciones del launcher. Cambia el idioma allí y vuelve a abrir el modo local.</p>'
+        + '<div class="modal-actions"><button class="secondary" data-panel-action="launcher" type="button">Abrir Opciones del launcher</button></div>';
+    }
     return '<h2>—</h2>';
   }
 
@@ -385,6 +399,7 @@
         var action = button.getAttribute('data-panel-action');
         if (action === 'settings') showView('settings');
         if (action === 'inventory') showView('inventory');
+        if (action === 'launcher') leaveToLauncher();
       });
     });
   }
@@ -408,7 +423,7 @@
     dots.forEach(function (dot, index) { dot.classList.toggle('on', index < easter.clicks || easter.cat); });
     var state = $('hub-easter-state');
     if (state) state.textContent = easter.cat ? '😺 ACTIVADO' : (easter.clicks >= 3 ? '✨ COMPLETADO' : '');
-    var brand = $('hub-brand');
+    var brand = $('hub-isotipo');
     if (brand) brand.title = easter.cat ? 'MuzicMania · modo gato' : 'MuzicMania';
     renderHubNotes();
   }
@@ -443,6 +458,78 @@
     renderEaster();
   }
 
+  var HUB_MODE_PREVIEWS = {
+    historia: { icon: 'i-book', title: 'HISTORIA', color: '#9ca3af', desc: 'Sumérgete en la historia de MuzicMania. Descubre secretos, desbloquea canciones y avanza por capítulos.', stats: [['CAPÍTULOS', 'Sin definir'], ['SECRETOS', 'Por descubrir'], ['CANON', 'Historia principal']] },
+    solo: { icon: 'i-music', title: 'MODO SOLO', color: '#68cfff', desc: 'Demuestra tu habilidad rítmica en partidas individuales. Elige entre 4 dificultades y completa cada canción al ritmo perfecto.', stats: [['ESTILO', 'Individual'], ['PRECISIÓN', 'Descripción'], ['SUPERVIVENCIA', 'Descripción']] },
+    local: { icon: 'i-monitor', title: 'MODO LOCAL', color: '#68cfff', desc: 'Juega con tus niveles y configuración guardados en este equipo. Sin restricciones online; es un modo más del hub.', stats: [['ESTILO', 'Individual'], ['DATOS', 'Equipo'], ['ESTADO', 'Sin restricciones']] },
+    multijugador: { icon: 'i-radio', title: 'MULTIJUGADOR', color: '#ff33cc', desc: 'Compite en el mismo equipo contra otro jugador. 1 vs 1 local con J1 y J2, sin salas ni internet.', stats: [['ESTILO', 'Competitivo'], ['MODOS', '1v1 local'], ['ESTADO', 'LOCAL']] },
+    crear: { icon: 'i-customize', title: 'CREAR', color: '#10b981', desc: 'Diseña tus propios niveles con el editor integrado. Guarda, exporta y juega tus creaciones sin conexión.', stats: [['EDITOR', 'TAP · HOLD · MINE'], ['GUARDADO', 'Local'], ['SELECTORES', 'Tus niveles']] },
+    eventos: { icon: 'i-trophy', title: 'EVENTOS', color: '#ff6600', desc: 'Participa en eventos por tiempo limitado. Consigue recompensas exclusivas y compite por el podio.', stats: [['RECOMPENSAS', 'Por definir'], ['DURACIÓN', 'Tiempo limitado'], ['PODIO', 'Próximamente']] },
+    tienda: { icon: 'i-store', title: 'TIENDA', color: '#ffd900', desc: 'Consigue nuevos ítems y skins exclusivos. Personaliza tu experiencia al máximo.', stats: [['SKINS', 'Próximamente'], ['CANCIONES', 'Próximamente'], ['OFERTAS', 'Próximamente']] }
+  };
+  var HUB_OPTION_PREVIEWS = {
+    inventario: { icon: 'i-backpack', title: 'INVENTARIO', color: '#ffd900', desc: 'Gestiona tus skins, efectos y objetos coleccionables.' },
+    ayuda: { icon: 'i-help', title: 'AYUDA', color: '#68cfff', desc: 'Guía de controles, puntuación y mecánicas del juego.' },
+    info: { icon: 'i-about', title: 'INFORMACIÓN', color: '#59b4ff', desc: 'Información general sobre MuzicMania.' },
+    creditos: { icon: 'i-star', title: 'CRÉDITOS', color: '#ff33cc', desc: 'Conoce al equipo detrás de MuzicMania.' },
+    leaderboard: { icon: 'i-trophy', title: 'LEADERBOARD', color: '#ffd900', desc: 'Clasificación global de los mejores jugadores.' },
+    forum: { icon: 'i-forum', title: 'FORUM', color: '#68cfff', desc: 'Comunidad, discusiones y contenido del equipo.' },
+    redes: { icon: 'i-discord', title: 'REDES', color: '#00ff88', desc: 'Síguenos en todas las plataformas.' },
+    cambios: { icon: 'i-clock', title: 'CHANGELOG', color: '#ff6600', desc: 'Últimas actualizaciones y cambios del juego.' },
+    otros: { icon: 'i-sliders', title: 'OTROS', color: '#b400ff', desc: 'Enlaces rápidos a otras secciones de la plataforma.' },
+    config: { icon: 'i-settings', title: 'CONFIGURACIÓN', color: '#a855f7', desc: 'Ajusta la configuración del juego, audio, controles y apariencia.' }
+  };
+
+  function setHubPreview(kind, key) {
+    var lockup = $('hub-lockup');
+    var preview = $('hub-preview');
+    var prompt = $('hub-prompt');
+    var guest = $('hub-guest-note');
+    if (!preview || !lockup) return;
+    if (!key) {
+      lockup.classList.remove('dimmed');
+      preview.classList.add('hidden');
+      prompt?.classList.remove('hidden');
+      guest?.classList.remove('hidden');
+      return;
+    }
+    var data = (kind === 'mode' ? HUB_MODE_PREVIEWS : HUB_OPTION_PREVIEWS)[key];
+    if (!data) return;
+    lockup.classList.add('dimmed');
+    prompt?.classList.add('hidden');
+    guest?.classList.add('hidden');
+    preview.classList.remove('hidden');
+    var icon = $('hub-preview-icon');
+    if (icon) {
+      icon.innerHTML = '<svg class="icon"><use href="#' + data.icon + '"></use></svg>';
+      icon.style.color = data.color;
+      icon.style.borderColor = data.color + '44';
+      icon.style.background = data.color + '18';
+    }
+    var title = $('hub-preview-title');
+    if (title) {
+      title.textContent = data.title;
+      title.style.background = 'none';
+      title.style.color = data.color;
+      title.style.webkitTextFillColor = data.color;
+    }
+    var desc = $('hub-preview-desc');
+    if (desc) desc.textContent = data.desc;
+    var stats = $('hub-preview-stats');
+    if (stats) {
+      stats.innerHTML = '';
+      (data.stats || []).forEach(function (pair) {
+        var item = document.createElement('div');
+        var label = document.createElement('small');
+        label.textContent = pair[0];
+        var value = document.createElement('strong');
+        value.textContent = pair[1];
+        item.append(label, value);
+        stats.appendChild(item);
+      });
+    }
+  }
+
   function selectHubMode(mode) {
     var target = document.querySelector('.hub-mode[data-hub-mode="' + mode + '"]');
     if (target && target.classList.contains('locked')) {
@@ -454,13 +541,7 @@
     document.querySelectorAll('.hub-mode').forEach(function (button) {
       button.classList.toggle('active', button.getAttribute('data-hub-mode') === mode);
     });
-    var kicker = $('hub-mode-kicker');
-    var title = $('hub-mode-title');
-    var desc = $('hub-mode-desc');
     if (mode === 'solo' || mode === 'local') {
-      if (kicker) kicker.textContent = 'MODO LOCAL · 1 JUGADOR';
-      if (title) title.textContent = 'Elige una pista';
-      if (desc) desc.textContent = 'Juega las pistas oficiales o carga tus niveles y canciones. Todo se guarda en este equipo y no requiere conexión.';
       showView('solo');
     } else if (mode === 'multijugador') {
       showView('versus');
@@ -473,6 +554,13 @@
     } else if (mode === 'tienda') {
       hubNotice('La tienda requiere conexión. En local no hay compras.');
     }
+  }
+
+  function updateNowPlaying() {
+    var element = $('hub-nowplaying');
+    if (!element) return;
+    var track = selectedTrack || (typeof OFFICIAL_TRACKS !== 'undefined' ? OFFICIAL_TRACKS[0] : null);
+    element.textContent = track ? track.name : 'Sin pista';
   }
 
   function downloadJson(payload, name) {
@@ -580,6 +668,7 @@
   }
 
   function stopLocalGame() {
+    if (typeof stopGame === 'function') stopGame();
     isRunning = false;
     isPaused = false;
     cancelAnimationFrame(raf);
@@ -597,6 +686,11 @@
     if (name === 'solo') {
       $('menu').style.display = 'flex';
       renderTracks();
+      updateStats();
+    }
+    if (name === 'hub') {
+      setHubPreview(null, null);
+      updateNowPlaying();
       updateStats();
     }
   }
@@ -864,43 +958,36 @@
         document.querySelectorAll('#editor-note-tools .input-choice').forEach(function (item) { item.classList.toggle('active', item === button); });
       });
     });
-    $('hub-local').addEventListener('click', function () { showView('solo'); });
-    $('hub-editor').addEventListener('click', openEditor);
-    $('hub-inventory').addEventListener('click', function () { showView('inventory'); });
-    $('hub-settings').addEventListener('click', function () { showView('settings'); });
-    $('hub-back').addEventListener('click', function () { showView('welcome'); });
-    $('hub-play')?.addEventListener('click', function () { showView('solo'); });
-    $('hub-play-versus')?.addEventListener('click', function () { showView('versus'); });
-    $('hub-create')?.addEventListener('click', openEditor);
-    $('hub-brand')?.addEventListener('click', registerEasterClick);
+    $('hub-settings')?.addEventListener('click', function () { showView('settings'); });
+    $('hub-isotipo')?.addEventListener('click', registerEasterClick);
+    $('hub-profile-card')?.addEventListener('click', function () { openHubPanel('perfil'); });
+    $('hub-latest')?.addEventListener('click', function () { openHubPanel('cambios'); });
+    $('hub-theme-bottom')?.addEventListener('click', function () {
+      setLocalTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+    $('hub-lang-bottom')?.addEventListener('click', function () { openHubPanel('idioma'); });
     document.querySelectorAll('.hub-mode').forEach(function (button) {
-      button.addEventListener('click', function () { selectHubMode(button.getAttribute('data-hub-mode')); });
+      var mode = button.getAttribute('data-hub-mode');
+      button.addEventListener('mouseenter', function () { setHubPreview('mode', mode); });
+      button.addEventListener('mouseleave', function () { setHubPreview(null, null); });
+      button.addEventListener('focus', function () { setHubPreview('mode', mode); });
+      button.addEventListener('blur', function () { setHubPreview(null, null); });
+      button.addEventListener('click', function () { selectHubMode(mode); });
     });
     document.querySelectorAll('[data-hub-panel]').forEach(function (button) {
-      button.addEventListener('click', function () { openHubPanel(button.getAttribute('data-hub-panel')); });
+      var panel = button.getAttribute('data-hub-panel');
+      button.addEventListener('mouseenter', function () { setHubPreview('option', panel); });
+      button.addEventListener('mouseleave', function () { setHubPreview(null, null); });
+      button.addEventListener('focus', function () { setHubPreview('option', panel); });
+      button.addEventListener('blur', function () { setHubPreview(null, null); });
+      button.addEventListener('click', function () { openHubPanel(panel); });
+    });
+    document.querySelectorAll('[data-external]').forEach(function (button) {
+      button.addEventListener('click', function () { openExternalUrl(button.getAttribute('data-external')); });
     });
     $('local-modal-close')?.addEventListener('click', closeLocalModal);
     $('local-modal')?.addEventListener('click', function (event) {
       if (event.target === $('local-modal')) closeLocalModal();
-    });
-    var onlineButton = $('hub-online');
-    var refreshOnlineButton = function () {
-      if (!onlineButton) return;
-      onlineButton.disabled = !navigator.onLine;
-      onlineButton.textContent = navigator.onLine ? 'Jugar online' : 'Online sin conexión';
-    };
-    refreshOnlineButton();
-    window.addEventListener('online', refreshOnlineButton);
-    window.addEventListener('offline', refreshOnlineButton);
-    if (onlineButton) onlineButton.addEventListener('click', function () {
-      if (!navigator.onLine) return;
-      try {
-        if (window.__TAURI_INTERNALS__ && window.__TAURI_INTERNALS__.invoke) {
-          window.__TAURI_INTERNALS__.invoke('launcher_ready').catch(function (error) { setStatus(String(error), true); });
-          return;
-        }
-      } catch (e) {}
-      window.open('https://muzicmania.vercel.app/play', '_blank');
     });
     $('solo-back').addEventListener('click', backToHub);
     $('inventory-back').addEventListener('click', function () { showView('hub'); });
@@ -998,6 +1085,7 @@
     renderEaster();
     applyInputMode((store.settings && store.settings.inputMode) || 'dfjk');
     await rebuildTracks();
+    updateNowPlaying();
     showView('welcome');
     if (!store.levels.length) setStatus('Modo local listo. Puedes cargar un nivel JSON o una canción desde “Modo local”.');
   }

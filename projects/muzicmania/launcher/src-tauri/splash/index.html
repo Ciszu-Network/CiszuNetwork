@@ -27,6 +27,7 @@
   <symbol id="i-window-min" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
   <symbol id="i-window-max" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="1"/></symbol>
   <symbol id="i-window-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
   <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></symbol>
   <symbol id="i-back" viewBox="0 0 24 24"><path d="M20 12H4M10 6l-6 6 6 6"/></symbol>
   <symbol id="i-discord" viewBox="0 0 24 24"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3c-.2.4-.4.9-.6 1.3a18.3 18.3 0 0 0-5.5 0C9 3.9 8.8 3.4 8.6 3a19.8 19.8 0 0 0-4.9 1.4C.5 9-.3 13.6.1 18.1a19.9 19.9 0 0 0 6 3c.5-.7.9-1.4 1.2-2a13 13 0 0 1-1.9-.9l.5-.4a14.2 14.2 0 0 0 12.1 0l.5.4c-.6.3-1.2.6-1.9.9.3.7.7 1.4 1.2 2a19.9 19.9 0 0 0 6-3c.5-5.2-.8-9.7-3.5-13.7ZM8 15.3c-1.2 0-2.2-1.1-2.2-2.4S6.7 10.5 8 10.5s2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Z"/></symbol>
@@ -40,6 +41,7 @@
 <header class="window-titlebar" id="window-titlebar" data-tauri-drag-region>
   <div class="titlebar-brand" data-tauri-drag-region>
     <img src="isotipo.svg" alt="MuzicMania" class="titlebar-logo titlebar-isotipo">
+    <img src="logo.svg" alt="MuzicMania" class="titlebar-logotype">
     <span class="titlebar-beta" id="titlebar-beta">BETA</span>
   </div>
   <div class="titlebar-actions">
@@ -58,9 +60,9 @@
         <button id="account-menu-logout" type="button" class="hidden"><svg class="icon"><use href="#i-power"></use></svg><span data-i18n="accountLogout">Cerrar sesión</span></button>
       </div>
     </div>
+    <button id="titlebar-hub" class="titlebar-btn" type="button" title="Volver al hub" aria-label="Volver al hub"><svg class="icon"><use href="#i-home"></use></svg><span>HUB</span></button>
     <button id="titlebar-update" class="titlebar-btn hidden" type="button" title="Actualización disponible" aria-label="Actualización disponible"><svg class="icon"><use href="#i-download"></use></svg><span class="notif-dot"></span></button>
     <button id="titlebar-notifications" class="titlebar-btn notif-trigger" type="button" title="Notificaciones" aria-label="Notificaciones"><svg class="icon"><use href="#i-bell"></use></svg><span id="notif-badge" class="notif-badge hidden">0</span></button>
-    <button id="titlebar-hub" class="titlebar-btn" type="button" title="Volver al hub" aria-label="Volver al hub"><svg class="icon"><use href="#i-home"></use></svg><span>HUB</span></button>
     <button id="titlebar-settings" class="titlebar-btn" type="button" title="Configuración" aria-label="Configuración"><svg class="icon"><use href="#i-settings"></use></svg></button>
     <button id="titlebar-minimize" class="titlebar-btn" type="button" title="Minimizar" aria-label="Minimizar"><svg class="icon"><use href="#i-window-min"></use></svg></button>
     <button id="titlebar-maximize" class="titlebar-btn" type="button" title="Maximizar" aria-label="Maximizar"><svg class="icon"><use href="#i-window-max"></use></svg></button>
@@ -99,12 +101,16 @@
   <section id="view-splash" class="view active">
     <div class="compact">
       <div class="compact-shell">
-        <div class="brand"><img src="logo.svg" alt="MuzicMania"></div>
+        <div class="brand-lockup splash-lockup">
+          <img class="splash-isotipo" src="isotipo.svg" alt="MuzicMania">
+          <img class="splash-logotype" src="logo.svg" alt="MuzicMania">
+        </div>
         <div class="version" id="splash-version">V2.1.1</div>
-        <div class="status" id="splash-status">INICIALIZANDO...</div>
-        <div class="bar"><i id="splash-bar"></i></div>
+        <div class="status splash-loading-blink" id="splash-status">INICIALIZANDO...</div>
+        <div class="bar splash-bar-blink"><i id="splash-bar"></i></div>
         <div class="pct" id="splash-pct">0%</div>
         <p class="note" id="splash-note">Preparando el launcher y comprobando el estado del servicio.</p>
+        <p class="splash-support hidden" id="splash-support"><span>Soporte por tardanza</span> · <a data-url href="https://muzicmania.vercel.app/support">Abrir soporte</a></p>
       </div>
     </div>
   </section>
@@ -217,47 +223,57 @@
 
   <section id="view-hub" class="view">
     <div class="hub-shell">
-      <div class="hub-top">
-        <div class="hub-brand">
-          <img src="logo.svg" alt="MuzicMania">
-          <small>Launcher · <span id="hub-top-channel">BETA</span></small>
-        </div>
+      <div class="hub-ambient" aria-hidden="true">
+        <span class="hub-orb orb-a"></span><span class="hub-orb orb-b"></span><span class="hub-orb orb-c"></span>
+        <span class="hub-gridlines"></span>
+        <span class="hub-note n1">♪</span><span class="hub-note n2">♫</span><span class="hub-note n3">◆</span><span class="hub-note n4">✦</span><span class="hub-note n5">♬</span>
       </div>
 
       <div class="hub-grid">
-        <section class="hero">
-          <div>
-            <div class="eyebrow" id="hub-kicker">BIENVENIDO DE VUELTA</div>
+        <section class="hero hub-hero-center">
+          <div class="hub-lockup">
+            <img class="hub-isotipo" src="isotipo.svg" alt="MuzicMania">
             <img class="hero-logo" src="logo.svg" alt="MuzicMania">
-            <p id="hub-welcome">Tu launcher está listo. Elige cómo quieres entrar al juego.</p>
-            <div class="hero-actions">
-              <button id="hub-play-online" class="btn primary"><svg class="icon"><use href="#i-play"></use></svg><span id="hub-play-online-label" data-i18n="playOnline">Jugar online</span></button>
-              <button id="hub-play-offline" class="btn"><svg class="icon"><use href="#i-wifi-off"></use></svg><span data-i18n="playOffline">Jugar offline</span></button>
-              <button id="hub-restart-online" class="btn ghost hidden"><svg class="icon"><use href="#i-refresh"></use></svg><span data-i18n="retry">Reintentar conexión</span></button>
-            </div>
           </div>
-          <div>
-            <div class="hero-meta" id="hub-disclaimer">El modo offline usa las pistas locales y no requiere conexión.</div>
-            <div class="hero-meta">Launcher v<span id="hub-version">2.3.2</span> · MuzicMania v<span id="hub-game-version">2.1.1</span> · <span id="hub-channel">BETA</span></div>
+          <div class="eyebrow" id="hub-kicker">BIENVENIDO DE VUELTA</div>
+          <p id="hub-welcome">Tu launcher está listo. Elige cómo quieres entrar al juego.</p>
+          <div class="hero-actions hero-actions-stack">
+            <button id="hub-play-online" class="btn primary"><svg class="icon"><use href="#i-play"></use></svg><span id="hub-play-online-label" data-i18n="playOnline">Jugar online</span></button>
+            <button id="hub-play-offline" class="btn"><svg class="icon"><use href="#i-wifi-off"></use></svg><span data-i18n="playOffline">Jugar offline</span></button>
+            <button id="hub-restart-online" class="btn ghost hidden"><svg class="icon"><use href="#i-refresh"></use></svg><span data-i18n="retry">Reintentar conexión</span></button>
           </div>
+          <div class="hero-meta" id="hub-disclaimer">El modo offline usa las pistas locales y no requiere conexión.</div>
+          <div class="hero-meta">Launcher v<span id="hub-version">2.3.2</span> · MuzicMania v<span id="hub-game-version">2.1.1</span> · <span id="hub-channel">BETA</span></div>
         </section>
 
         <aside class="hub-side">
-          <div class="card">
+          <div class="card account-card">
             <h3><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="account">Cuenta</span></h3>
-            <div class="who" id="account-who">Invitado</div>
-            <div class="sub" id="account-sub">Sesión local</div>
+            <div class="account-profile">
+              <span class="avatar-frame"><span class="avatar avatar-lg" id="account-avatar">?</span></span>
+              <div class="account-copy">
+                <div class="who" id="account-who">Invitado</div>
+                <div class="sub" id="account-sub">Sesión local</div>
+              </div>
+            </div>
+            <div class="sub account-session" id="hub-session-note">La conexión se comprueba al iniciar.</div>
             <div class="mini-actions">
               <button id="account-login" class="btn hidden"><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="accountLogin">Iniciar sesión</span></button>
               <button id="account-profile" class="btn hidden"><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="accountProfile">Mi cuenta</span></button>
               <button id="account-logout" class="btn ghost hidden"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="accountLogout">Cerrar sesión</span></button>
+              <button id="hub-refresh" class="btn"><svg class="icon"><use href="#i-refresh"></use></svg><span id="hub-refresh-label" data-i18n="refresh">Actualizar estado</span></button>
             </div>
           </div>
 
+          <div class="card changelog-card">
+            <h3><svg class="icon"><use href="#i-clock"></use></svg> Últimos cambios</h3>
+            <div class="changelog-list" id="hub-changelog-list"></div>
+            <a class="link changelog-link" data-url href="https://muzicmania.vercel.app/changelog"><svg class="icon"><use href="#i-refresh"></use></svg><span>Ver changelog completo</span></a>
+          </div>
         </aside>
       </div>
 
-      <div class="hub-bottom">
+      <div class="hub-bottom hub-bottom-compact">
         <article class="card">
           <h3><svg class="icon"><use href="#i-globe"></use></svg> <span data-i18n="community">Comunidad</span></h3>
           <div class="links">
@@ -277,13 +293,6 @@
             <a class="link" data-url href="https://muzicmania.vercel.app/download"><svg class="icon"><use href="#i-download"></use></svg><span data-i18n="download">Descargar</span></a>
             <a class="link social whatsapp" data-url href="https://wa.me/584126858111"><svg class="icon"><use href="#i-whatsapp"></use></svg><span>WhatsApp</span></a>
             <a class="link" data-url href="https://ciszunetwork.vercel.app"><svg class="icon"><use href="#i-globe"></use></svg><span data-i18n="ciszuNetwork">Ciszu Network</span></a>
-          </div>
-        </article>
-        <article class="card">
-          <h3><svg class="icon"><use href="#i-user"></use></svg> <span data-i18n="session">Estado de la sesión</span></h3>
-          <div class="sub" id="hub-session-note">La conexión se comprueba al iniciar.</div>
-          <div class="mini-actions">
-            <button id="hub-refresh" class="btn"><svg class="icon"><use href="#i-refresh"></use></svg><span id="hub-refresh-label" data-i18n="refresh">Actualizar estado</span></button>
           </div>
         </article>
       </div>
@@ -358,6 +367,22 @@
     </div>
     <div class="settings-line"><span><svg class="icon"><use href="#i-monitor"></use></svg> <span data-i18n="themeLabel">Tema</span></span><select id="modal-theme" class="settings-select"><option value="light" data-i18n="themeLight">Claro</option><option value="dark" data-i18n="themeDark">Oscuro</option></select></div>
     <div class="settings-line" id="startup-line"><span><svg class="icon"><use href="#i-monitor"></use></svg> <span data-i18n="startWithWindows">Iniciar con el sistema</span></span><label class="switch"><input id="modal-startup" type="checkbox"><span></span></label></div>
+    <div class="settings-section notif-settings">
+      <div class="settings-label"><svg class="icon"><use href="#i-bell"></use></svg> <span>Notificaciones</span></div>
+      <div class="settings-line"><span>No molestar</span><label class="switch"><input id="modal-notif-dnd" type="checkbox"><span></span></label></div>
+      <div class="settings-line"><span>Sonidos de notificación</span><label class="switch"><input id="modal-notif-sound" type="checkbox" checked><span></span></label></div>
+      <div class="settings-line"><span>Avisos por correo</span><label class="switch"><input id="modal-notif-email" type="checkbox"><span></span></label></div>
+      <div class="settings-line"><span>Autoeliminar leídas</span><select id="modal-notif-auto-remove" class="settings-select"><option value="0">Nunca</option><option value="15">15 minutos</option><option value="60">1 hora</option><option value="1440">24 horas</option><option value="10080">7 días</option></select></div>
+      <div class="notif-capture-title">Capturar</div>
+      <div class="notif-capture-grid">
+        <label><input id="modal-notif-capture-update" type="checkbox" checked><span>Actualizaciones</span></label>
+        <label><input id="modal-notif-capture-account" type="checkbox" checked><span>Cuenta</span></label>
+        <label><input id="modal-notif-capture-error" type="checkbox" checked><span>Errores</span></label>
+        <label><input id="modal-notif-capture-log" type="checkbox" checked><span>Logs</span></label>
+        <label><input id="modal-notif-capture-social" type="checkbox" checked><span>Social</span></label>
+      </div>
+      <p class="note notif-sync-note">Se guarda en este equipo y se aplicará a la cuenta cuando el servicio lo permita.</p>
+    </div>
     <div class="settings-section">
       <div class="settings-label"><svg class="icon"><use href="#i-power"></use></svg> <span data-i18n="closeBehavior">Al cerrar</span></div>
       <div class="select-field">

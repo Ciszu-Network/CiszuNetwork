@@ -31,6 +31,8 @@ const state = {
   notifSyncWarned: false,
   serverUnread: 0,
   readServerIds: new Set(),
+  notificationPrefs: null,
+  splashSupportTimer: null,
 };
 
 const LANGUAGES = [
@@ -483,6 +485,10 @@ function show(id) {
   const target = $(id);
   if (target) target.classList.add('active');
   document.body.classList.toggle('onboarding', ['view-welcome', 'view-tutorial', 'view-login'].includes(id));
+  if (id !== 'view-splash') {
+    clearTimeout(state.splashSupportTimer);
+    $('splash-support')?.classList.add('hidden');
+  }
   updateTitlebarState();
 }
 
@@ -584,17 +590,19 @@ function avatarLetter(session) {
 }
 
 function setAvatar(session) {
-  const element = $('hub-avatar');
-  if (!element) return;
-  if (session?.avatar_url) {
-    element.innerHTML = '';
-    const image = document.createElement('img');
-    image.src = session.avatar_url;
-    image.alt = '';
-    element.appendChild(image);
-  } else {
-    element.textContent = avatarLetter(session);
-  }
+  ['hub-avatar', 'account-avatar'].forEach((id) => {
+    const element = $(id);
+    if (!element) return;
+    if (session?.avatar_url) {
+      element.innerHTML = '';
+      const image = document.createElement('img');
+      image.src = session.avatar_url;
+      image.alt = '';
+      element.appendChild(image);
+    } else {
+      element.textContent = avatarLetter(session);
+    }
+  });
 }
 
 async function checkOnline() {
@@ -607,6 +615,7 @@ async function checkOnline() {
 }
 
 async function boot() {
+  state.notificationPrefs = loadNotificationPrefs();
   state.notifications = loadLocalNotifications();
   try {
     const savedRead = JSON.parse(localStorage.getItem(NOTIF_SERVER_READ_KEY) || '[]');
@@ -616,6 +625,11 @@ async function boot() {
   }
   renderNotificationBadge();
   show('view-splash');
+  $('splash-support')?.classList.add('hidden');
+  clearTimeout(state.splashSupportTimer);
+  state.splashSupportTimer = setTimeout(() => {
+    if ($('view-splash')?.classList.contains('active')) $('splash-support')?.classList.remove('hidden');
+  }, 15000);
   setBar('splash-bar', 4);
   setPct('splash-pct', 4);
   await sleep(220);
@@ -1142,6 +1156,7 @@ function renderHub() {
   setText('hub-channel', String(state.boot?.channel || BUILD.channel || 'beta').toUpperCase());
 
   syncSettingsForm();
+  renderHubChangelog();
 }
 
 function syncSettingsForm() {
@@ -1158,6 +1173,18 @@ function syncSettingsForm() {
     : Boolean(state.settings.launch_on_startup);
   const theme = $('modal-theme');
   if (theme) theme.value = state.settings.theme === 'dark' ? 'dark' : 'light';
+  const prefs = state.notificationPrefs || loadNotificationPrefs();
+  const setToggle = (id, value) => { const el = $(id); if (el) el.checked = value !== false; };
+  setToggle('modal-notif-dnd', prefs.dnd);
+  setToggle('modal-notif-sound', prefs.sound);
+  setToggle('modal-notif-email', prefs.email);
+  const autoRemove = $('modal-notif-auto-remove');
+  if (autoRemove) autoRemove.value = String(prefs.autoRemove || 0);
+  const capture = prefs.capture || DEFAULT_NOTIF_PREFS.capture;
+  ['update', 'account', 'error', 'log', 'social'].forEach((key) => {
+    const el = $(`modal-notif-capture-${key}`);
+    if (el) el.checked = capture[key] !== false;
+  });
   const updateChannel = $('modal-update-channel');
   if (updateChannel) updateChannel.value = state.settings.update_channel || state.boot?.update_channel || BUILD.channel || 'beta';
   const autoRelease = $('modal-auto-release');
@@ -1232,6 +1259,103 @@ window.showCloseDialog = function () {
   $('close-dialog')?.classList.remove('hidden');
 };
 
+const NOTIF_PREFS_KEY = 'muzic_launcher_notif_prefs_v1';
+const DEFAULT_NOTIF_PREFS = {
+  dnd: false,
+  sound: true,
+  email: false,
+  autoRemove: 0,
+  capture: { update: true, account: true, error: true, log: true, social: true },
+};
+
+const LAUNCHER_CHANGELOG = [
+  { version: '2.5.0', date: '27 nov 2026', title: 'Cuenta, tema claro, notificaciones y logs' },
+  { version: '2.4.2', date: '26 nov 2026', title: 'Modo offline, editor y 1v1 local' },
+  { version: '2.4.0', date: '25 nov 2026', title: 'Instaladores Linux y autostart' },
+];
+
+function loadNotificationPrefs() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(NOTIF_PREFS_KEY) || '{}');
+    return {
+      ...DEFAULT_NOTIF_PREFS,
+      ...saved,
+      capture: { ...DEFAULT_NOTIF_PREFS.capture, ...(saved.capture || {}) },
+    };
+  } catch {
+    return { ...DEFAULT_NOTIF_PREFS, capture: { ...DEFAULT_NOTIF_PREFS.capture } };
+  }
+}
+
+function saveNotificationPrefs() {
+  try {
+    localStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(state.notificationPrefs));
+  } catch {}
+}
+
+function notifKindEnabled(kind) {
+  const capture = state.notificationPrefs?.capture || DEFAULT_NOTIF_PREFS.capture;
+  if (kind === 'update') return capture.update !== false;
+  if (kind === 'error') return capture.error !== false;
+  if (kind === 'log') return capture.log !== false;
+  if (kind === 'account') return capture.account !== false;
+  return capture.social !== false;
+}
+
+function playNotificationSound() {
+  if (!state.notificationPrefs?.sound || state.notificationPrefs?.dnd) return;
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(880, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.09);
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.22);
+    oscillator.connect(gain).connect(ctx.destination);
+    oscillator.start();
+    oscillator.stop(ctx.currentTime + 0.24);
+    oscillator.onended = () => ctx.close().catch(() => {});
+  } catch {}
+}
+
+function pruneReadNotifications() {
+  const minutes = Number(state.notificationPrefs?.autoRemove) || 0;
+  if (minutes <= 0) return;
+  const cutoff = Date.now() - minutes * 60 * 1000;
+  const before = state.notifications.length;
+  state.notifications = state.notifications.filter((item) => !item.read || item.time > cutoff);
+  if (state.notifications.length !== before) {
+    saveLocalNotifications();
+    renderNotificationBadge();
+    if (state.notifOpen) renderNotifications();
+  }
+}
+
+function renderHubChangelog() {
+  const host = $('hub-changelog-list');
+  if (!host) return;
+  host.innerHTML = '';
+  LAUNCHER_CHANGELOG.forEach((entry) => {
+    const item = document.createElement('div');
+    item.className = 'changelog-item';
+    const title = document.createElement('strong');
+    title.textContent = entry.title;
+    const meta = document.createElement('small');
+    const version = document.createElement('span');
+    version.textContent = `v${entry.version}`;
+    const date = document.createElement('span');
+    date.textContent = entry.date;
+    meta.append(version, date);
+    item.append(title, meta);
+    host.appendChild(item);
+  });
+}
+
 const NOTIF_KEY = 'muzic_launcher_notifications_v1';
 const NOTIF_SERVER_READ_KEY = 'muzic_launcher_notif_read_v1';
 
@@ -1269,6 +1393,7 @@ function pushNotification(entry) {
     source: entry.source || 'launcher',
     fromLog: Boolean(entry.fromLog),
   };
+  if (!notifKindEnabled(item.kind)) return null;
   if (state.notifications.some((existing) => existing.id === item.id)) return null;
   const duplicate = state.notifications.find((existing) => existing.kind === item.kind
     && existing.message === item.message
@@ -1277,6 +1402,8 @@ function pushNotification(entry) {
   state.notifications.unshift(item);
   state.notifications = state.notifications.slice(0, 120);
   saveLocalNotifications();
+  playNotificationSound();
+  pruneReadNotifications();
   renderNotificationBadge();
   if (state.notifOpen) renderNotifications();
   return item;
@@ -1374,6 +1501,7 @@ async function syncOnlineNotifications() {
         source: 'online',
       });
     }
+    state.serverNotifications = state.serverNotifications.filter((item) => notifKindEnabled(item.kind));
   } catch (error) {
     const text = String(error || '');
     if (text.includes('401') || text.includes('unauthorized')) {
@@ -1394,7 +1522,7 @@ async function syncOnlineNotifications() {
 function renderNotificationBadge() {
   const localUnread = state.notifications.filter((item) => !item.read).length;
   const mappedServerUnread = state.serverNotifications.filter((item) => !item.read).length;
-  const unread = localUnread + Math.max(state.serverUnread || 0, mappedServerUnread);
+  const unread = state.notificationPrefs?.dnd ? 0 : localUnread + Math.max(state.serverUnread || 0, mappedServerUnread);
   const badge = $('notif-badge');
   if (badge) {
     badge.textContent = unread > 99 ? '99+' : String(unread);
@@ -1657,7 +1785,7 @@ async function checkForUpdatesQuietly() {
         message: tr('notifUpdateBody').replace('{version}', version),
         action: 'update',
       });
-      toast(tr('notifUpdateTitle'));
+      if (!state.notificationPrefs?.dnd) toast(tr('notifUpdateTitle'));
     }
   } catch {}
 }
@@ -1666,6 +1794,7 @@ function startBackgroundWatchers() {
   if (state.watchersStarted) return;
   state.watchersStarted = true;
   setInterval(() => invoke('launcher_heartbeat').catch(() => {}), 10000);
+  setInterval(pruneReadNotifications, 60000);
   setInterval(() => {
     syncOnlineNotifications();
     checkForUpdatesQuietly();
@@ -1938,6 +2067,31 @@ function bind() {
     await persistSettings({ language });
     $('language-restart-modal')?.classList.add('hidden');
     toast(tr('languageRestartToast'));
+  });
+  const saveNotifPrefsFromForm = () => {
+    state.notificationPrefs = {
+      ...(state.notificationPrefs || DEFAULT_NOTIF_PREFS),
+      dnd: Boolean($('modal-notif-dnd')?.checked),
+      sound: Boolean($('modal-notif-sound')?.checked),
+      email: Boolean($('modal-notif-email')?.checked),
+      autoRemove: Number($('modal-notif-auto-remove')?.value) || 0,
+      capture: {
+        update: Boolean($('modal-notif-capture-update')?.checked),
+        account: Boolean($('modal-notif-capture-account')?.checked),
+        error: Boolean($('modal-notif-capture-error')?.checked),
+        log: Boolean($('modal-notif-capture-log')?.checked),
+        social: Boolean($('modal-notif-capture-social')?.checked),
+      },
+    };
+    saveNotificationPrefs();
+    pruneReadNotifications();
+    renderNotificationBadge();
+    if (state.notifOpen) renderNotifications();
+  };
+  ['modal-notif-dnd', 'modal-notif-sound', 'modal-notif-email', 'modal-notif-auto-remove',
+    'modal-notif-capture-update', 'modal-notif-capture-account', 'modal-notif-capture-error',
+    'modal-notif-capture-log', 'modal-notif-capture-social'].forEach((id) => {
+    $(id)?.addEventListener('change', saveNotifPrefsFromForm);
   });
   $('modal-theme')?.addEventListener('change', async (event) => {
     const theme = event.target.value === 'dark' ? 'dark' : 'light';

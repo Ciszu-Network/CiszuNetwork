@@ -8,6 +8,41 @@
 <link rel="stylesheet" href="local.css">
 </head>
 <body>
+<svg class="svg-sprite" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+  <symbol id="i-monitor" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></symbol>
+  <symbol id="i-radio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></symbol>
+  <symbol id="i-customize" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></symbol>
+  <symbol id="i-store" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></symbol>
+  <symbol id="i-backpack" viewBox="0 0 24 24"><path d="M4 11a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8z"/><path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/><path d="M8 14h8"/><path d="M8 17h4"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-about" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></symbol>
+  <symbol id="i-forum" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><ellipse cx="12" cy="12" rx="4" ry="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></symbol>
+  <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M23 4v6h-6"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></symbol>
+  <symbol id="i-external" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-discord" viewBox="0 0 24 24"><path d="M20.3 4.4A19.8 19.8 0 0 0 15.4 3c-.2.4-.4.9-.6 1.3a18.3 18.3 0 0 0-5.5 0C9 3.9 8.8 3.4 8.6 3a19.8 19.8 0 0 0-4.9 1.4C.5 9-.3 13.6.1 18.1a19.9 19.9 0 0 0 6 3c.5-.7.9-1.4 1.2-2a13 13 0 0 1-1.9-.9l.5-.4a14.2 14.2 0 0 0 12.1 0l.5.4c-.6.3-1.2.6-1.9.9.3.7.7 1.4 1.2 2a19.9 19.9 0 0 0 6-3c.5-5.2-.8-9.7-3.5-13.7ZM8 15.3c-1.2 0-2.2-1.1-2.2-2.4S6.7 10.5 8 10.5s2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Zm8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4Z"/></symbol>
+  <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M20.5 3.5A11.8 11.8 0 0 0 1.9 17.7L.5 23.5l5.9-1.4A11.8 11.8 0 0 0 20.5 3.5Zm-8.4 18a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.5.9.9-3.4-.2-.4a9.8 9.8 0 1 1 8.2 4.5Zm5.4-7.3c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.2l-.9 1.1c-.2.2-.4.2-.7.1a8 8 0 0 1-2.3-1.4 8.8 8.8 0 0 1-1.6-2c-.2-.3 0-.5.1-.6l.5-.6.3-.6c.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 2.9 1.2 2.9.8 3.4.7.5 0 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.2-.6-.4Z"/></symbol>
+  <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-tiktok" viewBox="0 0 24 24"><path d="M14.5 3c.3 2.1 1.5 3.4 3.7 3.8v2.9c-1.4.1-2.6-.3-3.8-1v5.6a5.8 5.8 0 1 1-5.8-5.8c.3 0 .7 0 1 .1v3a2.8 2.8 0 1 0 1.9 2.6V3h3Z"/></symbol>
+  <symbol id="i-youtube" viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8ZM9.5 15.6V8.4L15.8 12l-6.3 3.6Z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18.2 2.3h3.3l-7.2 8.3 8.5 11.1h-6.6l-5.2-6.8-5.9 6.8H1.8l7.7-8.9L1.3 2.3h6.8l4.7 6.2 5.4-6.2Zm-1.2 17.5h1.8L6.9 4.1H5Z" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></symbol>
+</svg>
+
 <div class="glow"></div>
 
 <header class="top">
@@ -71,87 +106,85 @@
 
   <section id="view-hub" class="view hub-view">
     <aside class="hub-side">
-      <button class="hub-brand" id="hub-brand" type="button" title="MuzicMania">
-        <img src="../isotipo.svg" alt="">
-        <span>MuzicMania</span>
-        <em>LOCAL</em>
-      </button>
-      <div class="hub-mode-list">
-        <button class="hub-mode locked" data-hub-mode="historia" type="button"><span class="hub-mode-icon book">▤</span><span><strong>HISTORIA</strong><small>Próximamente</small></span><i>PRONTO</i></button>
-        <button class="hub-mode active" data-hub-mode="solo" type="button"><span class="hub-mode-icon cyan">♪</span><span><strong>MODO SOLO</strong><small>Partidas individuales</small></span><i>›</i></button>
-        <button class="hub-mode" data-hub-mode="local" type="button"><span class="hub-mode-icon cyan">▣</span><span><strong>MODO LOCAL</strong><small>Tus niveles guardados</small></span><i>›</i></button>
-        <button class="hub-mode" data-hub-mode="multijugador" type="button"><span class="hub-mode-icon pink">◉</span><span><strong>MULTIJUGADOR</strong><small>1 vs 1 local</small></span><i>LOCAL</i></button>
-        <button class="hub-mode" data-hub-mode="crear" type="button"><span class="hub-mode-icon green">＋</span><span><strong>CREAR</strong><small>Editor de niveles</small></span><i>›</i></button>
-        <button class="hub-mode locked" data-hub-mode="eventos" type="button"><span class="hub-mode-icon orange">🏆</span><span><strong>EVENTOS</strong><small>Próximamente</small></span><i>PRONTO</i></button>
-        <button class="hub-mode locked" data-hub-mode="tienda" type="button"><span class="hub-mode-icon yellow">▦</span><span><strong>TIENDA</strong><small>Requiere online</small></span><i>ONLINE</i></button>
-      </div>
-      <div class="hub-option-grid">
-        <button class="hub-option yellow" data-hub-panel="inventario" type="button">▣<span>INVENTARIO</span></button>
-        <button class="hub-option cyan" data-hub-panel="ayuda" type="button">?<span>AYUDA</span></button>
-        <button class="hub-option blue" data-hub-panel="info" type="button">i<span>INFO</span></button>
-        <button class="hub-option pink" data-hub-panel="creditos" type="button">★<span>CRÉDITOS</span></button>
-        <button class="hub-option yellow" data-hub-panel="leaderboard" type="button">▲<span>RANKING</span></button>
-        <button class="hub-option cyan" data-hub-panel="forum" type="button">◍<span>FORO</span></button>
-        <button class="hub-option green" data-hub-panel="redes" type="button">✆<span>REDES</span></button>
-        <button class="hub-option orange" data-hub-panel="cambios" type="button">◷<span>CAMBIOS</span></button>
-        <button class="hub-option violet" id="hub-settings" type="button">⚙<span>CONFIG</span></button>
-        <button class="hub-option purple" data-hub-panel="otros" type="button">≡<span>OTROS</span></button>
-      </div>
-      <div class="hub-account">
-        <div class="guest-chip"><span class="guest-avatar" id="hub-avatar">G</span><strong id="hub-guest-name">Invitado</strong></div>
-        <button class="secondary" id="hub-online" type="button">Jugar online</button>
-        <button class="secondary" id="hub-back" type="button">Salir del modo local</button>
-      </div>
-    </aside>
-    <div class="hub-main">
-      <div class="hub-notes" id="hub-notes"></div>
-      <div class="hub-easter hidden" id="hub-easter">
-        <span id="hub-easter-label">EASTER EGG</span>
-        <div class="easter-dots" id="easter-dots"><i></i><i></i><i></i></div>
-        <strong id="hub-easter-state"></strong>
-      </div>
-      <div class="hub-hero">
-        <div class="kicker" id="hub-mode-kicker">MODO LOCAL · 1 JUGADOR</div>
-        <h1 id="hub-mode-title">Elige una pista</h1>
-        <p class="sub" id="hub-mode-desc">Juega las pistas oficiales o carga tus niveles y canciones. Todo se guarda en este equipo y no requiere conexión.</p>
-        <div class="hub-hero-actions">
-          <button class="primary" id="hub-play" type="button">Jugar solo</button>
-          <button class="secondary" id="hub-play-versus" type="button">1 vs 1 local</button>
-          <button class="secondary" id="hub-create" type="button">Crear nivel</button>
+      <div class="hub-side-scroll">
+        <div class="hub-mode-list">
+          <button class="hub-mode locked" data-hub-mode="historia" type="button"><span class="hub-mode-icon gray"><svg class="icon"><use href="#i-book"></use></svg></span><span><strong>HISTORIA</strong><small>Próximamente</small></span><i>PRONTO</i></button>
+          <button class="hub-mode active" data-hub-mode="solo" type="button"><span class="hub-mode-icon cyan"><svg class="icon"><use href="#i-music"></use></svg></span><span><strong>MODO SOLO</strong><small>Partidas individuales</small></span><i>›</i></button>
+          <button class="hub-mode" data-hub-mode="local" type="button"><span class="hub-mode-icon cyan"><svg class="icon"><use href="#i-monitor"></use></svg></span><span><strong>MODO LOCAL</strong><small>Tus niveles guardados</small></span><i>›</i></button>
+          <button class="hub-mode" data-hub-mode="multijugador" type="button"><span class="hub-mode-icon pink"><svg class="icon"><use href="#i-radio"></use></svg></span><span><strong>MULTIJUGADOR</strong><small>1 vs 1 local</small></span><i>LOCAL</i></button>
+          <button class="hub-mode" data-hub-mode="crear" type="button"><span class="hub-mode-icon green"><svg class="icon"><use href="#i-customize"></use></svg></span><span><strong>CREAR</strong><small>Editor de niveles</small></span><i>›</i></button>
+          <button class="hub-mode locked" data-hub-mode="eventos" type="button"><span class="hub-mode-icon orange"><svg class="icon"><use href="#i-trophy"></use></svg></span><span><strong>EVENTOS</strong><small>Próximamente</small></span><i>PRONTO</i></button>
+          <button class="hub-mode locked" data-hub-mode="tienda" type="button"><span class="hub-mode-icon yellow"><svg class="icon"><use href="#i-store"></use></svg></span><span><strong>TIENDA</strong><small>Requiere online</small></span><i>ONLINE</i></button>
+        </div>
+        <div class="hub-divider"></div>
+        <div class="hub-option-grid">
+          <button class="hub-option yellow" data-hub-panel="inventario" type="button"><svg class="icon"><use href="#i-backpack"></use></svg><span>INVENTARIO</span></button>
+          <button class="hub-option cyan" data-hub-panel="ayuda" type="button"><svg class="icon"><use href="#i-help"></use></svg><span>AYUDA</span></button>
+          <button class="hub-option blue" data-hub-panel="info" type="button"><svg class="icon"><use href="#i-about"></use></svg><span>INFO</span></button>
+          <button class="hub-option pink" data-hub-panel="creditos" type="button"><svg class="icon"><use href="#i-star"></use></svg><span>CRÉDITOS</span></button>
+          <button class="hub-option yellow" data-hub-panel="leaderboard" type="button"><svg class="icon"><use href="#i-trophy"></use></svg><span>LEADERBOARD</span></button>
+          <button class="hub-option cyan" data-hub-panel="forum" type="button"><svg class="icon"><use href="#i-forum"></use></svg><span>FORUM</span></button>
+          <button class="hub-option green" data-hub-panel="redes" type="button"><svg class="icon"><use href="#i-discord"></use></svg><span>REDES</span></button>
+          <button class="hub-option orange" data-hub-panel="cambios" type="button"><svg class="icon"><use href="#i-clock"></use></svg><span>CAMBIOS</span></button>
+          <button class="hub-option violet" id="hub-settings" type="button"><svg class="icon"><use href="#i-settings"></use></svg><span>CONFIG</span></button>
+          <button class="hub-option purple" data-hub-panel="otros" type="button"><svg class="icon"><use href="#i-sliders"></use></svg><span>OTROS</span></button>
         </div>
       </div>
-      <div class="hub-notice hidden" id="hub-notice"></div>
-      <div class="hub-cards">
-        <button class="mode-card cyan" id="hub-local" type="button">
-          <span class="mode-icon">▶</span>
-          <strong>Modo solo</strong>
-          <small>Pistas oficiales, dificultades y récords locales.</small>
-          <em>1 JUGADOR</em>
+    </aside>
+
+    <div class="hub-main">
+      <div class="hub-notes" id="hub-notes"></div>
+      <div class="hub-topbar">
+        <button class="hub-profile" id="hub-profile-card" type="button">
+          <span class="hub-avatar-frame"><span class="guest-avatar" id="hub-avatar">G</span></span>
+          <span class="hub-profile-copy"><strong id="hub-guest-name">Invitado</strong><small id="hub-guest-id">@guest</small></span>
+          <span class="hub-profile-tag">LOCAL</span>
         </button>
-        <button class="mode-card pink" id="hub-multi" type="button">
-          <span class="mode-icon">1v1</span>
-          <strong>Multijugador local</strong>
-          <small>Dos jugadores en el mismo equipo, J1 y J2.</small>
-          <em>1 VS 1</em>
-        </button>
-        <button class="mode-card green" id="hub-editor" type="button">
-          <span class="mode-icon">＋</span>
-          <strong>Editor local</strong>
-          <small>Crea, guarda y juega tus propios niveles.</small>
-          <em>DISPONIBLE</em>
-        </button>
-        <button class="mode-card yellow" id="hub-inventory" type="button">
-          <span class="mode-icon">▣</span>
-          <strong>Inventario</strong>
-          <small>Aspectos por defecto. Sin compras ni objetos online.</small>
-          <em>LOCAL</em>
-        </button>
+        <button class="hub-latest" id="hub-latest" type="button"><svg class="icon"><use href="#i-clock"></use></svg><span>v2.5.0 — 27 NOV 2026</span></button>
       </div>
-      <div class="hub-stats">
-        <div><span>Pistas oficiales</span><strong id="hub-stat-official">0</strong></div>
-        <div><span>Niveles locales</span><strong id="hub-stat-levels">0</strong></div>
-        <div><span>Canciones locales</span><strong id="hub-stat-songs">0</strong></div>
-        <div><span>Modo</span><strong>Sin conexión</strong></div>
+
+      <div class="hub-center">
+        <div class="hub-lockup" id="hub-lockup">
+          <img class="hub-isotipo" id="hub-isotipo" src="../isotipo.svg" alt="MuzicMania">
+          <img class="hub-logotype" src="../logo.svg" alt="MuzicMania">
+        </div>
+        <p class="hub-prompt" id="hub-prompt">Selecciona un modo</p>
+        <div class="hub-guest-note" id="hub-guest-note">Sesión local · sin cuenta online</div>
+        <div class="hub-preview hidden" id="hub-preview">
+          <span class="hub-preview-icon" id="hub-preview-icon"></span>
+          <h2 id="hub-preview-title"></h2>
+          <p id="hub-preview-desc"></p>
+          <div class="hub-preview-stats" id="hub-preview-stats"></div>
+        </div>
+        <div class="hub-easter hidden" id="hub-easter">
+          <span id="hub-easter-label">EASTER EGG</span>
+          <div class="easter-dots" id="easter-dots"><i></i><i></i><i></i></div>
+          <strong id="hub-easter-state"></strong>
+        </div>
+      </div>
+
+      <div class="hub-nowplaying">
+        <span class="hub-disc">♪</span>
+        <span><small>AHORA SONANDO</small><strong id="hub-nowplaying">OLED Darkness</strong><em>MuzicMania · local</em></span>
+      </div>
+
+      <div class="hub-social">
+        <button data-external="https://discord.gg/W3kMtMMj6E" title="Discord"><svg class="icon"><use href="#i-discord"></use></svg></button>
+        <button data-external="https://wa.me/584126858111" title="WhatsApp"><svg class="icon"><use href="#i-whatsapp"></use></svg></button>
+        <button data-external="https://www.instagram.com/ciszunetwork/" title="Instagram"><svg class="icon"><use href="#i-instagram"></use></svg></button>
+        <button data-external="https://www.tiktok.com/@ciszunetwork" title="TikTok"><svg class="icon"><use href="#i-tiktok"></use></svg></button>
+        <button data-external="https://www.youtube.com/@CiszuNetwork" title="YouTube"><svg class="icon"><use href="#i-youtube"></use></svg></button>
+        <button data-external="https://x.com/CiszukoAntony" title="X"><svg class="icon"><use href="#i-x"></use></svg></button>
+        <button data-external="https://muzicmania.vercel.app" title="MuzicMania"><svg class="icon"><use href="#i-globe"></use></svg></button>
+      </div>
+
+      <div class="hub-notice hidden" id="hub-notice"></div>
+      <div class="hub-bottombar">
+        <p class="hub-copy">© 2026 <strong>CISZU NETWORK</strong> Y MUZICMANIA · HECHO POR <strong>CISZUKO ANTONY</strong></p>
+        <div class="hub-quickdocks">
+          <button id="hub-theme-bottom" type="button"><svg class="icon"><use href="#i-moon"></use></svg><span>AUTO</span></button>
+          <button id="hub-lang-bottom" type="button"><svg class="icon"><use href="#i-globe"></use></svg><span>ES</span></button>
+        </div>
       </div>
     </div>
   </section>
@@ -298,13 +331,45 @@
 </main>
 
 <section id="game">
-  <div class="hud">
-    <div class="hud-group"><span>Score<strong id="hud-score">0</strong></span><span class="combo">Combo<strong id="hud-combo">0</strong></span></div>
-    <div class="hud-group"><span>Accuracy<strong id="hud-acc">100%</strong></span><span>Misses<strong id="hud-miss">0</strong></span></div>
-    <button class="secondary" id="pause-btn" type="button">Pausa</button>
+  <div class="game-top">
+    <div class="game-score"><small>SCORE</small><strong id="hud-score">0</strong></div>
+    <div class="game-combo"><small>COMBO</small><strong id="hud-combo">0x</strong></div>
+    <div class="game-stats">
+      <div><small>MAX COMBO</small><strong id="hud-maxcombo">0x</strong></div>
+      <div><small>KPS</small><strong id="hud-kps">0</strong></div>
+      <div><small>MISSES</small><strong id="hud-miss">0</strong></div>
+      <div><small>ACCURACY</small><strong id="hud-acc">100%</strong></div>
+    </div>
+    <button id="pause-btn" class="game-pause" type="button" aria-label="Pausa"><svg class="icon"><use href="#i-pause"></use></svg></button>
   </div>
-  <div id="canvas-wrap"><canvas id="game-canvas"></canvas><div class="judgement" id="judgement"></div><div class="keys"><span class="key">D</span><span class="key">F</span><span class="key">J</span><span class="key">K</span></div></div>
-  <div id="results"><div class="result-card"><div class="result-title" id="result-track">Track</div><div class="result-grade" id="result-grade">S</div><div class="result-title">Puntuación final</div><div class="result-grid"><div class="result-row">Score<strong id="result-score">0</strong></div><div class="result-row">Accuracy<strong id="result-acc">100%</strong></div><div class="result-row">Max combo<strong id="result-combo">0</strong></div><div class="result-row">Misses<strong id="result-miss">0</strong></div></div><div class="result-actions"><button class="secondary" id="retry-btn" type="button">Repetir</button><button class="secondary" id="back-btn" type="button">Lista de pistas</button></div></div></div>
+  <div id="canvas-wrap">
+    <canvas id="game-canvas" width="1920" height="1080"></canvas>
+    <div id="judgement" class="judgement"></div>
+    <div id="countdown" class="countdown hidden">3</div>
+    <div class="keys"><span class="key">D</span><span class="key">F</span><span class="key">J</span><span class="key">K</span></div>
+  </div>
+  <div class="game-bottom">
+    <div class="life-wrap"><svg class="icon"><use href="#i-user"></use></svg><div class="life-bar"><i id="hud-life"></i></div><span id="hud-life-label">100%</span></div>
+    <div class="progress-wrap"><span id="hud-time">0:00</span><div class="progress-bar"><i id="hud-progress"></i></div><span id="hud-time-left">-0:00</span></div>
+  </div>
+  <div class="judgement-counts" id="hud-judgements"></div>
+
+  <div id="pause-screen" class="pause-screen hidden">
+    <div class="pause-card">
+      <div class="kicker">PARTIDA EN PAUSA</div>
+      <h1>PAUSED</h1>
+      <p>La música y el chart están detenidos. Pulsa Escape o Reanudar para continuar.</p>
+      <div class="pause-actions">
+        <button class="primary" id="pause-resume" type="button">Reanudar</button>
+        <button class="secondary" id="pause-restart" type="button">Reiniciar</button>
+        <button class="secondary" id="pause-config" type="button">Configuración</button>
+        <button class="secondary" id="pause-exit" type="button">Salir</button>
+      </div>
+      <small>Cuenta atrás de 3 segundos al reanudar</small>
+    </div>
+  </div>
+
+  <div id="results"><div class="result-card"><div class="result-title" id="result-track">Track</div><div class="result-grade" id="result-grade">S</div><div class="result-title">Puntuación final</div><div class="result-grid"><div class="result-row">Score<strong id="result-score">0</strong></div><div class="result-row">Accuracy<strong id="result-acc">100%</strong></div><div class="result-row">Max combo<strong id="result-combo">0</strong></div><div class="result-row">Misses<strong id="result-miss">0</strong></div><div class="result-row">Perfect<strong id="result-perfect">0</strong></div><div class="result-row">Great<strong id="result-great">0</strong></div><div class="result-row">Good<strong id="result-good">0</strong></div></div><div class="result-actions"><button class="secondary" id="retry-btn" type="button">Repetir</button><button class="secondary" id="back-btn" type="button">Lista de pistas</button></div></div></div>
 </section>
 
 <div id="local-modal" class="local-modal hidden">

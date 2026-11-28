@@ -1,8 +1,8 @@
 ﻿# LAUNCHER_SYSTEM — Launcher reutilizable de escritorio (Ciszu Network)
 
-Versión: 1.1.0
+Versión: 1.2.0
 Actualización: 2026-11-27
-Identificador: LAUNCHER_SYSTEM_V1.1.0_2026_11_27_ciszunetwork
+Identificador: LAUNCHER_SYSTEM_V1.2.0_2026_11_27_ciszunetwork
 
 > **Definición**: sistema oficial del launcher de escritorio de Ciszu Network: splash,
 > actualización, tutorial, login, hub, offline, configuración, bandeja y cierre, reutilizable
@@ -135,6 +135,22 @@ El hub contiene:
 - Reintentar conexión: visible en offline.
 - Actualizar estado: siempre en el hub.
 - Todos con icono y estado de carga.
+
+### 4.6 Splash, hub y paridad visual con `/play` (2.5.1)
+
+- Splash con isotipo + logotipo oficiales, animación de flotación/pulso, parpadeo del estado y
+  aviso de “Soporte por tardanza” tras 15 s sin respuesta.
+- Barra de ventana con isotipo y logotipo; se elimina el bloque duplicado “Launcher · BETA” del hub.
+- Hub centrado: logotipo lockup, acciones de juego apiladas verticalmente, fondo animado (orbes,
+  rejilla y notas), tarjeta de cuenta con marco de avatar y tarjeta de últimos cambios.
+- Campana de notificaciones junto a Configuración y sección de preferencias de notificaciones
+  (no molestar, sonidos, correo, autoeliminación y tipos capturados).
+- Fuentes oficiales Exo 2 y Rajdhani empaquetadas en el launcher.
+- Shell offline alineado con `/play`: sidebar de modos/opciones, previsualización central al
+  hover, perfil arriba a la izquierda, changelog arriba a la derecha, panel social, now playing y
+  quickdocks de tema/idioma en la barra inferior.
+- Motor local alineado con `useGameEngine`: mismo generador de chart/semilla, ventanas de juicio,
+  puntuación, vida, KPS, precisión, holds, minas, HUD y pausa con cuenta atrás y auto-pausa.
 
 ## 5. Configuración
 
